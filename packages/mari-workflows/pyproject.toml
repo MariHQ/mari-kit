@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mari-workflows"
+version = "0.1.0.dev0"
+description = "Storage-neutral workflow lifecycle functions"
+requires-python = ">=3.11"
+dependencies = ["mari-core==0.1.0.dev0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

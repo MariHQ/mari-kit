@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mari-agents"
+version = "0.1.0.dev0"
+description = "Streaming tool loops, hooks, and agent evaluation functions"
+requires-python = ">=3.11"
+dependencies = ["mari-core==0.1.0.dev0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

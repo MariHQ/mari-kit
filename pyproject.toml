@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mari-components"
+version = "0.1.0.dev0"
+description = "Complete collection of Mari product-knowledge components"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.0"]
+
+[tool.setuptools.packages.find]
+where = [
+  "packages/mari-core/src",
+  "packages/mari-connectors/src",
+  "packages/mari-retrieval/src",
+  "packages/mari-knowledge/src",
+  "packages/mari-agents/src",
+  "packages/mari-trajectories/src",
+  "packages/mari-workflows/src",
+  "packages/mari-destinations/src",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100

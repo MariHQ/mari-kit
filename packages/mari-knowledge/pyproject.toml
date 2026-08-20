@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mari-knowledge"
+version = "0.1.0.dev0"
+description = "Knowledge extraction, lifecycle, scoring, and review functions"
+requires-python = ">=3.11"
+dependencies = ["mari-core==0.1.0.dev0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

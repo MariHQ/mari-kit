@@ -40,6 +40,7 @@ def run_tool_loop(
     authorize_write: Callable[[Tool, Mapping[str, Any]], bool],
     observe: Callable[[AgentEvent], None] | None = None,
     maximum_steps: int = 8,
+    minimum_tool_observations: int = 0,
 ) -> Iterator[AgentEvent]:
     """Lazily execute a bounded loop and yield every event immediately.
 
@@ -51,6 +52,8 @@ def run_tool_loop(
     """
     if maximum_steps < 1:
         raise ValueError("maximum_steps must be positive")
+    if minimum_tool_observations < 0:
+        raise ValueError("minimum_tool_observations cannot be negative")
     by_name = {tool.name: tool for tool in tools}
     if len(by_name) != len(tools) or any(not name for name in by_name):
         raise ValueError("tool names must be non-empty and unique")
@@ -65,6 +68,7 @@ def run_tool_loop(
             observe(event)
         return event
 
+    observations = 0
     for _step in range(1, maximum_steps + 1):
         prompt = (
             "Choose exactly one action. Use tools only when needed and never invent a tool result. "
@@ -74,6 +78,12 @@ def run_tool_loop(
         decision = require_object(generate_json(prompt, "agent-loop-v2"), recipe="agent-loop-v2")
         action = str(decision.get("action") or "")
         if action == "answer":
+            if observations < minimum_tool_observations:
+                transcript.append({
+                    "role": "system",
+                    "content": "Inspect real state with a relevant tool before answering.",
+                })
+                continue
             emitted = False
             for chunk in stream_answer(tuple(transcript)):
                 if not isinstance(chunk, str):
@@ -111,6 +121,8 @@ def run_tool_loop(
             yield emit(result)
             transcript.append({"role": "tool", "content": f"{name}: failed ({type(error).__name__})"})
             continue
+        if getattr(value, "ok", True):
+            observations += 1
         yield emit(AgentEvent("tool_result", name, safe_arguments, value, True))
         transcript.append({"role": "tool", "content": f"{name}: {value!r}"[:4000]})
     raise PermanentFailure("agent reached the explicit tool-step limit")

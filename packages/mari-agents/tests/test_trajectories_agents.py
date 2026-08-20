@@ -45,6 +45,24 @@ class TrajectoryAgentTests(unittest.TestCase):
         self.assertTrue(evaluate_tools(ToolEvalCase("tools", ("search",)), events).passed)
         self.assertTrue(evaluate_answer(EvalCase("answer", ("30 days",), require_citations=True), answer, citation_count=1).passed)
 
+    def test_grounded_loop_refuses_to_answer_before_observing_a_tool(self):
+        decisions = iter([
+            {"action": "answer"},
+            {"action": "tool", "tool": "search", "arguments": {"query": "Mari"}},
+            {"action": "answer"},
+        ])
+        events = tuple(run_tool_loop(
+            [{"role": "user", "content": "What is Mari?"}],
+            [Tool("search", "Search knowledge", lambda _args: {"title": "Mari README"})],
+            generate_json=lambda _p, _v: next(decisions),
+            stream_answer=lambda _messages: ("Mari is a product knowledge system [Mari README].",),
+            authorize_write=lambda _tool, _args: False,
+            minimum_tool_observations=1,
+        ))
+        self.assertEqual([event.kind for event in events], [
+            "tool_call", "tool_result", "answer_delta", "answer_complete",
+        ])
+
     def test_product_neutral_outcome_evaluation(self):
         result = evaluate_outcome(
             OutcomeEvalCase("setup", ("token",), ("/settings",), ("test_connection",)),

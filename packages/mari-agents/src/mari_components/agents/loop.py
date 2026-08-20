@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any, Callable, Mapping
 
@@ -23,7 +23,7 @@ class Tool:
 class AgentEvent:
     kind: str
     name: str = ""
-    arguments: Mapping[str, Any] = MappingProxyType({})
+    arguments: Mapping[str, Any] = field(default_factory=lambda: MappingProxyType({}))
     result: Any = None
     ok: bool = True
 

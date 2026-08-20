@@ -75,7 +75,16 @@ def run_tool_loop(
             'Return JSON {"action":"tool","tool":"name","arguments":{}} or '
             '{"action":"answer"}.\nTools:\n' + catalog + "\nConversation:\n" + repr(transcript)
         )
-        decision = require_object(generate_json(prompt, "agent-loop-v2"), recipe="agent-loop-v2")
+        try:
+            decision = require_object(
+                generate_json(prompt, "agent-loop-v2"), recipe="agent-loop-v2",
+            )
+        except MalformedModelOutput:
+            transcript.append({
+                "role": "system",
+                "content": "Your previous decision was invalid. Return exactly one valid action object.",
+            })
+            continue
         action = str(decision.get("action") or "")
         if action == "answer":
             if observations < minimum_tool_observations:
@@ -97,11 +106,19 @@ def run_tool_loop(
             yield emit(AgentEvent("answer_complete"))
             return
         if action != "tool":
-            raise MalformedModelOutput("agent action must be tool or answer")
+            transcript.append({
+                "role": "system",
+                "content": "The action must be exactly 'tool' or 'answer'. Try again.",
+            })
+            continue
         name = str(decision.get("tool") or "")
         arguments = decision.get("arguments")
         if name not in by_name or not isinstance(arguments, dict):
-            raise MalformedModelOutput("agent selected an unknown tool or invalid arguments")
+            transcript.append({
+                "role": "system",
+                "content": "Choose a listed tool and provide arguments as a JSON object. Try again.",
+            })
+            continue
         tool = by_name[name]
         safe_arguments = MappingProxyType(dict(arguments))
         yield emit(AgentEvent("tool_call", name, safe_arguments))

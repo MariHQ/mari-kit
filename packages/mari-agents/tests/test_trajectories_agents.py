@@ -63,6 +63,23 @@ class TrajectoryAgentTests(unittest.TestCase):
             "tool_call", "tool_result", "answer_delta", "answer_complete",
         ])
 
+    def test_agent_retries_one_malformed_structured_decision(self):
+        decisions = iter([
+            None,
+            {"action": "tool", "tool": "search", "arguments": {"query": "Mari"}},
+            {"action": "answer"},
+        ])
+        events = tuple(run_tool_loop(
+            [], [Tool("search", "Search", lambda _args: "Mari README")],
+            generate_json=lambda _p, _v: next(decisions),
+            stream_answer=lambda _messages: ("Grounded answer.",),
+            authorize_write=lambda _tool, _args: False,
+            minimum_tool_observations=1,
+        ))
+        self.assertEqual([event.kind for event in events], [
+            "tool_call", "tool_result", "answer_delta", "answer_complete",
+        ])
+
     def test_product_neutral_outcome_evaluation(self):
         result = evaluate_outcome(
             OutcomeEvalCase("setup", ("token",), ("/settings",), ("test_connection",)),

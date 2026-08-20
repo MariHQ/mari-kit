@@ -47,5 +47,6 @@ def delete(project_id: int, document_ids: list[int], *, reason: str, actor: str,
             external_id=current.external_id, revision=current.revision,
             title=current.title, body=current.body, status="deleted",
             source_url=current.source_url, acl=current.acl, reason=reason, actor=actor,
+            source_updated_at=current.source_updated_at,
         ))
     ports.delete_projections(project_id, document_ids)

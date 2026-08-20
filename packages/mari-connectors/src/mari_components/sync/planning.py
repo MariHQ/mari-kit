@@ -43,6 +43,7 @@ def document_fingerprint(document: KnowledgeDocument) -> str:
         "revision": document.revision,
         "title": document.title,
         "body": document.body,
+        "updated_at": document.updated_at,
         "source_url": document.source_url,
         "acl": {
             "visibility": document.acl.visibility,

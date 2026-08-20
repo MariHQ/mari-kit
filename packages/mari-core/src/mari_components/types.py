@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Mapping, Sequence
@@ -46,6 +47,16 @@ class KnowledgeDocument:
     def __post_init__(self) -> None:
         if not self.external_id.strip():
             raise ValueError("document external_id is required")
+        if self.updated_at:
+            value = self.updated_at.strip()
+            try:
+                parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError as exc:
+                raise ValueError("document updated_at must be an ISO 8601 timestamp") from exc
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=dt.timezone.utc)
+            normalized = parsed.astimezone(dt.timezone.utc).isoformat().replace("+00:00", "Z")
+            object.__setattr__(self, "updated_at", normalized)
 
 
 @dataclass(frozen=True, slots=True)

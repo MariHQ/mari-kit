@@ -10,6 +10,12 @@ class TypesTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             KnowledgeDocument("", "Title", "Body")
 
+    def test_document_timestamp_is_normalized_to_utc(self):
+        document = KnowledgeDocument(
+            "page:1", "One", "Body", updated_at="2026-08-19T18:42:07-07:00"
+        )
+        self.assertEqual(document.updated_at, "2026-08-20T01:42:07Z")
+
     def test_acl_is_explicit_and_immutable(self):
         acl = DocumentACL("restricted", (Principal("group", "engineering"),))
         document = KnowledgeDocument("page:1", "One", "Body", acl=acl)

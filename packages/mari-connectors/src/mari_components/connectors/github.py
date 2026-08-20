@@ -290,6 +290,14 @@ def poll_github(
     head = str(commit.get("sha") or "")
     if not head:
         raise PermanentFailure("GitHub branch has no head commit")
+    head_detail = commit.get("commit") or {}
+    head_updated_at = str(
+        (head_detail.get("committer") or {}).get("date")
+        or (head_detail.get("author") or {}).get("date")
+        or ""
+    )
+    if not head_updated_at:
+        raise PermanentFailure("GitHub head commit has no timestamp")
     tree, tree_complete = _tree(
         config, head, http=http, request_limit=max(1, request.page_limit * request.page_size)
     )
@@ -314,6 +322,7 @@ def poll_github(
                 path,
                 body,
                 revision=sha,
+                updated_at=head_updated_at,
                 source_url=f"https://github.com/{config.repository}/blob/{branch}/{urllib.parse.quote(path)}",
                 acl=DocumentACL("connector_scope"),
                 metadata={"kind": "file", "path": path, "branch": branch},

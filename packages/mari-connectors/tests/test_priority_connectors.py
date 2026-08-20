@@ -108,7 +108,7 @@ class PriorityConnectorTests(unittest.TestCase):
         api = FakeHttp(
             [
                 {"full_name": "MariHQ/mari", "default_branch": "main"},
-                {"sha": "head"},
+                {"sha": "head", "commit": {"committer": {"date": "2026-08-19T18:42:07-07:00"}}},
                 {"truncated": False, "tree": [{"type": "blob", "path": "README.md", "sha": "blob"}]},
                 {"content": base64.b64encode(b"# Mari").decode()},
                 [],
@@ -118,12 +118,13 @@ class PriorityConnectorTests(unittest.TestCase):
         page = list(poll_github(GitHubConfig("token", "MariHQ/mari"), PollRequest(cursor=old_cursor), http=api))[0]
         self.assertTrue(page.snapshot_complete)
         self.assertEqual(page.upserts[0].external_id, "file:README.md")
+        self.assertEqual(page.upserts[0].updated_at, "2026-08-20T01:42:07Z")
         self.assertEqual(page.tombstones[0].external_id, "file:gone.md")
 
     def test_github_path_filters_are_connector_configuration(self):
         api = FakeHttp([
             {"full_name": "owner/repo", "default_branch": "main"},
-            {"sha": "head"},
+            {"sha": "head", "commit": {"author": {"date": "2026-08-20T01:42:07Z"}}},
             {"truncated": False, "tree": [
                 {"type": "blob", "path": "docs/guide.md", "sha": "one"},
                 {"type": "blob", "path": "src/app.py", "sha": "two"},

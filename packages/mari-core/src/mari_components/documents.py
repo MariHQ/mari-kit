@@ -27,6 +27,7 @@ class DocumentVersion:
     acl: dict[str, Any] = field(default_factory=lambda: {"visibility": "project", "principals": []})
     reason: str = "connector poll"
     actor: str = "connector"
+    source_updated_at: dt.datetime | None = None
     version_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     recorded_at: dt.datetime = field(default_factory=lambda: dt.datetime.now(dt.timezone.utc))
 
@@ -37,6 +38,8 @@ class DocumentVersion:
             raise ValueError("invalid document lifecycle status")
         if self.recorded_at.tzinfo is None:
             raise ValueError("recorded_at must be timezone-aware")
+        if self.source_updated_at is not None and self.source_updated_at.tzinfo is None:
+            raise ValueError("source_updated_at must be timezone-aware")
 
     @property
     def content_hash(self) -> str:

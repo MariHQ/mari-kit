@@ -19,6 +19,7 @@ class ProjectionFields:
 @dataclass(frozen=True, slots=True)
 class DocumentPorts:
     append_canonical: Callable[[DocumentVersion], None]
+    append_canonical_many: Callable[[list[DocumentVersion]], None]
     delete_canonical: Callable[[DocumentVersion], None]
     upsert_projection: Callable[[DocumentVersion, ProjectionFields], tuple[int, bool]]
     projected_versions: Callable[[int, list[int]], list[DocumentVersion]]
@@ -33,6 +34,13 @@ def upsert(version: DocumentVersion, fields: ProjectionFields, *, ports: Documen
     """
     ports.append_canonical(version)
     return ports.upsert_projection(version, fields)
+
+
+def upsert_many(versions: list[tuple[DocumentVersion, ProjectionFields]],
+                *, ports: DocumentPorts) -> list[tuple[int, bool]]:
+    """Append a connector page canonically, then update query projections."""
+    ports.append_canonical_many([version for version, _fields in versions])
+    return [ports.upsert_projection(version, fields) for version, fields in versions]
 
 
 def delete(project_id: int, document_ids: list[int], *, reason: str, actor: str,

@@ -26,6 +26,7 @@ class DocumentApplicationTests(unittest.TestCase):
 
         return DocumentPorts(
             append_canonical=append_canonical,
+            append_canonical_many=lambda items: [append_canonical(item) for item in items],
             delete_canonical=lambda item: calls.append(("tombstone", item.status)),
             upsert_projection=lambda item, fields: calls.append(("projection", fields.kind)) or (42, True),
             projected_versions=lambda project_id, ids: projected or [],

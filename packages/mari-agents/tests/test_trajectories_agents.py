@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 
 from mari_components.agents import EvalCase, OutcomeEvalCase, Tool, ToolEvalCase, evaluate_answer, evaluate_outcome, evaluate_tools, run_tool_loop
+from mari_components.agents.runtime import AgentPorts, ToolBinding, ToolOutcome, stream_agent_turn
 from mari_components.trajectories import (
     analyze_trajectory, distill_workflows, match_workflow, normalize_steps,
     rework_count, segment_phases,
@@ -10,6 +11,36 @@ from mari_components.trajectories import (
 
 
 class TrajectoryAgentTests(unittest.TestCase):
+    def test_stream_agent_turn_appends_observed_evidence_as_sources(self):
+        decisions = iter([
+            {"action": "tool", "tool": "search", "arguments": {"query": "Mari"}},
+            {"action": "answer"},
+        ])
+        saved = []
+        outputs = tuple(stream_agent_turn(
+            1,
+            "What is Mari?",
+            {"search": ToolBinding(
+                "Search knowledge",
+                lambda _args: ToolOutcome(True, "Found Mari", {}, evidence=(
+                    {"document_id": 7, "title": "Mari README"},
+                    {"document_id": 7, "title": "Mari README"},
+                )),
+            )},
+            AgentPorts(
+                history=lambda _session: (),
+                plan=lambda _prompt, _version: next(decisions),
+                answer=lambda _messages: iter(("Mari manages product knowledge.",)),
+                save_answer=lambda _session, answer, _trace: saved.append(answer),
+                observe_trajectory=lambda *_args: None,
+                record_usage=lambda *_args: None,
+            ),
+            minimum_tool_observations=1,
+        ))
+        streamed = "".join(str(item.payload.get("token", "")) for item in outputs)
+        self.assertEqual(streamed, "Mari manages product knowledge.\n\nSources: [1] Mari README")
+        self.assertEqual(saved, [streamed])
+
     def test_trajectory_redacts_segments_and_mines(self):
         events = [
             {"name": "search", "args": {"query": "retention", "token": "secret"}, "summary": "Found docs", "ok": True},

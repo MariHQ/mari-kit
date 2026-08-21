@@ -70,6 +70,7 @@ def stream_agent_turn(
 
     trace: list[Mapping[str, Any]] = []
     answer_parts: list[str] = []
+    evidence: list[Mapping[str, Any]] = []
     try:
         events = run_tool_loop(
             messages,
@@ -124,6 +125,7 @@ def stream_agent_turn(
                     "speculative": event.speculative,
                     "evidence": [dict(row) for row in outcome.evidence],
                 })
+                evidence.extend(outcome.evidence)
                 continue
             if event.kind == "answer_delta":
                 token = str(event.result)
@@ -133,6 +135,24 @@ def stream_agent_turn(
         yield AgentOutput("warning", {
             "message": f"Agent execution stopped: {type(error).__name__}",
         })
+
+    seen_documents: set[str] = set()
+    source_titles: list[str] = []
+    for item in evidence:
+        identity = str(item.get("document_id") or item.get("title") or "")
+        title = str(item.get("title") or "").strip()
+        if not identity or not title or identity in seen_documents:
+            continue
+        seen_documents.add(identity)
+        source_titles.append(title)
+        if len(source_titles) == 3:
+            break
+    if source_titles:
+        citations = "\n\nSources: " + "; ".join(
+            f"[{index}] {title}" for index, title in enumerate(source_titles, 1)
+        )
+        answer_parts.append(citations)
+        yield AgentOutput("token", {"token": citations})
 
     answer = "".join(answer_parts)
     try:

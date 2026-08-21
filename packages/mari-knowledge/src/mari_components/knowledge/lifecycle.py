@@ -21,6 +21,7 @@ class DocumentPorts:
     append_canonical: Callable[[DocumentVersion], None]
     append_canonical_many: Callable[[list[DocumentVersion]], None]
     delete_canonical: Callable[[DocumentVersion], None]
+    delete_canonical_many: Callable[[list[DocumentVersion]], None]
     upsert_projection: Callable[[DocumentVersion, ProjectionFields], tuple[int, bool]]
     projected_versions: Callable[[int, list[int]], list[DocumentVersion]]
     delete_projections: Callable[[int, list[int]], None]
@@ -49,12 +50,12 @@ def delete(project_id: int, document_ids: list[int], *, reason: str, actor: str,
     if not document_ids:
         return
     versions = ports.projected_versions(project_id, document_ids)
-    for current in versions:
-        ports.delete_canonical(DocumentVersion(
+    tombstones = [DocumentVersion(
             project_id=current.project_id, source_id=current.source_id,
             external_id=current.external_id, revision=current.revision,
             title=current.title, body=current.body, status="deleted",
             source_url=current.source_url, acl=current.acl, reason=reason, actor=actor,
             source_updated_at=current.source_updated_at,
-        ))
+        ) for current in versions]
+    ports.delete_canonical_many(tombstones)
     ports.delete_projections(project_id, document_ids)

@@ -35,6 +35,14 @@ class RetrievalTests(unittest.TestCase):
         self.assertEqual(query.shape, (self.config.dimension,))
         self.assertFalse(np.allclose(query, document))
 
+    def test_fde_is_invariant_to_provider_vector_magnitude(self):
+        parameters = projection_parameters(self.config, 3)
+        unit = np.asarray([[1, 2, 3]], np.float32)
+        np.testing.assert_allclose(
+            encode_fde(unit, self.config, parameters, query=False),
+            encode_fde(unit * 17, self.config, parameters, query=False),
+        )
+
     def test_polarquant_is_half_bit_and_finite(self):
         values = np.random.default_rng(4).normal(size=(9, self.config.dimension)).astype(np.float32)
         codec, packed = train_polar(values)

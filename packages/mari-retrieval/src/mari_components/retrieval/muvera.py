@@ -79,6 +79,10 @@ def encode_fde(
     values = np.asarray(points, np.float32)
     if values.ndim != 2 or not len(values) or values.shape[1] < 1:
         raise ValueError("MUVERA needs a non-empty two-dimensional vector matrix")
+    # Candidate generation must approximate the cosine MaxSim used for exact
+    # reranking. Normalize here so provider-specific vector magnitudes cannot
+    # change partitions or approximate scores.
+    values = values / np.maximum(np.linalg.norm(values, axis=1, keepdims=True), 1e-12)
     params = parameters or projection_parameters(config, int(values.shape[1]))
     if len(params) != config.repetitions:
         raise ValueError("projection parameters do not match repetitions")

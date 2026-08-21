@@ -9,6 +9,7 @@ from .protocol import (
 from .confluence import ConfluenceConfig, fetch_confluence_page, poll_confluence, validate_confluence
 from .github import (
     GitHubConfig, github_blob, github_commits, github_head, github_issue_comments,
+    github_pull_files, github_pull_request,
     github_issues, github_repository, github_tree, list_github_repositories,
     poll_github, validate_github, validate_github_team,
 )
@@ -59,6 +60,8 @@ __all__ = [
     "github_commits",
     "github_head",
     "github_issue_comments",
+    "github_pull_files",
+    "github_pull_request",
     "github_issues",
     "github_repository",
     "github_tree",

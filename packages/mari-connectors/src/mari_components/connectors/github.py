@@ -236,6 +236,26 @@ def github_issue_comments(config: GitHubConfig, number: int, *, http: HttpTransp
     return tuple(rows[-limit:])
 
 
+def github_pull_request(config: GitHubConfig, number: int, *, http: HttpTransport) -> dict:
+    """Fetch the canonical pull-request body for an interactive destination."""
+    value = _get(config, f"/repos/{config.repository}/pulls/{int(number)}", None, http=http)
+    if not isinstance(value, dict) or not value.get("number"):
+        raise PermanentFailure("GitHub pull request response is invalid")
+    return value
+
+
+def github_pull_files(config: GitHubConfig, number: int, *, http: HttpTransport,
+                      page_limit: int = 10) -> tuple[dict, ...]:
+    """Fetch changed-file patches with the connector's normal bounded paging."""
+    rows, complete = _paginate(
+        config, f"/repos/{config.repository}/pulls/{int(number)}/files", {},
+        http=http, page_limit=page_limit,
+    )
+    if not complete:
+        raise PermanentFailure("GitHub pull request files exceeded the configured page limit")
+    return tuple(rows)
+
+
 def github_commits(config: GitHubConfig, branch: str, since: str = "", *, http: HttpTransport, page_limit: int = 50) -> tuple[tuple[dict, ...], bool]:
     params: dict[str, Any] = {"sha": branch}
     if since:

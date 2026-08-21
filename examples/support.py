@@ -133,7 +133,10 @@ class FakeGitHub:
         if path == "/repos/acme/knowledge":
             return json_response({"full_name": "acme/knowledge", "default_branch": "main"})
         if path == "/repos/acme/knowledge/commits/main":
-            return json_response({"sha": self.head})
+            return json_response({
+                "sha": self.head,
+                "commit": {"committer": {"date": "2026-08-20T12:00:00Z"}},
+            })
         if path == f"/repos/acme/knowledge/git/trees/{self.head}":
             return json_response({
                 "truncated": False,

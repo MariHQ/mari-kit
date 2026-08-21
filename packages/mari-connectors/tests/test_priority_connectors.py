@@ -152,6 +152,8 @@ class PriorityConnectorTests(unittest.TestCase):
         self.assertTrue(page.snapshot_complete)
         self.assertEqual(page.upserts[0].acl.principals[0].identifier, "C1")
         self.assertEqual(page.next_cursor, "2.000000")
+        params = urllib.parse.parse_qs((api.requests[1].body or b"").decode())
+        self.assertEqual(params["types"], ["public_channel,private_channel"])
 
     def test_slack_polling_refetches_root_for_a_new_reply_row(self):
         api = FakeHttp([

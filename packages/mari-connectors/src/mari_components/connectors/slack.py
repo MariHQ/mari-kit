@@ -230,7 +230,11 @@ def poll_slack(
     channels, channels_complete = _paginate(
         config.bot_token,
         "conversations.list",
-        {"types": "public_channel,private_channel,mpim,im", "exclude_archived": "true", "limit": 200},
+        # DMs are bot conversation state, not shared product knowledge. Besides
+        # leaking private conversations into the corpus, polling IM/MPIM IDs can
+        # make an otherwise healthy source fail when Slack retains a stale DM
+        # descriptor that conversations.history answers with channel_not_found.
+        {"types": "public_channel,private_channel", "exclude_archived": "true", "limit": 200},
         http=http,
         page_limit=request.page_limit,
         collection="channels",
@@ -244,7 +248,7 @@ def poll_slack(
         name = str(channel.get("name") or "")
         if wanted and name.casefold() not in wanted:
             continue
-        if not channel.get("is_member") and not channel.get("is_im") and not channel.get("is_mpim"):
+        if not channel.get("is_member"):
             continue
         rows, history_complete = _paginate(
             config.bot_token,

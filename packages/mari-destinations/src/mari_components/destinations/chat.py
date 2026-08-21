@@ -22,6 +22,7 @@ class ChatContext:
     sources: Sequence[Mapping[str, Any]]
     messages: Sequence[Mapping[str, str]]
     approved_answer: str = ""
+    cache_hit: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,7 +48,8 @@ def stream_answer(session_id: int | None, message: str, *, ports: ChatPorts) -> 
     yield ChatEvent("meta", {
         "session_id": context.session_id,
         "sources": list(context.sources),
-        "approved": bool(context.approved_answer),
+        "approved": bool(context.approved_answer) and not context.cache_hit,
+        "cache_hit": context.cache_hit,
     })
     parts: list[str] = []
     if context.approved_answer:
@@ -65,5 +67,6 @@ def stream_answer(session_id: int | None, message: str, *, ports: ChatPorts) -> 
         yield ChatEvent("token", {"token": warning})
     ports.persist(context.session_id, "".join(parts), context.sources)
     ports.record_usage()
-    ports.observe(context.session_id, clean, context.sources, bool(context.approved_answer))
+    ports.observe(context.session_id, clean, context.sources,
+                  bool(context.approved_answer) and not context.cache_hit)
     yield ChatEvent("done", {"session_id": context.session_id})

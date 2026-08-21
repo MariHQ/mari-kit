@@ -109,7 +109,10 @@ class PriorityConnectorTests(unittest.TestCase):
             [
                 {"full_name": "MariHQ/mari", "default_branch": "main"},
                 {"sha": "head", "commit": {"committer": {"date": "2026-08-19T18:42:07-07:00"}}},
-                {"truncated": False, "tree": [{"type": "blob", "path": "README.md", "sha": "blob"}]},
+            {"truncated": False, "tree": [
+                {"type": "blob", "path": "README.md", "sha": "blob"},
+                {"type": "blob", "path": "src/app.ts", "sha": "typescript"},
+            ]},
                 {"content": base64.b64encode(b"# Mari").decode()},
                 [],
                 [],
@@ -118,6 +121,7 @@ class PriorityConnectorTests(unittest.TestCase):
         page = list(poll_github(GitHubConfig("token", "MariHQ/mari"), PollRequest(cursor=old_cursor), http=api))[0]
         self.assertTrue(page.snapshot_complete)
         self.assertEqual(page.upserts[0].external_id, "file:README.md")
+        self.assertNotIn("src/app.ts", json.loads(page.next_cursor)["files"])
         self.assertEqual(page.upserts[0].updated_at, "2026-08-20T01:42:07Z")
         self.assertEqual(page.tombstones[0].external_id, "file:gone.md")
 

@@ -18,7 +18,7 @@ from .airtable import AirtableConfig, poll_airtable, validate_airtable
 from .asana import AsanaConfig, poll_asana, validate_asana
 from .confluence import ConfluenceConfig, poll_confluence, validate_confluence
 from .dropbox import DropboxConfig, poll_dropbox, validate_dropbox
-from .github import GitHubConfig, poll_github, validate_github
+from .github import DEFAULT_KNOWLEDGE_PATHS, GitHubConfig, poll_github, validate_github
 from .google_drive import (
     GoogleDriveConfig, GoogleOAuthRefresh, poll_google_drive,
     refresh_google_access_token, validate_google_drive,
@@ -90,6 +90,21 @@ def _has_refresh(values: Mapping[str, Any]) -> bool:
     return all(_text(values, key) for key in ("refresh_token", "client_id", "client_secret"))
 
 
+def _csv(values: Mapping[str, Any], key: str) -> tuple[str, ...]:
+    return tuple(
+        part.strip() for part in _text(values, key).replace("\n", ",").split(",")
+        if part.strip()
+    )
+
+
+def _github_config(values: Mapping[str, Any]) -> GitHubConfig:
+    return GitHubConfig(
+        _text(values, "token"), _text(values, "repo"), _text(values, "branch"),
+        _csv(values, "paths") or DEFAULT_KNOWLEDGE_PATHS,
+        _csv(values, "content_types") or ("files",),
+    )
+
+
 def _refresh_drive(values: Mapping[str, Any], http: HttpTransport) -> GoogleDriveConfig:
     token = refresh_google_access_token(
         GoogleOAuthRefresh(
@@ -110,19 +125,23 @@ def _field(
 
 _DEFINITIONS = (
     ConnectorDefinition(
-        "github", "GitHub", "Markdown, issues, pull requests, and commits from a repository.",
+        "github", "GitHub", "Documentation files from a repository; other content is opt-in.",
         (
             _field("token", "Fine-grained personal access token", secret=True, placeholder="github_pat_…"),
             _field("repo", "Repository", placeholder="owner/repository"),
             _field("branch", "Branch", required=False, placeholder="main"),
-            _field("paths", "Paths filter", required=False, placeholder="docs/**"),
+            _field(
+                "paths", "Knowledge file globs", required=False,
+                placeholder="*.md, *.mdx, *.rst, *.txt",
+                help="Defaults to documentation formats at any depth. Use ** to include every file.",
+            ),
+            _field(
+                "content_types", "Content types", required=False, placeholder="files",
+                help="Comma-separated: files, issues, pull_requests, commits. Defaults to files only.",
+            ),
         ),
         "https://github.com/settings/personal-access-tokens/new",
-        lambda v: GitHubConfig(
-            _text(v, "token"), _text(v, "repo"), _text(v, "branch"),
-            tuple(part.strip() for part in _text(v, "paths").replace("\n", ",").split(",")
-                  if part.strip()),
-        ),
+        _github_config,
         validate_github, poll_github, ("repo",), 10,
     ),
     ConnectorDefinition(

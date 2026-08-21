@@ -17,6 +17,10 @@ from mari_components.types import DocumentACL, KnowledgeDocument, PollPage, Poll
 
 
 API = "https://api.github.com"
+DEFAULT_KNOWLEDGE_PATHS = (
+    "*.md", "*.mdx", "*.rst", "*.adoc", "*.asciidoc", "*.txt", "README", "README.*",
+)
+GITHUB_CONTENT_TYPES = frozenset({"files", "issues", "pull_requests", "commits"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,12 +28,16 @@ class GitHubConfig:
     token: str
     repository: str
     branch: str = ""
-    paths: tuple[str, ...] = ()
+    paths: tuple[str, ...] = DEFAULT_KNOWLEDGE_PATHS
+    content_types: tuple[str, ...] = ("files",)
 
     def __post_init__(self) -> None:
         parts = self.repository.strip().split("/")
         if not self.token.strip() or len(parts) != 2 or not all(parts):
             raise ValueError("GitHub token and owner/repository are required")
+        unknown = set(self.content_types) - GITHUB_CONTENT_TYPES
+        if unknown:
+            raise ValueError(f"Unknown GitHub content types: {', '.join(sorted(unknown))}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -318,9 +326,11 @@ def poll_github(
     )
     if not head_updated_at:
         raise PermanentFailure("GitHub head commit has no timestamp")
-    tree, tree_complete = _tree(
-        config, head, http=http, request_limit=max(1, request.page_limit * request.page_size)
-    )
+    tree, tree_complete = ([], True)
+    if "files" in config.content_types:
+        tree, tree_complete = _tree(
+            config, head, http=http, request_limit=max(1, request.page_limit * request.page_size)
+        )
     files = {
         str(item.get("path") or ""): str(item.get("sha") or "")
         for item in tree
@@ -355,16 +365,23 @@ def poll_github(
     item_params: dict[str, Any] = {"state": "all", "sort": "updated", "direction": "asc"}
     if previous.item_since:
         item_params["since"] = previous.item_since
-    issues, issues_complete = _paginate(
-        config,
-        f"/repos/{config.repository}/issues",
-        item_params,
-        http=http,
-        page_limit=request.page_limit,
-    )
+    include_issues = "issues" in config.content_types
+    include_pull_requests = "pull_requests" in config.content_types
+    issues, issues_complete = ([], True)
+    if include_issues or include_pull_requests:
+        issues, issues_complete = _paginate(
+            config,
+            f"/repos/{config.repository}/issues",
+            item_params,
+            http=http,
+            page_limit=request.page_limit,
+        )
     item_complete = issues_complete
     newest = previous.item_since
     for issue in issues:
+        is_pull_request = bool(issue.get("pull_request"))
+        if (is_pull_request and not include_pull_requests) or (not is_pull_request and not include_issues):
+            continue
         document, comments_complete = _issue_document(
             config, issue, http=http, page_limit=request.page_limit
         )
@@ -375,13 +392,15 @@ def poll_github(
     commit_params: dict[str, Any] = {"sha": branch}
     if previous.item_since:
         commit_params["since"] = previous.item_since
-    commits, commits_complete = _paginate(
-        config,
-        f"/repos/{config.repository}/commits",
-        commit_params,
-        http=http,
-        page_limit=request.page_limit,
-    )
+    commits, commits_complete = ([], True)
+    if "commits" in config.content_types:
+        commits, commits_complete = _paginate(
+            config,
+            f"/repos/{config.repository}/commits",
+            commit_params,
+            http=http,
+            page_limit=request.page_limit,
+        )
     for item in commits:
         detail = item.get("commit") or {}
         author = detail.get("author") or {}

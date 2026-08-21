@@ -7,6 +7,15 @@ from dataclasses import dataclass
 from typing import Any
 
 
+def answer_search_query(message: str) -> str:
+    """Turn terse entity prompts into useful, non-generative retrieval queries."""
+    clean = " ".join((message or "").strip().split())
+    words = clean.rstrip("?.!").split()
+    if clean and len(words) <= 3 and not clean.endswith("?"):
+        return f"what is {clean}?"
+    return clean
+
+
 @dataclass(frozen=True, slots=True)
 class ChatContext:
     session_id: int

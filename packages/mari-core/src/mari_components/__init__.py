@@ -5,6 +5,10 @@ model client, or configuration discovery. Public operations receive their
 dependencies explicitly.
 """
 
+from pkgutil import extend_path
+
+__path__ = extend_path(__path__, __name__)
+
 from .errors import (
     AuthenticationFailure,
     ComponentError,

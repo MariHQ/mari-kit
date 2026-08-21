@@ -36,6 +36,7 @@ class ChatPorts:
     generate: Callable[[Sequence[Mapping[str, str]]], Iterable[str]]
     persist: Callable[[int, str, Sequence[Mapping[str, Any]]], None]
     record_usage: Callable[[], None]
+    observe: Callable[[int, str, Sequence[Mapping[str, Any]], bool], None]
 
 
 def stream_answer(session_id: int | None, message: str, *, ports: ChatPorts) -> Iterator[ChatEvent]:
@@ -64,4 +65,5 @@ def stream_answer(session_id: int | None, message: str, *, ports: ChatPorts) -> 
         yield ChatEvent("token", {"token": warning})
     ports.persist(context.session_id, "".join(parts), context.sources)
     ports.record_usage()
+    ports.observe(context.session_id, clean, context.sources, bool(context.approved_answer))
     yield ChatEvent("done", {"session_id": context.session_id})

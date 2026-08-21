@@ -6,7 +6,7 @@ from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from mari_components.agents.loop import Tool, run_tool_loop
+from mari_components.agents.loop import Tool, ToolAuth, run_tool_loop
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,12 +15,16 @@ class ToolOutcome:
     summary: str
     detail: Any
     navigation: str = ""
+    evidence: tuple[Mapping[str, Any], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
 class ToolBinding:
     description: str
     call: Callable[[Mapping[str, Any]], ToolOutcome]
+    writes: bool = False
+    input_schema: Mapping[str, Any] | None = None
+    auth: ToolAuth | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,11 +41,14 @@ class AgentPorts:
     save_answer: Callable[[int, str, Sequence[Mapping[str, Any]]], None]
     observe_trajectory: Callable[[int, str, Sequence[Mapping[str, Any]], str], None]
     record_usage: Callable[[str, str], None]
+    authorize_tool: Callable[[Tool, Mapping[str, Any]], bool] | None = None
+    authorize_write: Callable[[Tool, Mapping[str, Any]], bool] | None = None
 
 
 def _tools(bindings: Mapping[str, ToolBinding]) -> tuple[Tool, ...]:
     return tuple(
-        Tool(name, binding.description, binding.call)
+        Tool(name, binding.description, binding.call, binding.writes,
+             binding.input_schema or {}, binding.auth)
         for name, binding in bindings.items()
     )
 
@@ -69,14 +76,38 @@ def stream_agent_turn(
             _tools(bindings),
             generate_json=ports.plan,
             stream_answer=ports.answer,
-            authorize_write=lambda _tool, _arguments: False,
+            authorize_write=ports.authorize_write or (lambda _tool, _arguments: False),
+            authorize_tool=ports.authorize_tool,
             maximum_steps=maximum_steps,
             minimum_tool_observations=minimum_tool_observations,
         )
         for event in events:
             arguments = dict(event.arguments)
+            if event.kind == "tool_proposal":
+                yield AgentOutput("tool_proposal", {
+                    "name": event.name, "args": arguments, "speculative": True,
+                })
+                continue
+            if event.kind == "auth_required":
+                auth = event.result
+                yield AgentOutput("auth_required", {
+                    "name": event.name,
+                    "provider": getattr(auth, "provider", ""),
+                    "kind": getattr(auth, "kind", ""),
+                    "scopes": list(getattr(auth, "scopes", ())),
+                    "setup_url": getattr(auth, "setup_url", ""),
+                })
+                trace.append({
+                    "kind": "auth_required", "name": event.name, "args": arguments,
+                    "summary": f"Authorization required: {getattr(auth, 'provider', '')}",
+                    "ok": False, "speculative": event.speculative,
+                })
+                continue
             if event.kind == "tool_call":
-                yield AgentOutput("tool_start", {"name": event.name, "args": arguments})
+                yield AgentOutput("tool_start", {
+                    "name": event.name, "args": arguments,
+                    "speculative": event.speculative,
+                })
                 continue
             if event.kind == "tool_result":
                 outcome = event.result
@@ -90,6 +121,8 @@ def stream_agent_turn(
                 trace.append({
                     "kind": "tool", "name": event.name, "args": arguments,
                     "summary": outcome.summary, "ok": outcome.ok,
+                    "speculative": event.speculative,
+                    "evidence": [dict(row) for row in outcome.evidence],
                 })
                 continue
             if event.kind == "answer_delta":

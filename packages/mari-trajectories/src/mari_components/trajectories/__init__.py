@@ -4,7 +4,7 @@ from .mine import TrajectoryAnalysis, analyze_trajectory
 from .normalize import DEFAULT_FAMILY_MAP, TrajectoryStep, normalize_steps
 from .segment import TrajectoryPhase, rework_count, segment_phases
 from .workflows import DistilledWorkflow, WorkflowMatch, distill_workflows, match_workflow
-from .hierarchy import HierarchyMatch, cosine, match_hierarchy
+from .hierarchy import HierarchyMatch, cosine, match_hierarchy, project_embeddings_2d
 
 __all__ = [
     "DEFAULT_FAMILY_MAP",
@@ -18,6 +18,7 @@ __all__ = [
     "distill_workflows",
     "match_workflow",
     "match_hierarchy",
+    "project_embeddings_2d",
     "cosine",
     "normalize_steps",
     "rework_count",

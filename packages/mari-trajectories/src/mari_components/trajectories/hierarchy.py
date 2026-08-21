@@ -24,6 +24,40 @@ def cosine(left: Sequence[float], right: Sequence[float]) -> float:
     return sum(a * b for a, b in zip(left, right)) / denominator if denominator else 0.0
 
 
+def project_embeddings_2d(vectors: Sequence[Sequence[float]]) -> list[tuple[float, float]]:
+    """Project a small related embedding set onto two deterministic local axes."""
+    if not vectors:
+        return []
+    width = len(vectors[0])
+    if not width or any(len(vector) != width for vector in vectors):
+        return []
+    center = [sum(float(vector[column]) for vector in vectors) / len(vectors)
+              for column in range(width)]
+    centered = [[float(value) - center[column] for column, value in enumerate(vector)]
+                for vector in vectors]
+
+    def norm(vector: Sequence[float]) -> float:
+        return math.sqrt(sum(value * value for value in vector))
+
+    first = max(centered, key=norm)
+    first_norm = norm(first)
+    axis_x = [value / first_norm for value in first] if first_norm else [0.0] * width
+    residuals = []
+    for vector in centered:
+        projection = sum(value * axis for value, axis in zip(vector, axis_x))
+        residuals.append([value - projection * axis for value, axis in zip(vector, axis_x)])
+    second = max(residuals, key=norm)
+    second_norm = norm(second)
+    axis_y = [value / second_norm for value in second] if second_norm else [0.0] * width
+    raw = [(
+        sum(value * axis for value, axis in zip(vector, axis_x)),
+        sum(value * axis for value, axis in zip(vector, axis_y)),
+    ) for vector in centered]
+    scale_x = max((abs(x) for x, _ in raw), default=1.0) or 1.0
+    scale_y = max((abs(y) for _, y in raw), default=1.0) or 1.0
+    return [(round(x / scale_x, 5), round(y / scale_y, 5)) for x, y in raw]
+
+
 def match_hierarchy(
     query_embedding: Sequence[float], workflows: Iterable[Mapping], *, minimum_score: float,
 ) -> HierarchyMatch | None:

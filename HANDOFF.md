@@ -2,10 +2,18 @@
 
 ## Purpose
 
-Mari Kit is the reusable Python substrate extracted from the Mari product. It
-must let a host assemble a knowledge system from ordinary functions and small
-protocols without adopting Mari's server, UI, database, authentication,
-scheduler, or deployment model.
+Mari Kit is a collection of reusable Python tools for making AI agents more
+consistent and correct when they work with a company's knowledge. It must let a
+host assemble grounding, evidence, retrieval, review, and learned-workflow
+behavior from ordinary functions and small protocols without adopting Mari's
+server, UI, database, authentication, scheduler, or deployment model.
+
+The organizing outcome is agent correctness: equivalent questions should use
+the same reviewed knowledge and behavior; claims should remain traceable to the
+exact source revisions that support them; model and tool behavior should be
+observable and reviewable; and cached or distilled behavior should become stale
+when its knowledge dependencies change. Connector and knowledge-management
+features exist to support that outcome.
 
 The repository was extracted with history from `mari-components` in
 `MariHQ/mari`. Mari consumes it as a Git submodule at `vendor/mari-kit`; the
@@ -202,6 +210,10 @@ The kit is ready for a first public release when clean external projects can:
    it stale when a referenced document revision changes;
 6. assemble all of the above without importing a server framework, database
    driver, Mari auth, or Mari UI.
+
+Across those scenarios, repeated equivalent agent requests must produce the
+same reviewed result while its evidence remains current, and must stop using
+that result once a referenced revision changes.
 
 ## Relationship to Mari
 

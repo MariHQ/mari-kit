@@ -1,9 +1,16 @@
 # Mari Kit
 
-Mari Kit is a collection of infrastructure-neutral functions for
-building product-knowledge systems. It provides connector polling and event
-normalization, replay-safe sync planning, MUVERA/PolarQuant retrieval, grounded
-knowledge recipes, trajectory mining, tool loops, and agent evaluations.
+Mari Kit is a collection of infrastructure-neutral tools for making AI agents
+more consistent and correct when they work with a company's knowledge. It
+provides connector polling and event normalization, replay-safe sync planning,
+MUVERA/PolarQuant retrieval, evidence-grounded knowledge recipes, trajectory
+mining, tool loops, and agent evaluations.
+
+The kit helps an agent repeatedly reach the same grounded answer, cite the
+right source revision, recognize when prior work can be reused, and invalidate
+that work when company knowledge changes. It is not a knowledge-base product;
+it is the reusable correctness substrate from which products like Mari can be
+built.
 
 It is not a framework and has no application or `KnowledgeBase` object. A host
 configures each connector, consumes its `PollPage` change stream, applies

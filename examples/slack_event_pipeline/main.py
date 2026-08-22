@@ -6,31 +6,47 @@ import hashlib
 import hmac
 import json
 import os
-from typing import Iterable, Mapping
+from collections.abc import Iterable, Mapping
 
+from examples.support import FakeSlack, required, selected_mode, urllib_transport
 from mari_components.connectors import (
-    SlackConfig, fetch_slack_thread_by_id, poll_slack, validate_slack,
+    SlackConfig,
+    fetch_slack_thread_by_id,
+    poll_slack,
+    validate_slack,
 )
 from mari_components.connectors.events import (
-    coalesce_hints, parse_json_object, slack_change_hint, verify_slack_signature,
+    coalesce_hints,
+    parse_json_object,
+    slack_change_hint,
+    verify_slack_signature,
 )
 from mari_components.sync import SyncState, plan_sync
 from mari_components.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
 
-from examples.support import FakeSlack, required, selected_mode, urllib_transport
-
 
 def _fake_event(secret: str, request_timestamp: str) -> tuple[bytes, str]:
-    raw = json.dumps({
-        "event_id": "Ev-example",
-        "event": {
-            "type": "message", "channel": "C-ENG", "ts": "102.000001",
-            "thread_ts": "100.000001", "user": "U1",
+    raw = json.dumps(
+        {
+            "event_id": "Ev-example",
+            "event": {
+                "type": "message",
+                "channel": "C-ENG",
+                "ts": "102.000001",
+                "thread_ts": "100.000001",
+                "user": "U1",
+            },
         },
-    }, separators=(",", ":")).encode()
-    signature = "v0=" + hmac.new(
-        secret.encode(), b"v0:" + request_timestamp.encode() + b":" + raw, hashlib.sha256,
-    ).hexdigest()
+        separators=(",", ":"),
+    ).encode()
+    signature = (
+        "v0="
+        + hmac.new(
+            secret.encode(),
+            b"v0:" + request_timestamp.encode() + b":" + raw,
+            hashlib.sha256,
+        ).hexdigest()
+    )
     return raw, signature
 
 
@@ -39,12 +55,13 @@ def _apply(
     documents: dict[str, KnowledgeDocument],
     pages: Iterable[PollPage],
     *,
+    source_id: str = "slack",
     mode: SyncMode,
 ) -> tuple[SyncState, tuple[str, ...], tuple[str, ...]]:
     changed: list[str] = []
     unchanged: list[str] = []
     for page in pages:
-        plan = plan_sync(state, page, mode=mode)
+        plan = plan_sync(state, page, source_id=source_id, mode=mode)
         for document in plan.upserts:
             documents[document.external_id] = document
             changed.append(document.external_id)
@@ -79,8 +96,9 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
 
     documents: dict[str, KnowledgeDocument] = {}
     state, initial_changed, _ = _apply(
-        SyncState(), documents,
-        poll_slack(config, PollRequest(mode=SyncMode.FULL), http=provider),
+        SyncState(),
+        documents,
+        poll_slack(config, PollRequest(), http=provider),
         mode=SyncMode.FULL,
     )
     initial_messages = next(iter(documents.values())).body.count("\n") + 1
@@ -107,9 +125,13 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     state, stream_changed, _ = _apply(
         state,
         documents,
-        (PollPage(
-            (streamed,), next_cursor=state.cursor, snapshot_complete=complete,
-        ),),
+        (
+            PollPage(
+                upserts=(streamed,),
+                next_cursor=state.cursor,
+                snapshot_complete=complete,
+            ),
+        ),
         mode=SyncMode.INCREMENTAL,
     )
     stream_messages = streamed.body.count("\n") + 1
@@ -123,7 +145,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
         documents,
         poll_slack(
             config,
-            PollRequest(SyncMode.INCREMENTAL, state.cursor, state.checkpoint),
+            PollRequest(cursor=state.cursor, checkpoint=state.checkpoint),
             http=provider,
         ),
         mode=SyncMode.INCREMENTAL,

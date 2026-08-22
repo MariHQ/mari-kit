@@ -4,23 +4,28 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Iterable, Mapping
+from collections.abc import Iterable, Mapping
 
 import numpy as np
 
+from examples.support import (
+    FakeGoogleDrive,
+    embed_document,
+    required,
+    selected_mode,
+    token_vectors,
+    urllib_transport,
+)
 from mari_components.connectors import (
-    GoogleDriveConfig, poll_google_drive, start_google_drive_watch,
+    GoogleDriveConfig,
+    poll_google_drive,
+    start_google_drive_watch,
     validate_google_drive,
 )
 from mari_components.connectors.events import gdrive_change_hint
 from mari_components.retrieval import build_index, search_index
 from mari_components.sync import SyncState, plan_sync
 from mari_components.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
-
-from examples.support import (
-    FakeGoogleDrive, embed_document, required, selected_mode, token_vectors,
-    urllib_transport,
-)
 
 
 def _apply_pages(
@@ -30,12 +35,13 @@ def _apply_pages(
     vectors: dict[str, np.ndarray],
     embedded: list[str],
     *,
+    source_id: str,
     mode: SyncMode,
 ) -> tuple[SyncState, tuple[str, ...], tuple[str, ...]]:
     changed: list[str] = []
     deleted: list[str] = []
     for page in pages:
-        plan = plan_sync(state, page, mode=mode)
+        plan = plan_sync(state, page, source_id=source_id, mode=mode)
         # A real host performs these writes and the state update in its own
         # transaction. ACL/revision-only upserts are persisted without
         # recomputing derived vectors when title and body are unchanged.
@@ -62,11 +68,15 @@ def _headers(value: str) -> dict[str, str]:
     try:
         parsed = json.loads(value)
     except json.JSONDecodeError as error:
-        raise RuntimeError("GDRIVE_NOTIFICATION_HEADERS_JSON must be valid JSON") from error
+        raise RuntimeError(
+            "GDRIVE_NOTIFICATION_HEADERS_JSON must be valid JSON"
+        ) from error
     if not isinstance(parsed, dict) or not all(
         isinstance(key, str) and isinstance(item, str) for key, item in parsed.items()
     ):
-        raise RuntimeError("GDRIVE_NOTIFICATION_HEADERS_JSON must contain string headers")
+        raise RuntimeError(
+            "GDRIVE_NOTIFICATION_HEADERS_JSON must contain string headers"
+        )
     return parsed
 
 
@@ -74,7 +84,8 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     env = os.environ if environment is None else environment
     mode = selected_mode(env)
     config = GoogleDriveConfig(
-        required(env, "GDRIVE_ACCESS_TOKEN"), str(env.get("GDRIVE_FOLDER_ID") or "").strip(),
+        required(env, "GDRIVE_ACCESS_TOKEN"),
+        str(env.get("GDRIVE_FOLDER_ID") or "").strip(),
     )
     callback_url = required(env, "GDRIVE_CALLBACK_URL")
     channel_id = required(env, "GDRIVE_CHANNEL_ID")
@@ -89,13 +100,20 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     vectors: dict[str, np.ndarray] = {}
     embedded: list[str] = []
     state, initial_changed, _ = _apply_pages(
-        poll_google_drive(config, PollRequest(mode=SyncMode.FULL), http=provider),
-        SyncState(), documents, vectors, embedded, mode=SyncMode.FULL,
+        poll_google_drive(config, PollRequest(), http=provider),
+        SyncState(),
+        documents,
+        vectors,
+        embedded,
+        source_id=f"gdrive:{config.folder_id or 'root'}",
+        mode=SyncMode.FULL,
     )
     if not state.cursor:
         raise RuntimeError("initial Google Drive snapshot returned no Changes cursor")
     initial_index = build_index(vectors)
-    previous_doc_one_vector = np.array(vectors.get("doc-1"), copy=True) if "doc-1" in vectors else None
+    previous_doc_one_vector = (
+        np.array(vectors.get("doc-1"), copy=True) if "doc-1" in vectors else None
+    )
 
     watch = start_google_drive_watch(
         config,
@@ -105,7 +123,9 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
         channel_token,
         http=provider,
     )
-    normalized_headers = {key.casefold(): value for key, value in notification_headers.items()}
+    normalized_headers = {
+        key.casefold(): value for key, value in notification_headers.items()
+    }
     if normalized_headers.get("x-goog-channel-token") != channel_token:
         raise RuntimeError("Google Drive notification channel token does not match")
     hint = gdrive_change_hint(notification_headers)
@@ -115,10 +135,15 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     state, changed, deleted = _apply_pages(
         poll_google_drive(
             config,
-            PollRequest(SyncMode.INCREMENTAL, state.cursor, state.checkpoint),
+            PollRequest(cursor=state.cursor, checkpoint=state.checkpoint),
             http=provider,
         ),
-        state, documents, vectors, embedded, mode=SyncMode.INCREMENTAL,
+        state,
+        documents,
+        vectors,
+        embedded,
+        source_id=f"gdrive:{config.folder_id or 'root'}",
+        mode=SyncMode.INCREMENTAL,
     )
     current_index = build_index(vectors)
     hits = search_index(current_index, token_vectors("retention ninety"), limit=1)

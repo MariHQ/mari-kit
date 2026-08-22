@@ -1,12 +1,14 @@
 # Knowledge lifecycle
 
-This project runs evidence-validated fact, decision, glossary, FAQ, and digest
-recipes, then evaluates an automatic-approval policy. Outputs are ordinary
-immutable values; the host decides how to persist and review them.
+This project keeps its DeepSeek prompts in the example, then passes the model
+outputs through Mari's fact, decision, glossary, FAQ, and digest parsers. The
+parsers validate exact evidence and attach the source revision. The example
+demonstrates that a grounded fact becomes stale after its source changes; the
+host decides persistence and review policy.
 
 ```bash
 MARI_EXAMPLE_MODEL=fixture python -m examples.knowledge_lifecycle.main
 ```
 
-For a real OpenAI-compatible gateway, set `MARI_EXAMPLE_MODEL=openai` plus
-`LLM_BASE_URL`, `LLM_TOKEN`, and `LLM_MODEL`.
+For live generation, install `.[examples]` and set
+`MARI_EXAMPLE_MODEL=deepseek`, `DEEPSEEK_API_KEY`, and `DEEPSEEK_MODEL`.

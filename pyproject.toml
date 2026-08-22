@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mari-components"
+version = "0.1.0.dev0"
+description = "Versioned, reviewable, freshness-aware product knowledge for AI agents"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE.md"]
+authors = [{name = "Daniel Henneberger", email = "git@danielhenneberger.com"}]
+keywords = ["ai-agents", "knowledge-management", "rag", "muvera", "connectors"]
+dependencies = ["numpy>=1.26"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://github.com/MariHQ/mari-kit"
+Repository = "https://github.com/MariHQ/mari-kit"
+Issues = "https://github.com/MariHQ/mari-kit/issues"
+
+[project.optional-dependencies]
+examples = ["openai>=1.79", "slack-sdk>=3.33"]
+openai-agents = ["openai-agents>=0.2"]
+langchain = ["langchain>=1.0"]
+dev = ["build>=1.2", "pyright>=1.1", "pytest>=8", "ruff>=0.12"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+mari_components = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "UP"]
+ignore = ["BLE001", "E501"]

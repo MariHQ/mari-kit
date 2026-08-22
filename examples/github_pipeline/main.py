@@ -6,23 +6,30 @@ import hashlib
 import hmac
 import json
 import os
-from typing import Iterable, Mapping
+from collections.abc import Iterable, Mapping
 
 import numpy as np
 
+from examples.support import (
+    FakeGitHub,
+    embed_document,
+    json_generator,
+    required,
+    selected_mode,
+    token_vectors,
+    urllib_transport,
+)
 from mari_components.connectors import GitHubConfig, poll_github, validate_github
 from mari_components.connectors.events import (
-    coalesce_hints, github_change_hint, parse_json_object, verify_hmac_sha256,
+    coalesce_hints,
+    github_change_hint,
+    parse_json_object,
+    verify_hmac_sha256,
 )
-from mari_components.knowledge import answer_question
+from mari_components.knowledge import parse_answer
 from mari_components.retrieval import build_index, search_index
 from mari_components.sync import SyncState, plan_sync
 from mari_components.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
-
-from examples.support import (
-    FakeGitHub, embed_document, json_generator, required, selected_mode, token_vectors,
-    urllib_transport,
-)
 
 
 def _apply(
@@ -32,16 +39,21 @@ def _apply(
     state: SyncState,
     pages: Iterable[PollPage],
     *,
+    source_id: str,
     mode: SyncMode,
 ) -> tuple[SyncState, tuple[str, ...], tuple[str, ...]]:
     changed: list[str] = []
     deleted: list[str] = []
     for page in pages:
-        plan = plan_sync(state, page, mode=mode)
+        plan = plan_sync(state, page, source_id=source_id, mode=mode)
         for document in plan.upserts:
             previous = documents.get(document.external_id)
             documents[document.external_id] = document
-            if previous is None or previous.title != document.title or previous.body != document.body:
+            if (
+                previous is None
+                or previous.title != document.title
+                or previous.body != document.body
+            ):
                 vectors[document.external_id] = embed_document(document)
                 embedded.append(document.external_id)
             changed.append(document.external_id)
@@ -54,13 +66,20 @@ def _apply(
 
 
 def _fake_event(secret: str) -> tuple[bytes, str, str]:
-    raw = json.dumps({
-        "repository": {"full_name": "acme/knowledge"},
-        "ref": "refs/heads/main",
-        "commits": [{
-            "added": [], "modified": ["README.md"], "removed": ["docs/release.md"],
-        }],
-    }, separators=(",", ":")).encode()
+    raw = json.dumps(
+        {
+            "repository": {"full_name": "acme/knowledge"},
+            "ref": "refs/heads/main",
+            "commits": [
+                {
+                    "added": [],
+                    "modified": ["README.md"],
+                    "removed": ["docs/release.md"],
+                }
+            ],
+        },
+        separators=(",", ":"),
+    ).encode()
     signature = "sha256=" + hmac.new(secret.encode(), raw, hashlib.sha256).hexdigest()
     return raw, signature, "push"
 
@@ -74,7 +93,8 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     webhook_secret = required(env, "GITHUB_WEBHOOK_SECRET")
     provider = FakeGitHub() if mode == "fake" else urllib_transport
     config = GitHubConfig(
-        token, repository,
+        token,
+        repository,
         paths=tuple(value.strip() for value in paths.split(",") if value.strip()),
     )
     validation = validate_github(config, http=provider)
@@ -85,30 +105,55 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     vectors: dict[str, np.ndarray] = {}
     embedded: list[str] = []
     state, initial_upserts, _ = _apply(
-        documents, vectors, embedded, SyncState(),
-        poll_github(config, PollRequest(mode=SyncMode.FULL), http=provider),
+        documents,
+        vectors,
+        embedded,
+        SyncState(),
+        poll_github(config, PollRequest(), http=provider),
+        source_id=f"github:{repository}",
         mode=SyncMode.FULL,
     )
     initial_cursor_advanced = bool(state.cursor)
     initial_index = build_index(vectors)
     hits = search_index(
-        initial_index, token_vectors("How do I deploy a release?"),
+        initial_index,
+        token_vectors("How do I deploy a release?"),
         limit=min(2, len(vectors)),
     )
 
     answer = ""
     citations: tuple[str, ...] = ()
     if "file:docs/release.md" in documents:
-        generator = json_generator(env, lambda _prompt, _version: {
-            "answer": "Release Mari by deploying the tested main branch.",
-            "evidence": [{
-                "document_id": "file:docs/release.md",
-                "quote": "Release Mari by deploying the tested main branch.",
-            }],
-        })
-        grounded = answer_question(
-            "How do I release the product?", (documents["file:docs/release.md"],),
-            generate_json=generator,
+        generator = json_generator(
+            env,
+            lambda _prompt, _version: {
+                "answer": "Release Mari by deploying the tested main branch.",
+                "evidence": [
+                    {
+                        "document_id": f"github:{repository}/file:docs/release.md",
+                        "quote": "Release Mari by deploying the tested main branch.",
+                    }
+                ],
+            },
+        )
+        document = documents["file:docs/release.md"]
+        output = generator(
+            "Answer how to release the product using only this JSON document. "
+            "Return answer, disposition, and evidence with an exact document_id and quote.\n"
+            + json.dumps(
+                {
+                    "document_id": document.document_id,
+                    "revision": document.revision,
+                    "title": document.title,
+                    "body": document.body,
+                }
+            ),
+            "grounded-answer-v2",
+        )
+        grounded = parse_answer(
+            "How do I release the product?",
+            (document,),
+            output,
         )
         answer = grounded.answer
         citations = tuple(item.document_id for item in grounded.evidence)
@@ -126,11 +171,16 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     # A webhook is only a dirty hint. Canonical state still comes from the
     # connector poll, sharing the same cursor and manifest as scheduled work.
     state, event_changed, event_deleted = _apply(
-        documents, vectors, embedded, state,
+        documents,
+        vectors,
+        embedded,
+        state,
         poll_github(
-            config, PollRequest(SyncMode.INCREMENTAL, state.cursor, state.checkpoint),
+            config,
+            PollRequest(cursor=state.cursor, checkpoint=state.checkpoint),
             http=provider,
         ),
+        source_id=f"github:{repository}",
         mode=SyncMode.INCREMENTAL,
     )
 
@@ -139,11 +189,16 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     if mode == "fake":
         provider.publish_without_event()
     state, polling_changed, polling_deleted = _apply(
-        documents, vectors, embedded, state,
+        documents,
+        vectors,
+        embedded,
+        state,
         poll_github(
-            config, PollRequest(SyncMode.INCREMENTAL, state.cursor, state.checkpoint),
+            config,
+            PollRequest(cursor=state.cursor, checkpoint=state.checkpoint),
             http=provider,
         ),
+        source_id=f"github:{repository}",
         mode=SyncMode.INCREMENTAL,
     )
     current_index = build_index(vectors)

@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
-import os
 import re
-from typing import Callable, Mapping
 import urllib.error
 import urllib.request
+from collections.abc import Callable, Mapping
 from urllib.parse import parse_qs, urlparse
 
 import numpy as np
@@ -34,47 +34,58 @@ def selected_mode(environment: Mapping[str, str]) -> str:
 def urllib_transport(request: HttpRequest) -> HttpResponse:
     """Standard-library adapter used by the live example projects."""
     outbound = urllib.request.Request(
-        request.url, data=request.body, headers=dict(request.headers), method=request.method,
+        request.url,
+        data=request.body,
+        headers=dict(request.headers),
+        method=request.method,
     )
     try:
         with urllib.request.urlopen(outbound, timeout=request.timeout) as response:
-            return HttpResponse(response.status, dict(response.headers.items()), response.read())
+            return HttpResponse(
+                response.status, dict(response.headers.items()), response.read()
+            )
     except urllib.error.HTTPError as error:
         return HttpResponse(error.code, dict(error.headers.items()), error.read())
 
 
 def json_generator(
-    environment: Mapping[str, str], fixture: Callable[[str, str], object],
+    environment: Mapping[str, str],
+    fixture: Callable[[str, str], object],
 ) -> Callable[[str, str], object]:
-    """Select an explicit fixture or OpenAI-compatible JSON model boundary."""
+    """Select an explicit fixture or DeepSeek JSON-completion boundary."""
     backend = required(environment, "MARI_EXAMPLE_MODEL")
     if backend == "fixture":
         return fixture
-    if backend != "openai":
-        raise RuntimeError("MARI_EXAMPLE_MODEL must be fixture or openai")
-    base_url = required(environment, "LLM_BASE_URL").rstrip("/")
-    token = required(environment, "LLM_TOKEN")
-    model = required(environment, "LLM_MODEL")
+    if backend != "deepseek":
+        raise RuntimeError("MARI_EXAMPLE_MODEL must be fixture or deepseek")
+    from openai import OpenAI
+
+    base_url = str(
+        environment.get("DEEPSEEK_BASE_URL") or "https://api.deepseek.com"
+    ).rstrip("/")
+    token = required(environment, "DEEPSEEK_API_KEY")
+    model = required(environment, "DEEPSEEK_MODEL")
+    client = OpenAI(api_key=token, base_url=base_url)
 
     def generate(prompt: str, version: str) -> object:
-        request = HttpRequest(
-            "POST",
-            base_url + "/chat/completions",
-            {"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-            json.dumps({
-                "model": model,
-                "response_format": {"type": "json_object"},
-                "messages": [
-                    {"role": "system", "content": f"Follow JSON recipe {version} exactly."},
-                    {"role": "user", "content": prompt},
-                ],
-            }).encode(),
+        response = client.chat.completions.create(
+            model=model,
+            response_format={"type": "json_object"},
+            max_tokens=1200,
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"Return JSON for recipe {version} exactly.",
+                },
+                {"role": "user", "content": prompt},
+            ],
         )
-        response = urllib_transport(request)
-        if response.status >= 400:
-            raise RuntimeError(f"model request failed with HTTP {response.status}")
-        value = json.loads(response.body)
-        content = value["choices"][0]["message"]["content"]
+        choice = response.choices[0]
+        if choice.finish_reason == "length":
+            raise RuntimeError("DeepSeek JSON response was truncated")
+        content = choice.message.content
+        if not content:
+            raise RuntimeError("DeepSeek returned empty JSON content")
         parsed = json.loads(content)
         if not isinstance(parsed, dict):
             raise RuntimeError("model returned a non-object JSON value")
@@ -83,8 +94,69 @@ def json_generator(
     return generate
 
 
+def _fixture_embedding(text: str, dimensions: int = 64) -> tuple[float, ...]:
+    aliases = {
+        "customers": "customer",
+        "refunds": "refund",
+        "refunded": "refund",
+        "moneyback": "refund",
+        "voice": "style",
+        "tone": "style",
+    }
+    values = np.zeros(dimensions, np.float64)
+    for raw in re.findall(r"[a-z0-9]+", text.casefold()):
+        token = aliases.get(
+            raw, raw[:-1] if raw.endswith("s") and len(raw) > 3 else raw
+        )
+        digest = hashlib.sha256(token.encode()).digest()
+        values[int.from_bytes(digest[:4], "big") % dimensions] += 1.0
+    norm = float(np.linalg.norm(values))
+    if not norm:
+        raise ValueError("embedding input must not be empty")
+    return tuple(float(value) for value in values / norm)
+
+
+def text_embedder(
+    environment: Mapping[str, str],
+) -> Callable[[tuple[str, ...]], tuple[tuple[float, ...], ...]]:
+    """Select deterministic fixtures or the OpenAI embeddings endpoint."""
+    backend = required(environment, "MARI_EXAMPLE_EMBEDDINGS")
+    if backend == "fixture":
+        return lambda texts: tuple(_fixture_embedding(text) for text in texts)
+    if backend != "openai":
+        raise RuntimeError("MARI_EXAMPLE_EMBEDDINGS must be fixture or openai")
+    from openai import OpenAI
+
+    token = required(environment, "OPENAI_API_KEY")
+    model = required(environment, "OPENAI_EMBEDDING_MODEL")
+    base_url = str(
+        environment.get("OPENAI_BASE_URL") or "https://api.openai.com/v1"
+    ).rstrip("/")
+    dimensions_text = str(environment.get("OPENAI_EMBEDDING_DIMENSIONS") or "").strip()
+    client = OpenAI(api_key=token, base_url=base_url)
+
+    def embed(texts: tuple[str, ...]) -> tuple[tuple[float, ...], ...]:
+        if not texts or any(not text.strip() for text in texts):
+            raise ValueError("embedding inputs must be non-empty strings")
+        options: dict[str, object] = {"model": model, "input": list(texts)}
+        if dimensions_text:
+            options["dimensions"] = int(dimensions_text)
+        response = client.embeddings.create(**options)
+        rows = sorted(response.data, key=lambda row: row.index)
+        if len(rows) != len(texts):
+            raise RuntimeError("OpenAI returned the wrong number of embeddings")
+        embeddings = tuple(tuple(float(item) for item in row.embedding) for row in rows)
+        if not embeddings or any(len(row) != len(embeddings[0]) for row in embeddings):
+            raise RuntimeError("OpenAI returned invalid embedding dimensions")
+        return embeddings
+
+    return embed
+
+
 def json_response(value: object, status: int = 200) -> HttpResponse:
-    return HttpResponse(status, {"Content-Type": "application/json"}, json.dumps(value).encode())
+    return HttpResponse(
+        status, {"Content-Type": "application/json"}, json.dumps(value).encode()
+    )
 
 
 class FakeGitHub:
@@ -98,9 +170,18 @@ class FakeGitHub:
     def __init__(self) -> None:
         self.head = "head-1"
         self.files = {
-            "README.md": ("blob-readme-1", "Mari is a product knowledge system for engineering teams."),
-            "docs/release.md": ("blob-release-1", "Release Mari by deploying the tested main branch."),
-            "private/notes.md": ("blob-private-1", "This path is excluded by connector configuration."),
+            "README.md": (
+                "blob-readme-1",
+                "Mari is a product knowledge system for engineering teams.",
+            ),
+            "docs/release.md": (
+                "blob-release-1",
+                "Release Mari by deploying the tested main branch.",
+            ),
+            "private/notes.md": (
+                "blob-private-1",
+                "This path is excluded by connector configuration.",
+            ),
         }
         self.requests: list[HttpRequest] = []
 
@@ -131,27 +212,37 @@ class FakeGitHub:
         if auth != "Bearer example-token":
             return json_response({"message": "bad credentials"}, 401)
         if path == "/repos/acme/knowledge":
-            return json_response({"full_name": "acme/knowledge", "default_branch": "main"})
+            return json_response(
+                {"full_name": "acme/knowledge", "default_branch": "main"}
+            )
         if path == "/repos/acme/knowledge/commits/main":
-            return json_response({
-                "sha": self.head,
-                "commit": {"committer": {"date": "2026-08-20T12:00:00Z"}},
-            })
+            return json_response(
+                {
+                    "sha": self.head,
+                    "commit": {"committer": {"date": "2026-08-20T12:00:00Z"}},
+                }
+            )
         if path == f"/repos/acme/knowledge/git/trees/{self.head}":
-            return json_response({
-                "truncated": False,
-                "tree": [
-                    {"path": name, "type": "blob", "sha": sha}
-                    for name, (sha, _body) in self.files.items()
-                ],
-            })
+            return json_response(
+                {
+                    "truncated": False,
+                    "tree": [
+                        {"path": name, "type": "blob", "sha": sha}
+                        for name, (sha, _body) in self.files.items()
+                    ],
+                }
+            )
         if "/git/blobs/" in path:
             sha = path.rsplit("/", 1)[-1]
-            body = next((body for current, body in self.files.values() if current == sha), None)
-            return json_response({
-                "content": base64.b64encode((body or "").encode()).decode(),
-                "encoding": "base64",
-            })
+            body = next(
+                (body for current, body in self.files.values() if current == sha), None
+            )
+            return json_response(
+                {
+                    "content": base64.b64encode((body or "").encode()).decode(),
+                    "encoding": "base64",
+                }
+            )
         if path == "/repos/acme/knowledge/issues":
             return json_response([])
         if path == "/repos/acme/knowledge/commits":
@@ -165,18 +256,34 @@ class FakeSlack:
     def __init__(self) -> None:
         self.phase = "initial"
         self.messages = [
-            {"type": "message", "ts": "100.000001", "user": "U1", "text": "How do releases work?"},
-            {"type": "message", "ts": "101.000001", "thread_ts": "100.000001", "user": "U2", "text": "Deploy the tested main branch."},
+            {
+                "type": "message",
+                "ts": "100.000001",
+                "user": "U1",
+                "text": "How do releases work?",
+            },
+            {
+                "type": "message",
+                "ts": "101.000001",
+                "thread_ts": "100.000001",
+                "user": "U2",
+                "text": "Deploy the tested main branch.",
+            },
         ]
         self.requests: list[HttpRequest] = []
 
     def add_reply(self, text: str = "The release runbook confirms this.") -> None:
         self.phase = "changes"
         timestamp = f"{100 + len(self.messages):d}.000001"
-        self.messages.append({
-            "type": "message", "ts": timestamp, "thread_ts": "100.000001",
-            "user": "U1", "text": text,
-        })
+        self.messages.append(
+            {
+                "type": "message",
+                "ts": timestamp,
+                "thread_ts": "100.000001",
+                "user": "U1",
+                "text": text,
+            }
+        )
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         self.requests.append(request)
@@ -185,22 +292,30 @@ class FakeSlack:
         if request.headers.get("Authorization") != "Bearer xoxb-example":
             return json_response({"ok": False, "error": "invalid_auth"})
         if method == "users.list":
-            return json_response({
-                "ok": True,
-                "members": [
-                    {"id": "U1", "profile": {"display_name": "Dana"}},
-                    {"id": "U2", "profile": {"display_name": "Lee"}},
-                ],
-                "response_metadata": {"next_cursor": ""},
-            })
+            return json_response(
+                {
+                    "ok": True,
+                    "members": [
+                        {"id": "U1", "profile": {"display_name": "Dana"}},
+                        {"id": "U2", "profile": {"display_name": "Lee"}},
+                    ],
+                    "response_metadata": {"next_cursor": ""},
+                }
+            )
         if method == "auth.test":
-            return json_response({"ok": True, "team": "Example", "team_id": "T-EXAMPLE"})
+            return json_response(
+                {"ok": True, "team": "Example", "team_id": "T-EXAMPLE"}
+            )
         if method == "conversations.list":
-            return json_response({
-                "ok": True,
-                "channels": [{"id": "C-ENG", "name": "engineering", "is_member": True}],
-                "response_metadata": {"next_cursor": ""},
-            })
+            return json_response(
+                {
+                    "ok": True,
+                    "channels": [
+                        {"id": "C-ENG", "name": "engineering", "is_member": True}
+                    ],
+                    "response_metadata": {"next_cursor": ""},
+                }
+            )
         if method == "conversations.history":
             oldest = float((params.get("oldest") or ["0"])[0])
             if not oldest:
@@ -209,16 +324,24 @@ class FakeSlack:
                 root["latest_reply"] = self.messages[-1]["ts"]
                 rows = [root]
             else:
-                rows = [item for item in self.messages[1:] if float(item["ts"]) >= oldest]
-            return json_response({
-                "ok": True, "messages": rows,
-                "response_metadata": {"next_cursor": ""},
-            })
+                rows = [
+                    item for item in self.messages[1:] if float(item["ts"]) >= oldest
+                ]
+            return json_response(
+                {
+                    "ok": True,
+                    "messages": rows,
+                    "response_metadata": {"next_cursor": ""},
+                }
+            )
         if method == "conversations.replies" and params.get("channel") == ["C-ENG"]:
-            return json_response({
-                "ok": True, "messages": self.messages,
-                "response_metadata": {"next_cursor": ""},
-            })
+            return json_response(
+                {
+                    "ok": True,
+                    "messages": self.messages,
+                    "response_metadata": {"next_cursor": ""},
+                }
+            )
         return json_response({"ok": False, "error": f"unhandled_{method}"})
 
 
@@ -232,19 +355,25 @@ class FakeGoogleDrive:
         self.requests: list[HttpRequest] = []
         self.files = {
             "doc-1": {
-                "id": "doc-1", "name": "Retention policy", "mimeType": self.document_mime,
+                "id": "doc-1",
+                "name": "Retention policy",
+                "mimeType": self.document_mime,
                 "modifiedTime": "2026-01-01T00:00:00Z",
                 "permissions": [{"type": "group", "emailAddress": "eng@example.com"}],
                 "body": "Customer data retention is thirty days.",
             },
             "doc-2": {
-                "id": "doc-2", "name": "Security handbook", "mimeType": self.document_mime,
+                "id": "doc-2",
+                "name": "Security handbook",
+                "mimeType": self.document_mime,
                 "modifiedTime": "2026-01-01T00:00:00Z",
                 "permissions": [{"type": "group", "emailAddress": "eng@example.com"}],
                 "body": "Security incidents use the on-call process.",
             },
             "doc-4": {
-                "id": "doc-4", "name": "Access guide", "mimeType": self.document_mime,
+                "id": "doc-4",
+                "name": "Access guide",
+                "mimeType": self.document_mime,
                 "modifiedTime": "2026-01-01T00:00:00Z",
                 "permissions": [{"type": "group", "emailAddress": "eng@example.com"}],
                 "body": "Access requests require manager approval.",
@@ -261,7 +390,9 @@ class FakeGoogleDrive:
         }
         self.files.pop("doc-2")
         self.files["doc-3"] = {
-            "id": "doc-3", "name": "Onboarding checklist", "mimeType": self.document_mime,
+            "id": "doc-3",
+            "name": "Onboarding checklist",
+            "mimeType": self.document_mime,
             "modifiedTime": "2026-01-02T00:00:00Z",
             "permissions": [{"type": "domain", "domain": "example.com"}],
             "body": "Onboarding includes product knowledge training.",
@@ -281,45 +412,77 @@ class FakeGoogleDrive:
         parsed = urlparse(request.url)
         path = parsed.path
         query = parse_qs(parsed.query)
-        if path != "/token" and request.headers.get("Authorization") != "Bearer drive-example":
+        if (
+            path != "/token"
+            and request.headers.get("Authorization") != "Bearer drive-example"
+        ):
             return json_response({"error": "invalid credentials"}, 401)
         if path.endswith("/about"):
             return json_response({"user": {"emailAddress": "owner@example.com"}})
         if path.endswith("/changes/startPageToken"):
             return json_response({"startPageToken": "stream-1"})
         if path.endswith("/files") and "q" in query:
-            return json_response({
-                "files": [self._metadata(file) for file in self.files.values()],
-            })
+            return json_response(
+                {
+                    "files": [self._metadata(file) for file in self.files.values()],
+                }
+            )
         if path.endswith("/changes/watch") and request.method == "POST":
-            return json_response({
-                "id": "example-channel", "resourceId": "example-resource",
-                "expiration": "4102444800000",
-            })
+            return json_response(
+                {
+                    "id": "example-channel",
+                    "resourceId": "example-resource",
+                    "expiration": "4102444800000",
+                }
+            )
         if path.endswith("/changes"):
             if self.phase != "changes":
                 return json_response({"changes": [], "newStartPageToken": "stream-1"})
-            return json_response({
-                "changes": [
-                    {"fileId": "doc-1", "file": self._metadata(self.files["doc-1"])},
-                    {"fileId": "doc-2", "removed": True},
-                    {"fileId": "doc-3", "file": self._metadata(self.files["doc-3"])},
-                    {"fileId": "doc-4", "file": self._metadata(self.files["doc-4"])},
-                ],
-                "newStartPageToken": "stream-2",
-            })
+            return json_response(
+                {
+                    "changes": [
+                        {
+                            "fileId": "doc-1",
+                            "file": self._metadata(self.files["doc-1"]),
+                        },
+                        {"fileId": "doc-2", "removed": True},
+                        {
+                            "fileId": "doc-3",
+                            "file": self._metadata(self.files["doc-3"]),
+                        },
+                        {
+                            "fileId": "doc-4",
+                            "file": self._metadata(self.files["doc-4"]),
+                        },
+                    ],
+                    "newStartPageToken": "stream-2",
+                }
+            )
         match = re.search(r"/files/([^/]+)/export$", path)
         if match:
             file = self.files.get(match.group(1))
             if file is None:
                 return HttpResponse(404, {}, b"")
-            return HttpResponse(200, {"Content-Type": "text/plain"}, str(file["body"]).encode())
+            return HttpResponse(
+                200, {"Content-Type": "text/plain"}, str(file["body"]).encode()
+            )
         return json_response({"message": f"unhandled example route: {path}"}, 404)
 
 
 VOCABULARY = (
-    "mari", "product", "knowledge", "release", "deploy", "main", "answers", "citations",
-    "retention", "thirty", "ninety", "security", "onboarding",
+    "mari",
+    "product",
+    "knowledge",
+    "release",
+    "deploy",
+    "main",
+    "answers",
+    "citations",
+    "retention",
+    "thirty",
+    "ninety",
+    "security",
+    "onboarding",
 )
 
 

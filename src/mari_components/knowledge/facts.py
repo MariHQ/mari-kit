@@ -11,6 +11,7 @@ from mari_components.json import require_list
 from mari_components.types import Evidence, FactCandidate, KnowledgeDocument
 
 from .scoring import grounding_coverage
+from .sections import document_sections
 
 FACT_EXTRACTION_VERSION = "facts-extract-v2"
 FACT_CHECK_VERSION = "facts-check-v2"
@@ -31,18 +32,38 @@ def _evidence(
         quote = str(value.get("quote") or "").strip()
         if not quote:
             raise MalformedModelOutput(f"{recipe} evidence quote is required")
-        if quote not in allowed[document_id].body:
+        document = allowed[document_id]
+        if quote not in document.body:
             raise MalformedModelOutput(
                 f"{recipe} evidence quote is not present in the document"
             )
-        start = allowed[document_id].body.index(quote)
+        requested_section = str(value.get("section_id") or "").strip()
+        sections = document_sections(document)
+        matching_sections = [
+            section
+            for section in sections
+            if quote in section.body
+            and (not requested_section or section.section_id == requested_section)
+        ]
+        if not matching_sections:
+            raise MalformedModelOutput(
+                f"{recipe} evidence quote is not present in the requested section"
+            )
+        if len(matching_sections) > 1:
+            raise MalformedModelOutput(
+                f"{recipe} repeated evidence quote requires section_id"
+            )
+        section = matching_sections[0]
+        start = section.start + section.body.index(quote)
         output.append(
             Evidence(
                 document_id=document_id,
-                revision=allowed[document_id].revision,
+                revision=document.revision,
                 quote=quote,
                 start=start,
                 end=start + len(quote),
+                section_id=section.section_id,
+                section_revision=section.revision,
             )
         )
     return tuple(output)

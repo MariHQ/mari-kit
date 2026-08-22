@@ -148,7 +148,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
                     "body": document.body,
                 }
             ),
-            "grounded-answer-v2",
+            "grounded-answer-v3",
         )
         grounded = parse_answer(
             "How do I release the product?",

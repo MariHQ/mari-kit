@@ -3,12 +3,15 @@ from __future__ import annotations
 import json
 import unittest
 
+from examples.cross_user_acl_isolation.main import run as run_acl_isolation
 from examples.github_pipeline.main import run as run_github
 from examples.google_drive_change_stream.main import run as run_drive
+from examples.incident_response_drift.main import run as run_incident_drift
 from examples.knowledge_lifecycle.main import run as run_lifecycle
 from examples.slack_event_pipeline.main import run as run_slack
 from examples.slackbot_reliable_answers.main import run as run_slackbot
 from examples.verify_all import run as verify_all
+from examples.workflow_view_step_cache.main import run as run_workflow_view
 
 GITHUB_ENV = {
     "MARI_EXAMPLE_MODE": "fake",
@@ -51,6 +54,12 @@ DRIVE_ENV = {
         }
     ),
 }
+WORKFLOW_VIEW_ENV = {
+    "MARI_EXAMPLE_MODE": "fake",
+    "MARI_EXAMPLE_MODEL": "fixture",
+    "MARI_EXAMPLE_EMBEDDINGS": "fixture",
+    "MARI_CACHE_THRESHOLD": "0.97",
+}
 
 
 class RunnableExampleTests(unittest.TestCase):
@@ -65,6 +74,21 @@ class RunnableExampleTests(unittest.TestCase):
             run_lifecycle({})
         with self.assertRaisesRegex(RuntimeError, "MARI_EXAMPLE_MODE is required"):
             run_drive({})
+        with self.assertRaisesRegex(RuntimeError, "MARI_EXAMPLE_MODE is required"):
+            run_workflow_view({})
+        with self.assertRaisesRegex(RuntimeError, "MARI_EXAMPLE_MODE is required"):
+            run_acl_isolation({})
+        with self.assertRaisesRegex(RuntimeError, "MARI_EXAMPLE_MODE is required"):
+            run_incident_drift({})
+
+    def test_acl_isolation_applies_to_retrieval_and_cached_answers(self):
+        result = run_acl_isolation({"MARI_EXAMPLE_MODE": "fake"})
+        self.assertEqual(result["customer_allowed_document_ids"], ("status/checkout",))
+        self.assertEqual(result["customer_retrieval_hits"], ("status/checkout",))
+        self.assertEqual(result["employee_workflow"], "internal-checkout-mitigation")
+        self.assertEqual(result["customer_workflow"], "public-checkout-status")
+        self.assertTrue(result["restricted_document_hidden_from_customer"])
+        self.assertTrue(result["both_users_received_grounded_cache"])
 
     def test_github_change_pipeline_uses_separate_functions(self):
         result = run_github(GITHUB_ENV)
@@ -131,7 +155,7 @@ class RunnableExampleTests(unittest.TestCase):
         )
         self.assertTrue(result["trajectory_analyzed_after_answer"])
         self.assertTrue(result["cache_hit"])
-        self.assertEqual(result["impacted_workflows"], ("support-refunds",))
+        self.assertEqual(result["impacted_artifacts"], ("workflow:support-refunds",))
         self.assertEqual(
             result["action_after_document_change"], "speculative_retrieval"
         )
@@ -153,6 +177,46 @@ class RunnableExampleTests(unittest.TestCase):
         self.assertEqual(result["initial_freshness"], "current")
         self.assertEqual(result["freshness_after_source_edit"], "stale")
         self.assertFalse(result["stale_fact_reusable"])
+
+    def test_workflow_view_caches_and_invalidates_individual_steps(self):
+        result = run_workflow_view(WORKFLOW_VIEW_ENV)
+        self.assertEqual(result["deepseek_layer_rounds"], 2)
+        self.assertEqual(result["openai_embedding_calls"], 1)
+        self.assertEqual(result["cacheable_steps"], ("sso-entitlement", "sso-setup"))
+        self.assertTrue(result["entitlement_cache_hit"])
+        self.assertTrue(result["setup_cache_hit"])
+        self.assertNotEqual(result["compound_request_action"], "cached_response")
+        self.assertNotEqual(result["strict_threshold_action"], "cached_response")
+        self.assertEqual(result["relaxed_threshold_action"], "cached_response")
+        self.assertEqual(
+            result["impacted_after_entitlement_change"],
+            ("workflow:sso-entitlement",),
+        )
+        self.assertEqual(result["entitlement_after_change"], "speculative_retrieval")
+        self.assertEqual(result["setup_after_change"], "cached_response")
+
+    def test_incident_drift_invalidates_only_changed_runbook_section(self):
+        result = run_incident_drift({"MARI_EXAMPLE_MODE": "fake"})
+        self.assertEqual(
+            result["impacted_artifacts"],
+            (
+                "answer:checkout-mitigation",
+                "digest:whole-checkout-runbook",
+                "workflow:checkout-mitigation",
+            ),
+        )
+        self.assertEqual(
+            result["mitigation_action_after_change"], "speculative_retrieval"
+        )
+        self.assertEqual(
+            result["mitigation_sources"],
+            (
+                "github:acme/operations/checkout-runbook.md",
+                "slack:acme/thread:checkout-1042",
+            ),
+        )
+        self.assertEqual(result["escalation_action_after_change"], "cached_response")
+        self.assertTrue(result["unchanged_escalation_cache_preserved"])
 
     def test_google_drive_edit_replaces_vectors_and_delete_removes_them(self):
         result = run_drive(DRIVE_ENV)

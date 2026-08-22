@@ -12,9 +12,12 @@ from .facts import FactAssessment, parse_claim_assessments, parse_facts
 from .freshness import (
     FreshnessReport,
     FreshnessStatus,
+    KnowledgeDependency,
     RevisionChange,
+    assess_dependencies,
     assess_freshness,
     evidence_dependencies,
+    impacted_artifacts,
 )
 from .glossary import parse_glossary
 from .links import (
@@ -26,6 +29,7 @@ from .links import (
 )
 from .refinement import RefinementEdit, parse_refinement
 from .scoring import grounding_coverage
+from .sections import document_sections, section_revisions
 from .summaries import (
     DigestSummary,
     DigestTopic,
@@ -51,19 +55,23 @@ __all__ = [
     "FreshnessReport",
     "FreshnessStatus",
     "GroundedAnswer",
+    "KnowledgeDependency",
     "ImpactAssessment",
     "LinkCandidate",
     "RefinementEdit",
     "RevisionChange",
     "TagAssignments",
     "TagDefinition",
+    "assess_dependencies",
     "assess_freshness",
     "assign_tags",
     "derive_links",
+    "document_sections",
     "evidence_dependencies",
     "excerpt",
     "extract_explicit_links",
     "grounding_coverage",
+    "impacted_artifacts",
     "parse_answer",
     "parse_answer_candidates",
     "parse_claim_assessments",
@@ -75,4 +83,5 @@ __all__ = [
     "parse_refinement",
     "normalize_tag",
     "search_weight",
+    "section_revisions",
 ]

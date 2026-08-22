@@ -4,14 +4,18 @@ from __future__ import annotations
 
 import json
 
+from examples.cross_user_acl_isolation.main import run as run_acl_isolation
 from examples.github_pipeline.main import run as run_github
 from examples.google_drive_change_stream.main import run as run_drive
+from examples.incident_response_drift.main import run as run_incident_drift
 from examples.knowledge_lifecycle.main import run as run_lifecycle
 from examples.slack_event_pipeline.main import run as run_slack
 from examples.slackbot_reliable_answers.main import run as run_slackbot
+from examples.workflow_view_step_cache.main import run as run_workflow_view
 
 
 def run() -> dict[str, object]:
+    acl_isolation = run_acl_isolation({"MARI_EXAMPLE_MODE": "fake"})
     github = run_github(
         {
             "MARI_EXAMPLE_MODE": "fake",
@@ -43,6 +47,15 @@ def run() -> dict[str, object]:
         }
     )
     lifecycle = run_lifecycle({"MARI_EXAMPLE_MODEL": "fixture"})
+    incident_drift = run_incident_drift({"MARI_EXAMPLE_MODE": "fake"})
+    workflow_view = run_workflow_view(
+        {
+            "MARI_EXAMPLE_MODE": "fake",
+            "MARI_EXAMPLE_MODEL": "fixture",
+            "MARI_EXAMPLE_EMBEDDINGS": "fixture",
+            "MARI_CACHE_THRESHOLD": "0.97",
+        }
+    )
     drive = run_drive(
         {
             "MARI_EXAMPLE_MODE": "fake",
@@ -63,6 +76,15 @@ def run() -> dict[str, object]:
         }
     )
     checks = {
+        "acl_retrieval_isolated_before_scoring": (
+            acl_isolation["restricted_document_hidden_from_customer"] is True
+            and acl_isolation["customer_retrieval_hits"] == ("status/checkout",)
+        ),
+        "acl_cache_isolated_before_matching": (
+            acl_isolation["employee_workflow"] == "internal-checkout-mitigation"
+            and acl_isolation["customer_workflow"] == "public-checkout-status"
+            and acl_isolation["both_users_received_grounded_cache"] is True
+        ),
         "github_changes_planned": github["initial_upserts"]
         == (
             "file:README.md",
@@ -93,13 +115,31 @@ def run() -> dict[str, object]:
         is True,
         "slackbot_high_threshold_cache": slackbot["cache_hit"] is True,
         "slackbot_dependency_invalidated": (
-            slackbot["impacted_workflows"] == ("support-refunds",)
+            slackbot["impacted_artifacts"] == ("workflow:support-refunds",)
             and slackbot["action_after_document_change"] == "speculative_retrieval"
         ),
         "slackbot_new_doc_falls_back": (
             slackbot["new_document_unreviewed_action"] == "speculative_retrieval"
             and slackbot["new_document_nonimpacting_action"] == "cached_response"
             and slackbot["new_document_impacting_action"] == "speculative_retrieval"
+        ),
+        "workflow_view_extracts_intra_workflow_answers": (
+            workflow_view["cacheable_steps"] == ("sso-entitlement", "sso-setup")
+            and workflow_view["entitlement_cache_hit"] is True
+            and workflow_view["setup_cache_hit"] is True
+        ),
+        "workflow_view_does_not_cache_compound_request": (
+            workflow_view["compound_request_action"] != "cached_response"
+        ),
+        "workflow_view_cache_threshold_is_tunable": (
+            workflow_view["strict_threshold_action"] != "cached_response"
+            and workflow_view["relaxed_threshold_action"] == "cached_response"
+        ),
+        "workflow_view_invalidates_only_affected_step": (
+            workflow_view["impacted_after_entitlement_change"]
+            == ("workflow:sso-entitlement",)
+            and workflow_view["entitlement_after_change"] == "speculative_retrieval"
+            and workflow_view["setup_after_change"] == "cached_response"
         ),
         "knowledge_lifecycle_completed": all(
             lifecycle[key] == 1
@@ -116,6 +156,23 @@ def run() -> dict[str, object]:
             and lifecycle["freshness_after_source_edit"] == "stale"
             and lifecycle["stale_fact_reusable"] is False
         ),
+        "incident_drift_reports_all_impacted_artifacts": (
+            incident_drift["impacted_artifacts"]
+            == (
+                "answer:checkout-mitigation",
+                "digest:whole-checkout-runbook",
+                "workflow:checkout-mitigation",
+            )
+            and incident_drift["mitigation_sources"]
+            == (
+                "github:acme/operations/checkout-runbook.md",
+                "slack:acme/thread:checkout-1042",
+            )
+        ),
+        "incident_drift_preserves_unchanged_section_cache": (
+            incident_drift["mitigation_action_after_change"] == "speculative_retrieval"
+            and incident_drift["escalation_action_after_change"] == "cached_response"
+        ),
         "drive_change_stream_advanced": drive["cursor"] == "changes:stream-2",
         "drive_edit_reembedded": drive["embedding_changed_for_edit"] is True,
         "drive_delete_removed_vector": drive["deleted_vector_removed"] is True,
@@ -128,11 +185,14 @@ def run() -> dict[str, object]:
         "passed": all(checks.values()),
         "checks": checks,
         "projects": {
+            "cross_user_acl_isolation": acl_isolation,
             "github": github,
             "slack": slack,
             "slackbot_reliable_answers": slackbot,
             "knowledge_lifecycle": lifecycle,
+            "incident_response_drift": incident_drift,
             "google_drive": drive,
+            "workflow_view_step_cache": workflow_view,
         },
     }
 

@@ -7,12 +7,15 @@ from mari_components.errors import MalformedModelOutput
 from mari_components.knowledge import (
     AnswerDisposition,
     FreshnessStatus,
+    KnowledgeDependency,
     TagAssignments,
     TagDefinition,
+    assess_dependencies,
     assess_freshness,
     assign_tags,
     extract_explicit_links,
     grounding_coverage,
+    impacted_artifacts,
     parse_answer,
     parse_answer_candidates,
     parse_claim_assessments,
@@ -22,6 +25,7 @@ from mari_components.knowledge import (
     parse_glossary,
     parse_refinement,
     search_weight,
+    section_revisions,
 )
 
 
@@ -127,6 +131,96 @@ class KnowledgeRecipeTests(unittest.TestCase):
         self.assertFalse(stale.reusable)
         self.assertEqual(stale.changes[0].current_revision, "v2")
         self.assertEqual(missing.status, FreshnessStatus.MISSING)
+
+    def test_section_revision_ignores_unrelated_document_changes(self):
+        original = KnowledgeDocument(
+            source_id="docs",
+            external_id="runbook",
+            title="Runbook",
+            body="# Detection\nOld signal.\n\n# Mitigation\nRestart the worker.\n",
+            revision="v1",
+        )
+        unrelated_edit = KnowledgeDocument(
+            source_id="docs",
+            external_id="runbook",
+            title="Runbook",
+            body="# Detection\nNew signal.\n\n# Mitigation\nRestart the worker.\n",
+            revision="v2",
+        )
+        mitigation_edit = KnowledgeDocument(
+            source_id="docs",
+            external_id="runbook",
+            title="Runbook",
+            body="# Detection\nNew signal.\n\n# Mitigation\nRestart both workers.\n",
+            revision="v3",
+        )
+        answer = parse_answer(
+            "How do we mitigate?",
+            (original,),
+            {
+                "answer": "Restart the worker.",
+                "evidence": [
+                    {
+                        "document_id": original.document_id,
+                        "quote": "Restart the worker.",
+                    }
+                ],
+            },
+        )
+        self.assertEqual(answer.evidence[0].section_id, "mitigation")
+        current = assess_freshness(
+            answer.evidence,
+            {original.document_id: unrelated_edit.revision},
+            current_section_revisions=section_revisions((unrelated_edit,)),
+        )
+        stale = assess_freshness(
+            answer.evidence,
+            {original.document_id: mitigation_edit.revision},
+            current_section_revisions=section_revisions((mitigation_edit,)),
+        )
+        fallback = assess_freshness(
+            answer.evidence,
+            {original.document_id: unrelated_edit.revision},
+        )
+        self.assertTrue(current.reusable)
+        self.assertEqual(stale.status, FreshnessStatus.STALE)
+        self.assertEqual(stale.changes[0].section_id, "mitigation")
+        self.assertEqual(fallback.status, FreshnessStatus.STALE)
+
+    def test_general_impact_reports_answers_workflows_and_document_artifacts(self):
+        dependencies = (KnowledgeDependency(document_id="docs/runbook", revision="v1"),)
+        impacts = impacted_artifacts(
+            {
+                "answer:mitigation": dependencies,
+                "fact:threshold": dependencies,
+                "workflow:incident": dependencies,
+            },
+            {"docs/runbook": "v2"},
+        )
+        self.assertEqual(
+            tuple(impacts),
+            ("answer:mitigation", "fact:threshold", "workflow:incident"),
+        )
+
+    def test_grounded_answer_tracks_non_factual_context_dependencies(self):
+        answer = parse_answer(
+            "How long?",
+            (self.document,),
+            {"answer": "30 days", "evidence": self.evidence()},
+            context_dependencies=(
+                KnowledgeDependency(document_id="docs/styleguide", revision="style-v1"),
+            ),
+        )
+        self.assertEqual(
+            {row.document_id for row in answer.knowledge_dependencies},
+            {"docs/1", "docs/styleguide"},
+        )
+        report = assess_dependencies(
+            answer.knowledge_dependencies,
+            {"docs/1": "v1", "docs/styleguide": "style-v2"},
+        )
+        self.assertEqual(report.status, FreshnessStatus.STALE)
+        self.assertEqual(report.changes[0].document_id, "docs/styleguide")
 
     def test_unknown_evidence_fails_without_fallback(self):
         with self.assertRaises(MalformedModelOutput):

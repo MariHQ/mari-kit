@@ -21,6 +21,11 @@ from examples.support import (
 from mari_components import KnowledgeDocument, PollRequest
 from mari_components.agents import AgentEvent, EventKind
 from mari_components.connectors import GitHubConfig, poll_github, validate_github
+from mari_components.knowledge import (
+    KnowledgeDependency,
+    impacted_artifacts,
+    parse_answer,
+)
 from mari_components.retrieval import build_index, search_index
 from mari_components.trajectories import (
     ReviewedWorkflow,
@@ -28,7 +33,6 @@ from mari_components.trajectories import (
     WorkflowPolicy,
     build_reviewed_workflow_index,
     decide_reviewed_workflow,
-    impacted_workflows,
     match_reviewed_workflow,
     parse_trajectory_analysis,
     start_speculative_retrieval,
@@ -382,6 +386,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     citation_rows = tuple(raw_citations) if isinstance(raw_citations, list) else ()
     evidence = _evidence_blocks(selected, styleguide_id)
     citations: list[str] = []
+    answer_evidence: list[dict[str, str]] = []
     verified_evidence = 0
     for citation in citation_rows:
         if not isinstance(citation, str) or citation not in evidence:
@@ -391,8 +396,26 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
             raise RuntimeError("evidence block lost its source provenance")
         verified_evidence += 1
         citations.append(document.external_id)
+        answer_evidence.append(
+            {"document_id": document.document_id, "quote": paragraph}
+        )
     if not answer or not citations:
         raise RuntimeError("DeepSeek answer must cite retrieved evidence")
+    grounded_answer = parse_answer(
+        question,
+        selected,
+        {
+            "answer": answer,
+            "disposition": "grounded",
+            "evidence": answer_evidence,
+        },
+        context_dependencies=(
+            KnowledgeDependency(
+                document_id=styleguide_id,
+                revision=by_id[styleguide_id].revision,
+            ),
+        ),
+    )
     events.append(AgentEvent(kind=EventKind.ANSWER, result=answer))
 
     telemetry = _telemetry(tuple(events))
@@ -408,8 +431,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
     cached = replace(
         seed,
         document_ids=selected_ids,
-        cache_dependencies={row.document_id: row.revision for row in selected},
-        cached_answer=answer,
+        cached_answer=grounded_answer,
     )
     cached_index = build_reviewed_workflow_index((cached,))
     cache_match = match_reviewed_workflow(
@@ -440,7 +462,10 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
         changed_revisions,
         policy=policy,
     )
-    impacted = impacted_workflows((cached,), changed_revisions)
+    impacted = impacted_artifacts(
+        {"workflow:support-refunds": grounded_answer.knowledge_dependencies},
+        changed_revisions,
+    )
 
     new_document = "mari/refund-exception"
     new_scores = {new_document: 0.99}
@@ -511,9 +536,11 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
         "cache_score": round(cache_score, 4),
         "cache_hit": cache_decision.action is WorkflowAction.CACHED_RESPONSE,
         "nearby_query_action": nearby_decision.action.value,
-        "cached_response": cache_decision.cached_answer,
+        "cached_response": (
+            cache_decision.cached_answer.answer if cache_decision.cached_answer else ""
+        ),
         "changed_document": changed_document,
-        "impacted_workflows": impacted,
+        "impacted_artifacts": tuple(impacted),
         "action_after_document_change": changed_decision.action.value,
         "new_document_unreviewed_action": unresolved_new.action.value,
         "new_document_nonimpacting_action": nonimpacting_new.action.value,

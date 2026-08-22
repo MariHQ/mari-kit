@@ -25,7 +25,9 @@ database, scheduler, or authorization system.
   summaries, impact assessments, and refinement proposals.
 - Mari-managed tag definitions and assignments that survive provider resyncs.
 - Reviewed-intent matching for actual speculative document reads, conservative
-  full-response caching, and dependency-impact lookup.
+  grounded-answer caching, ACL-aware selection, and dependency-impact lookup.
+- Stable Markdown section identities and hashes for selective invalidation when
+  an unrelated part of a source document changes.
 - Framework-neutral trajectory normalization and model-label validation.
 
 ## Installation
@@ -206,6 +208,23 @@ Grounding coverage is a reproducible evidence signal, not a model confidence
 score and not an automatic approval decision. Review and publishing policy
 remain application concerns.
 
+Evidence parsed from Markdown is bound to a stable heading path and section
+content hash. Supply current section revisions to avoid invalidating artifacts
+for unrelated edits in the same document:
+
+```python
+from mari_components.knowledge import section_revisions
+
+freshness = assess_freshness(
+    answer.evidence,
+    {current_document.document_id: current_document.revision},
+    current_section_revisions=section_revisions((current_document,)),
+)
+```
+
+If section revisions are omitted, Mari conservatively falls back to the whole
+document revision.
+
 ## Managed tags
 
 Tags are deliberately separate from connector-owned documents. A new provider
@@ -265,13 +284,16 @@ decision = decide_reviewed_workflow(
     query_vectors,
     reviewed_workflow_index,
     current_revisions,
+    current_section_revisions=current_section_revisions,
+    allowed_document_ids=authorized_document_ids,
     relevant_document_scores=relevant_document_scores,
     impact_decisions=user_reviewed_impact,
     policy=WorkflowPolicy(),
 )
 
 if decision.action is WorkflowAction.CACHED_RESPONSE:
-    response = decision.cached_answer
+    grounded_answer = decision.cached_answer
+    response = grounded_answer.answer
 
 elif decision.action is WorkflowAction.SPECULATIVE_RETRIEVAL:
     retrieval_task = start_speculative_retrieval(
@@ -286,11 +308,32 @@ A complete response is reusable only when:
 1. The intent clears the high cache threshold.
 2. Every recorded document revision is current.
 3. No highly relevant new document has unresolved or positive impact.
+4. Every dependency document is authorized for the current user.
 
 When a new highly relevant document appears, a user can mark it non-impacting
 and preserve reuse. Otherwise Mari selects speculative retrieval and the host
-LLM path. `impacted_workflows` finds reviewed intents invalidated by changed or
-removed document revisions.
+LLM path. Cached responses are `GroundedAnswer` artifacts, retaining exact
+evidence, citations, grounding coverage, and non-factual context dependencies
+such as a managed styleguide revision.
+
+Impact analysis is not limited to workflows. Give `impacted_artifacts` a
+namespaced mapping of answers, facts, digests, or workflows to their exact
+dependencies:
+
+```python
+from mari_components.knowledge import impacted_artifacts
+
+impacts = impacted_artifacts(
+    {
+        "answer:refund-policy": answer.knowledge_dependencies,
+        "workflow:support-refund": answer.knowledge_dependencies,
+    },
+    current_revisions,
+    current_section_revisions=current_section_revisions,
+)
+```
+
+The returned freshness reports identify changed or missing document sections.
 
 ## Trajectory analysis
 
@@ -345,6 +388,19 @@ machine-readable acceptance suite:
   managed styleguide, real speculative retrieval, one DeepSeek answer round,
   one post-answer analysis round, OpenAI embeddings, conservative caching, and
   revision/new-document impact policies.
+- [`cross_user_acl_isolation`](examples/cross_user_acl_isolation/) proves that
+  restricted documents are excluded before both MUVERA scoring and reviewed
+  cache matching for an unauthorized user.
+- [`incident_response_drift`](examples/incident_response_drift/) changes one
+  section of a GitHub incident runbook, reports every affected answer, digest,
+  and workflow, and preserves the cached escalation guidance grounded in an
+  unchanged section.
+- [`workflow_view_step_cache`](examples/workflow_view_step_cache/) follows
+  [WorkflowView](https://arxiv.org/abs/2606.14654) to turn atomic actions into
+  detailed phases and a high-level activity, then independently caches the
+  evidence-grounded answers discovered inside those phases. It demonstrates
+  cross-workflow substep reuse, a tunable cache gate, and selective
+  invalidation when one dependency changes.
 
 Run everything without credentials:
 

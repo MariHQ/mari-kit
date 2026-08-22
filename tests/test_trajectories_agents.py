@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import unittest
 
+from mari_components import KnowledgeDocument
 from mari_components.agents import (
     AgentEvent,
     EventKind,
@@ -10,19 +11,38 @@ from mari_components.agents import (
     evaluate_tools,
 )
 from mari_components.errors import MalformedModelOutput
+from mari_components.knowledge import impacted_artifacts, parse_answer
 from mari_components.trajectories import (
+    CacheDecisionReason,
     ReviewedWorkflow,
     WorkflowAction,
     WorkflowPolicy,
     build_reviewed_workflow_index,
     decide_reviewed_workflow,
-    impacted_workflows,
     match_cached_response,
     match_reviewed_workflow,
     normalize_steps,
     parse_trajectory_analysis,
     start_speculative_retrieval,
 )
+
+
+def grounded_answer(text: str, revision: str):
+    document = KnowledgeDocument(
+        source_id="docs",
+        external_id="refund",
+        title="Refund policy",
+        body=text,
+        revision=revision,
+    )
+    return parse_answer(
+        "What is the refund policy?",
+        (document,),
+        {
+            "answer": text,
+            "evidence": [{"document_id": document.document_id, "quote": text}],
+        },
+    )
 
 
 class TrajectoryAgentTests(unittest.TestCase):
@@ -132,16 +152,14 @@ class TrajectoryAgentTests(unittest.TestCase):
             name="Exact refunds",
             match_vectors=((1.0, 0.0, 0.0, 0.0),),
             document_ids=("docs/refund",),
-            cache_dependencies={"docs/refund": "v1"},
-            cached_answer="Stale answer",
+            cached_answer=grounded_answer("Stale answer", "v1"),
         )
         fresh = ReviewedWorkflow(
             identifier="near",
             name="Nearby refunds",
             match_vectors=((0.95, 0.05, 0.0, 0.0),),
             document_ids=("docs/refund",),
-            cache_dependencies={"docs/refund": "v2"},
-            cached_answer="Fresh answer",
+            cached_answer=grounded_answer("Fresh answer", "v2"),
         )
         query = ((1.0, 0.0, 0.0, 0.0),)
         index = build_reviewed_workflow_index((stale, fresh))
@@ -154,9 +172,14 @@ class TrajectoryAgentTests(unittest.TestCase):
             minimum_score=0.9,
         )
         self.assertEqual(cache.match.workflow.identifier, "near")
-        self.assertEqual(
-            impacted_workflows((stale, fresh), {"docs/refund": "v2"}), ("exact",)
+        impacts = impacted_artifacts(
+            {
+                "workflow:exact": stale.cached_answer.knowledge_dependencies,
+                "workflow:near": fresh.cached_answer.knowledge_dependencies,
+            },
+            {"docs/refund": "v2"},
         )
+        self.assertEqual(tuple(impacts), ("workflow:exact",))
 
     def test_cache_requires_extreme_match_and_accounts_for_new_documents(self):
         workflow = ReviewedWorkflow(
@@ -164,8 +187,7 @@ class TrajectoryAgentTests(unittest.TestCase):
             name="Refund",
             match_vectors=((1.0, 0.0, 0.0, 0.0),),
             document_ids=("docs/refund",),
-            cache_dependencies={"docs/refund": "v1"},
-            cached_answer="Thirty days.",
+            cached_answer=grounded_answer("Thirty days.", "v1"),
         )
         index = build_reviewed_workflow_index((workflow,))
         policy = WorkflowPolicy(
@@ -195,6 +217,79 @@ class TrajectoryAgentTests(unittest.TestCase):
             policy=policy,
         )
         self.assertEqual(cleared.action, WorkflowAction.CACHED_RESPONSE)
+
+    def test_cache_matching_excludes_workflows_with_unauthorized_dependencies(self):
+        private = ReviewedWorkflow(
+            identifier="private",
+            name="Private mitigation",
+            match_vectors=((1.0, 0.0, 0.0, 0.0),),
+            document_ids=("docs/private",),
+            cached_answer=parse_answer(
+                "What should I do?",
+                (
+                    KnowledgeDocument(
+                        source_id="docs",
+                        external_id="private",
+                        title="Private",
+                        body="Use the private mitigation.",
+                        revision="v1",
+                    ),
+                ),
+                {
+                    "answer": "Use the private mitigation.",
+                    "evidence": [
+                        {
+                            "document_id": "docs/private",
+                            "quote": "Use the private mitigation.",
+                        }
+                    ],
+                },
+            ),
+        )
+        public = ReviewedWorkflow(
+            identifier="public",
+            name="Public guidance",
+            match_vectors=((0.95, 0.05, 0.0, 0.0),),
+            document_ids=("docs/public",),
+            cached_answer=parse_answer(
+                "What should I do?",
+                (
+                    KnowledgeDocument(
+                        source_id="docs",
+                        external_id="public",
+                        title="Public",
+                        body="Use the public status page.",
+                        revision="v1",
+                    ),
+                ),
+                {
+                    "answer": "Use the public status page.",
+                    "evidence": [
+                        {
+                            "document_id": "docs/public",
+                            "quote": "Use the public status page.",
+                        }
+                    ],
+                },
+            ),
+        )
+        decision = decide_reviewed_workflow(
+            ((1.0, 0.0, 0.0, 0.0),),
+            build_reviewed_workflow_index((private, public)),
+            {"docs/private": "v1", "docs/public": "v1"},
+            allowed_document_ids={"docs/public"},
+            policy=WorkflowPolicy(speculation_threshold=0.7, cache_threshold=0.97),
+        )
+        self.assertEqual(decision.action, WorkflowAction.CACHED_RESPONSE)
+        self.assertEqual(decision.match.workflow.identifier, "public")
+        hidden = match_cached_response(
+            ((1.0, 0.0, 0.0, 0.0),),
+            build_reviewed_workflow_index((private,)),
+            {"docs/private": "v1"},
+            minimum_score=0.0,
+            allowed_document_ids=set(),
+        )
+        self.assertEqual(hidden.reason, CacheDecisionReason.NO_CACHED_RESPONSE)
 
 
 class SpeculativeRetrievalTests(unittest.IsolatedAsyncioTestCase):

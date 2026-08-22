@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from collections.abc import Awaitable, Callable, Collection, Iterable, Mapping, Sequence
+from dataclasses import dataclass
 from enum import StrEnum
 from types import MappingProxyType
 from typing import TypeVar
 
 import numpy as np
 
-from mari_components.knowledge import FreshnessReport, assess_freshness
+from mari_components.knowledge import (
+    FreshnessReport,
+    GroundedAnswer,
+    assess_dependencies,
+)
 from mari_components.retrieval import MuveraIndex, build_index, search_index
-from mari_components.types import Evidence
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -29,8 +32,7 @@ class ReviewedWorkflow:
     name: str
     match_vectors: tuple[tuple[float, ...], ...]
     document_ids: tuple[str, ...]
-    cache_dependencies: Mapping[str, str] = field(default_factory=dict)
-    cached_answer: str = ""
+    cached_answer: GroundedAnswer | None = None
 
     def __post_init__(self) -> None:
         matrix = np.asarray(self.match_vectors, np.float32)
@@ -42,11 +44,14 @@ class ReviewedWorkflow:
             self.document_ids
         ):
             raise ValueError("workflow document IDs must be non-empty and unique")
-        if set(self.cache_dependencies) - set(self.document_ids):
-            raise ValueError("cache dependencies must refer to workflow documents")
-        object.__setattr__(
-            self, "cache_dependencies", MappingProxyType(dict(self.cache_dependencies))
-        )
+        if self.cached_answer is not None and not {
+            row.document_id for row in self.cached_answer.knowledge_dependencies
+        }.issubset(self.document_ids):
+            raise ValueError(
+                "cached answer dependencies must refer to workflow documents"
+            )
+        if self.cached_answer is not None and not self.cached_answer.evidence:
+            raise ValueError("cached answers must contain grounded evidence")
 
 
 @dataclass(frozen=True, slots=True)
@@ -121,10 +126,10 @@ class WorkflowDecision:
     documents_needing_impact_review: tuple[str, ...] = ()
 
     @property
-    def cached_answer(self) -> str:
+    def cached_answer(self) -> GroundedAnswer | None:
         if self.action is WorkflowAction.CACHED_RESPONSE and self.match is not None:
             return self.match.workflow.cached_answer
-        return ""
+        return None
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -158,11 +163,30 @@ def match_reviewed_workflow(
     index: ReviewedWorkflowIndex,
     *,
     minimum_score: float,
+    allowed_document_ids: Collection[str] | None = None,
 ) -> ReviewedWorkflowMatch | None:
     """Match against a reusable reviewed-intent MUVERA index."""
     if not -1 <= minimum_score <= 1:
         raise ValueError("minimum_score must be between -1 and 1")
-    hit = search_index(index.muvera, np.asarray(query_vectors, np.float32), limit=1)[0]
+    allowed_workflows = None
+    if allowed_document_ids is not None:
+        allowed = frozenset(str(value) for value in allowed_document_ids)
+        allowed_workflows = {
+            identifier
+            for identifier, workflow in index.workflows.items()
+            if set(workflow.document_ids).issubset(allowed)
+        }
+        if not allowed_workflows:
+            return None
+    hits = search_index(
+        index.muvera,
+        np.asarray(query_vectors, np.float32),
+        limit=1,
+        allowed_document_ids=allowed_workflows,
+    )
+    if not hits:
+        return None
+    hit = hits[0]
     if hit.score < minimum_score:
         return None
     return ReviewedWorkflowMatch(index.workflows[hit.document_id], hit.score)
@@ -171,12 +195,17 @@ def match_reviewed_workflow(
 def workflow_freshness(
     workflow: ReviewedWorkflow,
     current_revisions: Mapping[str, str],
+    *,
+    current_section_revisions: Mapping[tuple[str, str], str] | None = None,
 ) -> FreshnessReport:
-    evidence = tuple(
-        Evidence(document_id=document_id, revision=revision)
-        for document_id, revision in workflow.cache_dependencies.items()
+    dependencies = (
+        workflow.cached_answer.knowledge_dependencies if workflow.cached_answer else ()
     )
-    return assess_freshness(evidence, current_revisions)
+    return assess_dependencies(
+        dependencies,
+        current_revisions,
+        current_section_revisions=current_section_revisions,
+    )
 
 
 def match_cached_response(
@@ -185,24 +214,43 @@ def match_cached_response(
     current_revisions: Mapping[str, str],
     *,
     minimum_score: float,
+    current_section_revisions: Mapping[tuple[str, str], str] | None = None,
+    allowed_document_ids: Collection[str] | None = None,
 ) -> CacheDecision:
     """Select the highest-scoring fresh cached response and explain every miss."""
     if not -1 <= minimum_score <= 1:
         raise ValueError("minimum_score must be between -1 and 1")
+    allowed_workflows = None
+    visible_workflows = tuple(index.workflows.values())
+    if allowed_document_ids is not None:
+        allowed = frozenset(str(value) for value in allowed_document_ids)
+        allowed_workflows = {
+            identifier
+            for identifier, workflow in index.workflows.items()
+            if set(workflow.document_ids).issubset(allowed)
+        }
+        visible_workflows = tuple(
+            index.workflows[identifier] for identifier in allowed_workflows
+        )
     hits = search_index(
         index.muvera,
         np.asarray(query_vectors, np.float32),
         limit=len(index.workflows),
         candidate_limit=len(index.workflows),
+        allowed_document_ids=allowed_workflows,
     )
     stale_report: FreshnessReport | None = None
     for hit in hits:
         if hit.score < minimum_score:
             break
         workflow = index.workflows[hit.document_id]
-        if not workflow.cached_answer or not workflow.cache_dependencies:
+        if workflow.cached_answer is None:
             continue
-        freshness = workflow_freshness(workflow, current_revisions)
+        freshness = workflow_freshness(
+            workflow,
+            current_revisions,
+            current_section_revisions=current_section_revisions,
+        )
         if freshness.reusable:
             return CacheDecision(
                 reason=CacheDecisionReason.HIT,
@@ -220,28 +268,10 @@ def match_cached_response(
     return CacheDecision(
         reason=(
             CacheDecisionReason.NO_CACHED_RESPONSE
-            if not any(
-                row.cached_answer and row.cache_dependencies
-                for row in index.workflows.values()
-            )
+            if not any(row.cached_answer is not None for row in visible_workflows)
             else CacheDecisionReason.BELOW_THRESHOLD
         ),
         threshold=minimum_score,
-    )
-
-
-def impacted_workflows(
-    workflows: Iterable[ReviewedWorkflow],
-    current_revisions: Mapping[str, str],
-) -> tuple[str, ...]:
-    """Return reviewed caches made stale by changed or removed documents."""
-    return tuple(
-        sorted(
-            row.identifier
-            for row in workflows
-            if row.cache_dependencies
-            and not workflow_freshness(row, current_revisions).reusable
-        )
     )
 
 
@@ -250,6 +280,8 @@ def decide_reviewed_workflow(
     index: ReviewedWorkflowIndex,
     current_revisions: Mapping[str, str],
     *,
+    current_section_revisions: Mapping[tuple[str, str], str] | None = None,
+    allowed_document_ids: Collection[str] | None = None,
     relevant_document_scores: Mapping[str, float] | None = None,
     impact_decisions: Mapping[str, bool] | None = None,
     policy: WorkflowPolicy | None = None,
@@ -267,6 +299,7 @@ def decide_reviewed_workflow(
         query_vectors,
         index,
         minimum_score=selected_policy.speculation_threshold,
+        allowed_document_ids=allowed_document_ids,
     )
     if match is None:
         return WorkflowDecision(
@@ -274,18 +307,28 @@ def decide_reviewed_workflow(
             reason=WorkflowDecisionReason.NO_INTENT_MATCH,
         )
     workflow = match.workflow
+    allowed = (
+        None
+        if allowed_document_ids is None
+        else frozenset(str(value) for value in allowed_document_ids)
+    )
     relevant = tuple(
         sorted(
             document_id
             for document_id, score in relevant_scores.items()
             if score >= selected_policy.relevant_document_threshold
             and document_id not in workflow.document_ids
+            and (allowed is None or document_id in allowed)
         )
     )
     unresolved = tuple(row for row in relevant if row not in decisions)
     impactful = tuple(row for row in relevant if decisions.get(row) is True)
     selected_ids = tuple(dict.fromkeys((*workflow.document_ids, *relevant)))
-    freshness = workflow_freshness(workflow, current_revisions)
+    freshness = workflow_freshness(
+        workflow,
+        current_revisions,
+        current_section_revisions=current_section_revisions,
+    )
     if unresolved:
         return WorkflowDecision(
             action=WorkflowAction.SPECULATIVE_RETRIEVAL,
@@ -308,7 +351,7 @@ def decide_reviewed_workflow(
             match=match,
             document_ids=selected_ids,
         )
-    if not workflow.cached_answer or not workflow.cache_dependencies:
+    if workflow.cached_answer is None:
         return WorkflowDecision(
             action=WorkflowAction.SPECULATIVE_RETRIEVAL,
             reason=WorkflowDecisionReason.NO_CACHED_RESPONSE,

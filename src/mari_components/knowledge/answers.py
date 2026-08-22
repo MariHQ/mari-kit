@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import StrEnum
@@ -11,9 +12,10 @@ from mari_components.json import require_list, require_object
 from mari_components.types import AnswerCandidate, Evidence, KnowledgeDocument
 
 from .facts import _evidence
+from .freshness import KnowledgeDependency, evidence_dependencies
 from .scoring import grounding_coverage
 
-ANSWER_VERSION = "grounded-answer-v2"
+ANSWER_VERSION = "grounded-answer-v3"
 FAQ_VERSION = "faq-mine-v2"
 
 
@@ -28,13 +30,48 @@ class GroundedAnswer:
     evidence: tuple[Evidence, ...]
     grounding_coverage: float
     disposition: AnswerDisposition
+    context_dependencies: tuple[KnowledgeDependency, ...] = ()
     schema_version: str = ANSWER_VERSION
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "evidence", tuple(self.evidence))
+        object.__setattr__(
+            self, "context_dependencies", tuple(self.context_dependencies)
+        )
+        if not self.answer.strip():
+            raise ValueError("grounded answer text is required")
+        if not isinstance(self.disposition, AnswerDisposition):
+            raise TypeError("answer disposition must be an AnswerDisposition")
+        if self.disposition is AnswerDisposition.GROUNDED and not self.evidence:
+            raise ValueError("a grounded answer requires evidence")
+        if (
+            not math.isfinite(self.grounding_coverage)
+            or not 0 <= self.grounding_coverage <= 1
+        ):
+            raise ValueError("grounding coverage must be between zero and one")
+        evidence_keys = {
+            (row.document_id, row.section_id)
+            for row in evidence_dependencies(self.evidence)
+        }
+        context_keys = {
+            (row.document_id, row.section_id) for row in self.context_dependencies
+        }
+        if len(context_keys) != len(self.context_dependencies):
+            raise ValueError("answer context dependencies must be unique")
+        if evidence_keys.intersection(context_keys):
+            raise ValueError("answer dependencies must be unique")
+
+    @property
+    def knowledge_dependencies(self) -> tuple[KnowledgeDependency, ...]:
+        return (*evidence_dependencies(self.evidence), *self.context_dependencies)
 
 
 def parse_answer(
     question: str,
     documents: Iterable[KnowledgeDocument],
     model_output: object,
+    *,
+    context_dependencies: Iterable[KnowledgeDependency] = (),
 ) -> GroundedAnswer:
     question = question.strip()
     if not question:
@@ -68,6 +105,7 @@ def parse_answer(
         evidence=evidence,
         grounding_coverage=grounding_coverage(answer, evidence),
         disposition=disposition,
+        context_dependencies=tuple(context_dependencies),
     )
 
 

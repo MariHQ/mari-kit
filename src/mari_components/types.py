@@ -90,6 +90,27 @@ class KnowledgeDocument:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class KnowledgeSection:
+    """A stable, content-versioned section inside one knowledge document."""
+
+    document_id: str
+    section_id: str
+    title: str
+    body: str
+    revision: str
+    start: int
+    end: int
+
+    def __post_init__(self) -> None:
+        if not self.document_id or not self.section_id or not self.revision:
+            raise ValueError(
+                "section document ID, section ID, and revision are required"
+            )
+        if self.start < 0 or self.end < self.start:
+            raise ValueError("section span is invalid")
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class Tombstone:
     source_id: str
     external_id: str
@@ -160,12 +181,18 @@ class Evidence:
     quote: str = ""
     start: int | None = None
     end: int | None = None
+    section_id: str = ""
+    section_revision: str = ""
 
     def __post_init__(self) -> None:
         if not self.document_id or not self.revision:
             raise ValueError("evidence document_id and revision are required")
         if (self.start is None) != (self.end is None):
             raise ValueError("evidence start and end must be supplied together")
+        if bool(self.section_id) != bool(self.section_revision):
+            raise ValueError(
+                "evidence section ID and section revision must be supplied together"
+            )
         if self.start is not None:
             end = self.end
             if end is None or self.start < 0 or end < self.start:

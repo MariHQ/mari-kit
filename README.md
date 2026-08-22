@@ -1,6 +1,6 @@
-# Mari Components
+# Mari Kit
 
-Mari Components is a collection of infrastructure-neutral functions for
+Mari Kit is a collection of infrastructure-neutral functions for
 building product-knowledge systems. It provides connector polling and event
 normalization, replay-safe sync planning, MUVERA/PolarQuant retrieval, grounded
 knowledge recipes, trajectory mining, tool loops, and agent evaluations.
@@ -54,7 +54,9 @@ confidence computed from exact-quote coverage, independent source count, and
 citation count. The public `evidence_confidence` function lets hosts apply the
 same calculation to their own recipes.
 
-See [SCOPE.md](SCOPE.md) for the architecture boundary.
+See [SCOPE.md](SCOPE.md) for the original extraction boundary and
+[HANDOFF.md](HANDOFF.md) for the current package map and next architectural
+migration.
 
 ## Executable projects
 

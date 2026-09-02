@@ -14,7 +14,7 @@ from typing import Any
 
 from mari_components.errors import AuthenticationFailure
 from mari_components.http import HttpTransport
-from mari_components.types import PollPage, PollRequest
+from mari_components.types import ChangeHint, PollPage, PollRequest
 
 from .airtable import AirtableConfig, poll_airtable, validate_airtable
 from .asana import AsanaConfig, poll_asana, validate_asana
@@ -31,8 +31,9 @@ from .google_drive import (
 from .jira import JiraConfig, poll_jira, validate_jira
 from .linear import LinearConfig, poll_linear, validate_linear
 from .notion import NotionConfig, poll_notion, validate_notion
-from .protocol import ValidationResult
+from .protocol import ConnectorMode, StreamEvent, ValidationResult, VerifyStreamEvent
 from .slack import SlackConfig, poll_slack, validate_slack
+from .streaming import stream_change_hint
 from .trello import TrelloConfig, poll_trello, validate_trello
 from .zendesk import ZendeskConfig, poll_zendesk, validate_zendesk
 
@@ -40,6 +41,7 @@ ConfigFactory = Callable[[Mapping[str, Any]], Any]
 ValidateOperation = Callable[..., ValidationResult]
 PollOperation = Callable[..., Iterator[PollPage]]
 RefreshOperation = Callable[[Mapping[str, Any], HttpTransport], Any]
+StreamOperation = Callable[..., ChangeHint]
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,6 +67,32 @@ class ConnectorDefinition:
     qualifier_fields: tuple[str, ...] = ()
     priority: int = 100
     refresh_operation: RefreshOperation | None = None
+    stream_operation: StreamOperation | None = None
+
+    @property
+    def modes(self) -> frozenset[ConnectorMode]:
+        modes = {ConnectorMode.POLL}
+        if self.stream_operation is not None:
+            modes.add(ConnectorMode.STREAM)
+        return frozenset(modes)
+
+    def supports(self, mode: ConnectorMode) -> bool:
+        return mode in self.modes
+
+    def stream(
+        self,
+        event: StreamEvent,
+        *,
+        verify: VerifyStreamEvent,
+        maximum_bytes: int = 1_048_576,
+    ) -> ChangeHint:
+        if self.stream_operation is None:
+            raise ValueError(f"connector {self.key!r} does not support streaming")
+        if event.provider != self.key:
+            raise ValueError(
+                f"stream event provider {event.provider!r} does not match connector {self.key!r}"
+            )
+        return self.stream_operation(event, verify=verify, maximum_bytes=maximum_bytes)
 
     def config(self, values: Mapping[str, Any]) -> Any:
         return self.config_factory(values)
@@ -181,6 +209,7 @@ _DEFINITIONS = (
         poll_github,
         ("repo",),
         10,
+        stream_operation=stream_change_hint,
     ),
     ConnectorDefinition(
         "slack",
@@ -214,6 +243,7 @@ _DEFINITIONS = (
         poll_slack,
         ("channels",),
         20,
+        stream_operation=stream_change_hint,
     ),
     ConnectorDefinition(
         "gdrive",
@@ -241,6 +271,7 @@ _DEFINITIONS = (
         ("folder_id",),
         30,
         _refresh_drive,
+        stream_change_hint,
     ),
     ConnectorDefinition(
         "confluence",
@@ -266,6 +297,7 @@ _DEFINITIONS = (
         poll_confluence,
         ("site_url", "space_key"),
         40,
+        stream_operation=stream_change_hint,
     ),
     ConnectorDefinition(
         "notion",

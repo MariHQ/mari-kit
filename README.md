@@ -14,13 +14,18 @@ database, scheduler, or authorization system.
 
 ## What it provides
 
-- Connectors for GitHub, Slack, Google Drive, Confluence, Dropbox, Notion,
-  Airtable, Asana, Jira, Linear, Trello, and Zendesk.
+- Polling connectors for GitHub, Slack, Google Drive, Confluence, Dropbox,
+  Notion, Airtable, Asana, Jira, Linear, Trello, and Zendesk; verified streaming
+  event connectors for GitHub, Slack, Google Drive, and Confluence.
 - Replay-safe synchronization with canonical document identity, revisions,
   tombstones, checkpoints, and full-snapshot reconciliation.
 - Provider-observed ACL metadata and retrieval-time candidate filtering.
 - MUVERA candidate generation, PolarQuant compression, and exact MaxSim
   reranking. There is no separate handmade cosine-similarity path.
+- Weighted reciprocal-rank fusion, maximal-marginal-relevance diversification,
+  and allowed-node Personalized PageRank with passage projection.
+- Paper-derived planning boundaries for HyDE, RAPTOR, Self-RAG, CRAG, FLARE,
+  A-MEM, Generative Agents, MemWalker, Chain-of-Note, and RECOMP.
 - Strict parsers for evidence-backed facts, decisions, answers, glossary terms,
   summaries, impact assessments, and refinement proposals.
 - Mari-managed tag definitions and assignments that survive provider resyncs.
@@ -28,6 +33,8 @@ database, scheduler, or authorization system.
   grounded-answer caching, ACL-aware selection, and dependency-impact lookup.
 - Stable Markdown section identities and hashes for selective invalidation when
   an unrelated part of a source document changes.
+- Validated add/update/delete/no-op memory plans and hybrid topic segmentation
+  for application-owned online and offline consolidation flows.
 - Framework-neutral trajectory normalization and model-label validation.
 
 ## Installation
@@ -163,6 +170,16 @@ Indexes can be persisted with `serialize_index` and restored with
 `deserialize_index`. The serialized files include checksums and reject unknown,
 missing, or corrupted entries.
 
+For weighted reciprocal-rank fusion, diversity-aware packing, graph
+propagation, topic segmentation, and memory mutation plans, see
+[`docs/research-algorithms.md`](docs/research-algorithms.md).
+Ten additional paper-derived retrieval, memory, evidence-reading, and
+compression boundaries are documented in
+[`docs/ten-paper-extensions.md`](docs/ten-paper-extensions.md).
+The evidence and validation requirements behind the proposed artifact, store,
+pipeline, context, temporal-graph, procedure, and compiler APIs are in
+[`docs/proposed-api-foundations.md`](docs/proposed-api-foundations.md).
+
 ## Evidence validation and freshness
 
 Mari Components does not own prompts or model calls. Give your agent the source
@@ -203,6 +220,78 @@ assert not stale.reusable
 Available parsers include `parse_facts`, `parse_claim_assessments`,
 `parse_decisions`, `parse_answer`, `parse_answer_candidates`, `parse_glossary`,
 `parse_digest`, `parse_impact`, and `parse_refinement`.
+
+See [`docs/knowledge-parsers.md`](docs/knowledge-parsers.md) for the academic
+task foundations behind each parser, the exact contract Mari adopts, and the
+places where deterministic validation is intentionally narrower than semantic
+entailment or the cited benchmark.
+
+Fact extraction and checking tolerate only recoverable model drift. Cosmetic
+claim variants are deduplicated with `normalize_claim`; reordered or lightly
+paraphrased assessment rows are restored to the caller's original claim order;
+missing rows and unverifiable citations become `uncertain` rather than
+invalidating sound findings elsewhere in the batch. Bare evidence quotes are
+accepted only when they resolve to exactly one supplied document. Structured
+fact fields such as atomic claims, subject/relation/object, scopes, validity,
+and conditions are preserved in `FactCandidate.qualifiers`.
+
+Applications can make repeated extraction incremental at section granularity:
+
+```python
+from mari_components.knowledge import fact_scan_revisions, pending_fact_sections
+
+pending = pending_fact_sections(
+    documents,
+    stored_fact_scan_revisions,
+    query="retention",
+    limit=20,
+)
+successful = extract_and_persist_review_candidates(pending)
+# Commit these checkpoint updates with the candidates when storage permits.
+stored_fact_scan_revisions |= fact_scan_revisions(successful)
+```
+
+The section revision is a content hash, so unchanged passages remain complete
+while an edit creates one new unit of work. Selection is round-robin across
+documents. Persist checkpoints only after candidate persistence succeeds,
+preferably in the same transaction.
+
+## Verification portfolios
+
+Mari can repeatedly call any candidate-producing function and apply
+deterministic, evidence-aware selection. It does not configure or depend on a
+model runtime. The result contains the winner plus every score and failed
+attempt:
+
+```python
+from mari_components.knowledge import parse_claim_assessments
+from mari_components.verification import best_of_n, score_grounded
+
+
+def parse_prediction(prediction):
+    return parse_claim_assessments(
+        (claim,),
+        documents,
+        {"assessments": prediction.assessments},
+    )[0]
+
+
+result = best_of_n(
+    lambda: generate_assessment(claim, documents),
+    parse_prediction,
+    score_grounded,
+    attempts=3,
+    threshold=0.9,
+)
+assessment = result.selected
+score = result.selected_attempt.breakdown
+assert score is not None and score.evidence_valid
+```
+
+The same package exposes `select_best`, `verdict_consensus`,
+`idea_completeness`, and `harmonic_score`. Consensus abstains on ties or weak
+agreement and only carries evidence from assessments supporting the winning
+verdict. Scores are audit signals, not truth probabilities.
 
 Grounding coverage is a reproducible evidence signal, not a model confidence
 score and not an automatic approval decision. Review and publishing policy
@@ -360,9 +449,14 @@ Connector functions accept an injected `HttpTransport`. This keeps network
 policy, retries, observability, and testing under application control.
 
 Each provider exposes a configuration value plus validation and polling
-functions. Priority connectors also expose provider-specific operations such
-as Slack thread refetch and Google Drive watches. See the executable projects
-under [`examples/`](examples/) for complete integrations.
+functions. GitHub, Slack, Google Drive, and Confluence additionally expose
+streaming event parsing. Events become bounded `ChangeHint` values and trigger
+a canonical provider refetch; they are never treated as complete documents.
+Both modes yield `PollPage` values for the same synchronization planner.
+
+See [`docs/connectors.md`](docs/connectors.md) for both contracts, capability
+discovery, verification, hydration, and code examples. Executable integrations
+are under [`examples/`](examples/).
 
 Credentials are excluded from configuration representations. `HttpRequest`
 representations redact authorization headers, bodies, URL userinfo, and common

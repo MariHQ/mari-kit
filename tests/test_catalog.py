@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components.connectors import CONNECTOR_CATALOG, connector_definitions
+from mari_components.connectors import (
+    CONNECTOR_CATALOG,
+    ConnectorMode,
+    StreamEvent,
+    connector_definitions,
+)
 from mari_components.connectors.airtable import AirtableConfig
 from mari_components.connectors.asana import AsanaConfig
 from mari_components.connectors.confluence import ConfluenceConfig
@@ -50,6 +55,11 @@ class CatalogTests(unittest.TestCase):
             ],
         )
         self.assertTrue(all(definition.fields for definition in ordered))
+        self.assertTrue(all(item.supports(ConnectorMode.POLL) for item in ordered))
+        self.assertEqual(
+            {item.key for item in ordered if item.supports(ConnectorMode.STREAM)},
+            {"github", "slack", "gdrive", "confluence"},
+        )
 
     def test_connector_credentials_are_absent_from_representations(self):
         secret = "recognizable-secret-value"
@@ -69,6 +79,23 @@ class CatalogTests(unittest.TestCase):
             ZendeskConfig("acme", "owner@example.com", secret),
         )
         self.assertTrue(all(secret not in repr(config) for config in configs))
+
+    def test_catalog_stream_operation_checks_provider_identity(self):
+        definition = CONNECTOR_CATALOG["github"]
+        hint = definition.stream(
+            StreamEvent(
+                provider="github",
+                event_type="push",
+                raw_body=b'{"repository":{"full_name":"MariHQ/mari"}}',
+            ),
+            verify=lambda event: None,
+        )
+        self.assertEqual(hint.provider, "github")
+        with self.assertRaisesRegex(ValueError, "does not match"):
+            definition.stream(
+                StreamEvent(provider="slack", raw_body=b"{}"),
+                verify=lambda event: None,
+            )
 
 
 if __name__ == "__main__":

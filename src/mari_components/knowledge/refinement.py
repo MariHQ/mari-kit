@@ -25,6 +25,12 @@ def parse_refinement(
     *,
     maximum_edits: int = 4,
 ) -> tuple[RefinementEdit, ...]:
+    """Validate bounded exact-substring revision proposals.
+
+    Attribution-aware and fact-based revision are studied by RARR
+    (arXiv:2210.08726) and FactEditor (arXiv:2007.00916). Mari returns edits for
+    review and never applies them to the source document.
+    """
     if maximum_edits < 1:
         raise ValueError("maximum_edits must be positive")
     body = document.body[:60_000]

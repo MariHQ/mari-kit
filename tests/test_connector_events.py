@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import json
 import unittest
 
+from mari_components import KnowledgeDocument, PollPage
+from mari_components.connectors import StreamEvent, stream_change_hint, stream_pages
 from mari_components.connectors.events import (
     coalesce_hints,
     confluence_change_hint,
@@ -69,6 +72,77 @@ class ConnectorEventTests(unittest.TestCase):
         out = coalesce_hints([first, second])
         self.assertEqual(len(out), 1)
         self.assertEqual(out[0].revision, "2")
+
+    def test_stream_event_is_verified_before_parsing(self):
+        calls = []
+        event = StreamEvent(
+            provider="github",
+            event_type="push",
+            raw_body=json.dumps(
+                {"repository": {"full_name": "MariHQ/mari"}, "commits": []}
+            ).encode(),
+        )
+
+        hint = stream_change_hint(event, verify=lambda value: calls.append(value))
+
+        self.assertEqual(calls, [event])
+        self.assertEqual(hint.aggregate_key, "repository:marihq/mari")
+
+    def test_stream_pages_coalesces_then_hydrates_canonical_state(self):
+        events = (
+            StreamEvent(
+                provider="slack",
+                raw_body=b'{"event":{"type":"message","channel":"C","ts":"1"}}',
+            ),
+            StreamEvent(
+                provider="slack",
+                raw_body=b'{"event":{"type":"message","channel":"C","ts":"2","thread_ts":"1"}}',
+            ),
+        )
+        hydrated = []
+
+        def hydrate(hint):
+            hydrated.append(hint)
+            return (
+                PollPage(
+                    upserts=(
+                        KnowledgeDocument(
+                            source_id="slack:team",
+                            external_id=hint.aggregate_key,
+                            title="Thread",
+                            body="Canonical provider state",
+                            revision=hint.revision,
+                        ),
+                    ),
+                    snapshot_complete=True,
+                ),
+            )
+
+        pages = tuple(stream_pages(events, verify=lambda event: None, hydrate=hydrate))
+
+        self.assertEqual(len(hydrated), 1)
+        self.assertEqual(hydrated[0].revision, "2")
+        self.assertEqual(pages[0].upserts[0].body, "Canonical provider state")
+
+    def test_stream_batch_is_bounded(self):
+        event = StreamEvent(
+            provider="gdrive",
+            headers={
+                "X-Goog-Channel-ID": "one",
+                "X-Goog-Resource-ID": "resource",
+                "X-Goog-Resource-State": "change",
+                "X-Goog-Message-Number": "1",
+            },
+        )
+        with self.assertRaisesRegex(ValueError, "maximum_events"):
+            tuple(
+                stream_pages(
+                    (event, event),
+                    verify=lambda value: None,
+                    hydrate=lambda hint: (),
+                    maximum_events=1,
+                )
+            )
 
 
 if __name__ == "__main__":

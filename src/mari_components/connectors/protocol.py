@@ -3,22 +3,32 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
-from dataclasses import dataclass
+from collections.abc import Callable, Iterator, Mapping
+from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import TypeVar
+from types import MappingProxyType
+from typing import Protocol, TypeVar, runtime_checkable
 
 from mari_components.errors import (
     AuthenticationFailure,
     PermanentFailure,
     TransientFailure,
 )
+from mari_components.http import HttpTransport
+from mari_components.types import ChangeHint, PollPage, PollRequest
 
 
 class ErrorKind(StrEnum):
     AUTH = "auth"
     TRANSIENT = "transient"
     PERMANENT = "permanent"
+
+
+class ConnectorMode(StrEnum):
+    """How a connector learns that provider state may have changed."""
+
+    POLL = "poll"
+    STREAM = "stream"
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +77,54 @@ def classify_error(error: BaseException) -> ErrorKind:
 
 
 T = TypeVar("T")
+ConfigT = TypeVar("ConfigT", contravariant=True)
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class StreamEvent:
+    """One raw delivery received from an application-owned webhook or stream."""
+
+    provider: str
+    raw_body: bytes = b""
+    headers: Mapping[str, str] = field(default_factory=dict)
+    event_type: str = ""
+
+    def __post_init__(self) -> None:
+        provider = self.provider.strip().casefold()
+        if not provider:
+            raise ValueError("stream event provider is required")
+        object.__setattr__(self, "provider", provider)
+        object.__setattr__(self, "raw_body", bytes(self.raw_body))
+        object.__setattr__(self, "headers", MappingProxyType(dict(self.headers)))
+
+
+VerifyStreamEvent = Callable[[StreamEvent], None]
+
+
+@runtime_checkable
+class PollingConnector(Protocol[ConfigT]):
+    """A cursor/checkpoint connector that enumerates canonical provider state."""
+
+    def __call__(
+        self,
+        config: ConfigT,
+        request: PollRequest,
+        *,
+        http: HttpTransport,
+    ) -> Iterator[PollPage]: ...
+
+
+@runtime_checkable
+class StreamingConnector(Protocol):
+    """A verified provider-event parser that emits a bounded change hint."""
+
+    def __call__(
+        self,
+        event: StreamEvent,
+        *,
+        verify: VerifyStreamEvent,
+        maximum_bytes: int = 1_048_576,
+    ) -> ChangeHint: ...
 
 
 def call_with_retry(

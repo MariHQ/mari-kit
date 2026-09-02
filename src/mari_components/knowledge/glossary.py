@@ -17,6 +17,10 @@ def parse_glossary(
     documents: Iterable[KnowledgeDocument],
     model_output: object,
 ) -> tuple[GlossaryCandidate, ...]:
+    """Validate evidence-backed term-definition pairs and aliases.
+
+    The task is grounded in DeftEval definition extraction (arXiv:2008.13694).
+    """
     allowed = {document.document_id: document for document in documents}
     rows = require_list(model_output, "terms", recipe=GLOSSARY_VERSION)
     output: list[GlossaryCandidate] = []

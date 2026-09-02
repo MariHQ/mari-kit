@@ -3,7 +3,11 @@ from __future__ import annotations
 import unittest
 
 from mari_components import KnowledgeDocument, PollPage, SyncMode, Tombstone
-from mari_components.testing import check_connector_contract
+from mari_components.connectors import StreamEvent
+from mari_components.testing import (
+    check_connector_contract,
+    check_streaming_connector_contract,
+)
 
 
 class ConnectorContractKitTests(unittest.TestCase):
@@ -40,3 +44,30 @@ class ConnectorContractKitTests(unittest.TestCase):
                 mode=SyncMode.FULL,
                 starting_cursor="v1",
             )
+
+    def test_streaming_contract_replays_through_the_same_page_rules(self):
+        event = StreamEvent(
+            provider="slack",
+            raw_body=b'{"event":{"type":"message","channel":"C","ts":"1"}}',
+        )
+
+        def hydrate(hint):
+            return (
+                PollPage(
+                    upserts=(
+                        KnowledgeDocument(
+                            source_id="slack:test",
+                            external_id=hint.aggregate_key,
+                            title="Thread",
+                            body="Current thread",
+                            revision=hint.revision,
+                        ),
+                    ),
+                    snapshot_complete=True,
+                ),
+            )
+
+        report = check_streaming_connector_contract(
+            (event,), verify=lambda value: None, hydrate=hydrate
+        )
+        self.assertEqual((report.pages, report.upserts), (1, 1))

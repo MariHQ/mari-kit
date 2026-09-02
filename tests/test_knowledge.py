@@ -13,9 +13,12 @@ from mari_components.knowledge import (
     assess_dependencies,
     assess_freshness,
     assign_tags,
+    deduplicate_fact_candidates,
     extract_explicit_links,
+    fact_scan_revisions,
     grounding_coverage,
     impacted_artifacts,
+    normalize_claim,
     parse_answer,
     parse_answer_candidates,
     parse_claim_assessments,
@@ -24,6 +27,7 @@ from mari_components.knowledge import (
     parse_facts,
     parse_glossary,
     parse_refinement,
+    pending_fact_sections,
     search_weight,
     section_revisions,
 )
@@ -106,6 +110,158 @@ class KnowledgeRecipeTests(unittest.TestCase):
 
         self.assertEqual(extract(-100), extract(100))
         self.assertEqual(extract("not a number"), 0.9)
+
+    def test_fact_identity_and_extraction_deduplicate_cosmetic_variants(self):
+        self.assertEqual(
+            normalize_claim("  Retention—is 30 DAYS. "),
+            normalize_claim("retention is 30 days"),
+        )
+        facts = parse_facts(
+            [self.document],
+            {
+                "facts": [
+                    {
+                        "claim": "Retention is 30 days.",
+                        "evidence": self.evidence(),
+                    },
+                    {
+                        "claim": "RETENTION—IS 30 DAYS",
+                        "evidence": self.evidence(),
+                    },
+                ]
+            },
+        )
+        self.assertEqual([fact.claim for fact in facts], ["Retention is 30 days."])
+        self.assertEqual(
+            deduplicate_fact_candidates(
+                facts, existing_claims=["retention IS 30 days"]
+            ),
+            (),
+        )
+
+    def test_fact_extraction_preserves_structured_representations(self):
+        facts = parse_facts(
+            [self.document],
+            {
+                "facts": [
+                    {
+                        "claim": "Retention is 30 days.",
+                        "atomic_claims": ["Retention lasts 30 days."],
+                        "subject": {
+                            "canonical": "retention",
+                            "aliases": ["data retention"],
+                        },
+                        "relation": "has duration",
+                        "object": "30 days",
+                        "scopes": ["environment:production"],
+                        "valid_from": None,
+                        "conditions": [],
+                        "evidence": self.evidence(),
+                    }
+                ]
+            },
+        )
+        self.assertEqual(facts[0].qualifiers["relation"], "has duration")
+        self.assertEqual(facts[0].qualifiers["object"], "30 days")
+        self.assertEqual(
+            facts[0].qualifiers["subject"]["canonical"], "retention"
+        )
+
+    def test_fact_check_recovers_reordered_paraphrased_and_missing_rows(self):
+        claims = (
+            "Retention is 30 days.",
+            "Backups run nightly.",
+            "Support answers within one hour.",
+        )
+        checked = parse_claim_assessments(
+            claims,
+            [self.document],
+            {
+                "assessments": [
+                    {
+                        "claim": "backups run nightly",
+                        "verdict": "uncertain",
+                        "explanation": "Not mentioned",
+                        "evidence": [],
+                    },
+                    {
+                        "claim": "Retention is 30 days",
+                        "verdict": "supported",
+                        "explanation": "Direct",
+                        "evidence": self.evidence(),
+                    },
+                ]
+            },
+        )
+        self.assertEqual([item.claim for item in checked], list(claims))
+        self.assertEqual(
+            [item.verdict for item in checked],
+            ["supported", "uncertain", "uncertain"],
+        )
+        self.assertEqual(
+            checked[2].explanation, "The model did not address this claim."
+        )
+
+    def test_fact_check_accepts_unambiguous_bare_quote_and_downgrades_bad_quote(self):
+        checked = parse_claim_assessments(
+            ["Retention is 30 days.", "Backups run nightly."],
+            [self.document],
+            {
+                "assessments": [
+                    {
+                        "claim": "Retention is 30 days.",
+                        "verdict": "supported",
+                        "explanation": "Direct",
+                        "evidence": ["Retention is 30 days."],
+                    },
+                    {
+                        "claim": "Backups run nightly.",
+                        "verdict": "contradicted",
+                        "explanation": "Says weekly.",
+                        "evidence": ["Invented quote."],
+                    },
+                ]
+            },
+        )
+        self.assertEqual(checked[0].verdict, "supported")
+        self.assertEqual(checked[0].evidence[0].document_id, "docs/1")
+        self.assertEqual(checked[1].verdict, "uncertain")
+        self.assertIn("could not be verified", checked[1].explanation)
+
+    def test_incremental_fact_scan_selects_changed_sections_round_robin(self):
+        first = KnowledgeDocument(
+            source_id="docs",
+            external_id="one",
+            title="One",
+            body="# A\nRetention A.\n# B\nRetention B.\n",
+            revision="v2",
+        )
+        second = KnowledgeDocument(
+            source_id="docs",
+            external_id="two",
+            title="Two",
+            body="# A\nRetention C.\n# B\nOther.\n",
+            revision="v1",
+        )
+        original_first = KnowledgeDocument(
+            source_id="docs",
+            external_id="one",
+            title="One",
+            body="# A\nRetention A.\n# B\nOld retention.\n",
+            revision="v1",
+        )
+        checkpoints = section_revisions((original_first,))
+        pending = pending_fact_sections(
+            (first, second), checkpoints, query="retention", limit=3
+        )
+        self.assertEqual(
+            [(item.document_id, item.section_id) for item in pending],
+            [("docs/one", "b"), ("docs/two", "a")],
+        )
+        updated = {**checkpoints, **fact_scan_revisions(pending)}
+        self.assertEqual(
+            pending_fact_sections((first, second), updated, query="retention"), ()
+        )
 
     def test_grounding_coverage_rewards_independent_corroboration(self):
         text = "Retention is 30 days."

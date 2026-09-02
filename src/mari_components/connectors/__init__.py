@@ -32,8 +32,15 @@ from .google_drive import (
 from .jira import JiraConfig, poll_jira, validate_jira
 from .linear import LinearConfig, poll_linear, validate_linear
 from .notion import NotionConfig, poll_notion, validate_notion
-from .protocol import ValidationResult
+from .protocol import (
+    ConnectorMode,
+    PollingConnector,
+    StreamEvent,
+    StreamingConnector,
+    ValidationResult,
+)
 from .slack import SlackConfig, fetch_slack_thread_by_id, poll_slack, validate_slack
+from .streaming import stream_change_hint, stream_pages
 from .trello import TrelloConfig, poll_trello, validate_trello
 from .zendesk import ZendeskConfig, poll_zendesk, validate_zendesk
 
@@ -44,6 +51,7 @@ __all__ = [
     "ConfluenceConfig",
     "ConnectorDefinition",
     "ConnectorField",
+    "ConnectorMode",
     "DropboxConfig",
     "GitHubConfig",
     "GoogleDriveConfig",
@@ -51,7 +59,10 @@ __all__ = [
     "JiraConfig",
     "LinearConfig",
     "NotionConfig",
+    "PollingConnector",
     "SlackConfig",
+    "StreamEvent",
+    "StreamingConnector",
     "TrelloConfig",
     "ValidationResult",
     "ZendeskConfig",
@@ -73,6 +84,8 @@ __all__ = [
     "poll_trello",
     "poll_zendesk",
     "start_google_drive_watch",
+    "stream_change_hint",
+    "stream_pages",
     "validate_airtable",
     "validate_asana",
     "validate_confluence",

@@ -12,6 +12,8 @@ import json
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from mari_components.connectors.protocol import StreamEvent, VerifyStreamEvent
+from mari_components.connectors.streaming import HydrateChange, stream_pages
 from mari_components.sync import document_fingerprint
 from mari_components.types import PollPage, SyncMode
 
@@ -86,3 +88,25 @@ def check_connector_contract(
         final_cursor=final.next_cursor,
         replay_fingerprint=_poll_fingerprint(materialized),
     )
+
+
+def check_streaming_connector_contract(
+    events: Iterable[StreamEvent],
+    *,
+    verify: VerifyStreamEvent,
+    hydrate: HydrateChange,
+) -> ConnectorContractReport:
+    """Check deterministic stream parsing, hydration, and incremental pages.
+
+    This helper runs fake events twice. Downstream contract tests should inject
+    side-effect-free verification and hydration fixtures.
+    """
+    materialized = tuple(events)
+    first = tuple(stream_pages(materialized, verify=verify, hydrate=hydrate))
+    second = tuple(stream_pages(materialized, verify=verify, hydrate=hydrate))
+    first_report = check_connector_contract(first, mode=SyncMode.INCREMENTAL)
+    second_report = check_connector_contract(second, mode=SyncMode.INCREMENTAL)
+    assert first_report.replay_fingerprint == second_report.replay_fingerprint, (
+        "stream replay emitted different canonical pages"
+    )
+    return first_report

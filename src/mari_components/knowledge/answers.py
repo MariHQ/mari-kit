@@ -73,6 +73,11 @@ def parse_answer(
     *,
     context_dependencies: Iterable[KnowledgeDependency] = (),
 ) -> GroundedAnswer:
+    """Validate an evidence-grounded answer or explicit abstention.
+
+    The contract is informed by evidence-selected document QA in QASPER
+    (arXiv:2105.03011) and citation evaluation in ALCE (arXiv:2305.14627).
+    """
     question = question.strip()
     if not question:
         raise ValueError("question is required")
@@ -113,6 +118,7 @@ def parse_answer_candidates(
     documents: Iterable[KnowledgeDocument],
     model_output: object,
 ) -> tuple[AnswerCandidate, ...]:
+    """Validate reusable question-answer candidates with exact source evidence."""
     allowed = {document.document_id: document for document in documents}
     rows = require_list(model_output, "answers", recipe=FAQ_VERSION)
     output: list[AnswerCandidate] = []

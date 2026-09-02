@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Single-page feature documentation for mari-kit.">
+  <title>Mari documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#overview"><i>m</i><strong>mari</strong><span>docs</span></a>
+    <button class="toc-toggle" aria-controls="sidebar" aria-expanded="false">Contents</button>
+    <div class="top-actions"><button data-copy="pip install mari-components"><b>$</b> pip install mari-components</button><a href="https://github.com/MariHQ/mari-kit">GitHub ↗</a></div>
+  </header>
+  <div class="layout">
+    <aside id="sidebar" class="sidebar"><nav>
+      <p>Start</p><a href="#overview">Overview</a><a href="#install">Install</a><a href="#architecture">Architecture</a>
+      <p><i class="status current"></i> Current API</p>
+      <a href="#documents">Documents &amp; ACLs</a><a href="#connectors">Connectors</a><a href="#sync">Synchronization</a><a href="#retrieval">Retrieval</a><a href="#memory-algorithms">Memory updates</a><a href="#parsers">Knowledge parsers</a><a href="#evidence">Evidence</a><a href="#freshness">Freshness</a><a href="#sections">Sections &amp; fact scans</a><a href="#tags">Tags &amp; links</a><a href="#workflows">Reviewed workflows</a><a href="#trajectories">Trajectories &amp; agents</a><a href="#verification">Verification</a><a href="#errors">Errors &amp; boundaries</a>
+      <p><i class="status proposed"></i> Research + proposed</p>
+      <a href="#retrieval-construction">Retrieval construction</a><a href="#adaptive-retrieval">Adaptive retrieval</a><a href="#memory-organization">Memory organization</a><a href="#admission">Admission</a><a href="#entity-resolution">Entity resolution</a><a href="#graph-processing">Graph processing</a><a href="#consolidation">Consolidation</a><a href="#projections">Projections</a><a href="#procedural-learning">Procedural learning</a><a href="#memory-evaluation">Memory evaluation</a><a href="#artifacts">Artifact model</a><a href="#stores">Storage protocols</a><a href="#pipelines">Pipelines</a><a href="#context">Context assembly</a><a href="#graph">Temporal graph</a><a href="#procedures">Procedural knowledge</a><a href="#compiler">Evaluation compiler</a>
+    </nav></aside>
+    <main>
+      <section id="overview" class="section intro">
+        <div class="version">mari-components · 0.1.0.dev0</div>
+        <h1>Mari documentation</h1>
+        <p class="lede">Mari is a framework-neutral Python library for building knowledge systems from changing source material. It supplies immutable domain types, connector contracts, synchronization planning, multi-vector and graph retrieval, rank fusion, memory update plans, topic segmentation, evidence validation, freshness tracking, workflow reuse, trajectory analysis, and verification utilities.</p>
+        <div class="legend"><span><i class="status current"></i> Current — implemented</span><span><i class="status proposed"></i> Proposed — planned, not released</span></div>
+        <h3>How to read this page</h3><p>“Current” sections describe importable code in <code>mari_components</code>. “Proposed” sections describe concrete interfaces and algorithms that are not released. Each research-derived mechanism links its evidence next to the explanation; library boundaries and failure behavior are labeled as Mari engineering contracts.</p>
+        <aside class="note"><strong>Package naming</strong><code>mari-components</code> is the distribution. Public imports use <code>mari_components</code>.</aside>
+      </section>
+
+      <section id="install" class="section"><h2>Install</h2><p>Python 3.11–3.13 is supported. NumPy is the only runtime dependency.</p>
+        <div class="code"><header><span>terminal</span><button>Copy</button></header><pre><code>pip install mari-components
+
+<span class="cm"># Optional runtime adapters</span>
+pip install <span class="st">'mari-components[openai-agents]'</span>
+pip install <span class="st">'mari-components[langchain]'</span></code></pre></div>
+        <h3>How it works</h3><p>The base wheel installs the domain, connector, synchronization, retrieval, knowledge, trajectory, and verification modules without a model SDK or database client. Extras add adapter imports only; applications still inject model calls, HTTP transport, persistence, clocks, and authorization decisions. This is package behavior, not a research-derived algorithm.</p>
+      </section>
+
+      <section id="architecture" class="section"><h2>Architecture</h2><p>Values cross explicit boundaries. Mari plans and validates; the application performs side effects.</p>
+        <div class="diagram flow" aria-label="Knowledge system flow">
+          <article><b>Sources</b><small>provider APIs</small></article><i>poll</i><article><b>Documents</b><small>identity · revision · ACL</small></article><i>derive</i><article><b>Knowledge</b><small>facts · answers · decisions</small></article><i>retrieve</i><article><b>Context</b><small>allowed · fresh · cited</small></article>
+        </div>
+        <table><thead><tr><th>Mari supplies</th><th>Application supplies</th></tr></thead><tbody><tr><td>Typed values and pure planning functions</td><td>Database and transactions</td></tr><tr><td>Connector polling and cursor contracts</td><td>Credentials, HTTP transport, retries, scheduler</td></tr><tr><td>Strict parsers for generated values</td><td>Model, prompts, and inference</td></tr><tr><td>Retrieval and index serialization</td><td>Embeddings and index lifecycle</td></tr><tr><td>Policy and evaluation functions</td><td>Authorization and agent runtime</td></tr></tbody></table>
+        <h3>How it works</h3><p>Provider data is normalized into immutable values. Pure functions transform those values into plans, candidates, reports, or index payloads. The caller validates the return value and commits it through its own transaction boundary. Because network and storage operations are injected, the same input values can be replayed in tests before any side effect occurs.</p>
+        <div class="source-block"><strong>Research and standards</strong><p><a class="paper" href="https://www.w3.org/TR/prov-dm/">W3C PROV data model</a><a class="paper" href="https://arxiv.org/abs/2006.12117">Data pipeline reproducibility</a></p><small>Provenance and reproducibility motivate explicit entities, revisions, activities, and captured configuration. The pure-planning/application-commit split is a Mari engineering contract.</small></div>
+      </section>
+
+      <div class="chapter current-chapter"><b>Current API</b><span>Available in mari-kit today</span></div>
+
+      <section id="documents" class="section"><label class="current-label">Current</label><h2>Documents, identity, and ACLs</h2><p><code>KnowledgeDocument</code> is the canonical provider-owned record. Its stable ID is <code>{source_id}/{external_id}</code>. Domain values are frozen dataclasses.</p>
+        <h3>How it works</h3><p><code>source_id</code> names one configured source; <code>external_id</code> is the provider’s stable object key. Their pair prevents two providers from colliding. <code>revision</code> identifies content version, while <code>updated_at</code> is descriptive metadata and is never used as identity. ACL visibility and principals travel with the document so an allowed-ID set can be computed before retrieval scoring. Frozen values prevent an indexed object from changing behind its recorded revision.</p>
+        <div class="code"><header><span>document.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components <span class="kw">import</span> DocumentACL, KnowledgeDocument, Principal
+
+doc = KnowledgeDocument(
+    source_id=<span class="st">"github:acme/product"</span>,
+    external_id=<span class="st">"file:docs/refunds.md"</span>,
+    title=<span class="st">"Refund policy"</span>,
+    body=<span class="st">"## Enterprise\nRefunds close after 30 days."</span>,
+    revision=<span class="st">"8f31c2a"</span>, updated_at=<span class="st">"2026-08-31T10:00:00Z"</span>,
+    source_url=<span class="st">"https://github.com/acme/product/blob/main/docs/refunds.md"</span>,
+    acl=DocumentACL(visibility=<span class="st">"restricted"</span>, principals=(
+        Principal(kind=<span class="st">"team"</span>, identifier=<span class="st">"support"</span>),
+    )),
+    metadata={<span class="st">"path"</span>: <span class="st">"docs/refunds.md"</span>},
+)
+assert doc.document_id == <span class="st">"github:acme/product/file:docs/refunds.md"</span></code></pre></div>
+        <div class="cards"><article><code>PollPage</code><p>Upserts, tombstones, cursor, checkpoint, snapshot completeness, provider metadata.</p></article><article><code>Tombstone</code><p>Explicit deletion by source and external ID.</p></article><article><code>KnowledgeSection</code><p>Stable section ID, offsets, text, and section revision.</p></article><article><code>Evidence</code><p>Exact quote plus document, revision, span, and optional section coordinates.</p></article></div>
+        <div class="source-block"><strong>Research and standards</strong><p><a class="paper" href="https://www.w3.org/TR/prov-dm/">W3C PROV: entity identity and revision</a><a class="paper" href="https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/">Zanzibar: relationship-based authorization</a></p><small>Mari carries principals and visibility but does not implement an authorization engine. The application resolves those fields to <code>allowed_document_ids</code>.</small></div>
+      </section>
+
+      <section id="connectors" class="section"><label class="current-label">Current</label><h2>Polling and streaming connectors</h2><p>Every connector defines a frozen configuration object, validation, and polling. GitHub, Slack, Google Drive, and Confluence also accept verified provider events. Network calls use an injected <code>HttpTransport</code>.</p>
+        <h3>How it works</h3><p>A polling connector starts from the caller’s cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded <code>ChangeHint</code> keys, coalesces duplicates, and canonically refetches the object. Both routes produce <code>PollPage</code>, so event order, partial webhook payloads, and provider retry behavior cannot bypass synchronization invariants.</p>
+        <div class="matrix"><span>GitHub</span><span>Slack</span><span>Google Drive</span><span>Confluence</span><span>Dropbox</span><span>Notion</span><span>Airtable</span><span>Asana</span><span>Jira</span><span>Linear</span><span>Trello</span><span>Zendesk</span></div>
+        <div class="diagram flow"><div><b>Scheduled poll</b><small>PollRequest · cursor · checkpoint</small></div><i>→</i><div><b>Canonical PollPage</b><small>upserts · tombstones · revision</small></div><i>→</i><div><b>plan_sync</b><small>one persistence path</small></div></div>
+        <div class="diagram flow"><div><b>Provider stream</b><small>raw body · headers</small></div><i>verify + parse</i><div><b>ChangeHint</b><small>bounded · coalesced</small></div><i>canonical refetch</i><div><b>PollPage</b><small>same synchronization path</small></div></div>
+        <h3>Provider examples</h3><p>All polling functions accept the same <code>PollRequest</code> and injected <code>HttpTransport</code>, and return an iterator of <code>PollPage</code> values.</p>
+        <div class="connector-examples">
+          <article><h4>GitHub</h4><p>Files, issues, pull requests, and commits.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> GitHubConfig, poll_github
+cfg = GitHubConfig(token=token, repository=<span class="st">"acme/product"</span>,
+    branch=<span class="st">"main"</span>, paths=(<span class="st">"docs/**"</span>,),
+    content_types=(<span class="st">"files"</span>, <span class="st">"issues"</span>, <span class="st">"pull_requests"</span>))
+pages = poll_github(cfg, request, http=http)</code></pre></article>
+          <article><h4>Slack</h4><p>Channels, DMs, and canonical thread documents.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> SlackConfig, poll_slack
+cfg = SlackConfig(bot_token=bot_token,
+    history_token=history_token, channels=(<span class="st">"C0123"</span>,))
+pages = poll_slack(cfg, request, http=http)</code></pre></article>
+          <article><h4>Google Drive</h4><p>Drive files, Google Docs, changes, and push watches.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> GoogleDriveConfig, poll_google_drive
+cfg = GoogleDriveConfig(access_token=token, folder_id=<span class="st">"folder-id"</span>)
+pages = poll_google_drive(cfg, request, http=http)
+<span class="cm"># poll_google_drive_changes(...) and start_google_drive_watch(...)</span></code></pre></article>
+          <article><h4>Confluence</h4><p>Cloud pages converted from storage HTML to Markdown-like text.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> ConfluenceConfig, poll_confluence
+cfg = ConfluenceConfig(site_url=<span class="st">"https://acme.atlassian.net/wiki"</span>,
+    email=<span class="st">"bot@acme.com"</span>, api_token=token, space_key=<span class="st">"ENG"</span>)
+pages = poll_confluence(cfg, request, http=http)</code></pre></article>
+          <article><h4>Dropbox</h4><p>Native delta cursor with explicit deleted entries.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> DropboxConfig, poll_dropbox
+cfg = DropboxConfig(token=token, path=<span class="st">"/Knowledge"</span>)
+pages = poll_dropbox(cfg, request, http=http)</code></pre></article>
+          <article><h4>Notion</h4><p>Page search and bounded block-tree ingestion.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> NotionConfig, poll_notion
+cfg = NotionConfig(token=token)
+pages = poll_notion(cfg, request, http=http)</code></pre></article>
+          <article><h4>Airtable</h4><p>Base metadata and table snapshots.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> AirtableConfig, poll_airtable
+cfg = AirtableConfig(token=token, base_id=<span class="st">"appABC123"</span>)
+pages = poll_airtable(cfg, request, http=http)</code></pre></article>
+          <article><h4>Asana</h4><p>Workspace or project tasks with offset checkpoints.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> AsanaConfig, poll_asana
+cfg = AsanaConfig(token=token, workspace_gid=<span class="st">"workspace-gid"</span>,
+    project_gid=<span class="st">"project-gid"</span>)
+pages = poll_asana(cfg, request, http=http)</code></pre></article>
+          <article><h4>Jira</h4><p>Cloud issues with project or custom JQL scope.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> JiraConfig, poll_jira
+cfg = JiraConfig(site_url=<span class="st">"https://acme.atlassian.net"</span>,
+    email=<span class="st">"bot@acme.com"</span>, api_token=token, project_key=<span class="st">"SUP"</span>)
+pages = poll_jira(cfg, request, http=http)</code></pre></article>
+          <article><h4>Linear</h4><p>Issues and comments through the GraphQL API.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> LinearConfig, poll_linear
+cfg = LinearConfig(api_key=api_key, team_id=<span class="st">"team-id"</span>)
+pages = poll_linear(cfg, request, http=http)</code></pre></article>
+          <article><h4>Trello</h4><p>Open boards, lists, and cards.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> TrelloConfig, poll_trello
+cfg = TrelloConfig(api_key=api_key, token=token)
+pages = poll_trello(cfg, request, http=http)</code></pre></article>
+          <article><h4>Zendesk</h4><p>Guide articles with ordered page checkpoints.</p><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> ZendeskConfig, poll_zendesk
+cfg = ZendeskConfig(subdomain=<span class="st">"acme"</span>,
+    email=<span class="st">"bot@acme.com"</span>, api_token=token)
+pages = poll_zendesk(cfg, request, http=http)</code></pre></article>
+        </div>
+        <div class="code"><header><span>connector.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components <span class="kw">import</span> PollRequest
+<span class="kw">from</span> mari_components.connectors <span class="kw">import</span> GitHubConfig, poll_github, validate_github
+
+config = GitHubConfig(token=token, repository=<span class="st">"acme/product"</span>,
+    paths=(<span class="st">"docs/**"</span>,), content_types=(<span class="st">"files"</span>, <span class="st">"issues"</span>))
+validation = validate_github(config, http=http)
+request = PollRequest(cursor=saved_cursor, page_size=<span class="nu">100</span>, page_limit=<span class="nu">20</span>)
+
+<span class="kw">for</span> page <span class="kw">in</span> poll_github(config, request, http=http):
+    consume(page)</code></pre></div>
+        <h3>Streaming</h3><p><code>stream_pages</code> requires a verifier, rejects oversized deliveries and batches, parses provider-specific hints, coalesces repeated aggregate keys, and calls an injected hydration function. The application owns the webhook server, queue, acknowledgement, and retries.</p>
+        <div class="code"><header><span>stream.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.connectors <span class="kw">import</span> StreamEvent, stream_pages
+
+event = StreamEvent(provider=<span class="st">"slack"</span>, raw_body=raw_body, headers=headers)
+
+<span class="kw">def</span> <span class="fn">hydrate</span>(hint):
+    document, complete = fetch_slack_thread_by_id(config,
+        hint.metadata[<span class="st">"channel"</span>], hint.metadata[<span class="st">"thread_timestamp"</span>], http=http)
+    <span class="kw">return</span> (PollPage(upserts=(document,) <span class="kw">if</span> document <span class="kw">else</span> (),
+        snapshot_complete=complete),)
+
+<span class="kw">for</span> page <span class="kw">in</span> stream_pages((event,), verify=verify_signature, hydrate=hydrate):
+    consume(page)</code></pre></div>
+        <h3>Connector-specific capabilities</h3><ul><li>All twelve connectors: polling, validation, pagination limits, normalized documents, and explicit deletion handling.</li><li>GitHub, Slack, Google Drive, and Confluence: verified streaming change hints plus canonical refetch.</li><li>Slack: canonical thread fetch by ID.</li><li>Google Drive: native Changes polling and push-watch registration.</li><li>Confluence: direct canonical page fetch.</li><li><code>ConnectorDefinition.supports(ConnectorMode.POLL | STREAM)</code> exposes mode capabilities for setup UIs.</li></ul>
+        <div class="source-block"><strong>Standards and protocol basis</strong><p><a class="paper" href="https://spec.openapis.org/oas/latest.html">OpenAPI: HTTP operation contracts</a><a class="paper" href="https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md">CloudEvents: event envelopes</a><a class="paper" href="https://www.rfc-editor.org/rfc/rfc2104">RFC 2104: HMAC verification</a></p><small>Provider pagination, cursor, and signature schemes differ. Mari normalizes their observable results; it does not claim a universal delivery guarantee.</small></div>
+      </section>
+
+      <section id="sync" class="section"><label class="current-label">Current</label><h2>Synchronization</h2><p><code>plan_sync</code> compares a durable <code>SyncState</code> with one <code>PollPage</code> and returns a side-effect-free <code>SyncPlan</code>. <code>stream_sync</code> applies the same rules across pages.</p>
+        <h3>How it works</h3><p>For each upsert, Mari validates source ownership and compares a deterministic content fingerprint with the manifest: equal means unchanged; unequal means upsert. Explicit tombstones always become deletes. Absence becomes deletion only after the terminal page of an authoritative full snapshot. The returned plan carries the prior generation as a compare-and-swap precondition and the next manifest/cursor as proposed state; persistence must atomically commit both data and state.</p>
+        <div class="diagram state" aria-label="Full synchronization state machine"><div><b>Start</b><small>generation 41</small></div><i>→</i><div><b>Pages</b><small>upsert · tombstone · unchanged</small></div><i>→</i><div class="gate"><b>Complete?</b><small>no: preserve missing docs</small></div><i>→</i><div><b>Reconcile</b><small>yes: absence may delete</small></div><i>→</i><div><b>Commit</b><small>CAS generation 42</small></div></div>
+        <div class="code"><header><span>sync.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components <span class="kw">import</span> SyncMode
+<span class="kw">from</span> mari_components.sync <span class="kw">import</span> SyncState, plan_sync
+
+state = load_state() <span class="kw">or</span> SyncState()
+<span class="kw">for</span> page <span class="kw">in</span> provider_pages:
+    plan = plan_sync(state, page,
+        source_id=<span class="st">"github:acme/product"</span>, mode=SyncMode.FULL)
+    store.commit(upserts=plan.upserts, deletes=plan.deletes,
+        state=plan.state, expected_generation=plan.expected_generation)
+    state = plan.state</code></pre></div>
+        <h3>Enforced invariants</h3><ul><li>Page replay is idempotent through content fingerprints and manifests.</li><li>Only terminal, authoritative full pages reconcile absence.</li><li>Explicit tombstones apply in full and incremental modes.</li><li>Incomplete full sync cannot resume as incremental.</li><li>Generation compare-and-swap prevents concurrent state loss.</li><li>Foreign source IDs, duplicate IDs, and upsert/delete overlap are rejected.</li></ul>
+        <div class="source-block"><strong>Research basis</strong><p><a class="paper" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems.pdf">Build Systems à la Carte: fingerprints and minimal rebuilds</a><a class="paper" href="https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf">Dynamo: versioning and reconciliation</a></p><small>Snapshot authority, deletion rules, and atomic compare-and-swap are Mari’s connector/store contract.</small></div>
+      </section>
+
+      <section id="retrieval" class="section"><label class="current-label">Current</label><h2>Multi-vector retrieval</h2><p>Mari implements MUVERA fixed-dimensional candidate generation, PolarQuant compression, and exact normalized MaxSim reranking in one retrieval path.</p>
+        <div class="diagram retrieval"><div><b>Query token vectors</b></div><i>MUVERA</i><div><b>Candidate documents</b><small>allowed IDs only</small></div><i>exact MaxSim</i><div><b>RetrievalHit[]</b><small>ranked + scored</small></div></div>
+        <div class="code"><header><span>retrieve.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.retrieval <span class="kw">import</span> FDEConfig, build_index, search_index
+
+index = build_index({doc.document_id: token_vectors},
+    config=FDEConfig(repetitions=<span class="nu">20</span>, projection_dimension=<span class="nu">16</span>))
+hits = search_index(index, query_token_vectors, limit=<span class="nu">8</span>,
+    allowed_document_ids=authorized_document_ids)</code></pre></div>
+        <p><code>serialize_index</code> and <code>deserialize_index</code> use versioned, checksummed payloads. <code>exact_maxsim</code> is public for direct scoring.</p><aside class="warning"><strong>Authorization must precede scoring.</strong> Supply <code>allowed_document_ids</code>; post-filtering can leak information through ranks and fallback behavior.</aside>
+        <h3>How it works and backing algorithms</h3>
+        <p>Mari's current path uses token-level late interaction: each query token takes its maximum similarity to any document token, and the maxima are summed. MUVERA maps those multi-vector sets to fixed-dimensional encodings for fast candidate generation; Mari then reranks the candidates with exact MaxSim. The packed Polar codec is an implementation-level compression of candidate encodings, not an alternative relevance model.</p>
+        <table class="algorithm-table"><thead><tr><th>Status</th><th>Index family</th><th>Representation and algorithm</th><th>Appropriate when</th><th>Primary source</th></tr></thead><tbody>
+          <tr><td><span class="pill live">Current</span></td><td>MUVERA + exact MaxSim</td><td>Multi-vector FDE candidate generation, compressed storage, exact late-interaction reranking</td><td>Fine-grained semantic matching where individual query terms matter</td><td><a class="paper" href="https://arxiv.org/abs/2405.19504">MUVERA</a> · <a class="paper" href="https://arxiv.org/abs/2004.12832">ColBERT</a></td></tr>
+          <tr><td><span class="pill next">Proposed</span></td><td>Dense flat</td><td>Exact cosine, dot-product, or L2 scan over one vector per passage</td><td>Small corpora, evaluation baselines, or exact reproducibility</td><td><a class="paper" href="https://arxiv.org/abs/2004.04906">Dense Passage Retrieval</a></td></tr>
+          <tr><td><span class="pill next">Proposed</span></td><td>HNSW</td><td>Hierarchical proximity graph for approximate nearest-neighbor search</td><td>Large mutable dense-vector collections with low-latency queries</td><td><a class="paper" href="https://doi.org/10.1109/TPAMI.2018.2889473">HNSW</a></td></tr>
+          <tr><td><span class="pill next">Proposed</span></td><td>IVF-PQ</td><td>Coarse inverted partitions plus product-quantized vector codes</td><td>Memory-constrained or very large dense indexes</td><td><a class="paper" href="https://doi.org/10.1109/TPAMI.2010.57">Product Quantization</a> · <a class="paper" href="https://arxiv.org/abs/1702.08734">Faiss</a></td></tr>
+          <tr><td><span class="pill next">Proposed</span></td><td>BM25</td><td>Probabilistic lexical ranking over an inverted term index</td><td>Exact names, identifiers, code symbols, and domain terminology</td><td><a class="paper" href="https://doi.org/10.1561/1500000019">BM25 and Beyond</a></td></tr>
+          <tr><td><span class="pill next">Proposed</span></td><td>Learned sparse</td><td>Transformer-produced sparse term weights served by an inverted index</td><td>Lexical interpretability with learned expansion</td><td><a class="paper" href="https://arxiv.org/abs/2107.05720">SPLADE</a></td></tr>
+          <tr><td><span class="pill live">Current</span></td><td>Rank fusion</td><td>Weighted reciprocal-rank fusion over independent result lists, with per-source contribution traces</td><td>Mixed corpora where source scores are not directly comparable</td><td><a class="paper" href="https://arxiv.org/abs/2402.03367">RAG-Fusion</a></td></tr>
+          <tr><td><span class="pill live">Current</span></td><td>Graph propagation</td><td>Allowed-node personalized PageRank followed by weighted node-to-passage projection</td><td>Multi-hop recall from query-linked entities, facts, or sections</td><td><a class="paper" href="https://arxiv.org/abs/2405.14831">HippoRAG</a></td></tr>
+        </tbody></table>
+        <h3>Proposed index interface</h3><p>The common protocol should describe capabilities rather than a vendor. Index selection then becomes pipeline configuration and can be evaluated against recall, latency, memory, freshness, and ACL-filter behavior.</p>
+        <div class="code proposed-code"><header><span>proposed / indexes.py</span><button>Copy</button></header><pre><code>indexes = {
+    <span class="st">"exact"</span>: DenseFlatIndex(metric=<span class="st">"cosine"</span>),
+    <span class="st">"dense"</span>: HNSWIndex(metric=<span class="st">"cosine"</span>, m=<span class="nu">32</span>, ef_search=<span class="nu">128</span>),
+    <span class="st">"compressed"</span>: IVFPQIndex(partitions=<span class="nu">4096</span>, subquantizers=<span class="nu">32</span>),
+    <span class="st">"lexical"</span>: BM25Index(k1=<span class="nu">1.2</span>, b=<span class="nu">0.75</span>),
+    <span class="st">"sparse"</span>: SparseVectorIndex(model=<span class="st">"splade"</span>),
+    <span class="st">"late"</span>: LateInteractionIndex(candidate=<span class="st">"muvera"</span>, rerank=<span class="st">"maxsim"</span>),
+}
+
+hybrid = HybridIndex(arms=[indexes[<span class="st">"lexical"</span>], indexes[<span class="st">"dense"</span>], indexes[<span class="st">"late"</span>]],
+    fusion=ReciprocalRankFusion(k=<span class="nu">60</span>))</code></pre></div>
+
+        <h3>Rank fusion, graph recall, and diverse packing</h3>
+        <div class="diagram context"><div class="arms"><span>MUVERA</span><span>lexical</span><span>recent</span></div><i>RRF</i><div><b>authorized nodes</b><b>PageRank</b><b>passage projection</b></div><i>MMR</i><div><strong>Context candidates</strong><small>scores and contributions retained</small></div></div>
+        <div class="code"><header><span>compose_retrieval.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.retrieval <span class="kw">import</span> (
+    maximal_marginal_relevance, personalized_pagerank,
+    project_graph_scores, reciprocal_rank_fusion,
+)
+
+fused = reciprocal_rank_fusion(
+    {<span class="st">"muvera"</span>: dense_ids, <span class="st">"lexical"</span>: lexical_ids, <span class="st">"recent"</span>: recent_ids},
+    weights={<span class="st">"recent"</span>: <span class="nu">0.25</span>}, rank_constant=<span class="nu">60</span>,
+    eligible=authorized_document_ids.__contains__, limit=<span class="nu">40</span>)
+
+nodes = personalized_pagerank(graph, query_seeds,
+    allowed_node_ids=authorized_graph_nodes, damping=<span class="nu">0.85</span>)
+passages = project_graph_scores(nodes.hits, node_passages, limit=<span class="nu">20</span>)
+
+context = maximal_marginal_relevance(
+    {hit.document_id: hit.score <span class="kw">for</span> hit <span class="kw">in</span> fused},
+    similarity=passage_similarity, relevance_weight=<span class="nu">0.65</span>, limit=<span class="nu">12</span>)
+assert nodes.converged</code></pre></div>
+      </section>
+
+      <section id="memory-algorithms" class="section"><label class="current-label">Current</label><h2>Memory segmentation and mutation plans</h2>
+        <p><code>hybrid_topic_segments</code> splits a stream only where an attention-boundary peak and a semantic-similarity valley agree. The application extracts candidates from those bounded groups and classifies each one as add, update, delete, or no-op. <code>plan_memory_mutations</code> validates the decisions without writing storage.</p>
+        <h3>How it works</h3><p>Normalize boundary and adjacent-similarity arrays to the <code>n−1</code> gaps between <code>n</code> turns. A gap is eligible only when its attention score is a local peak above the configured boundary threshold and its adjacent semantic similarity is below the valley threshold. Eligible gaps split consecutive, non-overlapping segments. Mutation planning then requires exactly one decision per candidate, validates update/delete targets against current IDs, rejects duplicate adds and conflicting operations on one target, and returns a deterministic plan.</p>
+        <div class="diagram promotion"><div><b>Turns</b><small>attention + similarity signals</small></div><i>topic boundary</i><div><b>Candidate memories</b><small>host extraction and classification</small></div><i>validated plan</i><div><b>Host commit</b><small>ADD · UPDATE · DELETE · NOOP</small></div></div>
+        <div class="code"><header><span>memory_update.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> (
+    MemoryDecision, MemoryOperation, hybrid_topic_segments,
+    plan_memory_mutations,
+)
+
+segments = hybrid_topic_segments(turns,
+    attention_boundaries=attention, adjacent_similarities=similarity,
+    similarity_threshold=<span class="nu">0.40</span>)
+
+plan = plan_memory_mutations(existing, candidates, {
+    <span class="st">"new-role"</span>: MemoryDecision(operation=MemoryOperation.UPDATE,
+        target_id=<span class="st">"role"</span>, reason=<span class="st">"newer explicit statement"</span>),
+    <span class="st">"unchanged"</span>: MemoryDecision(operation=MemoryOperation.NOOP),
+})
+store.commit(plan, expected_generation=generation)</code></pre></div>
+        <aside class="note"><strong>Classification remains application-owned.</strong>Mari checks candidate coverage, target existence, add collisions, and conflicting target operations. <code>apply_memory_mutations</code> provides a pure preview for tests; it is not a database.</aside>
+        <div class="source-block"><strong>Research basis</strong><p><a class="paper" href="https://arxiv.org/abs/2504.19413">Mem0: memory extraction and update operations</a><a class="paper" href="https://arxiv.org/abs/2510.18866">LightMem: topic-aware memory consolidation</a></p><small>The conjunctive peak/valley rule and mutation validation are Mari implementations; model-based classification remains outside the library.</small></div>
+      </section>
+
+      <section id="parsers" class="section"><label class="current-label">Current</label><h2>Knowledge parsers</h2><p>Models return JSON-like values. Parsers resolve all evidence against supplied document and section revisions and return immutable typed values. Research establishes each task formulation; Mari implements a deterministic validation boundary rather than the cited model.</p>
+        <h3>How it works</h3><p>Each parser first requires the recipe’s top-level collection, then validates every required field and enum, resolves evidence through the exact contract below, derives deterministic audit signals, and constructs frozen result types. It never repairs a claim’s meaning. Batch claim assessment is the exception to fail-fast parsing: rows are keyed back to caller order, absent rows become <code>uncertain</code>, and individually malformed rows do not erase valid siblings.</p>
+        <div class="diagram stages"><span>model proposal</span><i>→</i><span>schema</span><i>→</i><span>exact evidence</span><i>→</i><span>revision binding</span><i>→</i><span>typed candidate</span></div>
+        <table class="source-table parser-table"><thead><tr><th>Parser</th><th>Produces</th><th>Research-backed task</th><th>Academic sources</th></tr></thead><tbody>
+          <tr><td><code>parse_facts</code></td><td><code>FactCandidate</code></td><td>Atomic claims and optional document-level relations with evidence</td><td><a class="paper" href="https://arxiv.org/abs/2305.14251">FActScore</a> · <a class="paper" href="https://arxiv.org/abs/1906.06127">DocRED</a></td></tr>
+          <tr><td><code>parse_claim_assessments</code></td><td><code>FactAssessment</code></td><td>Supported, contradicted, or uncertain verdicts; decisive rows require evidence</td><td><a class="paper" href="https://arxiv.org/abs/1803.05355">FEVER</a></td></tr>
+          <tr><td><code>parse_decisions</code></td><td><code>DecisionCandidate</code></td><td>Decision-related utterance extraction without treating topical language as proof</td><td><a class="paper" href="https://aclanthology.org/N07-1004/">Hsueh &amp; Moore</a> · <a class="paper" href="https://aclanthology.org/2021.sigdial-1.56/">Karan et al.</a></td></tr>
+          <tr><td><code>parse_answer</code></td><td><code>GroundedAnswer</code></td><td>Evidence-selected document QA, citations, or explicit insufficient evidence</td><td><a class="paper" href="https://arxiv.org/abs/2105.03011">QASPER</a> · <a class="paper" href="https://arxiv.org/abs/2305.14627">ALCE</a></td></tr>
+          <tr><td><code>parse_answer_candidates</code></td><td><code>AnswerCandidate[]</code></td><td>Reusable question-answer pairs bound to supporting passages</td><td><a class="paper" href="https://arxiv.org/abs/2105.03011">QASPER</a></td></tr>
+          <tr><td><code>parse_glossary</code></td><td><code>GlossaryCandidate[]</code></td><td>Term-definition relations, aliases, and source spans</td><td><a class="paper" href="https://arxiv.org/abs/2008.13694">DeftEval</a></td></tr>
+          <tr><td><code>parse_digest</code></td><td><code>DigestSummary</code></td><td>Overall and topic summaries with separately inspectable evidence</td><td><a class="paper" href="https://arxiv.org/abs/2004.04228">QAGS</a> · <a class="paper" href="https://arxiv.org/abs/2111.09525">SummaC</a></td></tr>
+          <tr><td><code>parse_impact</code></td><td><code>ImpactAssessment</code></td><td>In-scope affected-document proposals followed by deterministic dependency checks</td><td>Mari contract; no claimed benchmark reproduction</td></tr>
+          <tr><td><code>parse_refinement</code></td><td><code>RefinementEdit[]</code></td><td>Bounded, attribution-aware, fact-preserving edit proposals</td><td><a class="paper" href="https://arxiv.org/abs/2210.08726">RARR</a> · <a class="paper" href="https://arxiv.org/abs/2007.00916">FactEditor</a></td></tr></tbody></table>
+        <div class="code"><header><span>answer.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> parse_answer
+
+raw = model(question, documents)
+answer = parse_answer(question, documents, raw)
+<span class="fn">print</span>(answer.disposition)         <span class="cm"># grounded | insufficient_evidence</span>
+<span class="fn">print</span>(answer.grounding_coverage)  <span class="cm"># deterministic text coverage</span>
+<span class="fn">print</span>(answer.evidence[<span class="nu">0</span>].quote)  <span class="cm"># exact source text</span></code></pre></div>
+        <p>Additional deterministic helpers include <code>normalize_claim</code>, <code>deduplicate_fact_candidates</code>, <code>grounding_coverage</code>, and <code>excerpt</code>. Recoverable batch drift is handled conservatively: assessment rows are restored to caller order, missing rows become uncertain, and good rows survive alongside invalid ones. Structured fact qualifiers preserve subject, relation, object, scope, validity, and conditions.</p><aside class="warning"><strong><code>grounding_coverage</code> is not entailment or confidence.</strong>It is a Mari-specific lexical audit signal motivated by citation completeness. Exact quote validation prevents fabricated citations but does not prove that every paraphrase follows logically from its evidence.</aside>
+      </section>
+
+      <section id="evidence" class="section"><label class="current-label">Current</label><h2>Evidence contracts</h2>
+        <p>An evidence record is a byte-for-byte quotation bound to the exact document and section revision that was supplied to a parser. It is provenance, not a model confidence score.</p>
+        <h3>How it works</h3>
+        <ol class="mechanics">
+          <li><b>Restrict the corpus.</b> Build an allowed map from only the <code>KnowledgeDocument</code> values passed by the caller. A model cannot cite an ID outside that map.</li>
+          <li><b>Resolve the document.</b> Require <code>document_id</code>. If exactly one allowed document contains the quote, Mari may recover a missing ID; zero or multiple holders is rejected.</li>
+          <li><b>Match exact text.</b> Require a non-empty quote and test literal containment in the canonical document body. Fuzzy, normalized, or semantic matches are not accepted.</li>
+          <li><b>Resolve one section.</b> Split the document into current sections and find sections containing the quote. A repeated quote spanning multiple sections is rejected unless <code>section_id</code> selects exactly one.</li>
+          <li><b>Derive coordinates.</b> Mari computes <code>start = section.start + section.body.index(quote)</code> and <code>end = start + len(quote)</code>; it does not trust model-supplied offsets or revisions.</li>
+          <li><b>Bind revisions.</b> The accepted record receives the current <code>document.revision</code>, stable <code>section_id</code>, and content-derived <code>section.revision</code>. These become the invalidation key.</li>
+        </ol>
+        <div class="diagram evidence"><div class="source"><small>refunds.md · rev 8f31c2a</small><p>Enterprise refunds close after <mark>30 days</mark>.</p></div><i>literal containment<br>+ unique section</i><div class="record"><b>Evidence</b><code>document_id = …refunds.md</code><code>revision = 8f31c2a</code><code>quote = "30 days"</code><code>start = 31 · end = 38</code><code>section_id = enterprise</code><code>section_revision = sha256:…</code></div></div>
+        <div class="code"><header><span>evidence.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> parse_facts
+
+raw = {<span class="st">"facts"</span>: [{
+    <span class="st">"claim"</span>: <span class="st">"Enterprise refunds close after 30 days."</span>,
+    <span class="st">"evidence"</span>: [{<span class="st">"document_id"</span>: doc.document_id,
+                  <span class="st">"section_id"</span>: <span class="st">"enterprise"</span>,
+                  <span class="st">"quote"</span>: <span class="st">"30 days"</span>}],
+}]}
+fact = parse_facts([doc], raw)[<span class="nu">0</span>]
+e = fact.evidence[<span class="nu">0</span>]
+<span class="kw">assert</span> doc.body[e.start:e.end] == e.quote
+
+<span class="cm"># Rejected: unknown document, absent quote, or a repeated quote</span>
+<span class="cm"># whose section cannot be selected unambiguously.</span></code></pre></div>
+        <h3>Dependency conversion</h3>
+        <p><code>evidence_dependencies</code> projects each record to <code>(document_id, document_revision, section_id, section_revision)</code>, deduplicated by <code>(document_id, section_id)</code> and returned in stable order. Two records naming different revisions of the same key raise <code>ValueError</code>; silently choosing one would make reuse nondeterministic.</p>
+        <aside class="warning"><strong>What this proves—and does not prove</strong>The contract proves that the quoted characters occurred in one supplied source revision and records where. It does not prove entailment, source authority, completeness, or truth. Those require claim assessment, corroboration, authorization, and review.</aside>
+        <div class="source-block"><strong>Research and standards</strong><p><a class="paper" href="https://arxiv.org/abs/2305.14627">ALCE: citation correctness and completeness</a><a class="paper" href="https://arxiv.org/abs/2105.03011">QASPER: evidence-bearing document QA</a><a class="paper" href="https://arxiv.org/abs/2305.14251">FActScore: atomic factual claims</a><a class="paper" href="https://arxiv.org/abs/1803.05355">FEVER: evidence-backed verdicts</a><a class="paper" href="https://www.w3.org/TR/prov-dm/">W3C PROV: quotation, derivation, and revision</a></p><small>These works motivate inspectable evidence and revision provenance. Literal substring validation, unique-section resolution, and failure behavior are Mari engineering contracts.</small></div>
+      </section>
+
+      <section id="freshness" class="section"><label class="current-label">Current</label><h2>Freshness and impact</h2><p>Freshness is an exact dependency comparison. It answers “did an input revision change?”—not “is the answer still semantically correct?”</p>
+        <h3>How it works</h3>
+        <ol class="mechanics">
+          <li><b>Record dependencies.</b> Every derived artifact stores the document or section revision used to build it.</li>
+          <li><b>Select comparison granularity.</b> If a dependency names a section and the caller supplies a section-revision map, compare section hashes. Otherwise compare the containing document revision as a conservative fallback.</li>
+          <li><b>Classify every key.</b> Missing document/section → <code>missing</code>; empty expected/current revision → <code>unversioned</code>; unequal revisions → <code>stale</code>; otherwise → <code>current</code>.</li>
+          <li><b>Reduce deterministically.</b> Overall precedence is <code>missing &gt; unversioned &gt; stale &gt; current</code>. Changes and IDs are sorted, so the same inputs produce the same report.</li>
+          <li><b>Propagate impact.</b> <code>impacted_artifacts</code> evaluates each artifact independently and returns only non-current artifacts. Mari reports the set; the application chooses whether to regenerate, review, or retire them.</li>
+        </ol>
+        <div class="diagram dependency"><div><b>Policy answer</b><small>depends on § window</small></div><svg viewBox="0 0 120 40"><path d="M0 20 C45 20 75 20 120 20"/></svg><div class="changed"><b>§ window</b><small>30 → 45 days</small></div><svg viewBox="0 0 120 40"><path d="M0 20 C45 20 75 20 120 20"/></svg><div><b>Refresh queue</b><small>only affected artifacts</small></div></div>
+        <div class="status-order" aria-label="Freshness status precedence"><span class="missing"><b>1 · missing</b><small>source or section absent</small></span><span class="unversioned"><b>2 · unversioned</b><small>cannot compare safely</small></span><span class="stale"><b>3 · stale</b><small>revision differs</small></span><span class="current"><b>4 · current</b><small>all revisions equal</small></span></div>
+        <div class="code"><header><span>freshness.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> (
+    FreshnessStatus, assess_dependencies, assess_freshness,
+    impacted_artifacts,
+)
+
+report = assess_freshness(answer.evidence, current_revisions,
+    current_section_revisions=current_sections)
+<span class="kw">if not</span> report.reusable:
+    refresh(report.changes, report.missing_dependency_ids)
+
+stale = impacted_artifacts(dependencies_by_artifact, current_revisions,
+    current_section_revisions=current_sections)</code></pre></div>
+        <h3>Document edit versus affected section</h3>
+        <div class="code"><header><span>granularity.py</span><button>Copy</button></header><pre><code><span class="cm"># The document changed v1 → v2, but the cited section is still s1.</span>
+current_revisions = {doc_id: <span class="st">"v2"</span>}
+current_sections = {(doc_id, <span class="st">"refund-window"</span>): <span class="st">"s1"</span>}
+
+fine = assess_dependencies(deps, current_revisions,
+    current_section_revisions=current_sections)
+<span class="kw">assert</span> fine.status == FreshnessStatus.CURRENT
+
+coarse = assess_dependencies(deps, current_revisions)
+<span class="kw">assert</span> coarse.status == FreshnessStatus.STALE  <span class="cm"># safe fallback</span></code></pre></div>
+        <aside class="note"><strong>Operational consequence</strong>Section hashes avoid regenerating an answer when an unrelated section changed. Omitting the section map intentionally increases false-positive refreshes rather than risking stale reuse. Only <code>current</code> sets <code>report.reusable</code> to true.</aside>
+        <div class="source-block"><strong>Research and standards</strong><p><a class="paper" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems.pdf">Build Systems à la Carte: dependency-driven recomputation</a><a class="paper" href="https://arxiv.org/abs/2005.11401">RAG: updateable non-parametric knowledge and provenance</a><a class="paper" href="https://www.w3.org/TR/prov-dm/">W3C PROV: revision and derivation</a></p><small>Mari applies build-system invalidation to knowledge artifacts. Status precedence, section fallback, and reuse policy are explicit Mari contracts, not semantic change detection.</small></div>
+      </section>
+
+      <section id="sections" class="section"><label class="current-label">Current</label><h2>Sections and incremental fact scans</h2><p><code>document_sections</code> maps Markdown headings to stable section IDs and content revisions. <code>section_revisions</code> builds the current revision map. Fact scans can then skip unchanged sections.</p>
+        <h3>How it works</h3><p>Scan Markdown heading lines, treating content before the first heading as a preamble. Normalize each heading into a slug and suffix collisions deterministically. Store absolute body offsets and hash the section body into its revision. <code>pending_fact_sections</code> compares <code>(document_id, section_id) → revision</code> with the last committed scan and yields new or changed sections only. Persist new scan revisions only after extracted facts commit, or a failed run would incorrectly suppress retry.</p>
+        <div class="code"><header><span>fact_scan.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> (
+    document_sections, fact_scan_revisions, pending_fact_sections,
+)
+
+sections = document_sections(document)
+pending = pending_fact_sections([document], previous_scan_revisions)
+facts = [parse_facts([document], model(section.body)) <span class="kw">for</span> section <span class="kw">in</span> pending]
+next_revisions = fact_scan_revisions(pending)  <span class="cm"># persist only after facts commit</span></code></pre></div>
+        <div class="source-block"><strong>Research and standards</strong><p><a class="paper" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems.pdf">Build Systems à la Carte: change detection and recomputation</a><a class="paper" href="https://www.rfc-editor.org/rfc/rfc6920">RFC 6920: digest-based content identity</a></p><small>Markdown heading segmentation and slug collision rules are Mari engineering contracts.</small></div>
+      </section>
+
+      <section id="tags" class="section"><label class="current-label">Current</label><h2>Tags and links</h2><div class="split"><article><h3>Managed tags</h3><p><code>TagDefinition</code>, <code>TagAssignments</code>, <code>assign_tags</code>, <code>normalize_tag</code>, and <code>search_weight</code> keep curation separate from provider-owned documents, so resync does not erase it.</p></article><article><h3>Derived links</h3><p><code>extract_explicit_links</code> finds explicit references. <code>derive_links</code> adds bounded similarity links and produces typed <code>LinkCandidate</code> values.</p></article></div>
+        <h3>How it works</h3><p>Tag keys are normalized before add/remove set operations; definitions validate that assignments refer to known tags. Search weight combines assigned tag weights through deterministic policy rather than rewriting source relevance. Explicit-link extraction recognizes source references first. Similarity linking scores only caller-supplied candidate IDs, removes self-links, applies a threshold and limit, and sorts ties stably. Returned links are proposals; committing and interpreting them remains application policy.</p>
+        <div class="code"><header><span>curation.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> (
+    TagAssignments, TagDefinition, assign_tags, derive_links, search_weight,
+)
+
+definitions = {<span class="st">"canonical"</span>: TagDefinition(key=<span class="st">"canonical"</span>, label=<span class="st">"Canonical"</span>,
+    kind=<span class="st">"canonical"</span>, search_weight=<span class="nu">2.0</span>, behaviors=(<span class="st">"Wins conflicts"</span>,))}
+assignments = assign_tags(TagAssignments(), doc.document_id, definitions,
+    add=(<span class="st">"canonical"</span>,))
+weight = search_weight(doc.document_id, assignments, definitions)
+links = derive_links(doc.document_id, candidate_ids,
+    score=<span class="kw">lambda</span> source, target: similarity_scores[source, target])</code></pre></div>
+        <div class="source-block"><strong>Research basis</strong><p><a class="paper" href="https://doi.org/10.1145/956863.956972">Similarity measures for text processing</a><a class="paper" href="https://arxiv.org/abs/2502.12110">A-MEM: dynamic linked-note organization</a></p><small>Mari’s managed-tag overlay and bounded link proposal rules are deterministic curation contracts.</small></div>
+      </section>
+
+      <section id="workflows" class="section"><label class="current-label">Current</label><h2>Reviewed workflows and cached answers</h2><p>Reviewed workflow indexes match new requests to approved intents. Policy thresholds independently control speculative retrieval and direct cached-response reuse.</p>
+        <h3>How it works</h3><p>Build an index from reviewed workflow intent vectors. At query time, compute normalized similarity, retain only workflows whose dependencies are authorized, and choose the best match with stable ties. Crossing the lower threshold may start retrieval speculatively; crossing the higher threshold only makes reuse eligible. A cached response is returned only after its exact evidence dependencies pass freshness checks. Similarity never overrides ACL or revision failure.</p>
+        <div class="diagram thresholds"><div><b>0.00</b><small>run normally</small></div><div class="retr"><b>0.72</b><small>start retrieval</small></div><div class="reuse"><b>0.95</b><small>consider reuse</small></div><div><b>1.00</b></div></div>
+        <div class="code"><header><span>workflow.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.trajectories <span class="kw">import</span> (
+    WorkflowPolicy, build_reviewed_workflow_index, decide_reviewed_workflow,
+)
+
+index = build_reviewed_workflow_index(reviewed_workflows)
+decision = decide_reviewed_workflow(query_vectors, index, current_revisions,
+    policy=WorkflowPolicy(speculation_threshold=<span class="nu">0.72</span>, cache_threshold=<span class="nu">0.95</span>),
+    allowed_document_ids=authorized_document_ids)</code></pre></div>
+        <p>Related APIs: <code>match_reviewed_workflow</code>, <code>start_speculative_retrieval</code>, <code>match_cached_response</code>, and <code>workflow_freshness</code>. Reuse requires a strong match plus fresh, authorized dependencies.</p>
+        <div class="source-block"><strong>Research basis</strong><p><a class="paper" href="https://aclanthology.org/2023.nlposs-1.24/">GPTCache: semantic caching for language-model queries</a><a class="paper" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems.pdf">Build Systems à la Carte: dependency-valid reuse</a></p><small>The two thresholds, authorization gate, and exact freshness condition are Mari policy.</small></div>
+      </section>
+
+      <section id="trajectories" class="section"><label class="current-label">Current</label><h2>Trajectories and agent evaluation</h2><p><code>normalize_steps</code> converts runtime records into privacy-bounded <code>TrajectoryStep</code> values. <code>parse_trajectory_analysis</code> validates model-proposed phases. Mari provides adapters, not an agent loop.</p>
+        <h3>How it works</h3><p>Adapters map framework events into ordered <code>AgentEvent</code> values. Normalization assigns stable step positions, keeps allowlisted metadata, and redacts sensitive argument names and transport fields. Tool evaluation compares observed names and counts against expectations; outcome evaluation compares terminal paths and completion. A proposed phase analysis must cover every observed event exactly once with contiguous, non-overlapping ranges and known tool families.</p>
+        <div class="diagram timeline"><div><b>inspect</b><small>search_knowledge</small></div><i></i><div><b>reason</b><small>2 docs · 2 citations</small></div><i></i><div><b>answer</b><small>outcome: resolved</small></div></div>
+        <div class="code"><header><span>agents.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.agents <span class="kw">import</span> evaluate_outcome, evaluate_tools
+<span class="kw">from</span> mari_components.trajectories <span class="kw">import</span> normalize_steps
+
+steps = normalize_steps(runtime_events)
+tools = evaluate_tools(events, expected_tools=(<span class="st">"search_knowledge"</span>,))
+outcome = evaluate_outcome(paths=(<span class="st">"resolved"</span>,),
+    expected_paths=(<span class="st">"resolved"</span>,), completed=<span class="kw">True</span>)</code></pre></div>
+        <p><code>AgentEvent</code> and <code>EventKind</code> are framework-neutral. Optional adapters cover OpenAI Agents and LangChain/LangGraph. Normalization redacts common sensitive arguments; phase validation requires the returned ranges to cover observed events exactly.</p>
+        <div class="code"><header><span>trajectory_analysis.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.trajectories <span class="kw">import</span> parse_trajectory_analysis
+
+analysis = parse_trajectory_analysis(normalized_events, model_labels,
+    family_map={<span class="st">"search_product_knowledge"</span>: <span class="st">"inspect"</span>,
+                <span class="st">"answer"</span>: <span class="st">"answer"</span>})</code></pre></div>
+        <div class="source-block"><strong>Research and standards</strong><p><a class="paper" href="https://arxiv.org/abs/2308.03688">AgentBench: multi-environment agent evaluation</a><a class="paper" href="https://opentelemetry.io/docs/specs/otel/trace/">OpenTelemetry trace specification</a></p><small>Mari’s event schema, redaction list, exact phase coverage, and outcome predicates are library contracts.</small></div>
+      </section>
+
+      <section id="verification" class="section"><label class="current-label">Current</label><h2>Verification portfolios</h2><p>Verification functions score already-parsed values and retain all successful attempts and failures for audit.</p>
+        <h3>How it works</h3><p><code>best_of_n</code> calls the producer up to <code>n</code> times, parses each output, records parse failures without discarding successful siblings, scores valid candidates, and selects the highest score with stable first-wins ties; it may stop once the threshold is met. <code>verdict_consensus</code> counts typed verdicts rather than free text. Grounding scores combine declared deterministic components; they are used for ranking or abstention, never calibrated as probabilities.</p>
+        <div class="code"><header><span>verify.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.verification <span class="kw">import</span> best_of_n, score_grounded
+
+result = best_of_n(
+    <span class="kw">lambda</span>: model(question, documents),
+    <span class="kw">lambda</span> raw: parse_answer(question, documents, raw),
+    <span class="kw">lambda</span> answer: score_grounded(answer,
+        required_ideas=(<span class="st">"eligibility"</span>, <span class="st">"time limit"</span>)),
+    attempts=<span class="nu">3</span>, threshold=<span class="nu">0.90</span>)
+
+audit(result.selected, result.attempts, result.failures, result.stopped_early)</code></pre></div>
+        <div class="cards"><article><code>select_best</code><p>Scores existing candidates with stable tie-breaking.</p></article><article><code>verdict_consensus</code><p>Aggregates supported, contradicted, and uncertain assessments.</p></article><article><code>score_grounded</code><p>Evidence, coverage, completeness, corroboration, certainty.</p></article><article><code>harmonic_score</code></article><article><code>idea_completeness</code></article></div><aside class="note"><strong>Scores are not truth probabilities.</strong>They are deterministic quality signals for selection and abstention.</aside>
+        <div class="source-block"><strong>Research basis</strong><p><a class="paper" href="https://arxiv.org/abs/2203.11171">Self-consistency improves chain-of-thought reasoning</a><a class="paper" href="https://arxiv.org/abs/1803.05355">FEVER: evidence-based verification</a><a class="paper" href="https://arxiv.org/abs/2305.14627">ALCE: citation quality evaluation</a></p><small>Mari exposes an auditable selection portfolio; it does not reproduce model sampling or benchmark metrics.</small></div>
+      </section>
+
+      <section id="errors" class="section"><label class="current-label">Current</label><h2>Errors and deliberate boundaries</h2>
+        <h3>How it works</h3><p>Exceptions classify which boundary failed and whether repeating the same request can help. Connector adapters translate provider responses into authentication, transient, or permanent failures. Snapshot validation raises <code>IncompleteSnapshot</code> before absence can become deletion. Knowledge parsers raise <code>MalformedModelOutput</code> before an invalid value crosses into typed state. Mari never retries automatically because retry budgets, clocks, credentials, and side effects belong to the host.</p>
+        <table><thead><tr><th>Error</th><th>Meaning</th><th>Typical handling</th></tr></thead><tbody><tr><td><code>AuthenticationFailure</code></td><td>Credentials rejected</td><td>Request new credentials</td></tr><tr><td><code>TransientFailure</code></td><td>Temporary provider failure</td><td>Retry using app policy</td></tr><tr><td><code>PermanentFailure</code></td><td>Request cannot succeed unchanged</td><td>Require intervention</td></tr><tr><td><code>IncompleteSnapshot</code></td><td>Listing is not authoritative</td><td>Do not infer deletion</td></tr><tr><td><code>MalformedModelOutput</code></td><td>Generated value violates parser contract</td><td>Retry or abstain</td></tr></tbody></table>
+        <h3>Safe representations and connector contracts</h3><p>Credentials are excluded from connector configuration representations. <code>HttpRequest</code> representations redact authorization headers, bodies, URL userinfo, and common sensitive query parameters. <code>check_connector_contract</code> provides an executable contract check for third-party connector implementations.</p>
+        <div class="code"><header><span>connector_test.py</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components <span class="kw">import</span> SyncMode
+<span class="kw">from</span> mari_components.testing <span class="kw">import</span> check_connector_contract
+
+pages = tuple(my_connector(config, request, http=fake_http))
+report = check_connector_contract(pages, mode=SyncMode.FULL,
+    starting_cursor=request.cursor)
+assert report.pages == len(pages)</code></pre></div>
+        <p>Not included: model client, prompt framework, database, scheduler, credential store, authorization engine, agent runtime, or worker queue.</p>
+        <aside class="note"><strong>Engineering contract</strong>This taxonomy defines control flow and safe defaults. It is not a claim that provider APIs share identical failure semantics; each adapter must map its protocol into these categories and pass the connector contract checks.</aside>
+      </section>
+
+      <div class="chapter proposed-chapter"><b>Research-backed components and further design</b><span>Each section labels current implementation separately from proposed interfaces</span></div>
+
+      <section id="retrieval-construction" class="section proposed-section"><label class="current-label">Current</label><h2>Hypothetical and hierarchical retrieval</h2>
+        <p>These functions construct alternative query representations and bounded navigation structures. Generation, encoding, clustering, summarization, and relevance models are injected; Mari owns shape validation, deterministic IDs, budgets, and traces.</p>
+        <h3>How it works</h3><p><code>hypothetical_document_embedding</code> weights and averages caller-encoded hypothetical answers, then L2-normalizes the vector used for retrieval; generated text is never stored as fact. <code>build_summary_tree</code> repeatedly validates a caller-proposed partition of every current root, creates stable parent nodes, and stops when the root count no longer decreases. <code>walk_summary_tree</code> expands the highest-scoring children under explicit branch and visit budgets and returns visited paths plus exhaustion state.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://arxiv.org/abs/2212.10496">HyDE: hypothetical document embeddings</a><a class="paper" href="https://arxiv.org/abs/2401.18059">RAPTOR: recursive summary trees</a><a class="paper" href="https://arxiv.org/abs/2310.05029">MemWalker: bounded memory-tree navigation</a></p></div>
+        <div class="diagram flow"><article><b>Generate</b><small>hypothetical answer</small></article><i>→</i><article><b>Encode</b><small>normalized query vector</small></article><i>→</i><article><b>Retrieve</b><small>candidate sections</small></article><i>→</i><article><b>Organize</b><small>recursive clusters</small></article><i>→</i><article><b>Walk</b><small>branch + visit budget</small></article></div>
+
+        <h3>Paper-derived retrieval construction</h3>
+        <div class="code"><header><span>hyde_raptor_memwalker.py · current</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.retrieval <span class="kw">import</span> (
+    build_summary_tree, hypothetical_document_embedding, walk_summary_tree,
+)
+
+hyde_vector = hypothetical_document_embedding([
+    document_encoder(text) <span class="kw">for</span> text <span class="kw">in</span> generate_hypotheses(query)
+])
+
+tree = build_summary_tree(section_text_by_id,
+    cluster=<span class="kw">lambda</span> nodes, level: cluster_embeddings(nodes, level),
+    summarize=<span class="kw">lambda</span> children, level: summarize(children, level))
+walk = walk_summary_tree(tree, <span class="kw">lambda</span> node: similarity(query, node.text),
+    branch_factor=<span class="nu">2</span>, max_visits=<span class="nu">24</span>)
+sections = document_store.get_many(walk.leaf_ids)</code></pre></div>
+
+      </section>
+
+      <section id="adaptive-retrieval" class="section proposed-section"><label class="current-label">Current</label><h2>Adaptive retrieval and compression</h2>
+        <p>Retrieval can be triggered, corrected, rescored, or compressed at explicit decision points instead of running as one opaque model call.</p>
+        <h3>How it works</h3><p>CRAG routing maps evaluator scores through two thresholds to use the corpus, augment it with external search, or replace it. FLARE finds low-confidence tokens in a predicted future sentence, removes those tokens, and uses the remaining text as a retrieval query before regeneration. Self-RAG combines generation, retrieval, relevance, support, and utility signals with visible weights. RECOMP selects scored sentences under a token budget, then restores their source order.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://arxiv.org/abs/2310.11511">Self-RAG: reflection-token scoring</a><a class="paper" href="https://arxiv.org/abs/2401.15884">CRAG: corrective retrieval</a><a class="paper" href="https://arxiv.org/abs/2305.06983">FLARE: forward-looking active retrieval</a><a class="paper" href="https://arxiv.org/abs/2310.04408">RECOMP: selective compression</a></p></div>
+        <div class="code"><header><span>adaptive_retrieval.py · current</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.retrieval <span class="kw">import</span> (
+    CompressionSentence, plan_active_retrieval, plan_corrective_retrieval,
+    selective_compression,
+)
+<span class="kw">from</span> mari_components.verification <span class="kw">import</span> score_self_rag_candidate
+
+correction = plan_corrective_retrieval(retrieval_evaluator(query, hits),
+    lower_threshold=-<span class="nu">0.8</span>, upper_threshold=<span class="nu">0.6</span>)
+active = plan_active_retrieval(future.tokens, future.probabilities, threshold=<span class="nu">0.2</span>)
+reflection = score_self_rag_candidate(generation_probability=signals.generation,
+    retrieve_probability=signals.retrieve, relevance_probability=signals.relevant,
+    support_probability=signals.supported, utility=signals.utility)
+
+compressed = selective_compression([
+    CompressionSentence(sentence_id=s.id, text=s.text, token_count=count_tokens(s.text),
+        relevance=compressor.score(query, s.text)) <span class="kw">for</span> s <span class="kw">in</span> sentences
+], token_budget=<span class="nu">600</span>, relevance_threshold=<span class="nu">0.4</span>)</code></pre></div>
+
+      </section>
+
+      <section id="memory-organization" class="section proposed-section"><label class="current-label">Current</label><h2>Memory organization and evidence notes</h2>
+        <p>These functions link related notes, rank memories for recall, and decide whether retrieved evidence can support an answer.</p>
+        <h3>How it works</h3><p>Note evolution applies a link threshold and a stricter metadata-evolution threshold to caller-supplied similarities. Salience exponentially decays recency, min-max normalizes recency, importance, and relevance over the candidate set, then returns every weighted contribution. Evidence-note decisions validate per-document relevance and answer support before choosing retrieved evidence, explicitly allowed parametric knowledge, or <code>unknown</code>.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://arxiv.org/abs/2502.12110">A-MEM: dynamic note evolution</a><a class="paper" href="https://arxiv.org/abs/2304.03442">Generative Agents: recency, importance, and relevance</a><a class="paper" href="https://arxiv.org/abs/2311.09210">Chain-of-Note: sequential evidence decisions</a></p></div>
+        <div class="code"><header><span>memory_evidence.py · current</span><button>Copy</button></header><pre><code><span class="kw">from</span> mari_components.knowledge <span class="kw">import</span> (
+    MemorySignal, plan_note_evolution, rank_salient_memories,
+)
+<span class="kw">from</span> mari_components.verification <span class="kw">import</span> (
+    EvidenceNote, decide_from_evidence_notes,
+)
+
+evolution = plan_note_evolution(new_note.id, similarity_by_note_id,
+    link_threshold=<span class="nu">0.72</span>, evolution_threshold=<span class="nu">0.91</span>)
+salient = rank_salient_memories([
+    MemorySignal(memory_id=m.id, hours_since_access=hours_since(m.last_accessed),
+        importance=importance(m), relevance=relevance(query, m)) <span class="kw">for</span> m <span class="kw">in</span> memories
+], recency_decay=<span class="nu">0.995</span>, limit=<span class="nu">20</span>)
+decision = decide_from_evidence_notes([
+    EvidenceNote(document_id=n.document_id, relevant=n.relevant,
+        supports_answer=n.supports_answer) <span class="kw">for</span> n <span class="kw">in</span> model_notes
+])</code></pre></div>
+
+      </section>
+
+      <section id="admission" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Knowledge admission and mutation planning</h2><p>Admission is evaluated before reconciliation. A candidate may be valid JSON and still be unsafe, low-authority, redundant, or unsupported. Reconciliation runs only for accepted candidates.</p>
+        <h3>How it works</h3><p>Run provenance, evidence-span, recalled-input, secret, external-instruction, authority, and confidence rules over the candidate. Aggregate rule results into <code>ACCEPT</code>, <code>DEFER</code>, <code>REJECT</code>, or <code>QUARANTINE</code> with reason codes. Only accepted candidates reach mutation reconciliation, which validates add, merge, supersede, retract, or unchanged operations against the current canonical slot without writing storage.</p>
+        <div class="source-block"><strong>Papers and standards</strong><p><a class="paper" href="https://arxiv.org/abs/2302.12173">Indirect prompt injection</a><a class="paper" href="https://www.w3.org/TR/prov-overview/">W3C PROV</a><a class="paper" href="https://arxiv.org/abs/2504.19413">Mem0: memory mutation operations</a></p><small>Disposition precedence and commit boundaries are proposed Mari contracts.</small></div>
+        <div class="code proposed-code"><header><span>proposed / write_plan.py</span><button>Copy</button></header><pre><code>candidate = extractor.propose(observation)
+admission = admit(candidate,
+    rules=[RequireEvidenceSpan(), RejectRecalledInput(), QuarantineSecrets(),
+           QuarantineExternalInstructions(), EnforceSourceAuthority()],
+    thresholds=AdmissionThresholds(accept=<span class="nu">0.90</span>, defer=<span class="nu">0.65</span>))
+
+<span class="kw">match</span> admission.disposition:
+    <span class="kw">case</span> ACCEPT:
+        mutation = reconcile(candidate, current=artifact_store.canonical_slot(candidate))
+        <span class="cm"># ADD | MERGE | SUPERSEDE | RETRACT | UNCHANGED</span>
+    <span class="kw">case</span> DEFER: review_queue.put(candidate, admission.reasons)
+    <span class="kw">case</span> QUARANTINE: quarantine.put(candidate, admission.reasons)
+    <span class="kw">case</span> REJECT: audit.record(admission)</code></pre></div>
+
+      </section>
+
+      <section id="entity-resolution" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Entity resolution with explicit uncertainty</h2><p>The cascade spends expensive work only after cheap deterministic checks. It never converts an ambiguous candidate into a merge without a configured threshold or review decision.</p>
+        <h3>How it works</h3><p>Block candidates by tenant, scope, and entity type; compare normalized exact aliases; calculate field-agreement and fuzzy scores; retrieve a small embedding neighborhood only for unresolved candidates; then apply separate link and review thresholds. Scores above link become a proposed canonical ID, scores in the review band retain all candidates and their feature trace, and lower scores remain distinct entities.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://doi.org/10.1080/01621459.1969.10501049">Fellegi–Sunter: probabilistic record linkage</a></p></div>
+        <div class="diagram resolution-cascade"><span>scope + type block</span><i>→</i><span>normalized exact</span><i>→</i><span>field/fuzzy score</span><i>→</i><span>embedding candidates</span><i>→</i><span>link · reject · review</span></div>
+        <div class="code proposed-code"><header><span>proposed / resolve.py</span><button>Copy</button></header><pre><code>resolver = EntityResolver([
+    ScopeAndTypeBlock(), NormalizedAliasMatch(),
+    ProbabilisticFieldMatch(link=<span class="nu">0.95</span>, review=<span class="nu">0.72</span>),
+    EmbeddingCandidates(index=entity_index, limit=<span class="nu">10</span>),
+])
+resolution = resolver.resolve(candidate, scope=artifact.scope)
+<span class="kw">if</span> resolution.ambiguous:
+    review_queue.put(resolution.candidates, resolution.comparison_trace)</code></pre></div>
+
+      </section>
+
+      <section id="graph-processing" class="section proposed-section"><label class="proposed-label">Current and proposed</label><h2>Graph recall and corpus aggregation</h2><p>Passage retrieval and corpus summarization are different operations. Personalized PageRank is a current bounded multi-hop recall function. Leiden communities and map-reduce reports are proposed, separately versioned aggregation stages.</p>
+        <h3>How it works</h3><p>Link query mentions to authorized seed nodes, induce an allowed subgraph, and propagate Personalized PageRank mass until tolerance or iteration limits; project node mass back to evidence-bearing sections. Separately, Leiden partitions the graph into well-connected communities, recursive grouping forms levels, and evidence-linked community reports support global map-reduce queries. Local queries fan out from entities; drift queries start globally and open bounded local branches.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://arxiv.org/abs/2405.14831">HippoRAG: Personalized PageRank recall</a><a class="paper" href="https://doi.org/10.1038/s41598-019-41695-z">Leiden community detection</a><a class="paper" href="https://arxiv.org/abs/2404.16130">GraphRAG: community reports and global query</a></p></div>
+        <div class="code proposed-code"><header><span>proposed / graph_algorithms.py</span><button>Copy</button></header><pre><code>recall = PersonalizedPageRank(
+    seeds=link_query(query, entities, facts), damping=<span class="nu">0.50</span>, hops=<span class="nu">3</span>,
+    edge_filter=AuthorizedAt(scope=user.scope, at=query.time),
+    project_to=<span class="st">"source_sections"</span>)
+
+communities = HierarchicalLeiden(resolution=<span class="nu">1.0</span>, max_size=<span class="nu">40</span>).fit(graph)
+reports = summarize_communities(communities, evidence_policy=ExactEvidence())
+
+answer = query_corpus(query, mode=<span class="st">"global"</span>, reports=reports,
+    reduction=RatedMapReduce(max_partial_answers=<span class="nu">24</span>))</code></pre></div>
+
+      </section>
+
+      <section id="consolidation" class="section proposed-section"><label class="proposed-label">Partially current</label><h2>Tiered memory consolidation</h2><p>Tiers are policies over cost and lifecycle, not hard-coded stores. Topic segmentation is current; compression, promotion, and offline scheduling are proposed. Each promotion creates a dependency-bearing proposal, and raw observations remain available for audit.</p>
+        <h3>How it works</h3><p>Filter observations cheaply, group them at attention-peak/similarity-valley topic boundaries, compress within bounded groups, and score promotion from recurrence, recency, usefulness, and evidence diversity. Expensive resolving, superseding, and summarization run in an offline call/token budget. Promotion creates a new artifact revision linked to every contributing observation.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://arxiv.org/abs/2510.18866">LightMem: topic-aware consolidation and offline updates</a><a class="paper" href="https://arxiv.org/abs/2506.06326">MemoryOS: tiered agent memory</a></p></div>
+        <div class="diagram promotion"><div><b>Observation buffer</b><small>cheap filters · content hashes</small></div><i>topic boundary</i><div><b>Session groups</b><small>bounded compression</small></div><i>offline window</i><div><b>Consolidated artifacts</b><small>resolve · supersede · review</small></div></div>
+        <div class="code proposed-code"><header><span>proposed / consolidation.py</span><button>Copy</button></header><pre><code>policy = ConsolidationPolicy(
+    segment=TopicBoundary(window=<span class="nu">12</span>, threshold=<span class="nu">0.68</span>),
+    promote=PromotionScore(recurrence=<span class="nu">0.30</span>, recency=<span class="nu">0.15</span>,
+        usefulness=<span class="nu">0.35</span>, evidence_diversity=<span class="nu">0.20</span>),
+    schedule=OfflineWindow(max_model_calls=<span class="nu">20</span>, max_tokens=<span class="nu">50000</span>))
+plan = plan_consolidation(observations, policy=policy)
+commit(review(plan.mutations), dependencies=plan.dependencies)</code></pre></div>
+
+      </section>
+
+      <section id="projections" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Event sourcing and disposable projections</h2><p>Canonical artifacts and append-only events remain authoritative. Search indexes, backlink tables, graph views, digests, and human-readable logs are projections with explicit build identities and safe swap semantics.</p>
+        <h3>How it works</h3><p>Append a validated event with an expected generation, fold ordered events through a deterministic projector into a staging version, and record schema plus embedding/configuration fingerprints. Validate counts, checksums, scope isolation, and sample queries before atomically switching the current pointer. A failed replay never replaces the last valid projection, and retaining the prior pointer makes rollback constant-time.</p>
+        <div class="source-block"><strong>Papers and standards</strong><p><a class="paper" href="https://arxiv.org/abs/2006.12117">Data pipeline reproducibility</a><a class="paper" href="https://arxiv.org/abs/1402.2237">Invariant confluence</a><a class="paper" href="https://www.w3.org/TR/prov-overview/">W3C PROV</a></p></div>
+        <div class="diagram projection-flow"><div><b>Canonical artifacts</b><small>documents · events · reviews</small></div><i>deterministic fold</i><div><b>Staging projections</b><small>vector · lexical · graph · Markdown</small></div><i>validate + swap</i><div><b>Current read version</b><small>rollback pointer retained</small></div></div>
+        <div class="code proposed-code"><header><span>proposed / projections.py</span><button>Copy</button></header><pre><code>events.append(KnowledgeEvent(kind=<span class="st">"artifact.superseded"</span>, payload=mutation,
+    actor=reviewer, expected_generation=<span class="nu">41</span>))
+
+build = rebuild_projection(events, projector=SearchProjector(
+    embedding_identity=embedder.fingerprint(), schema_version=<span class="st">"3"</span>))
+validate(build, checks=[DocumentCount(), Checksums(), ScopeIsolation(), SampleQueries()])
+projections.atomic_swap(build, retain_previous=<span class="kw">True</span>)
+
+<span class="cm"># A failed build never replaces the last valid read version.</span></code></pre></div>
+
+      </section>
+
+      <section id="procedural-learning" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Procedural learning and regression gates</h2><p>Execution feedback can propose procedural updates, but promotion depends on held-out cases, negative outcomes, cross-procedure interference, and explicit review.</p>
+        <h3>How it works</h3><p>Reflect over a trajectory and observed outcome, turn the reflection into atomic add/update/tag/remove operations, and apply the patch to a copy of the active skillbook. Evaluate that candidate on its own cases, related-procedure cases, and known failures. Hard gates reject grounding or ACL regressions; passing creates a review proposal rather than activating it automatically. Worked, failed, and partial attempts remain separately retrievable.</p>
+        <div class="source-block"><strong>Papers</strong><p><a class="paper" href="https://arxiv.org/abs/2510.04618">Agentic Context Engineering: incremental skillbooks</a><a class="paper" href="https://arxiv.org/abs/2303.11366">Reflexion: learning from verbal feedback</a><a class="paper" href="https://arxiv.org/abs/2410.10813">LongMemEval: long-horizon memory evaluation</a></p></div>
+        <div class="code proposed-code"><header><span>proposed / skillbook.py</span><button>Copy</button></header><pre><code>reflection = reflect(trajectory, outcome=outcome, evidence=observed_context)
+patch = curate(reflection, operations={<span class="st">"ADD"</span>, <span class="st">"UPDATE"</span>, <span class="st">"TAG"</span>, <span class="st">"REMOVE"</span>})
+candidate = skillbook.apply_to_copy(patch)
+
+gate = regression_gate(candidate, baseline=skillbook.active,
+    suites=[own_cases, related_procedure_cases, known_failures],
+    require={TaskSuccess(): NoRegression(), Groundedness(): AtLeast(<span class="nu">0.95</span>),
+             ACLLeakage(): Exactly(<span class="nu">0.0</span>)})
+<span class="kw">if</span> gate.passed:
+	    skillbook.propose(candidate, trace=gate.trace)  <span class="cm"># human promotion remains explicit</span></code></pre></div>
+      </section>
+
+      <section id="memory-evaluation" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Long-horizon memory evaluation</h2>
+        <p>A memory system needs separate measurements for writing, updating, retrieving, temporal reasoning, abstaining, and respecting context limits. One aggregate answer score hides which subsystem failed.</p>
+        <h3>How it works</h3><p>Freeze conversations, source revisions, expected evidence, and change events into cases. Replay each case under several corpus sizes and context budgets. Score extraction at write time, evidence recall at query time, cross-session synthesis, ordering and date reasoning, correction after source updates, abstention when evidence is absent, and ACL leakage. Store per-stage traces with every score so a regression points to the responsible parser, index, policy, or packing decision.</p>
+        <div class="metric-grid"><div><b>Extraction</b><span>precision · recall · evidence</span></div><div><b>Retrieval</b><span>recall@k · rank · authorization</span></div><div><b>Synthesis</b><span>support · completeness</span></div><div><b>Temporal</b><span>order · valid time · updates</span></div><div><b>Abstention</b><span>unsupported-answer rate</span></div><div><b>Operations</b><span>tokens · latency · refresh work</span></div></div>
+        <div class="code proposed-code"><header><span>proposed / memory_eval.py</span><button>Copy</button></header><pre><code>report = evaluate_memory_system(system, cases,
+    corpus_sizes=(<span class="nu">100</span>, <span class="nu">10_000</span>, <span class="nu">1_000_000</span>),
+    context_budgets=(<span class="nu">2_000</span>, <span class="nu">8_000</span>, <span class="nu">32_000</span>),
+    metrics=[ExtractionF1(), EvidenceRecall(k=<span class="nu">10</span>), UpdateFidelity(),
+             TemporalAccuracy(), AbstentionPrecision(), ACLLeakage()])
+
+report.by_capability[<span class="st">"updates"</span>]
+report.failures  <span class="cm"># case, stage, revisions, trace, observed output</span></code></pre></div>
+        <div class="source-block"><strong>Paper</strong><p><a class="paper" href="https://arxiv.org/abs/2410.10813">LongMemEval: five long-term memory capabilities</a></p><small>The multi-scale replay matrix and ACL/update constraints are proposed Mari evaluation requirements.</small></div>
+      </section>
+
+      <section id="artifacts" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Unified artifact model</h2><p>A generic envelope would give facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.</p>
+        <h3>How it works</h3><p>The payload type <code>T</code> holds domain content; the envelope holds governance. Artifact identity stays stable while each revision is immutable. Evidence and <code>derived_from</code> capture inputs, <code>generated_by</code> captures the producing activity/configuration, validity bounds describe when the claim applies, and <code>supersedes</code> closes a lineage edge without erasing history. Stores reject a revision if its evidence, scope, or predecessor is invalid.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://www.w3.org/TR/prov-overview/">W3C PROV</a> models entities, activities, agents, derivation, revision, and responsibility. <a class="paper" href="https://arxiv.org/abs/1809.06532">Nanopublications</a> attach provenance and metadata to atomic assertions. These results require first-class lineage; the single generic Python envelope is a Mari design choice to validate across artifact types.</aside>
+        <div class="diagram artifact"><div><b>KnowledgeArtifact[T]</b></div><div><span>identity + revision</span><span>KnowledgeScope</span><span>evidence</span><span>valid time</span><span>review state</span><span>generator</span><span>supersedes</span></div></div>
+        <div class="code proposed-code"><header><span>proposed / artifacts.py</span><button>Copy</button></header><pre><code>artifact = KnowledgeArtifact[PolicyFact](
+    id=<span class="st">"fact:refund-window:enterprise"</span>, revision=<span class="st">"sha256:8f31…"</span>,
+    value=PolicyFact(days=<span class="nu">30</span>),
+    scope=KnowledgeScope(tenant=<span class="st">"acme"</span>, space=<span class="st">"support"</span>),
+    evidence=answer.evidence, valid_from=<span class="st">"2026-01-01"</span>, valid_to=<span class="kw">None</span>,
+    recorded_at=clock.now(), review_state=ReviewState.APPROVED,
+    generated_by=Activity(<span class="st">"refund-policy/v4"</span>, model=<span class="st">"extractor@2026-08"</span>),
+    derived_from=(<span class="st">"github:policy/refunds.md@8f31c2a"</span>,),
+    supersedes=(<span class="st">"fact:refund-window:enterprise@v2"</span>,))</code></pre></div>
+      </section>
+
+      <section id="stores" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Storage protocols and conformance</h2><p>Capability protocols would allow independent document, artifact, vector, lexical, and graph implementations.</p>
+        <h3>How it works</h3><p>Protocols specify observable behavior rather than backend classes. A store implementation declares capabilities, then runs a shared conformance suite against replay, atomic revision, isolation, deletion, deterministic ordering, and point-in-time cases. Cross-store operations use an application transaction/outbox boundary; Mari does not pretend separate databases share an atomic commit. Indexes remain disposable projections that can be rebuilt from documents and artifacts.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://arxiv.org/abs/1402.2237">Invariant confluence</a> shows that safe coordination depends on application invariants. Mari therefore specifies atomicity, replay, isolation, time-travel, and deletion behavior independently of backend methods. The protocol split is library design, not a result asserted by the paper.</aside>
+        <div class="code proposed-code"><header><span>proposed / stores.py</span><button>Copy</button></header><pre><code><span class="kw">class</span> <span class="fn">DocumentStore</span>(Protocol):
+    <span class="kw">def</span> <span class="fn">commit_sync</span>(self, plan: SyncPlan) -&gt; <span class="kw">None</span>: ...
+    <span class="kw">def</span> <span class="fn">get_many</span>(self, ids: Iterable[str]) -&gt; Sequence[KnowledgeDocument]: ...
+
+<span class="kw">class</span> <span class="fn">ArtifactStore</span>(Protocol):
+    <span class="kw">def</span> <span class="fn">apply</span>(self, mutation: ArtifactMutation) -&gt; <span class="kw">None</span>: ...
+    <span class="kw">def</span> <span class="fn">at_time</span>(self, id: str, when: datetime) -&gt; KnowledgeArtifact | <span class="kw">None</span>: ...
+
+<span class="kw">class</span> <span class="fn">VectorIndex</span>(Protocol): ...
+<span class="kw">class</span> <span class="fn">LexicalIndex</span>(Protocol): ...
+<span class="kw">class</span> <span class="fn">GraphIndex</span>(Protocol): ...</code></pre></div><p>Conformance tests would cover replay safety, deterministic ordering, point-in-time reads, tenant isolation, atomic revisions, and delete behavior.</p>
+      </section>
+
+      <section id="pipelines" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Typed knowledge pipelines</h2><p>Composable stages would transform typed inputs and emit reviewable <code>ArtifactMutation</code> values: create, revise, supersede, retract, or leave unchanged.</p>
+        <h3>How it works</h3><p>Each stage declares input/output types, a versioned configuration fingerprint, and whether it is pure or calls an injected service. The runner topologically orders stages, passes immutable batches, records input revisions and stage results, and stops dependent stages after failure. Outputs are mutation proposals; a final policy validates evidence, scope, and expected artifact revision before the application commits them.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://arxiv.org/abs/2006.12117">Pipeline provenance research</a> ties reproducibility to captured inputs, transformations, and configuration. <a class="paper" href="https://doi.org/10.1145/3411764.3445518">Data Cascades</a> documents how upstream data failures compound downstream. This motivates stage identities, dependency traces, and visible failures; the generic stage and mutation types are Mari's composition boundary.</aside>
+        <div class="diagram stages"><span>extract</span><i>→</i><span>resolve</span><i>→</i><span>link</span><i>→</i><span>review</span><i>→</i><span>index</span></div>
+        <div class="code proposed-code"><header><span>proposed / pipeline.py</span><button>Copy</button></header><pre><code>pipeline = Pipeline[KnowledgeDocument, KnowledgeArtifact](
+    extract(FactExtractor(model=model)), resolve(EntityResolver(catalog=entities)),
+    link(EvidenceLinker()), review(ReviewPolicy(min_corroboration=<span class="nu">2</span>)),
+    index(vector=vector_index, graph=graph_index))
+
+result = pipeline.run(changed_documents)
+artifact_store.apply(result.mutations)
+trace_store.write(result.trace)</code></pre></div>
+      </section>
+
+      <section id="context" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Retrieval plans and context envelopes</h2><p>A retrieval plan would run explicit arms, fuse ranks, enforce scope and freshness, rerank, and pack a bounded context envelope. Its trace explains inclusion and exclusion.</p>
+        <h3>How it works</h3><p>Run semantic, lexical, graph, and recency arms over authorized IDs. Convert arm scores to ranks and combine them with reciprocal-rank fusion, then discard stale dependencies, rerank survivors, diversify near-duplicates, and greedily pack whole evidence excerpts under token/document limits. The envelope contains rendered context plus source revisions and per-candidate include/exclude reasons, allowing the caller to reproduce what the model saw.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://arxiv.org/abs/2005.11401">RAG</a> motivates explicit, updateable non-parametric memory and provenance; <a class="paper" href="https://arxiv.org/abs/2402.03367">RAG-Fusion</a> and <a class="paper" href="https://www.cs.cmu.edu/afs/cs/Web/People/jgc/publication/MMR_DiversityBased_Reranking_SIGIR_1998.pdf">MMR</a> back fusion and diversity; <a class="paper" href="https://arxiv.org/abs/2307.03172">Lost in the Middle</a> makes budget and evidence order evaluation requirements. <code>ContextEnvelope</code> is Mari's proposed carrier for those observable decisions.</aside>
+        <div class="diagram context"><div class="arms"><span>semantic</span><span>lexical</span><span>graph</span><span>recent</span></div><i>RRF</i><div><b>authorize</b><b>freshness</b><b>rerank</b></div><i>budget</i><div><strong>ContextEnvelope</strong><small>excerpts · evidence · revisions · trace</small></div></div>
+        <div class="code proposed-code"><header><span>proposed / context.py</span><button>Copy</button></header><pre><code>plan = RetrievalPlan(arms=[Semantic(vector_index, limit=<span class="nu">40</span>),
+    Lexical(lexical_index, limit=<span class="nu">30</span>), GraphExpand(graph_index, hops=<span class="nu">2</span>),
+    RecentChanges(window=<span class="st">"14d"</span>)], fusion=ReciprocalRankFusion(k=<span class="nu">60</span>),
+    reranker=ExactMaxSim())
+
+context = assemble_context(query, plan=plan, scope=user.knowledge_scope,
+    budget=ContextBudget(tokens=<span class="nu">6000</span>, documents=<span class="nu">12</span>))
+model(context.render())
+audit(context.retrieval_trace)</code></pre></div>
+      </section>
+
+      <section id="graph" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Bi-temporal knowledge graph</h2><p>Statements would track valid time (when the claim applied) and transaction time (when the system learned it), supporting historical queries and late corrections.</p>
+        <h3>How it works</h3><p>An assertion is append-only and carries two intervals. A correction learned today may close an older assertion’s transaction interval while preserving its historical valid interval. Query <code>at</code> filters valid time; <code>known_at</code> filters transaction time; both must contain their requested timestamp. Contradictions create explicit edges or superseding revisions instead of destructive overwrites.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://arxiv.org/abs/2501.13956">Zep</a> uses a temporally aware graph to maintain historical relationships for agent memory, while the <a class="paper" href="https://arxiv.org/abs/2201.08236">temporal knowledge-graph survey</a> catalogs representations and inference tasks for facts that change over time. Mari adds explicit valid-time and transaction-time query semantics; interval boundaries and contradiction policy require conformance tests.</aside>
+        <div class="diagram bitemporal"><div><b>valid time</b><span>Jan ───────── Aug</span></div><div><b>transaction time</b><span>learned Sep 01 ───▶</span></div></div>
+        <div class="code proposed-code"><header><span>proposed / graph.py</span><button>Copy</button></header><pre><code>graph.assert_fact(subject=<span class="st">"plan:enterprise"</span>, predicate=<span class="st">"refund_window_days"</span>,
+    object=<span class="nu">30</span>, valid_time=Interval(<span class="st">"2026-01-01"</span>, <span class="st">"2026-08-31"</span>),
+    transaction_time=clock.now(), evidence=evidence)
+
+then = graph.query(at=<span class="st">"2026-06-01"</span>, known_at=<span class="st">"2026-09-01"</span>)
+now = graph.query(at=clock.now(), known_at=clock.now())</code></pre></div>
+      </section>
+
+      <section id="procedures" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Procedural knowledge</h2><p>Successful trajectories could produce versioned procedure candidates. Regression gates and human review would separate observed behavior from active behavior.</p>
+        <h3>How it works</h3><p>Cluster successful traces by reviewed intent, extract a parameterized tool/action sequence with preconditions and failure exits, and retain links to the source traces. Replay the candidate on held-out cases, compare task success, tool correctness, grounding, cost, and regressions with the active version, then produce a review proposal. Only an explicit application commit can activate a version; failed attempts remain negative evidence.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://arxiv.org/abs/2305.16291">Voyager</a> stores compositional skills and improves them using execution feedback, errors, and self-verification. <a class="paper" href="https://arxiv.org/abs/2303.11366">Reflexion</a> retains verbal feedback for later trials. They motivate persistent procedural candidates; held-out regression gates and human promotion are conservative Mari policies, not conclusions of either paper.</aside>
+        <div class="diagram lifecycle"><span>trajectories</span><i>→</i><span>candidate</span><i>→</i><span>regression suite</span><i>→</i><span>review</span><i>→</i><span>active version</span></div>
+        <div class="code proposed-code"><header><span>proposed / procedures.py</span><button>Copy</button></header><pre><code>candidate = learn_procedure(successful_runs, intent=<span class="st">"process enterprise refund"</span>)
+report = evaluate_procedure(candidate, cases=refund_regression_suite,
+    metrics=[TaskSuccess(), ToolCorrectness(), Groundedness(), Cost()])
+<span class="kw">if</span> report.passes_gates:
+    procedures.propose(candidate, report=report)  <span class="cm"># review still required</span></code></pre></div>
+      </section>
+
+      <section id="compiler" class="section proposed-section"><label class="proposed-label">Proposed</label><h2>Evaluation and compilation</h2><p>A compiler would search pipeline and retrieval configurations against knowledge-system objectives and return a reviewable, versioned configuration proposal.</p>
+        <h3>How it works</h3><p>Declare tunable parameters, hard constraints, and optimization metrics. For each candidate configuration, run the same frozen training cases, cache stage results by configuration/input fingerprints, reject any candidate that violates provenance, update fidelity, or ACL constraints, and rank feasible candidates on grounded recall, cost, and latency. Validate the selected configuration once on held-out cases; compilation returns a report and proposal, never a deployment side effect.</p>
+        <aside class="note"><strong>Research basis</strong><a class="paper" href="https://arxiv.org/abs/2310.03714">DSPy</a> compiles parameterized LM pipelines against a declared metric. Mari generalizes the search space to retrieval, indexing, parsing, graph, consolidation, and packing configuration. Hard provenance, update-fidelity, and ACL constraints are Mari requirements and must be evaluated independently.</aside>
+        <div class="metric-grid"><div><b>Grounded recall</b><span>maximize</span></div><div><b>Provenance accuracy</b><span>require 1.0</span></div><div><b>Update fidelity</b><span>require 1.0</span></div><div><b>ACL leakage</b><span>require 0.0</span></div><div><b>Context tokens</b><span>minimize</span></div><div><b>Latency p95</b><span>minimize</span></div></div>
+        <div class="code proposed-code"><header><span>proposed / compile.py</span><button>Copy</button></header><pre><code>compiled = compile_knowledge_system(pipeline, trainset=train_cases,
+    validation=validation_cases,  <span class="cm"># optimizer may inspect these; never test_cases</span>
+    objectives={GroundedRecall(): Maximize(), ProvenanceAccuracy(): Require(<span class="nu">1.0</span>),
+        UpdateFidelity(): Require(<span class="nu">1.0</span>), ACLLeakage(): Require(<span class="nu">0.0</span>),
+        ContextTokens(): Minimize(), LatencyP95(): Minimize()},
+    search_space=KnowledgeConfigSpace())
+
+review(compiled.config, compiled.report, compiled.failures)
+test_report = evaluate_once(compiled.config, cases=test_cases)
+deploy(compiled.config, evidence=test_report)  <span class="cm"># explicit application action</span></code></pre></div>
+      </section>
+      <footer><span>mari-kit</span><span>Apache-2.0</span><span>Python 3.11–3.13</span><a href="#overview">Back to top ↑</a></footer>
+    </main>
+  </div>
+  <div class="toast" role="status" aria-live="polite">Copied</div><script src="script.js"></script>
+</body>
+</html>

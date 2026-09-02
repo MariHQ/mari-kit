@@ -42,6 +42,12 @@ def parse_digest(
     documents: Iterable[KnowledgeDocument],
     model_output: object,
 ) -> DigestSummary:
+    """Validate an evidence-linked overall and topic-level digest.
+
+    QAGS (arXiv:2004.04228) and SummaC (arXiv:2111.09525) motivate treating
+    summary consistency as separate from fluency. Mari resolves citations but
+    does not treat exact quotation as proof of semantic entailment.
+    """
     allowed = {document.document_id: document for document in documents}
     value = require_object(model_output, recipe=DIGEST_VERSION)
     topics = value.get("topics")
@@ -75,6 +81,7 @@ def parse_impact(
     documents: Iterable[KnowledgeDocument],
     model_output: object,
 ) -> ImpactAssessment:
+    """Validate an in-scope, optionally evidenced change-impact proposal."""
     allowed = {document.document_id: document for document in documents}
     value = require_object(model_output, recipe=IMPACT_VERSION)
     affected = value.get("affected_document_ids")

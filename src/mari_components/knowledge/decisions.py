@@ -18,6 +18,12 @@ def parse_decisions(
     documents: Iterable[KnowledgeDocument],
     model_output: object,
 ) -> tuple[DecisionCandidate, ...]:
+    """Validate decision statements with evidence from supplied documents.
+
+    Decision detection is studied by Hsueh and Moore (NAACL 2007, N07-1004)
+    and Karan et al. (SIGDIAL 2021, 2021.sigdial-1.56). Mari accepts proposed
+    decisions but does not infer them from topical language.
+    """
     allowed = {document.document_id: document for document in documents}
     rows = require_list(model_output, "decisions", recipe=DECISION_VERSION)
     output: list[DecisionCandidate] = []

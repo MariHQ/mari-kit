@@ -55,3 +55,15 @@ report = regression_gate(
 if report.passed:
     submit_for_review(candidate, report)  # application action, never automatic
 ```
+
+## Supporting mining functions
+
+| Function | Role before promotion |
+|---|---|
+| `mine_trajectory_process(runs, activity_aliases=...)` | Shows repeated variants, transitions, parallel calls, and rework before a procedure is proposed |
+| `mine_trajectory_invariants(..., minimum_support=1.0, minimum_applicable=2)` | Produces reviewable regularities from explicitly successful traces only |
+| `compare_trajectories(..., mode=..., matches=...)` | Measures candidate paths against a reference without assuming one exact argument representation |
+| `select_diverse_trajectories(vectors, limit=..., relevance=..., density=...)` | Selects behaviorally separated review cases from caller embeddings |
+
+These functions expose evidence and unmatched cases. They do not decide that a
+frequent behavior is desirable or that a procedure should be activated.

@@ -6,6 +6,9 @@
 | Input | Derived object | Activation boundary |
 |---|---|---|
 | Runtime events | Redacted normalized trajectory | Immediate record |
+| Trace exports | OpenAI, Anthropic, or OTLP normalized steps | Unknown outcomes remain unknown |
+| Trajectory corpus | Direct-follow graph, variants, rework, invariants | Caller reviews findings |
+| Model-proposed intent | Evidence-bound intent candidate | Independent semantic review |
 | Successful trajectories | Procedure candidate | Held-out gates and review |
 | Reflections | Skillbook mutation proposal | Never auto-promoted |
 | Reviewed procedure | Cached workflow match | Fresh and authorized dependencies required |
@@ -25,6 +28,8 @@
 :maxdepth: 1
 
 trajectories
+trajectory-mining
+intent-mining
 procedural-learning
 procedures
 ```

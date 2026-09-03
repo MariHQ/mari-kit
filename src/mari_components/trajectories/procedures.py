@@ -62,7 +62,9 @@ def learn_procedure(
         raise ValueError("intent and at least one trajectory are required")
     ordered = sorted(trajectories.items())
     if any(
-        not identifier.strip() or not steps or any(not step.ok for step in steps)
+        not identifier.strip()
+        or not steps
+        or any(step.ok is not True for step in steps)
         for identifier, steps in ordered
     ):
         raise ValueError(

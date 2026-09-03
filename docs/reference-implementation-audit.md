@@ -47,6 +47,14 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | Delimited data | `frictionlessdata/frictionless-py` at `5debad3` | MIT; permissive schema/dialect reference | `parse_delimited`, positioned record issues, caller identity fields |
 | Incremental syntax trees | `tree-sitter/py-tree-sitter` at `2e556e5` and `tree-sitter/tree-sitter-python` at `26855ea` | MIT; permissive syntax/span oracle | `SourceCoordinateMap`, `parse_python`; three definitions and UTF-8 byte spans differentially matched |
 | PDF extraction | `py-pdf/pypdf` at `a667e9d` | BSD-3-Clause; permissive page/text visitor reference | Neutral `StructuredDocument` adapter target; no PDF decoder is bundled |
+| Multi-format trajectory inspection | `AR-FORUM/hodoscope` at `e9b6930d4a01` | MIT; permissive adapter, abstraction, and sampling reference | Trace adapters and `select_diverse_trajectories` |
+| Hindsight intent relabeling | `alphadl/AgentHER` at `98072c34db5e` | Apache-2.0; permissive outcome/relabel/review reference | `IntentCandidate`, hindsight kind, independent review summaries |
+| Reference-path matching | `langchain-ai/agentevals` at `946ad15b9f2c` | MIT; permissive matching-semantics reference | `compare_trajectories`, explicit match modes and alignments |
+| Task-adaptive rubrics | `alphadl/AdaRubrics` at `69f81c58bcaa` | Apache-2.0; permissive rubric/reliability reference | Rubric proposal parsing, evidence-localized assessment, confidence-visible scoring |
+| Multi-runtime trace parsing | `agentpmhq/rogrep` at `8ec8b5f72535` | Apache-2.0; permissive parser-shape reference | Provider-neutral `TrajectoryStep` fields and bounded adapters |
+| Agent process mining | `gurov/traceroutine` at `7a1367c536d0` | Apache-2.0; permissive direct-follow and variant reference | `canonicalize_activity`, `mine_trajectory_process` |
+| Successful-trace invariant mining | `a-bhimava/agent-trace-to-evals` at `e1eda8337127` | Apache-2.0; permissive evidence and applicability reference | `mine_trajectory_invariants`, `check_trajectory_invariant` |
+| Intent-relative trajectory analysis | `askalf/plumbline` at `1cea591e6da5` | MIT; permissive adapter and public-corpus reference | Explicit unknown outcomes and public process-mining evaluation; no security policy copied |
 
 ## Connector references
 
@@ -87,3 +95,15 @@ Markdown-It-Py, HTML heading/table text with html5lib, and Python definition
 names plus UTF-8 byte spans with Tree-sitter. The fixtures matched `4/4`, `5/5`,
 and `3/3`, respectively. Frictionless and pypdf inform adapter and diagnostic
 boundaries; Mari does not claim their complete format coverage.
+
+The trajectory-mining pass ran the checked-out native suites for Plumbline
+(`166` tests), AgentHER (`41`), Trace-to-Evals (`68`), Hodoscope (`66`),
+TraceRoutine (`168` passed, one skipped), AdaRubric (`98`, with its undeclared
+`pytest-asyncio` test dependency supplied), and Rogrep (`144` Rust tests). The
+AgentEvals suite attempted LangSmith network tracking and received HTTP 401, so
+its native suite is not reported as passing; Mari instead uses local
+known-answer path cases. Mari processed Plumbline's seven MIT corpus files as
+seven trajectories and 118 events, recovering eight canonical activities and
+six exact variants. Independent planted cases recovered 13/13 known invariants,
+matched 4/4 path decisions, covered 4/4 embedding clusters, and normalized 3/3
+adapter shapes.

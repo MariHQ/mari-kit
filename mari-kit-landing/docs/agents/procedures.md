@@ -62,3 +62,16 @@ assert [step.tool for step in candidate.steps] == [
     "issue_refund",
 ]
 ```
+
+## Function definition and options
+
+`learn_procedure(trajectories, *, intent)` accepts a mapping from caller-owned
+trajectory IDs to ordered `TrajectoryStep` sequences. Every input run must be
+non-empty and every step must have `ok is True`; failed and unknown outcomes
+must be retained separately. The function computes a deterministic longest
+common tool subsequence. Arguments survive only when every aligned occurrence
+contains the same safe normalized values.
+
+The result contains a content-derived procedure ID and revision, the source
+trajectory IDs, and immutable `ProcedureStep` values. It is a candidate—not an
+executable workflow or promotion decision.

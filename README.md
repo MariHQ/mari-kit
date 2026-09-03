@@ -47,6 +47,12 @@ application or LLM can compose those operations for its particular system.
 - Validated add/update/delete/no-op memory plans and hybrid topic segmentation
   for application-owned online and offline consolidation flows.
 - Framework-neutral trajectory normalization and model-label validation.
+- OpenAI, Anthropic, and OpenTelemetry trajectory adapters; direct-follow
+  process models, exact variants, parallel-aware rework, reference-path
+  matching, successful-trace invariant mining, and diversity sampling.
+- Evidence-bound declared, inferred, and hindsight intent candidates with
+  caller-owned aggregation, independent-review summaries, and task-adaptive
+  rubric validation.
 - Framework-neutral context lifecycle hooks around application-owned model and
   tool calls, including explicit scope, purpose, budget, and update events.
 - Page-aware structured documents with regions, bounding boxes, tables,

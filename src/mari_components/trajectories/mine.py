@@ -85,7 +85,7 @@ def parse_trajectory_analysis(
                 start=start,
                 end=end,
                 substate=substate[:60],
-                failures=sum(not step.ok for step in steps[start : end + 1]),
+                failures=sum(step.ok is False for step in steps[start : end + 1]),
             )
         )
         expected_start = end + 1

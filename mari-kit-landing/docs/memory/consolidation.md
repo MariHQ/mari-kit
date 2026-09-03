@@ -1,11 +1,11 @@
-[]{#consolidation}[Partially current]{.proposed-label}
+[]{#consolidation}[Current]{.current-label}
 
 # Tiered memory consolidation
 
 ```{include} ../_includes/eval/memory.md
 ```
 
-Tiers are policies over cost and lifecycle, not hard-coded stores. Topic segmentation is current; compression, promotion, and offline scheduling are proposed. Each promotion creates a dependency-bearing proposal, and raw observations remain available for audit.
+Tiers are policies over cost and lifecycle, not hard-coded stores. Mari provides topic segmentation and a deterministic promotion planner. The host supplies compression models and commits selected revisions, keeping raw observations available for audit.
 
 ## How it works
 
@@ -42,13 +42,28 @@ Filter observations cheaply, group them at attention-peak/similarity-valley topi
 ::::::
 
 ```{code-block} python
-:caption: proposed / consolidation.py
+:caption: Select promotions under explicit model-call and token budgets
 
-policy = ConsolidationPolicy(
-    segment=TopicBoundary(window=12, threshold=0.68),
-    promote=PromotionScore(recurrence=0.30, recency=0.15,
-        usefulness=0.35, evidence_diversity=0.20),
-    schedule=OfflineWindow(max_model_calls=20, max_tokens=50000))
-plan = plan_consolidation(observations, policy=policy)
-commit(review(plan.mutations), dependencies=plan.dependencies)
+from mari_components.knowledge import (
+    ConsolidationBudget,
+    PromotionSignal,
+    plan_consolidation,
+)
+
+plan = plan_consolidation(
+    [
+        PromotionSignal(
+            artifact_id="session:refunds",
+            recurrence=0.9,
+            recency=0.8,
+            usefulness=0.95,
+            evidence_diversity=0.7,
+            estimated_calls=2,
+            estimated_tokens=2400,
+        )
+    ],
+    budget=ConsolidationBudget(max_model_calls=20, max_tokens=50_000),
+    minimum_score=0.70,
+)
+assert plan.selected_ids == ("session:refunds",)
 ```

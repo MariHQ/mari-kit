@@ -1,4 +1,4 @@
-[]{#procedural-learning}[Proposed]{.proposed-label}
+[]{#procedural-learning}[Current evaluation boundary]{.current-label}
 
 # Procedural learning and regression gates
 
@@ -18,16 +18,19 @@ Reflect over a trajectory and observed outcome, turn the reflection into atomic 
 :::
 
 ```{code-block} python
-:caption: proposed / skillbook.py
+:caption: Require independent quality and safety gates before review
 
-reflection = reflect(trajectory, outcome=outcome, evidence=observed_context)
-patch = curate(reflection, operations={"ADD", "UPDATE", "TAG", "REMOVE"})
-candidate = skillbook.apply_to_copy(patch)
+from mari_components.evaluation import GateMode, MetricGate, regression_gate
 
-gate = regression_gate(candidate, baseline=skillbook.active,
-    suites=[own_cases, related_procedure_cases, known_failures],
-    require={TaskSuccess(): NoRegression(), Groundedness(): AtLeast(0.95),
-             ACLLeakage(): Exactly(0.0)})
-if gate.passed:
-        skillbook.propose(candidate, trace=gate.trace)  # human promotion remains explicit
+report = regression_gate(
+    {"task_success": 0.86, "groundedness": 0.97, "acl_leakage": 0.0},
+    baseline={"task_success": 0.84},
+    gates=[
+        MetricGate(metric="task_success", mode=GateMode.NO_REGRESSION),
+        MetricGate(metric="groundedness", mode=GateMode.AT_LEAST, value=0.95),
+        MetricGate(metric="acl_leakage", mode=GateMode.AT_MOST, value=0.0),
+    ],
+)
+if report.passed:
+    submit_for_review(candidate, report)  # application action, never automatic
 ```

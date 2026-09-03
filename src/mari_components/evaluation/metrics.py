@@ -24,9 +24,87 @@ class ClassificationMetrics:
     support: int
 
 
-def reciprocal_rank(ranked_ids: Sequence[Hashable], relevant_ids: Iterable[Hashable]) -> float:
+@dataclass(frozen=True, slots=True, kw_only=True)
+class SetMetrics:
+    precision: float
+    recall: float
+    f1: float
+    true_positive: int
+    false_positive: int
+    false_negative: int
+
+
+def set_metrics(
+    expected: Iterable[Hashable], predicted: Iterable[Hashable]
+) -> SetMetrics:
+    """Score an evidence/entity/relation set with exact identifiers."""
+
+    expected_values = set(expected)
+    predicted_values = set(predicted)
+    true_positive = len(expected_values & predicted_values)
+    false_positive = len(predicted_values - expected_values)
+    false_negative = len(expected_values - predicted_values)
+    precision = true_positive / len(predicted_values) if predicted_values else 0.0
+    recall = true_positive / len(expected_values) if expected_values else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return SetMetrics(
+        precision=precision,
+        recall=recall,
+        f1=f1,
+        true_positive=true_positive,
+        false_positive=false_positive,
+        false_negative=false_negative,
+    )
+
+
+def boundary_metrics(
+    expected_boundaries: Iterable[int],
+    predicted_boundaries: Iterable[int],
+    *,
+    tolerance: int = 0,
+) -> SetMetrics:
+    """Match ordered topic boundaries once within an optional offset tolerance."""
+
+    if tolerance < 0:
+        raise ValueError("tolerance must not be negative")
+    expected = sorted(set(expected_boundaries))
+    predicted = sorted(set(predicted_boundaries))
+    if any(value < 0 for value in (*expected, *predicted)):
+        raise ValueError("boundaries must not be negative")
+    unmatched = set(expected)
+    hits = 0
+    for value in predicted:
+        options = sorted(
+            (
+                candidate
+                for candidate in unmatched
+                if abs(candidate - value) <= tolerance
+            ),
+            key=lambda candidate: (abs(candidate - value), candidate),
+        )
+        if options:
+            unmatched.remove(options[0])
+            hits += 1
+    precision = hits / len(predicted) if predicted else 0.0
+    recall = hits / len(expected) if expected else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return SetMetrics(
+        precision=precision,
+        recall=recall,
+        f1=f1,
+        true_positive=hits,
+        false_positive=len(predicted) - hits,
+        false_negative=len(expected) - hits,
+    )
+
+
+def reciprocal_rank(
+    ranked_ids: Sequence[Hashable], relevant_ids: Iterable[Hashable]
+) -> float:
     relevant = set(relevant_ids)
-    return next((1.0 / rank for rank, item in enumerate(ranked_ids, 1) if item in relevant), 0.0)
+    return next(
+        (1.0 / rank for rank, item in enumerate(ranked_ids, 1) if item in relevant), 0.0
+    )
 
 
 def ndcg_at_k(
@@ -41,10 +119,15 @@ def ndcg_at_k(
         raise ValueError("k must be positive")
 
     def dcg(grades: Iterable[float]) -> float:
-        return sum((2.0**grade - 1.0) / math.log2(rank + 1) for rank, grade in enumerate(grades, 1))
+        return sum(
+            (2.0**grade - 1.0) / math.log2(rank + 1)
+            for rank, grade in enumerate(grades, 1)
+        )
 
     observed = dcg(float(relevance.get(item, 0.0)) for item in ranked_ids[:k])
-    ideal = dcg(sorted((float(value) for value in relevance.values()), reverse=True)[:k])
+    ideal = dcg(
+        sorted((float(value) for value in relevance.values()), reverse=True)[:k]
+    )
     return observed / ideal if ideal else 0.0
 
 
@@ -86,12 +169,28 @@ def classification_metrics(
     recall_values: list[float] = []
     f1_values: list[float] = []
     for label in labels:
-        true_positive = sum(e == label and p == label for e, p in zip(expected, predicted, strict=True))
-        false_positive = sum(e != label and p == label for e, p in zip(expected, predicted, strict=True))
-        false_negative = sum(e == label and p != label for e, p in zip(expected, predicted, strict=True))
-        precision = true_positive / (true_positive + false_positive) if true_positive + false_positive else 0.0
-        recall = true_positive / (true_positive + false_negative) if true_positive + false_negative else 0.0
-        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        true_positive = sum(
+            e == label and p == label for e, p in zip(expected, predicted, strict=True)
+        )
+        false_positive = sum(
+            e != label and p == label for e, p in zip(expected, predicted, strict=True)
+        )
+        false_negative = sum(
+            e == label and p != label for e, p in zip(expected, predicted, strict=True)
+        )
+        precision = (
+            true_positive / (true_positive + false_positive)
+            if true_positive + false_positive
+            else 0.0
+        )
+        recall = (
+            true_positive / (true_positive + false_negative)
+            if true_positive + false_negative
+            else 0.0
+        )
+        f1 = (
+            2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        )
         precision_values.append(precision)
         recall_values.append(recall)
         f1_values.append(f1)

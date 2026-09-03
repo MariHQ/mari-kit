@@ -2,6 +2,7 @@
 
 from .mine import TrajectoryAnalysis, TrajectoryPhase, parse_trajectory_analysis
 from .normalize import DEFAULT_FAMILY_MAP, TrajectoryStep, normalize_steps
+from .procedures import ProcedureCandidate, ProcedureStep, learn_procedure
 from .workflows import (
     CacheDecision,
     CacheDecisionReason,
@@ -27,6 +28,8 @@ __all__ = [
     "ReviewedWorkflow",
     "ReviewedWorkflowIndex",
     "ReviewedWorkflowMatch",
+    "ProcedureCandidate",
+    "ProcedureStep",
     "TrajectoryAnalysis",
     "TrajectoryPhase",
     "TrajectoryStep",
@@ -38,6 +41,7 @@ __all__ = [
     "decide_reviewed_workflow",
     "match_cached_response",
     "match_reviewed_workflow",
+    "learn_procedure",
     "normalize_steps",
     "parse_trajectory_analysis",
     "start_speculative_retrieval",

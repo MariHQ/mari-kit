@@ -1,11 +1,11 @@
-[]{#procedures}[Proposed]{.proposed-label}
+[]{#procedures}[Current]{.current-label}
 
 # Procedural knowledge
 
 ```{include} ../_includes/eval/agents.md
 ```
 
-Successful trajectories could produce versioned procedure candidates. Regression gates and human review would separate observed behavior from active behavior.
+Successful trajectories produce versioned procedure candidates. Regression gates and human review separate observed behavior from active behavior.
 
 ## How it works
 
@@ -18,11 +18,25 @@ trajectories*→*candidate*→*regression suite*→*review*→*active version
 :::
 
 ```{code-block} python
-:caption: proposed / procedures.py
+:caption: Extract the stable tool subsequence across successful traces
 
-candidate = learn_procedure(successful_runs, intent="process enterprise refund")
-report = evaluate_procedure(candidate, cases=refund_regression_suite,
-    metrics=[TaskSuccess(), ToolCorrectness(), Groundedness(), Cost()])
-if report.passes_gates:
-    procedures.propose(candidate, report=report)  # review still required
+from mari_components.trajectories import TrajectoryStep, learn_procedure
+
+runs = {
+    "run-1": [
+        TrajectoryStep(0, "lookup_policy", "inspect", {"tier": "enterprise"}, ok=True),
+        TrajectoryStep(1, "issue_refund", "execute", {"currency": "USD"}, ok=True),
+    ],
+    "run-2": [
+        TrajectoryStep(0, "lookup_policy", "inspect", {"tier": "enterprise"}, ok=True),
+        TrajectoryStep(1, "check_account", "inspect", ok=True),
+        TrajectoryStep(2, "issue_refund", "execute", {"currency": "USD"}, ok=True),
+    ],
+}
+
+candidate = learn_procedure(runs, intent="process enterprise refund")
+assert [step.tool for step in candidate.steps] == [
+    "lookup_policy",
+    "issue_refund",
+]
 ```

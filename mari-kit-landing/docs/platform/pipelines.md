@@ -1,11 +1,11 @@
-[]{#pipelines}[Proposed]{.proposed-label}
+[]{#pipelines}[Current]{.current-label}
 
 # Typed knowledge pipelines
 
 ```{include} ../_includes/eval/platform.md
 ```
 
-Composable stages would transform typed inputs and emit reviewable `ArtifactMutation` values: create, revise, supersede, retract, or leave unchanged.
+Composable `Stage` values transform immutable batches and return outputs plus a complete `StageTrace`. Domain stages may emit reviewable artifact mutations; the runner itself performs no storage writes.
 
 ## How it works
 
@@ -18,14 +18,28 @@ extract*→*resolve*→*link*→*review*→*index
 :::
 
 ```{code-block} python
-:caption: proposed / pipeline.py
+:caption: A deterministic pipeline with stage fingerprints and visible failure
 
-pipeline = Pipeline[KnowledgeDocument, KnowledgeArtifact](
-    extract(FactExtractor(model=model)), resolve(EntityResolver(catalog=entities)),
-    link(EvidenceLinker()), review(ReviewPolicy(min_corroboration=2)),
-    index(vector=vector_index, graph=graph_index))
+from mari_components.platform import Pipeline, Stage
 
-result = pipeline.run(changed_documents)
-artifact_store.apply(result.mutations)
-trace_store.write(result.trace)
+pipeline = Pipeline(
+    stages=(
+        Stage(
+            name="normalize",
+            version="1",
+            transform=lambda rows: (row.strip() for row in rows),
+        ),
+        Stage(
+            name="discard-empty",
+            version="2",
+            transform=lambda rows: (row for row in rows if row),
+            configuration={"preserve_order": True},
+        ),
+    )
+)
+
+result = pipeline.run([" policy ", ""])
+assert result.outputs == ("policy",)
+assert result.succeeded
+assert result.trace[0].fingerprint
 ```

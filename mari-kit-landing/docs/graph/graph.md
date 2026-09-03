@@ -1,11 +1,11 @@
-[]{#graph}[Proposed]{.proposed-label}
+[]{#graph}[Current]{.current-label}
 
 # Bi-temporal knowledge graph
 
 ```{include} ../_includes/eval/graph.md
 ```
 
-Statements would track valid time (when the claim applied) and transaction time (when the system learned it), supporting historical queries and late corrections.
+`TemporalFact` tracks valid time (when a claim applies) and transaction time (when the system knows it), supporting historical queries and late corrections.
 
 ## How it works
 
@@ -28,12 +28,28 @@ An assertion is append-only and carries two intervals. A correction learned toda
 :::::
 
 ```{code-block} python
-:caption: proposed / graph.py
+:caption: Half-open valid-time and transaction-time queries
 
-graph.assert_fact(subject="plan:enterprise", predicate="refund_window_days",
-    object=30, valid_time=Interval("2026-01-01", "2026-08-31"),
-    transaction_time=clock.now(), evidence=evidence)
+from datetime import datetime, timezone
 
-then = graph.query(at="2026-06-01", known_at="2026-09-01")
-now = graph.query(at=clock.now(), known_at=clock.now())
+from mari_components.graph import TemporalFact, query_temporal_facts
+
+utc = timezone.utc
+facts = [
+    TemporalFact(
+        fact_id="refund-window@1",
+        subject="plan:enterprise",
+        predicate="refund_window_days",
+        object=30,
+        valid_from=datetime(2026, 1, 1, tzinfo=utc),
+        valid_to=datetime(2026, 9, 1, tzinfo=utc),
+        recorded_from=datetime(2026, 1, 3, tzinfo=utc),
+    )
+]
+
+visible = query_temporal_facts(
+    facts,
+    at=datetime(2026, 6, 1, tzinfo=utc),
+    known_at=datetime(2026, 8, 1, tzinfo=utc),
+)
 ```

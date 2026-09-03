@@ -1,11 +1,11 @@
-[]{#stores}[Proposed]{.proposed-label}
+[]{#stores}[Current reference semantics]{.current-label}
 
 # Storage protocols and conformance
 
 ```{include} ../_includes/eval/platform.md
 ```
 
-Capability protocols would allow independent document, artifact, vector, lexical, and graph implementations.
+`InMemoryArtifactStore` is the executable reference for optimistic revision checks, tenant isolation, explicit supersession, history, and point-in-time reads. Production adapters can run the same behavioral cases.
 
 ## How it works
 
@@ -14,19 +14,24 @@ Protocols specify observable behavior rather than backend classes. A store imple
 **Research basis**[Invariant confluence](https://arxiv.org/abs/1402.2237){.paper} shows that safe coordination depends on application invariants. Mari therefore specifies atomicity, replay, isolation, time-travel, and deletion behavior independently of backend methods. The protocol split is library design, not a result asserted by the paper.
 
 ```{code-block} python
-:caption: proposed / stores.py
+:caption: Compare-and-swap revisions with explicit lineage
 
-class DocumentStore(Protocol):
-    def commit_sync(self, plan: SyncPlan) -> None: ...
-    def get_many(self, ids: Iterable[str]) -> Sequence[KnowledgeDocument]: ...
+from mari_components.platform import InMemoryArtifactStore, RevisionConflict
 
-class ArtifactStore(Protocol):
-    def apply(self, mutation: ArtifactMutation) -> None: ...
-    def at_time(self, id: str, when: datetime) -> KnowledgeArtifact | None: ...
+store = InMemoryArtifactStore()
+store.commit(first_revision, expected_revision=None)
 
-class VectorIndex(Protocol): ...
-class LexicalIndex(Protocol): ...
-class GraphIndex(Protocol): ...
+try:
+    store.commit(second_revision, expected_revision="stale-revision")
+except RevisionConflict:
+    refresh_and_retry()
+
+current = store.get("fact:refund-window", scope=scope)
+historical = store.at_time(
+    "fact:refund-window",
+    scope=scope,
+    known_at=query_time,
+)
 ```
 
-Conformance tests would cover replay safety, deterministic ordering, point-in-time reads, tenant isolation, atomic revisions, and delete behavior.
+The bundled conformance tests cover replay safety, deterministic ordering, point-in-time reads, tenant isolation, and atomic revision checks. Physical deletion and cross-database transactions remain adapter-specific capabilities and must be tested by the host backend.

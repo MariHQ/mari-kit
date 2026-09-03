@@ -1,4 +1,4 @@
-[]{#admission}[Proposed]{.proposed-label}
+[]{#admission}[Current]{.current-label}
 
 # Knowledge admission and mutation planning
 
@@ -20,19 +20,28 @@ Run provenance, evidence-span, recalled-input, secret, external-instruction, aut
 :::
 
 ```{code-block} python
-:caption: proposed / write_plan.py
+:caption: Decide admission before calling a mutation planner
 
-candidate = extractor.propose(observation)
-admission = admit(candidate,
-    rules=[RequireEvidenceSpan(), RejectRecalledInput(), QuarantineSecrets(),
-           QuarantineExternalInstructions(), EnforceSourceAuthority()],
-    thresholds=AdmissionThresholds(accept=0.90, defer=0.65))
+from mari_components.knowledge import (
+    AdmissionDisposition,
+    AdmissionSignals,
+    AdmissionThresholds,
+    admit_candidate,
+)
 
-match admission.disposition:
-    case ACCEPT:
-        mutation = reconcile(candidate, current=artifact_store.canonical_slot(candidate))
-        # ADD | MERGE | SUPERSEDE | RETRACT | UNCHANGED
-    case DEFER: review_queue.put(candidate, admission.reasons)
-    case QUARANTINE: quarantine.put(candidate, admission.reasons)
-    case REJECT: audit.record(admission)
+decision = admit_candidate(
+    AdmissionSignals(
+        confidence=0.94,
+        has_provenance=True,
+        evidence_span_valid=True,
+        source_authorized=True,
+        recalled_input=False,
+        contains_secret=False,
+        contains_external_instruction=False,
+    ),
+    thresholds=AdmissionThresholds(accept=0.90, defer=0.65),
+)
+
+if decision.disposition is AdmissionDisposition.ACCEPT:
+    mutation_plan = reconcile(candidate, current)  # application-injected policy
 ```

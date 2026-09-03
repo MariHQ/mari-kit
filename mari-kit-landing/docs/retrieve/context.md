@@ -1,11 +1,11 @@
-[]{#context}[Proposed]{.proposed-label}
+[]{#context}[Current]{.current-label}
 
 # Retrieval plans and context envelopes
 
 ```{include} ../_includes/eval/retrieve.md
 ```
 
-A retrieval plan would run explicit arms, fuse ranks, enforce scope and freshness, rerank, and pack a bounded context envelope. Its trace explains inclusion and exclusion.
+Mari packs already-ranked retrieval candidates into a bounded, revision-bearing context envelope. Its trace explains every inclusion and exclusion.
 
 ## How it works
 
@@ -36,15 +36,18 @@ semanticlexicalgraphrecent
 ::::::
 
 ```{code-block} python
-:caption: proposed / context.py
+:caption: context.py
 
-plan = RetrievalPlan(arms=[Semantic(vector_index, limit=40),
-    Lexical(lexical_index, limit=30), GraphExpand(graph_index, hops=2),
-    RecentChanges(window="14d")], fusion=ReciprocalRankFusion(k=60),
-    reranker=ExactMaxSim())
+from mari_components.retrieval import ContextBudget, ContextCandidate, assemble_context
 
-context = assemble_context(query, plan=plan, scope=user.knowledge_scope,
-    budget=ContextBudget(tokens=6000, documents=12))
-model(context.render())
-audit(context.retrieval_trace)
+context = assemble_context([
+    ContextCandidate(document_id=hit.document_id, revision=revisions[hit.document_id],
+        text=passages[hit.document_id], token_count=token_count(hit.document_id),
+        score=hit.score, authorized=can_read(hit.document_id),
+        fresh=is_fresh(hit.document_id))
+    for hit in fused_hits
+], budget=ContextBudget(tokens=6000, documents=12))
+
+model(context.text)
+audit(context.trace)
 ```

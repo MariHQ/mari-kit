@@ -53,32 +53,33 @@ Mari\'s current path uses token-level late interaction: each query token takes i
 | Status | Index family | Representation and algorithm | Appropriate when | Primary source |
 |----|----|----|----|----|
 | [Current]{.pill .live} | MUVERA + exact MaxSim | Multi-vector FDE candidate generation, compressed storage, exact late-interaction reranking | Fine-grained semantic matching where individual query terms matter | [MUVERA](https://arxiv.org/abs/2405.19504){.paper} · [ColBERT](https://arxiv.org/abs/2004.12832){.paper} |
-| [Proposed]{.pill .next} | Dense flat | Exact cosine, dot-product, or L2 scan over one vector per passage | Small corpora, evaluation baselines, or exact reproducibility | [Dense Passage Retrieval](https://arxiv.org/abs/2004.04906){.paper} |
-| [Proposed]{.pill .next} | HNSW | Hierarchical proximity graph for approximate nearest-neighbor search | Large mutable dense-vector collections with low-latency queries | [HNSW](https://doi.org/10.1109/TPAMI.2018.2889473){.paper} |
-| [Proposed]{.pill .next} | IVF-PQ | Coarse inverted partitions plus product-quantized vector codes | Memory-constrained or very large dense indexes | [Product Quantization](https://doi.org/10.1109/TPAMI.2010.57){.paper} · [Faiss](https://arxiv.org/abs/1702.08734){.paper} |
-| [Proposed]{.pill .next} | BM25 | Probabilistic lexical ranking over an inverted term index | Exact names, identifiers, code symbols, and domain terminology | [BM25 and Beyond](https://doi.org/10.1561/1500000019){.paper} |
-| [Proposed]{.pill .next} | Learned sparse | Transformer-produced sparse term weights served by an inverted index | Lexical interpretability with learned expansion | [SPLADE](https://arxiv.org/abs/2107.05720){.paper} |
+| [Current]{.pill .live} | Dense flat | Exact cosine, dot-product, or L2 scan over one vector per passage | Small corpora, evaluation baselines, or exact reproducibility | [Dense Passage Retrieval](https://arxiv.org/abs/2004.04906){.paper} |
+| [Current]{.pill .live} | HNSW | Deterministic hierarchical proximity graph with configurable search breadth | Approximate dense search and recall-versus-exact evaluation | [HNSW](https://doi.org/10.1109/TPAMI.2018.2889473){.paper} |
+| [Current]{.pill .live} | IVF-PQ | Coarse inverted partitions plus residual product-quantized vector codes | Memory-constrained dense indexes | [Product Quantization](https://doi.org/10.1109/TPAMI.2010.57){.paper} · [Faiss](https://arxiv.org/abs/1702.08734){.paper} |
+| [Current]{.pill .live} | BM25 | Robertson--Walker lexical ranking over an in-memory inverted representation | Exact names, identifiers, code symbols, and domain terminology | [BM25 and Beyond](https://doi.org/10.1561/1500000019){.paper} |
+| [Current]{.pill .live} | Learned sparse | Exact sparse inner product over caller-produced term weights | Model-neutral serving for SPLADE-like expansion vectors | [SPLADE](https://arxiv.org/abs/2107.05720){.paper} |
 | [Current]{.pill .live} | Rank fusion | Weighted reciprocal-rank fusion over independent result lists, with per-source contribution traces | Mixed corpora where source scores are not directly comparable | [RAG-Fusion](https://arxiv.org/abs/2402.03367){.paper} |
 | [Current]{.pill .live} | Graph propagation | Allowed-node personalized PageRank followed by weighted node-to-passage projection | Multi-hop recall from query-linked entities, facts, or sections | [HippoRAG](https://arxiv.org/abs/2405.14831){.paper} |
 
-## Proposed index interface
+## Index interfaces
 
-The common protocol should describe capabilities rather than a vendor. Index selection then becomes pipeline configuration and can be evaluated against recall, latency, memory, freshness, and ACL-filter behavior.
+The index classes expose the same authorization-aware search shape while retaining algorithm-specific controls. Index selection is pipeline configuration and can be evaluated against recall, latency, memory, freshness, and ACL-filter behavior.
 
 ```{code-block} python
-:caption: proposed / indexes.py
+:caption: indexes.py
 
-indexes = {
-    "exact": DenseFlatIndex(metric="cosine"),
-    "dense": HNSWIndex(metric="cosine", m=32, ef_search=128),
-    "compressed": IVFPQIndex(partitions=4096, subquantizers=32),
-    "lexical": BM25Index(k1=1.2, b=0.75),
-    "sparse": SparseVectorIndex(model="splade"),
-    "late": LateInteractionIndex(candidate="muvera", rerank="maxsim"),
-}
+from mari_components.retrieval import (
+    BM25Index, DenseFlatIndex, HNSWIndex, IVFPQIndex, SparseVectorIndex,
+)
 
-hybrid = HybridIndex(arms=[indexes["lexical"], indexes["dense"], indexes["late"]],
-    fusion=ReciprocalRankFusion(k=60))
+exact = DenseFlatIndex(vectors, metric="cosine")
+graph = HNSWIndex(vectors, metric="cosine", m=32)
+compressed = IVFPQIndex(vectors, partitions=256, subquantizers=16)
+lexical = BM25Index(passages, k1=1.2, b=0.75)
+sparse = SparseVectorIndex(model_generated_term_weights)
+
+hits = graph.search(query_vector, limit=20, ef_search=128,
+    allowed_document_ids=authorized_document_ids)
 ```
 
 ## Rank fusion, graph recall, and diverse packing

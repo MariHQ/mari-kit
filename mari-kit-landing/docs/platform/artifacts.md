@@ -1,11 +1,11 @@
-[]{#artifacts}[Proposed]{.proposed-label}
+[]{#artifacts}[Current]{.current-label}
 
 # Unified artifact model
 
 ```{include} ../_includes/eval/platform.md
 ```
 
-A generic envelope would give facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.
+`KnowledgeArtifact[T]` gives facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.
 
 ## How it works
 
@@ -28,15 +28,29 @@ identity + revisionKnowledgeScopeevidencevalid timereview stategeneratorsupersed
 :::::
 
 ```{code-block} python
-:caption: proposed / artifacts.py
+:caption: Immutable, provenance-bearing artifact revision
 
-artifact = KnowledgeArtifact[PolicyFact](
-    id="fact:refund-window:enterprise", revision="sha256:8f31…",
-    value=PolicyFact(days=30),
+from datetime import datetime, timezone
+
+from mari_components.knowledge import (
+    Activity,
+    KnowledgeArtifact,
+    KnowledgeScope,
+    ReviewState,
+)
+
+artifact = KnowledgeArtifact[dict[str, int]](
+    artifact_id="fact:refund-window:enterprise",
+    revision="sha256:8f31",
+    value={"days": 30},
     scope=KnowledgeScope(tenant="acme", space="support"),
-    evidence=answer.evidence, valid_from="2026-01-01", valid_to=None,
-    recorded_at=clock.now(), review_state=ReviewState.APPROVED,
-    generated_by=Activity("refund-policy/v4", model="extractor@2026-08"),
+    recorded_at=datetime.now(timezone.utc),
+    review_state=ReviewState.APPROVED,
+    generated_by=Activity(
+        identifier="refund-policy/v4",
+        implementation="extractor@2026-08",
+    ),
     derived_from=("github:policy/refunds.md@8f31c2a",),
-    supersedes=("fact:refund-window:enterprise@v2",))
+    supersedes=("fact:refund-window:enterprise@v2",),
+)
 ```

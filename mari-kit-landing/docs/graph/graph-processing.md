@@ -1,11 +1,11 @@
-[]{#graph-processing}[Current and proposed]{.proposed-label}
+[]{#graph-processing}[Current]{.current-label}
 
 # Graph recall and corpus aggregation
 
 ```{include} ../_includes/eval/graph.md
 ```
 
-Passage retrieval and corpus summarization are different operations. Personalized PageRank is a current bounded multi-hop recall function. Leiden communities and map-reduce reports are proposed, separately versioned aggregation stages.
+Passage retrieval and corpus summarization are different operations. Personalized PageRank is a bounded multi-hop recall function. Deterministic community partitioning and model-injected map-reduce reports are separately versioned aggregation stages.
 
 ## How it works
 
@@ -18,16 +18,32 @@ Link query mentions to authorized seed nodes, induce an allowed subgraph, and pr
 :::
 
 ```{code-block} python
-:caption: proposed / graph_algorithms.py
+:caption: Authorized recall and community map-reduce
 
-recall = PersonalizedPageRank(
-    seeds=link_query(query, entities, facts), damping=0.50, hops=3,
-    edge_filter=AuthorizedAt(scope=user.scope, at=query.time),
-    project_to="source_sections")
+from mari_components.graph import (
+    build_community_reports,
+    leiden_communities,
+    map_reduce_reports,
+)
+from mari_components.retrieval import personalized_pagerank
 
-communities = HierarchicalLeiden(resolution=1.0, max_size=40).fit(graph)
-reports = summarize_communities(communities, evidence_policy=ExactEvidence())
+recall = personalized_pagerank(
+    graph,
+    seeds=query_seeds,
+    allowed_node_ids=authorized_node_ids,
+    damping=0.50,
+)
 
-answer = query_corpus(query, mode="global", reports=reports,
-    reduction=RatedMapReduce(max_partial_answers=24))
+partition = leiden_communities(
+    graph,
+    resolution=1.0,
+    allowed_node_ids=authorized_node_ids,
+)
+reports = build_community_reports(partition, summarize=summarize_nodes)
+answer = map_reduce_reports(
+    reports,
+    map_report=lambda report: answer_from_report(query, report),
+    reduce_answers=lambda partials: synthesize(query, partials),
+    limit=24,
+)
 ```

@@ -1,11 +1,11 @@
-[]{#compiler}[Proposed]{.proposed-label}
+[]{#compiler}[Current]{.current-label}
 
 # Evaluation and compilation
 
 ```{include} ../_includes/eval/platform.md
 ```
 
-A compiler would search pipeline and retrieval configurations against knowledge-system objectives and return a reviewable, versioned configuration proposal.
+`compile_configurations` searches caller-supplied pipeline and retrieval configurations against knowledge-system objectives and returns the highest-utility feasible candidate with every trial visible.
 
 ## How it works
 
@@ -52,16 +52,40 @@ Declare tunable parameters, hard constraints, and optimization metrics. For each
 :::::::::
 
 ```{code-block} python
-:caption: proposed / compile.py
+:caption: Constraint-first configuration search
 
-compiled = compile_knowledge_system(pipeline, trainset=train_cases,
-    validation=validation_cases,  # optimizer may inspect these; never test_cases
-    objectives={GroundedRecall(): Maximize(), ProvenanceAccuracy(): Require(1.0),
-        UpdateFidelity(): Require(1.0), ACLLeakage(): Require(0.0),
-        ContextTokens(): Minimize(), LatencyP95(): Minimize()},
-    search_space=KnowledgeConfigSpace())
+from mari_components.platform import (
+    MetricObjective,
+    ObjectiveDirection,
+    compile_configurations,
+)
 
-review(compiled.config, compiled.report, compiled.failures)
-test_report = evaluate_once(compiled.config, cases=test_cases)
-deploy(compiled.config, evidence=test_report)  # explicit application action
+def evaluate(config):
+    return benchmark(index=config["index"], k=config["k"])
+
+compiled = compile_configurations(
+    [
+        {"index": "bm25", "k": 20},
+        {"index": "hnsw", "k": 40},
+    ],
+    evaluate=evaluate,
+    objectives=[
+        MetricObjective(
+            name="grounded_recall",
+            direction=ObjectiveDirection.MAXIMIZE,
+            minimum=0.85,
+        ),
+        MetricObjective(
+            name="acl_leakage",
+            direction=ObjectiveDirection.MINIMIZE,
+            maximum=0.0,
+        ),
+        MetricObjective(
+            name="latency_p95",
+            direction=ObjectiveDirection.MINIMIZE,
+            weight=0.01,
+        ),
+    ],
+)
+print(compiled.configuration, compiled.winner.metrics)
 ```

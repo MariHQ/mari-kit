@@ -1,4 +1,4 @@
-[]{#entity-resolution}[Proposed]{.proposed-label}
+[]{#entity-resolution}[Current]{.current-label}
 
 # Entity resolution with explicit uncertainty
 
@@ -22,14 +22,17 @@ scope + type block*→*normalized exact*→*field/fuzzy score*→*embedding cand
 :::
 
 ```{code-block} python
-:caption: proposed / resolve.py
+:caption: resolution.py
 
-resolver = EntityResolver([
-    ScopeAndTypeBlock(), NormalizedAliasMatch(),
-    ProbabilisticFieldMatch(link=0.95, review=0.72),
-    EmbeddingCandidates(index=entity_index, limit=10),
-])
-resolution = resolver.resolve(candidate, scope=artifact.scope)
-if resolution.ambiguous:
-    review_queue.put(resolution.candidates, resolution.comparison_trace)
+from mari_components.graph import FieldAgreement, ResolutionDecision, resolve_entity
+
+resolution = resolve_entity([
+    FieldAgreement(field="email", agrees=True,
+        match_probability=0.99, nonmatch_probability=0.01),
+    FieldAgreement(field="name", agrees=False,
+        match_probability=0.90, nonmatch_probability=0.20),
+], link_threshold=4.0, review_threshold=1.0)
+
+if resolution.decision is ResolutionDecision.REVIEW:
+    review_queue.put(candidate, resolution.contributions)
 ```

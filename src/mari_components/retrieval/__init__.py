@@ -1,5 +1,13 @@
 """Candidate generation, rank fusion, graph propagation, and exact reranking."""
 
+from .context import (
+    ContextBudget,
+    ContextCandidate,
+    ContextEnvelope,
+    ContextExclusion,
+    ContextTrace,
+    assemble_context,
+)
 from .contradiction import (
     SparseContradictionCandidate,
     SparseContradictionHit,
@@ -18,6 +26,14 @@ from .fusion import (
 )
 from .graph import GraphHit, PageRankResult, personalized_pagerank, project_graph_scores
 from .index import MuveraIndex, RetrievalHit, build_index, search_index
+from .indexes import (
+    BM25Index,
+    DenseFlatIndex,
+    HNSWIndex,
+    IndexHit,
+    IVFPQIndex,
+    SparseVectorIndex,
+)
 from .maxsim import exact_maxsim
 from .muvera import FDEConfig
 from .research import (
@@ -44,20 +60,32 @@ __all__ = [
     "CompressionSentence",
     "CorrectiveAction",
     "CorrectiveRetrievalPlan",
+    "ContextBudget",
+    "ContextCandidate",
+    "ContextEnvelope",
+    "ContextExclusion",
+    "ContextTrace",
     "DiversifiedHit",
     "FDEConfig",
+    "BM25Index",
+    "DenseFlatIndex",
     "FusedHit",
     "GraphHit",
+    "HNSWIndex",
+    "IVFPQIndex",
+    "IndexHit",
     "MuveraIndex",
     "PageRankResult",
     "RankContribution",
     "RetrievalHit",
     "SparseContradictionCandidate",
+    "SparseVectorIndex",
     "SparseContradictionHit",
     "SparseContradictionScore",
     "SummaryTree",
     "SummaryTreeNode",
     "TreeWalk",
+    "assemble_context",
     "build_index",
     "build_summary_tree",
     "deserialize_index",

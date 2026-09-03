@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "suites": [
+    {"id":"dense-flat","api":"DenseFlatIndex","papers":["2004.04906"],"corpora":["beir","lotte"],"metrics":["ndcg@10","recall@100","latency_p95","index_bytes"]},
+    {"id":"hnsw","api":"HNSWIndex","papers":["10.1109/TPAMI.2018.2889473"],"corpora":["beir"],"metrics":["recall_vs_exact@k","latency_p95","index_bytes"]},
+    {"id":"ivfpq","api":"IVFPQIndex","papers":["10.1109/TPAMI.2010.57"],"corpora":["beir"],"metrics":["recall_vs_exact@k","latency_p95","bytes_per_vector"]},
+    {"id":"bm25","api":"BM25Index","papers":["10.1561/1500000019"],"corpora":["beir","lotte"],"metrics":["ndcg@10","recall@100","latency_p95"]},
+    {"id":"learned-sparse","api":"SparseVectorIndex","papers":["2107.05720"],"corpora":["beir"],"metrics":["ndcg@10","recall@100","nonzero_terms"]},
+    {"id":"muvera-maxsim","api":"build_index/search_index","papers":["2405.19504","2004.12832"],"corpora":["beir","lotte"],"metrics":["recall_vs_exact@k","ndcg@10","latency_p95"]},
+    {"id":"hyde","api":"hypothetical_document_embedding","papers":["2212.10496"],"corpora":["beir"],"metrics":["ndcg@10","recall@100","gain_vs_encoder_query"]},
+    {"id":"raptor","api":"build_summary_tree","papers":["2401.18059"],"corpora":["qasper","longbench"],"metrics":["answer_f1","evidence_f1","tree_coverage"]},
+    {"id":"memwalker","api":"walk_summary_tree","papers":["2310.05029"],"corpora":["qasper","longbench"],"metrics":["answer_f1","leaf_recall","nodes_visited"]},
+    {"id":"crag","api":"plan_corrective_retrieval","papers":["2401.15884"],"corpora":["fever","qasc"],"metrics":["routing_accuracy","evidence_f1","answer_accuracy"]},
+    {"id":"flare","api":"plan_active_retrieval","papers":["2305.06983"],"corpora":["qasper","freshqa"],"metrics":["trigger_f1","answer_f1","retrieval_calls"]},
+    {"id":"self-rag","api":"score_self_rag_candidate","papers":["2310.11511"],"corpora":["fever","qasc"],"metrics":["selection_accuracy","evidence_f1","answer_accuracy"]},
+    {"id":"chain-of-note","api":"decide_from_evidence_notes","papers":["2311.09210"],"corpora":["fever","qasper"],"metrics":["source_decision_f1","answer_f1","abstention_precision"]},
+    {"id":"recomp","api":"selective_compression","papers":["2310.04408"],"corpora":["qasper","longbench"],"metrics":["evidence_recall","answer_f1","compression_ratio"]},
+    {"id":"rag-fusion","api":"reciprocal_rank_fusion","papers":["2402.03367"],"corpora":["beir"],"metrics":["ndcg@10","recall@100","gain_vs_best_arm"]},
+    {"id":"hipporag","api":"personalized_pagerank/project_graph_scores","papers":["2405.14831"],"corpora":["qasc","kilt","docred"],"metrics":["multi_hop_accuracy","passage_recall","path_provenance"]},
+    {"id":"graph-communities","api":"leiden_communities/build_community_reports/map_reduce_reports","papers":["1810.08473","2404.16130"],"corpora":["docred","kilt"],"metrics":["modularity","community_coverage","answer_accuracy","evidence_recall"]},
+    {"id":"sparsecl","api":"rank_sparse_contradictions","papers":["2406.10746"],"corpora":["beir","contradoc"],"metrics":["contradiction_recall@k","ndcg@10","sparsity"]},
+    {"id":"document-contradiction","api":"validate_document_contradiction","papers":["2025.emnlp-main.67","2311.09182"],"corpora":["contradoc"],"metrics":["macro_f1","localization_f1","pair_reduction"]},
+    {"id":"mem0-mutations","api":"plan_memory_mutations","papers":["2504.19413"],"corpora":["longmemeval"],"metrics":["operation_f1","update_fidelity","stale_fact_rate"]},
+    {"id":"a-mem","api":"plan_note_evolution","papers":["2502.12110"],"corpora":["longmemeval"],"metrics":["link_f1","update_accuracy","answer_accuracy"]},
+    {"id":"lightmem","api":"hybrid_topic_segments","papers":["2510.18866"],"corpora":["wikisection","longmemeval"],"metrics":["boundary_f1","pk","answer_accuracy","write_cost"]},
+    {"id":"generative-agents","api":"rank_salient_memories","papers":["2304.03442"],"corpora":["longmemeval"],"metrics":["evidence_recall@k","answer_accuracy","recency_slice"]},
+    {"id":"context-envelope","api":"assemble_context","papers":["2005.11401","2307.03172"],"corpora":["longbench","qasper"],"metrics":["evidence_density","answer_f1","tokens","acl_leakage"]},
+    {"id":"temporal-graph","api":"query_temporal_facts","papers":["2501.13956","2201.08236"],"corpora":["longmemeval","docred"],"metrics":["temporal_accuracy","update_fidelity","provenance_recall"]},
+    {"id":"entity-resolution","api":"resolve_entity","papers":["10.1080/01621459.1969.10501049"],"corpora":["wdc-products"],"metrics":["pair_f1","cluster_f1","pairs_completeness","reduction_ratio"]},
+    {"id":"procedures","api":"learn_procedure/regression_gate","papers":["2305.16291","2303.11366"],"corpora":["qasc","kilt"],"metrics":["task_success","tool_sequence_f1","groundedness","cost"]},
+    {"id":"compiler","api":"compile_configurations","papers":["2310.03714"],"corpora":["beir","fever","longmemeval"],"metrics":["objective_utility","constraint_violations","heldout_score"]}
+  ]
+}

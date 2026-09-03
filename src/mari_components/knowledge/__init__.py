@@ -1,10 +1,24 @@
 """Evidence-preserving model-output parsers and deterministic policies."""
 
+from .admission import (
+    AdmissionDecision,
+    AdmissionDisposition,
+    AdmissionSignals,
+    AdmissionThresholds,
+    admit_candidate,
+)
 from .answers import (
     AnswerDisposition,
     GroundedAnswer,
     parse_answer,
     parse_answer_candidates,
+)
+from .artifacts import Activity, KnowledgeArtifact, KnowledgeScope, ReviewState
+from .consolidation import (
+    ConsolidationBudget,
+    ConsolidationPlan,
+    PromotionSignal,
+    plan_consolidation,
 )
 from .decisions import parse_decisions
 from .excerpt import excerpt
@@ -69,6 +83,13 @@ from .tags import (
 )
 
 __all__ = [
+    "Activity",
+    "AdmissionDecision",
+    "AdmissionDisposition",
+    "AdmissionSignals",
+    "AdmissionThresholds",
+    "ConsolidationBudget",
+    "ConsolidationPlan",
     "DEFAULT_SIMILARITY_LIMIT",
     "DEFAULT_SIMILARITY_THRESHOLD",
     "AnswerDisposition",
@@ -79,6 +100,8 @@ __all__ = [
     "FreshnessStatus",
     "GroundedAnswer",
     "KnowledgeDependency",
+    "KnowledgeArtifact",
+    "KnowledgeScope",
     "ImpactAssessment",
     "LinkCandidate",
     "MemoryDecision",
@@ -87,12 +110,15 @@ __all__ = [
     "MemoryOperation",
     "MemorySignal",
     "NoteEvolutionPlan",
+    "PromotionSignal",
     "RefinementEdit",
     "RevisionChange",
+    "ReviewState",
     "SalientMemory",
     "TagAssignments",
     "TagDefinition",
     "TopicSegment",
+    "admit_candidate",
     "apply_memory_mutations",
     "assess_dependencies",
     "assess_freshness",
@@ -118,6 +144,7 @@ __all__ = [
     "parse_impact",
     "parse_refinement",
     "plan_memory_mutations",
+    "plan_consolidation",
     "plan_note_evolution",
     "pending_fact_sections",
     "rank_salient_memories",

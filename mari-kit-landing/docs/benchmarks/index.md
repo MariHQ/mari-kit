@@ -10,9 +10,14 @@ Mari evaluates stages before end-to-end answers. A weak final score can originat
 ## Run contract
 
 ```python
-from mari_components.evaluation import evaluate_retrieval, load_catalog
+from mari_components.evaluation import (
+    evaluate_retrieval,
+    load_catalog,
+    load_suite_catalog,
+)
 
 catalog = load_catalog("benchmarks/catalog.json")
+suites = load_suite_catalog("benchmarks/suites.json")
 case_score = evaluate_retrieval(
     ranked_ids=["passage-7", "passage-2", "passage-9"],
     relevance={"passage-2": 2.0, "passage-7": 1.0},
@@ -52,4 +57,6 @@ The catalog records access and license notes but does not download anything. Ben
 :hidden:
 
 running
+suites
+reference-validation
 ```

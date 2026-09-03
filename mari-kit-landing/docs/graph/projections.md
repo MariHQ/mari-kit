@@ -1,15 +1,15 @@
-[]{#projections}[Proposed]{.proposed-label}
+[]{#projections}[Current]{.current-label}
 
 # Event sourcing and disposable projections
 
 ```{include} ../_includes/eval/graph.md
 ```
 
-Canonical artifacts and append-only events remain authoritative. Search indexes, backlink tables, graph views, digests, and human-readable logs are projections with explicit build identities and safe swap semantics.
+Canonical artifacts and append-only events remain authoritative. `replay_projection` builds deterministic derived state and gives each build a content identity. A backend can validate and swap that build using its own transaction boundary.
 
 ## How it works
 
-Append a validated event with an expected generation, fold ordered events through a deterministic projector into a staging version, and record schema plus embedding/configuration fingerprints. Validate counts, checksums, scope isolation, and sample queries before atomically switching the current pointer. A failed replay never replaces the last valid projection, and retaining the prior pointer makes rollback constant-time.
+Events must have unique IDs and contiguous generations. The replay function folds them in order and hashes the complete event input. Generation gaps and duplicate events fail before a usable build is returned. Storage adapters own staging validation, pointer swaps, and rollback because those guarantees depend on the selected database.
 
 ::: source-block
 **Papers and standards**
@@ -42,15 +42,24 @@ Append a validated event with an expected generation, fold ordered events throug
 ::::::
 
 ```{code-block} python
-:caption: proposed / projections.py
+:caption: Deterministic replay with contiguous generations
 
-events.append(KnowledgeEvent(kind="artifact.superseded", payload=mutation,
-    actor=reviewer, expected_generation=41))
+from mari_components.platform import KnowledgeEvent, replay_projection
 
-build = rebuild_projection(events, projector=SearchProjector(
-    embedding_identity=embedder.fingerprint(), schema_version="3"))
-validate(build, checks=[DocumentCount(), Checksums(), ScopeIsolation(), SampleQueries()])
-projections.atomic_swap(build, retain_previous=True)
+events = [
+    KnowledgeEvent(
+        event_id="event-1",
+        generation=1,
+        kind="artifact.indexed",
+        payload={"artifact_id": "policy-7"},
+    )
+]
 
-# A failed build never replaces the last valid read version.
+def project(state: set[str], event: KnowledgeEvent) -> set[str]:
+    return state | {str(event.payload["artifact_id"])}
+
+build = replay_projection(set(), events, projector=project)
+assert build.state == {"policy-7"}
+assert build.generation == 1
+print(build.build_id)  # stable SHA-256 identity of the replay input
 ```

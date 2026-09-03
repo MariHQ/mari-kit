@@ -22,6 +22,16 @@ for corpus in catalog.for_task("evidence-retrieval"):
     print(corpus.name, corpus.metrics, corpus.license)
 ```
 
+The paper-to-suite contract is queryable independently:
+
+```python
+from mari_components.evaluation import load_suite_catalog
+
+suites = load_suite_catalog("benchmarks/suites.json")
+for suite in suites.for_paper("2406.10746"):
+    print(suite.suite_id, suite.corpora, suite.metrics)
+```
+
 ## Retrieval run format
 
 The deterministic runner consumes one JSON object per query. `relevance` may contain binary or graded judgments.

@@ -1,4 +1,4 @@
-[]{#memory-evaluation}[Proposed]{.proposed-label}
+[]{#memory-evaluation}[Current]{.current-label}
 
 # Long-horizon memory evaluation
 
@@ -50,16 +50,27 @@ Freeze conversations, source revisions, expected evidence, and change events int
 :::::::::
 
 ```{code-block} python
-:caption: proposed / memory_eval.py
+:caption: Adapt LongMemEval cases and persist a reproducible run identity
 
-report = evaluate_memory_system(system, cases,
-    corpus_sizes=(100, 10_000, 1_000_000),
-    context_budgets=(2_000, 8_000, 32_000),
-    metrics=[ExtractionF1(), EvidenceRecall(k=10), UpdateFidelity(),
-             TemporalAccuracy(), AbstentionPrecision(), ACLLeakage()])
+from datetime import datetime, timezone
 
-report.by_capability["updates"]
-report.failures  # case, stage, revisions, trace, observed output
+from mari_components.evaluation import EvaluationRun, load_longmemeval_cases
+
+cases = load_longmemeval_cases("data/longmemeval_s.json")
+metrics = evaluate_memory_cases(system, cases)  # application-owned execution
+
+run = EvaluationRun(
+    run_id="memory-main-0042",
+    corpus_id="longmemeval",
+    corpus_revision="sha256:...",
+    split="longmemeval_s",
+    mari_revision="git:...",
+    started_at=datetime.now(timezone.utc),
+    configuration={"context_budget": 8_000},
+    model_identifiers=("reader@2026-08",),
+    seed=7,
+    metrics=metrics,
+)
 ```
 
 ::: source-block
@@ -67,5 +78,5 @@ report.failures  # case, stage, revisions, trace, observed output
 
 [LongMemEval: five long-term memory capabilities](https://arxiv.org/abs/2410.10813){.paper}
 
-[The multi-scale replay matrix and ACL/update constraints are proposed Mari evaluation requirements.]{.small}
+[The adapter, deterministic metrics, run identity, and hard regression gates are implemented. System execution remains an injected application callback.]{.small}
 :::

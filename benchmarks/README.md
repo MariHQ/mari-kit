@@ -11,6 +11,7 @@ Mari now has measured public-corpus baselines. The committed [result reports](re
 - SciFact index comparison: dense flat, HNSW, and IVF-PQ over the same 512-document, 64-query deterministic slice.
 - Knowledge-from-experience compatibility: PlugMem's Apache-2.0 coding smoke fixture plus known-answer association and loaded-knowledge diagnosis cases.
 - Knowledge-boundary conformance: five per-case records for observation stages, derivation independence, conditional disclosure, coordinated edits, and progressive expansion.
+- Semantic-atom invalidation: controlled insertion and modification over a pinned, MIT-licensed public Markdown document, compared with fixed 500-token chunks.
 
 The experience fixture is intentionally reported separately from corpus-quality
 scores: it verifies event/outcome compatibility and deterministic semantics,
@@ -56,6 +57,7 @@ python benchmarks/evaluate_retrieval.py run.jsonl --k 10
 python benchmarks/run_public.py all
 python benchmarks/run_experience_knowledge.py --plugmem-fixture /path/to/PlugMem/plugmem-coding-core/eval/fixtures/smoke.json
 python benchmarks/run_knowledge_boundaries.py
+python benchmarks/run_semantic_atoms.py --markdown /path/to/pi-llm-wiki/README.md
 python benchmarks/verify_results.py
 ```
 

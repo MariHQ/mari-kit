@@ -1,0 +1,4 @@
+{"case_id": "insert-early-paragraph", "operation": "inserted", "before_atom_id": null, "after_atom_id": "atom:6c3a275ee22c1b4350b7fab1", "after_content_hash": "4e73c9b0fc0a0bf2f89d5430e89ef11944ba22dd3218c04949c6f5c14212612c", "observed_action": "embed raw and contextual vectors"}
+{"case_id": "modify-existing-phrase", "operation": "modified", "before_atom_id": "atom:f582080fcc7f24fa12909c68", "after_atom_id": "atom:5d82cbef5e19f89700c3b969", "before_content_hash": "9e87bf6cfee80ca6a9c95429120b3de4b786464038c195fba7f5ab0535a8f9d2", "after_content_hash": "c0d2158884c478b408fdf738429536a53f1c5ce6884953e1d85d48041111dd60", "lexical_similarity": 0.9090909090909091, "observed_action": "embed new vectors and tombstone old atom"}
+{"case_id": "unchanged-atoms", "operation": "equal", "count": 220, "observed_action": "reuse raw and contextual vectors"}
+{"case_id": "fixed-boundary-comparison", "operation": "fixed_500_token_chunks", "before": 7, "after": 7, "invalidated": 7}

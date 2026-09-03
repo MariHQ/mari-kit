@@ -68,6 +68,20 @@ def verify_longmem(results: Path) -> None:
             close(mean(rows, field), report["metrics"][field])
 
 
+def verify_semantic_atoms(results: Path) -> None:
+    report = json.loads((results / "semantic-atoms.json").read_text())
+    rows = load_cases(results / "semantic-atoms.cases.jsonl")
+    assert len(rows) == 4
+    assert len({row["case_id"] for row in rows}) == len(rows)
+    by_id = {row["case_id"]: row for row in rows}
+    atoms = report["semantic_atoms"]
+    fixed = report["fixed_500_token_chunks"]
+    assert by_id["unchanged-atoms"]["count"] == atoms["raw_vectors_reused"]
+    assert by_id["fixed-boundary-comparison"]["invalidated"] == fixed["invalidated"]
+    assert atoms["raw_vectors_to_embed"] == 2
+    assert atoms["contextual_vectors_to_embed"] == 2
+
+
 def declared_suites(path: Path = Path("benchmarks/suites.json")) -> tuple[str, ...]:
     catalog = json.loads(path.read_text())
     return tuple(str(row["id"]) for row in catalog["suites"])
@@ -125,6 +139,7 @@ def verify(results: Path) -> tuple[int, int]:
     verify_scifact(results)
     verify_indexes(results)
     verify_longmem(results)
+    verify_semantic_atoms(results)
     return verify_declared_suites(results)
 
 

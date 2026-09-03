@@ -9,6 +9,7 @@
 | Dense flat | Exact small-corpus baseline |
 | HNSW / IVF-PQ | Approximate candidates with measured recall loss |
 | MUVERA + MaxSim | Token-level multi-vector candidate generation and exact reranking |
+| Atom ANN + parent aggregation | Retrieve stable atoms, rank their section, assemble context at query time |
 | SparseCL | Same-topic contradiction candidates |
 | Graph propagation | Multi-hop entity-to-passage recall |
 | Context lifecycle | Selectively inject evidence before a model call and plan updates afterward |
@@ -35,3 +36,6 @@ adaptive-retrieval
 context
 context-lifecycle
 ```
+
+See [Semantic atoms and retrieval-time chunks](../ingest/semantic-atoms.md)
+for incremental alignment, atom-vector aggregation, and neighbor expansion.

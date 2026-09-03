@@ -21,6 +21,14 @@ previews, and budgeted progressive expansion. The adjacent JSONL preserves
 expected and observed values for every case. This is semantic conformance, not
 an application-quality score.
 
+### Semantic-atom incremental invalidation
+
+On the pinned Pi LLM Wiki README (221 atoms), inserting one early paragraph
+and modifying one phrase reused 220 raw and 220 contextual vectors and required
+2 new vectors of each representation. All 7 fixed 500-token chunks changed.
+One old atom was tombstoned and 2 parent sections were invalidated. This controlled edit measures
+invalidation behavior, not retrieval accuracy or embedding runtime.
+
 ### BEIR SciFact retrieval
 
 Full public test split: 5,183 documents and 300 judged queries.
@@ -58,7 +66,9 @@ python benchmarks/run_public.py all
 python benchmarks/verify_results.py
 ```
 
-`verify_results.py` independently recomputes the quality aggregates from all 962 committed case records and fails on a mismatch.
+`verify_results.py` independently recomputes corpus-quality aggregates and
+checks the semantic-atom case ledger against its report. It fails on any
+mismatch.
 
 API conformance is recorded separately because passing deterministic cases is not corpus quality:
 

@@ -38,10 +38,16 @@ mean upstream code was vendored or that Mari reproduces an upstream product.
 | Conditional disclosure predicate | Inspectable `exists`, equality, inequality, and membership conditions | Never an ACL substitute |
 | Knowledge changeset validation | Multi-document preconditions, overlap checks, previews, proposed hashes, and inverse edits | Transactions and rollback remain store-owned |
 | Progressive disclosure manifest | Validated index → summary → section → source expansion with token accounting | No UI, retrieval model, or generation pipeline |
+| Semantic atom refresh | Markdown paragraphs, list items, table rows, and code become stable source-spanned atoms; patience/Myers alignment separates exact reuse, edits, insertions, and deletions | Parser IR and plans only; embedding and persistence remain caller-owned |
+| Multi-vector atom retrieval | Raw/contextual atom vectors, weighted parent aggregation, exact MaxSim, MUVERA compatibility, and budgeted retrieval-time neighbor expansion | Encoder, ANN service, and query decomposition remain caller-owned |
+| Temporal atom versions | Half-open valid-time and transaction-time visibility with embedding model/version identity | No storage engine or retention policy |
 
 These are derived from narrow reusable ideas in `letta-code`, `memoripy`,
-`nocturne_memory`, `pi-llm-wiki`, and related shelf projects. None imports an
-upstream framework, runtime, or storage design.
+`nocturne_memory`, `pi-llm-wiki`, `diff-patience`, `diff-myers`,
+`chunk-fastcdc`, and related shelf projects. None imports an upstream
+framework, runtime, or storage design. The FastCDC reference currently informs
+the fallback boundary contract; Mari's small character-span implementation is
+not byte-compatible FastCDC.
 
 ## Intentionally excluded
 

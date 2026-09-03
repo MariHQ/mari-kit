@@ -1,0 +1,29 @@
+{
+  "evaluation_type": "public-document incremental invalidation",
+  "source": {
+    "name": "README.md",
+    "sha256": "1ab441728823d03141e229f82e1d865c58c84784e0a8e26dc603092ca1b4ea97",
+    "repository_revision": "55510fac8e171c4f6a61eae2ce7bd7ae2349ac89"
+  },
+  "edit": {
+    "inserted_paragraphs": 1,
+    "modified_phrases": 1
+  },
+  "semantic_atoms": {
+    "before": 221,
+    "after": 222,
+    "raw_vectors_reused": 220,
+    "contextual_vectors_reused": 220,
+    "raw_vectors_to_embed": 2,
+    "contextual_vectors_to_embed": 2,
+    "tombstoned": 1,
+    "invalidated_sections": 2
+  },
+  "fixed_500_token_chunks": {
+    "before": 7,
+    "after": 7,
+    "invalidated": 7
+  },
+  "alignment_ms": 9.484000038355589,
+  "limitations": "One deterministic edit on one public Markdown document; embedding latency and retrieval quality are not measured."
+}

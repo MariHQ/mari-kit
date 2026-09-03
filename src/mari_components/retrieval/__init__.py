@@ -1,5 +1,15 @@
 """Candidate generation, rank fusion, graph propagation, and exact reranking."""
 
+from .atoms import (
+    AtomVectorHit,
+    DynamicContextChunk,
+    DynamicContextResult,
+    MultiVectorSection,
+    ParentVectorHit,
+    aggregate_atom_hits,
+    assemble_atom_context,
+    maxsim_section_score,
+)
 from .composition import (
     ContextItem,
     ContextSelection,
@@ -127,6 +137,7 @@ from .sufficiency import (
 
 __all__ = [
     "ActiveRetrievalQuery",
+    "AtomVectorHit",
     "ArtifactBM25Explanation",
     "ArtifactBM25Index",
     "ArtifactIndexDelta",
@@ -165,6 +176,8 @@ __all__ = [
     "DiverseCandidateEvaluation",
     "DiverseSelectionRound",
     "DiverseSelectionTrace",
+    "DynamicContextChunk",
+    "DynamicContextResult",
     "FDEConfig",
     "FilterDecision",
     "FilterPredicate",
@@ -183,7 +196,9 @@ __all__ = [
     "IndexOperation",
     "InformationRequirement",
     "MuveraIndex",
+    "MultiVectorSection",
     "PageRankResult",
+    "ParentVectorHit",
     "ProgressiveDisclosureManifest",
     "RankContribution",
     "RetrievalHit",
@@ -202,6 +217,8 @@ __all__ = [
     "RequirementStatus",
     "assess_context_sufficiency",
     "assemble_context",
+    "aggregate_atom_hits",
+    "assemble_atom_context",
     "build_index",
     "build_summary_tree",
     "deserialize_index",
@@ -219,6 +236,7 @@ __all__ = [
     "hydrate_hits",
     "inspect_disclosure_manifest",
     "maximal_marginal_relevance",
+    "maxsim_section_score",
     "personalized_pagerank",
     "plan_active_retrieval",
     "plan_corrective_retrieval",

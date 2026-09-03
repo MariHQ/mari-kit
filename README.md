@@ -44,6 +44,9 @@ application or LLM can compose those operations for its particular system.
   grounded-answer caching, ACL-aware selection, and dependency-impact lookup.
 - Stable Markdown section identities and hashes for selective invalidation when
   an unrelated part of a source document changes.
+- Stable paragraph, list-item, table-row, and code atoms with Myers/patience
+  revision alignment, content-defined fallback spans, temporal versions, and
+  exact embedding-reuse and parent-invalidation plans.
 - Validated add/update/delete/no-op memory plans and hybrid topic segmentation
   for application-owned online and offline consolidation flows.
 - Knowledge-from-experience tools: loaded-revision manifests, expert-feedback
@@ -63,6 +66,8 @@ application or LLM can compose those operations for its particular system.
 - Explicit information requirements, context sufficiency and gap queries,
   context-use and ablation accounting, contextual chunk representations, and
   late-chunk token-span pooling.
+- Atom-vector ANN aggregation, contextual multi-vector sections, exact MaxSim,
+  existing MUVERA candidate generation, and retrieval-time neighbor expansion.
 - Page-aware structured documents with regions, bounding boxes, tables,
   derived representations, and a language-neutral code symbol graph.
 - Dependency-free Markdown, HTML, CSV-like, JSON Lines, and Python structure

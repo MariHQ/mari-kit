@@ -288,7 +288,12 @@ class CodeReference:
     resolved_target_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if not self.source_id or not self.name or self.end < self.start or self.start < 0:
+        if (
+            not self.source_id
+            or not self.name
+            or self.end < self.start
+            or self.start < 0
+        ):
             raise ValueError("code reference identity and span are required")
         object.__setattr__(
             self, "resolved_target_ids", tuple(sorted(set(self.resolved_target_ids)))
@@ -320,6 +325,21 @@ def impacted_symbols(
     return tuple(result)
 
 
+from .atoms import (  # noqa: E402
+    AtomAlignment,
+    AtomDiffAlgorithm,
+    AtomKind,
+    AtomModification,
+    AtomRefreshPlan,
+    SemanticAtom,
+    TemporalAtom,
+    active_atoms,
+    align_atoms,
+    content_defined_spans,
+    normalize_atom_text,
+    plan_atom_refresh,
+    semantic_atoms,
+)
 from .code import CodeParseResult, parse_python  # noqa: E402
 from .coordinates import SourceCoordinateMap, line_column  # noqa: E402
 from .html import parse_html  # noqa: E402
@@ -331,6 +351,7 @@ from .results import (  # noqa: E402
     ParseResult,
     stable_source_id,
 )
+from .sequence_diff import DiffKind, DiffSpan, myers_diff, patience_diff  # noqa: E402
 from .tables import NormalizedTable, normalize_table  # noqa: E402
 from .validation import (  # noqa: E402
     RegionEvidenceResolution,
@@ -343,6 +364,11 @@ from .validation import (  # noqa: E402
 
 __all__ = [
     "BoundingBox",
+    "AtomAlignment",
+    "AtomDiffAlgorithm",
+    "AtomKind",
+    "AtomModification",
+    "AtomRefreshPlan",
     "CodeEdge",
     "CodeEdgeKind",
     "CodeParseResult",
@@ -350,6 +376,8 @@ __all__ = [
     "CodeSymbol",
     "CodeSymbolKind",
     "DocumentRegion",
+    "DiffKind",
+    "DiffSpan",
     "NormalizedTable",
     "ParseIssue",
     "ParseIssueSeverity",
@@ -363,20 +391,30 @@ __all__ = [
     "RegionKind",
     "RegionRepresentation",
     "SourceCoordinateMap",
+    "SemanticAtom",
     "StructureValidationReport",
     "StructureViolation",
     "StructuredDocument",
     "TableCell",
+    "TemporalAtom",
+    "active_atoms",
+    "align_atoms",
+    "content_defined_spans",
     "impacted_symbols",
     "line_column",
     "normalize_table",
+    "normalize_atom_text",
+    "myers_diff",
+    "patience_diff",
     "parse_markdown",
+    "plan_atom_refresh",
     "parse_python",
     "parse_delimited",
     "parse_html",
     "parse_json_lines",
     "parse_json_array",
     "stable_source_id",
+    "semantic_atoms",
     "validate_parsed_document",
     "validate_region_evidence",
     "validate_structured_document",

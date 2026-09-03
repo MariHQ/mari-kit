@@ -11,6 +11,7 @@
 | PDFs, slides, and spreadsheets | Preserve pages, regions, tables, figures, and derived representations | `StructuredDocument` |
 | Source repositories | Preserve symbols and structural relations | `CodeSymbol`, `CodeEdge` |
 | Markdown bodies | Split and fingerprint | Stable `KnowledgeSection` revisions |
+| Parsed Markdown | Extract stable semantic units | Paragraph, list-item, table-row, code, and fallback atoms |
 
 ## Function map
 
@@ -44,5 +45,6 @@ connectors
 sync
 parsers
 sections
+semantic-atoms
 tags
 ```

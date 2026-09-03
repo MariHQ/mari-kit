@@ -1,9 +1,38 @@
 # Benchmarks and evaluations
 
-:::{admonition} Benchmark first
-:class: benchmark
-The initial public suite is [BEIR](https://github.com/beir-cellar/beir) for retrieval, [FEVER](https://fever.ai/) and [QASPER](https://allenai.org/data/qasper) for evidence, [WikiSection](https://github.com/sebastianarnold/WikiSection) and [DocRED](https://github.com/thunlp/DocRED) for structure, [ContraDoc](https://github.com/ddhruvkr/CONTRADOC) for self-contradiction, [WDC Products](https://webdatacommons.org/largescaleproductcorpus/wdc-products/) for resolution, and [LongMemEval](https://github.com/xiaowu0162/LongMemEval) for memory.
-:::
+## Measured baselines
+
+These numbers come from committed public-corpus runs. Each aggregate links to per-case rankings in the repository and can be recomputed locally.
+
+### BEIR SciFact retrieval
+
+5,183 documents, all 300 test queries, BM25 with `k1=1.2` and `b=0.75`.
+
+| nDCG@10 | MRR@10 | Recall@10 | Recall@100 | p50 query | p95 query |
+|---:|---:|---:|---:|---:|---:|
+| 0.6634 | 0.6309 | 0.7876 | 0.8826 | 56.02 ms | 67.63 ms |
+
+### LongMemEval-S session retrieval
+
+The full cleaned small split contains 500 questions. The official evaluator excludes 30 `_abs` questions because no history evidence exists, leaving 470 scored cases. Mari indexes each timestamped conversation session as one BM25 document.
+
+| Recall all@5 | Recall all@10 | nDCG any@5 | nDCG any@10 | p50 query | p95 query |
+|---:|---:|---:|---:|---:|---:|
+| 0.8298 | 0.9021 | 0.8835 | 0.8972 | 3.16 ms | 3.69 ms |
+
+`Recall all@k` is one only when every annotated evidence session appears in the top `k`. The main remaining failures are multi-session, temporal, and implicit-preference questions; a high `Recall any` would conceal those failures.
+
+### Exact and approximate indexes
+
+This index-only run holds a deterministic 128-dimensional feature-hashing encoder constant across 512 SciFact documents and 64 queries. ANN Recall@10 compares each approximate result to exact dense search.
+
+| Index | Build | ANN Recall@10 | Corpus Recall@10 | p50 query |
+|---|---:|---:|---:|---:|
+| Dense flat | 1.3 ms | 1.0000 | 0.3906 | 0.24 ms |
+| HNSW | 240 ms | 0.4391 | 0.2214 | 0.21 ms |
+| IVF-PQ | 46 ms | 0.2563 | 0.2318 | 1.11 ms |
+
+The current HNSW and IVF-PQ settings lose too many exact neighbors. They are measured reference implementations, not recommended production defaults.
 
 Mari evaluates stages before end-to-end answers. A weak final score can originate in parsing, retrieval, evidence selection, policy, context packing, or generation; one aggregate number cannot distinguish them.
 
@@ -26,7 +55,7 @@ case_score = evaluate_retrieval(
 print(case_score.ndcg, case_score.recall)
 ```
 
-Every persisted run identifies the corpus revision and split, Mari commit, configuration, seed, model and prompt identifiers, environment, wall time, token counts, and per-case outputs. Dataset artifacts remain outside Git.
+Every persisted public run identifies the corpus artifact and checksum, split, Mari commit and implementation hash, exact configuration, runtime environment, build and query timings, and per-case outputs. Model-backed suites must additionally pin model and prompt identifiers and record token counts. Dataset artifacts remain outside Git.
 
 ## Evaluation path
 
@@ -34,7 +63,9 @@ Every persisted run identifies the corpus revision and split, Mari commit, confi
 frozen corpus *→* adapter *→* Mari stage *→* predictions + traces *→* deterministic metrics *→* regression gate
 :::
 
-## Corpus catalog
+## Planned corpus coverage
+
+The table below is the evaluation backlog. A catalog entry is not a result.
 
 | Capability | Primary corpus | Primary measurements |
 |---|---|---|

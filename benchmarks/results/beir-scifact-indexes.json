@@ -1,0 +1,63 @@
+{
+  "benchmark": "beir-scifact-indexes",
+  "created_at": "2026-09-03T06:50:47.572897+00:00",
+  "dataset": {
+    "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+    "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
+    "documents": 512,
+    "queries": 64,
+    "selection": "64 lexicographically first judged queries; all relevant documents plus lexicographic fill to 512",
+    "split": "test"
+  },
+  "encoder": {
+    "dimension": 128,
+    "name": "signed-sha256-feature-hashing",
+    "purpose": "index-only comparison; corpus relevance is diagnostic, not a semantic encoder claim"
+  },
+  "environment": {
+    "cpu_count": 12,
+    "mari_commit": "973c5c14e2e3b1e1a7970c2c777b607d4d068cf0",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3"
+  },
+  "metrics": {
+    "dense-flat": {
+      "ann_recall_at_10": 1.0,
+      "build_seconds": 0.0012753750197589397,
+      "config": {
+        "metric": "cosine"
+      },
+      "corpus_recall_at_10": 0.390625,
+      "query_latency_ms_p50": 0.240562,
+      "query_latency_ms_p95": 0.25971435
+    },
+    "hnsw": {
+      "ann_recall_at_10": 0.4390625,
+      "build_seconds": 0.24038637499324977,
+      "config": {
+        "ef_search": 64,
+        "m": 16,
+        "metric": "cosine"
+      },
+      "corpus_recall_at_10": 0.22135416666666666,
+      "query_latency_ms_p50": 0.210479,
+      "query_latency_ms_p95": 0.2495331
+    },
+    "ivf-pq": {
+      "ann_recall_at_10": 0.25625,
+      "build_seconds": 0.0455185838509351,
+      "config": {
+        "codebook_size": 16,
+        "metric": "l2",
+        "partitions": 32,
+        "probes": 8,
+        "subquantizers": 8
+      },
+      "corpus_recall_at_10": 0.23177083333333334,
+      "query_latency_ms_p50": 1.10575,
+      "query_latency_ms_p95": 1.3711286
+    }
+  },
+  "schema_version": 1
+}

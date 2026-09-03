@@ -1,9 +1,22 @@
 # Running an evaluation
 
-:::{admonition} Benchmark first
-:class: benchmark
-Begin with BEIR SciFact: it is small enough for a development loop and jointly tests ranking against scientific evidence judgments. Add ArguAna for opposition retrieval, then one large and one out-of-domain BEIR task before treating a retrieval change as general.
-:::
+The public runner downloads checksum-pinned SciFact and LongMemEval-S artifacts, invokes Mari's implementations, and writes aggregate JSON plus a JSONL row for every query.
+
+```console
+$ python benchmarks/run_public.py all
+$ python benchmarks/verify_results.py
+verified 3 reports and 962 case records
+```
+
+Run one layer while iterating:
+
+```console
+$ python benchmarks/run_public.py scifact
+$ python benchmarks/run_public.py indexes
+$ python benchmarks/run_public.py longmemeval
+```
+
+`benchmarks/data/` is ignored. `benchmarks/results/` is committed so a claimed score can be audited without downloading a corpus. Each report records its corpus checksum, exact configuration, Mari commit, Python and NumPy versions, platform, build time, and latency distribution.
 
 ## Score a ranked run
 
@@ -14,17 +27,7 @@ Create JSONL with one query per line. IDs must be the corpus IDs, not array posi
 {"query_id":"q2","ranked_ids":["d8","d4"],"relevance":{"d4":1}}
 ```
 
-```console
-$ python benchmarks/evaluate_retrieval.py results/scifact.jsonl --k 10
-{
-  "k": 10,
-  "mrr": 0.75,
-  "ndcg": 0.7138,
-  "precision": 0.15,
-  "queries": 2,
-  "recall": 1.0
-}
-```
+The generic scorer is useful for an external system's ranked run. It is not itself a benchmark until those rows came from a pinned public corpus.
 
 ## Compare the right layer
 

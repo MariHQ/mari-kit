@@ -57,6 +57,28 @@ for region in parsed.regions:
 
 Mari supplies the neutral document IR and validation. OCR, VLM inference, file decoding, and model downloads remain adapter responsibilities.
 
+For formats without pages or geometry, use `ParsedDocument` and `ParsedBlock`.
+Blocks retain stable IDs, parent relationships, optional source spans, and
+format-specific metadata without pretending that chat messages, HTML nodes, or
+database rows have PDF coordinates.
+
+```{code-block} python
+:caption: Represent a parsed chat thread without a document-layout fiction
+
+from mari_components.documents import ParsedBlock, ParsedDocument
+
+thread = ParsedDocument(
+    artifact_id="support-thread:42",
+    revision="event-18",
+    media_type="application/x-chat",
+    blocks=(
+        ParsedBlock(block_id="question", kind="message", text="Can I return it?"),
+        ParsedBlock(block_id="reply", parent_id="question",
+                    kind="message", text="Within 14 days."),
+    ),
+)
+```
+
 ## What to evaluate
 
 | Layer | Measures |

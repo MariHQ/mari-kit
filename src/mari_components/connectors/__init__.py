@@ -57,7 +57,7 @@ from .protocol import (
 from .rss import RSSConfig, poll_rss, validate_rss
 from .singer import singer_pages
 from .slack import SlackConfig, fetch_slack_thread_by_id, poll_slack, validate_slack
-from .streaming import stream_change_hint, stream_hints, stream_pages
+from .streaming import hydrate_hints, stream_change_hint, stream_hints, stream_pages
 from .trello import TrelloConfig, poll_trello, validate_trello
 from .zendesk import ZendeskConfig, poll_zendesk, validate_zendesk
 
@@ -96,6 +96,7 @@ __all__ = [
     "connector_definitions",
     "fetch_confluence_page",
     "fetch_slack_thread_by_id",
+    "hydrate_hints",
     "poll_airtable",
     "poll_asana",
     "poll_box",

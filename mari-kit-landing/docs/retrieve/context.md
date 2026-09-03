@@ -11,6 +11,12 @@
 | Authorization filter | Leakage `0` | Unauthorized candidates are removed before ordering and rendering |
 
 The first two values describe this BM25-backed configuration, not a universal context-window result. Adjust budget and ranking together.
+Use the separate dimensions to identify the failure mode; do not treat high recall as evidence that a context is current or correctly ordered.
+
+| Consumer probe | Evidence coverage | Other dimension | Decision consequence |
+|---|---:|---:|---|
+| Temporal research context | `1.000` | Temporal precision `0.667` | Perfect evidence recall still admitted a historical assertion |
+| Code evidence retrieval | Recall `1.000` | MRR `0.500` | All relevant files appeared, but the first result was wrong |
 
 :::{collapse} Worked inclusion trace
 
@@ -70,3 +76,43 @@ context = assemble_context([
 model(context.text)
 audit(context.trace)
 ```
+
+## Artifact-neutral composition
+
+`hydrate_hits` preserves rank, score, misses, and resolver failures while
+joining index IDs to revisioned `RetrievalUnit` values. `select_context` then
+packs those units under any set of caller-named budgets. The selection trace
+retains every eligibility or budget rejection.
+
+```{code-block} python
+:caption: Hydrate ranked units and apply token and latency budgets
+
+from mari_components.retrieval import (
+    ContextItem, hydrate_hits, select_context,
+)
+
+hydrated = hydrate_hits(
+    hits,
+    identity=lambda hit: hit.document_id,
+    score=lambda hit: hit.score,
+    resolve=unit_store.get,
+)
+
+selection = select_context(
+    [ContextItem(
+        unit=hit.unit,
+        score=hit.score,
+        costs={"tokens": count_tokens(hit.unit.text), "latency_ms": 2},
+        eligible=valid_at_query_time(hit.unit),
+        exclusion_reasons=() if valid_at_query_time(hit.unit) else ("historical",),
+    ) for hit in hydrated if hit.unit is not None],
+    limits={"tokens": 6000, "latency_ms": 30},
+)
+
+model(selection.render())
+validate_answer(visible_refs=selection.visible_refs)
+```
+
+The greedy packer is one inspectable reference algorithm, not a mandated
+context policy. Token, byte, latency, and monetary costs have no built-in
+priority; their names and limits come from the caller.

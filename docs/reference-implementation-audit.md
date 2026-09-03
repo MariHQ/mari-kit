@@ -39,6 +39,7 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | Construction quality | `kracr/kg-quality-metric` | Apache-2.0; permissive evaluation reference | `inspect_graph_quality`, graph construction evaluation boundaries |
 | RDF interchange | `RDFLib/rdflib` | BSD-3-Clause; permissive interoperability oracle | `to_rdflib` |
 | Entity blocking | `dedupeio/dedupe` | MIT; permissive blocking reference | `candidate_pairs`, `cluster_matches` |
+| BM25 scoring | `dorianbrown/rank_bm25` | Apache-2.0; permissive equation and fixture reference | `BM25Index`, analyzer injection, score explanations; Mari retains its positive Robertson--Walker IDF variant |
 
 ## Connector references
 
@@ -62,3 +63,9 @@ shallow NetworkX checkout for weighted shortest paths, connected components,
 degree, closeness, betweenness, Jaccard, Adamic--Adar, and SimRank. NetworkX and
 RDFLib projection round trips were also executed locally. Mari keeps its own
 smaller callback APIs and does not vendor either library.
+
+The composition pass additionally checked Mari's multi-predecessor breadth-first
+results against NetworkX predecessor and distance output. BM25 term-frequency
+normalization and length normalization were checked against the Apache-2.0
+`rank_bm25` implementation after substituting Mari's documented positive IDF;
+per-term explanations sum exactly to returned search scores.

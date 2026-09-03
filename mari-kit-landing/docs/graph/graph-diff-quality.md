@@ -36,6 +36,26 @@ quality = inspect_graph_quality(
 
 The diff uses exact identity and set semantics. It does not infer that renamed nodes are equivalent; callers can run entity resolution before comparison when that is appropriate.
 
+`diff_records` detects changes that preserve node identity, such as a modified
+function body or an updated entity attribute. Identity and fingerprints remain
+caller projections.
+
+```{code-block} python
+:caption: Separate structural and attribute changes
+
+from mari_components.graph import diff_records
+
+records = diff_records(
+    previous.symbols,
+    current.symbols,
+    identity=lambda symbol: symbol.qualified_name,
+    fingerprint=lambda symbol: (symbol.signature, symbol.body_hash),
+)
+
+for change in records.modified:
+    schedule_impact_analysis(change.record_id)
+```
+
 ## What to evaluate
 
 | Measure | Calculation |

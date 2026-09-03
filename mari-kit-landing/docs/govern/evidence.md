@@ -12,6 +12,10 @@
 
 Mari validates references against exact document and section revisions. Entailment and citation-quality scores come from the model or evaluator you inject.
 
+`ArtifactRef` and `ArtifactEvidence` provide the same contract for passages,
+symbols, rows, messages, assertions, and generated artifacts. The older
+document-specific `Evidence` remains available as a compatibility adapter.
+
 
 :::{collapse} Worked evidence resolution examples
 
@@ -69,6 +73,33 @@ assert doc.body[e.start:e.end] == e.quote
 # Rejected: unknown document, absent quote, or a repeated quote
 # whose section cannot be selected unambiguously.
 ```
+
+```{code-block} python
+:caption: Validate citations against exactly what the model saw
+
+from mari_components.knowledge import (
+    ArtifactEvidence, ArtifactRef, validate_artifact_evidence,
+)
+
+visible = ArtifactRef(
+    artifact_id="policy", revision="v8", unit_id="enterprise",
+)
+evidence = ArtifactEvidence(
+    ref=visible, quote="30 days", start=31, end=38,
+)
+
+report = validate_artifact_evidence(
+    [evidence],
+    visible_refs=[visible],
+    resolve_text=lambda ref: rendered_units.get(ref.key),
+)
+
+assert report.accepted
+```
+
+The report separates `not_visible`, `unresolved`, `invalid_span`, and
+`quote_mismatch`. It reports mechanical validity only. Applications decide
+whether the evidence is sufficient, independent, authorized, or persuasive.
 
 ## Dependency conversion
 

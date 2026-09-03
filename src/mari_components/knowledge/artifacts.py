@@ -14,6 +14,24 @@ from mari_components.types import Evidence
 PayloadT = TypeVar("PayloadT")
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ArtifactRef:
+    """Application-owned artifact identity at one immutable revision."""
+
+    artifact_id: str
+    revision: str
+    unit_id: str = ""
+    namespace: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.artifact_id.strip() or not self.revision.strip():
+            raise ValueError("artifact ID and revision are required")
+
+    @property
+    def key(self) -> tuple[str, str, str, str]:
+        return self.namespace, self.artifact_id, self.revision, self.unit_id
+
+
 class ReviewState(StrEnum):
     PROPOSED = "proposed"
     APPROVED = "approved"

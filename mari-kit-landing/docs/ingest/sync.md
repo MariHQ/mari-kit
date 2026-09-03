@@ -54,6 +54,24 @@ for page in provider_pages:
     state = plan.state
 ```
 
+When an application exposes an atomic transaction, `apply_sync_plan` performs
+the generation check, applies upserts and tombstones, and commits the proposed
+state through that caller-owned protocol.
+
+```{code-block} python
+:caption: Apply a plan through application storage
+
+from mari_components.sync import apply_sync_plan
+
+with store.sync_transaction(source_id) as transaction:
+    apply_sync_plan(plan, transaction=transaction)
+```
+
+The transaction implements `generation`, `upsert`, `delete`, and `commit`.
+Mari does not supply the database or claim atomicity for a transaction that does
+not provide it. `hydrate_hints(hints, hydrate=canonical_fetch)` is the matching
+bridge when verified stream hints already exist and no event parser is needed.
+
 ## Enforced invariants
 
 - Page replay is idempotent through content fingerprints and manifests.

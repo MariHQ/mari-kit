@@ -3,9 +3,58 @@
 from __future__ import annotations
 
 from collections import deque
-from collections.abc import Iterable
-from dataclasses import dataclass
+from collections.abc import Iterable, Mapping
+from dataclasses import dataclass, field
 from enum import StrEnum
+from types import MappingProxyType
+from typing import Any
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ParsedBlock:
+    """Format-neutral parsed material with stable source coordinates."""
+
+    block_id: str
+    kind: str
+    text: str
+    parent_id: str = ""
+    start: int | None = None
+    end: int | None = None
+    metadata: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.block_id.strip() or not self.kind.strip():
+            raise ValueError("parsed block ID and kind are required")
+        if (self.start is None) != (self.end is None):
+            raise ValueError("parsed block start and end must be supplied together")
+        if self.start is not None and (
+            self.start < 0 or self.end is None or self.end < self.start
+        ):
+            raise ValueError("parsed block span is invalid")
+        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ParsedDocument:
+    artifact_id: str
+    revision: str
+    media_type: str
+    blocks: tuple[ParsedBlock, ...]
+
+    def __post_init__(self) -> None:
+        if not self.artifact_id.strip() or not self.revision.strip():
+            raise ValueError("parsed document artifact ID and revision are required")
+        if not self.media_type.strip():
+            raise ValueError("parsed document media type is required")
+        ids = [block.block_id for block in self.blocks]
+        if len(ids) != len(set(ids)):
+            raise ValueError("parsed block IDs must be unique")
+        known = set(ids)
+        if any(
+            block.parent_id and block.parent_id not in known for block in self.blocks
+        ):
+            raise ValueError("parsed block parents must reference known blocks")
+        object.__setattr__(self, "blocks", tuple(self.blocks))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -16,8 +65,15 @@ class BoundingBox:
     bottom: float
 
     def __post_init__(self) -> None:
-        if self.left < 0 or self.top < 0 or self.right <= self.left or self.bottom <= self.top:
-            raise ValueError("bounding box must have positive area and non-negative origin")
+        if (
+            self.left < 0
+            or self.top < 0
+            or self.right <= self.left
+            or self.bottom <= self.top
+        ):
+            raise ValueError(
+                "bounding box must have positive area and non-negative origin"
+            )
 
 
 class RegionKind(StrEnum):
@@ -87,8 +143,15 @@ class RegionEvidence:
     cell: tuple[int, int] | None = None
 
     def __post_init__(self) -> None:
-        if not self.document_id or not self.revision or not self.region_id or self.page < 1:
-            raise ValueError("region evidence requires document, revision, region, and page")
+        if (
+            not self.document_id
+            or not self.revision
+            or not self.region_id
+            or self.page < 1
+        ):
+            raise ValueError(
+                "region evidence requires document, revision, region, and page"
+            )
         if self.cell is not None and min(self.cell) < 0:
             raise ValueError("cell coordinates must not be negative")
 
@@ -143,7 +206,15 @@ class CodeSymbol:
     end_line: int
 
     def __post_init__(self) -> None:
-        if not all((self.symbol_id, self.repository, self.revision, self.language, self.qualified_name)):
+        if not all(
+            (
+                self.symbol_id,
+                self.repository,
+                self.revision,
+                self.language,
+                self.qualified_name,
+            )
+        ):
             raise ValueError("code symbol identity fields are required")
         if self.start_line < 1 or self.end_line < self.start_line:
             raise ValueError("code symbol line span is invalid")

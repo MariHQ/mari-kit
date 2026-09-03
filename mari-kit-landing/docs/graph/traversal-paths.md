@@ -33,6 +33,27 @@ if path.found:
     context.add(path.nodes)
 ```
 
+Use `build_adjacency` to project caller edge iterables in the incoming,
+outgoing, or both direction. `predecessor_dag` retains every predecessor on an
+unweighted shortest path instead of hiding alternative explanations behind one
+BFS parent.
+
+```{code-block} python
+:caption: Retain two equally short impact paths
+
+from mari_components.graph import build_adjacency, predecessor_dag
+
+outgoing = build_adjacency(
+    call_edges, endpoints=lambda edge: (edge.caller, edge.callee),
+)
+paths = predecessor_dag(
+    [changed_symbol], neighbors=outgoing.__getitem__, max_depth=5,
+)
+
+for entry in paths.entries:
+    print(entry.node, entry.predecessors, entry.shortest_path_count)
+```
+
 Breadth-first traversal gives minimum hop count in an unweighted graph. Weighted paths use Dijkstra's algorithm and reject negative or non-finite costs. Authorization is checked before a node enters the frontier.
 
 ## What to evaluate

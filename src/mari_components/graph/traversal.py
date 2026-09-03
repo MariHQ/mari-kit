@@ -51,6 +51,83 @@ class CycleResult:
     truncated: bool
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PredecessorEntry:
+    node: Hashable
+    distance: int
+    predecessors: tuple[Hashable, ...]
+    shortest_path_count: int
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class PredecessorDAG:
+    entries: tuple[PredecessorEntry, ...]
+    truncated: bool
+
+
+def predecessor_dag(
+    starts: Iterable[NodeT],
+    *,
+    neighbors: Callable[[NodeT], Iterable[NodeT]],
+    allowed: Callable[[NodeT], bool] = lambda _node: True,
+    max_depth: int | None = None,
+    max_nodes: int | None = None,
+) -> PredecessorDAG:
+    """Retain every predecessor on a bounded unweighted shortest path."""
+
+    if max_depth is not None and max_depth < 0:
+        raise ValueError("max_depth must not be negative")
+    if max_nodes is not None and max_nodes < 1:
+        raise ValueError("max_nodes must be positive")
+    roots = tuple(sorted(set(starts), key=_stable))
+    distance: dict[NodeT, int] = {}
+    predecessors: dict[NodeT, set[NodeT]] = {}
+    counts: dict[NodeT, int] = {}
+    queue: deque[NodeT] = deque()
+    truncated = False
+    for root in roots:
+        if allowed(root):
+            distance[root] = 0
+            predecessors[root] = set()
+            counts[root] = 1
+            queue.append(root)
+    while queue:
+        node = queue.popleft()
+        depth = distance[node]
+        if max_depth is not None and depth >= max_depth:
+            continue
+        for adjacent in sorted(set(neighbors(node)), key=_stable):
+            if not allowed(adjacent):
+                continue
+            candidate_distance = depth + 1
+            if adjacent not in distance:
+                if max_nodes is not None and len(distance) >= max_nodes:
+                    truncated = True
+                    continue
+                distance[adjacent] = candidate_distance
+                predecessors[adjacent] = {node}
+                counts[adjacent] = counts[node]
+                queue.append(adjacent)
+            elif distance[adjacent] == candidate_distance:
+                if node not in predecessors[adjacent]:
+                    predecessors[adjacent].add(node)
+                    counts[adjacent] += counts[node]
+    return PredecessorDAG(
+        entries=tuple(
+            PredecessorEntry(
+                node=node,
+                distance=distance[node],
+                predecessors=tuple(sorted(predecessors[node], key=_stable)),
+                shortest_path_count=counts[node],
+            )
+            for node in sorted(
+                distance, key=lambda item: (distance[item], _stable(item))
+            )
+        ),
+        truncated=truncated,
+    )
+
+
 def breadth_first(
     starts: Iterable[NodeT],
     *,
@@ -120,7 +197,9 @@ def shortest_path(
     if not allowed(start) or not allowed(target):
         return PathResult(nodes=(), cost=math.inf, visited_count=0)
     counter = 0
-    heap: list[tuple[float, int, int, NodeT, tuple[NodeT, ...]]] = [(0.0, 0, counter, start, (start,))]
+    heap: list[tuple[float, int, int, NodeT, tuple[NodeT, ...]]] = [
+        (0.0, 0, counter, start, (start,))
+    ]
     best: dict[NodeT, float] = {start: 0.0}
     visited = 0
     while heap:
@@ -128,7 +207,9 @@ def shortest_path(
         if cost != best.get(node):
             continue
         if max_visited is not None and visited >= max_visited:
-            return PathResult(nodes=(), cost=math.inf, visited_count=visited, truncated=True)
+            return PathResult(
+                nodes=(), cost=math.inf, visited_count=visited, truncated=True
+            )
         visited += 1
         if node == target:
             return PathResult(nodes=path, cost=cost, visited_count=visited)
@@ -144,7 +225,9 @@ def shortest_path(
             if candidate < best.get(adjacent, math.inf):
                 best[adjacent] = candidate
                 counter += 1
-                heapq.heappush(heap, (candidate, depth + 1, counter, adjacent, (*path, adjacent)))
+                heapq.heappush(
+                    heap, (candidate, depth + 1, counter, adjacent, (*path, adjacent))
+                )
     return PathResult(nodes=(), cost=math.inf, visited_count=visited)
 
 
@@ -155,11 +238,21 @@ def connected_components(
     components: list[tuple[NodeT, ...]] = []
     while remaining:
         start = min(remaining, key=_stable)
-        result = breadth_first((start,), neighbors=lambda node: (item for item in neighbors(node) if item in remaining))
+        result = breadth_first(
+            (start,),
+            neighbors=lambda node: (
+                item for item in neighbors(node) if item in remaining
+            ),
+        )
         component = cast(tuple[NodeT, ...], tuple(result.nodes))
         remaining.difference_update(component)
         components.append(component)
-    return tuple(sorted(components, key=lambda part: (-len(part), tuple(_stable(item) for item in part))))
+    return tuple(
+        sorted(
+            components,
+            key=lambda part: (-len(part), tuple(_stable(item) for item in part)),
+        )
+    )
 
 
 def directed_cycles(
@@ -188,11 +281,17 @@ def directed_cycles(
             if len(path) > max_depth:
                 truncated = True
                 continue
-            for adjacent in sorted((item for item in set(neighbors(node)) if item in known), key=_stable, reverse=True):
+            for adjacent in sorted(
+                (item for item in set(neighbors(node)) if item in known),
+                key=_stable,
+                reverse=True,
+            ):
                 if adjacent == start:
                     cycles.add(canonical(path))
                     if len(cycles) >= max_cycles:
-                        return CycleResult(cycles=tuple(sorted(cycles, key=repr)), truncated=True)
+                        return CycleResult(
+                            cycles=tuple(sorted(cycles, key=repr)), truncated=True
+                        )
                 elif adjacent not in path:
                     stack.append((adjacent, (*path, adjacent)))
     return CycleResult(cycles=tuple(sorted(cycles, key=repr)), truncated=truncated)

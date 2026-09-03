@@ -19,9 +19,12 @@ Blocking reduces an all-pairs comparison from quadratic work to candidate pairs 
 ```{code-block} python
 :caption: Compose construction primitives explicitly
 
-from mari_components.graph import candidate_pairs, cluster_matches
+from mari_components.graph import (
+    explain_candidate_pairs, cluster_matches, inspect_clusters,
+    resolve_relation_evidence,
+)
 
-pairs = candidate_pairs(
+blocked = explain_candidate_pairs(
     entity_ids=records,
     blocking_keys=lambda entity_id: (
         normalized_name[entity_id][:4],
@@ -31,14 +34,24 @@ pairs = candidate_pairs(
 
 clusters = cluster_matches(
     entity_ids=records,
-    candidate_pairs=pairs,
+    candidate_pairs=[(pair.left, pair.right) for pair in blocked],
     score=lambda left, right: pair_model(left, right),
     threshold=0.91,
 )
 
+diagnostics = inspect_clusters(clusters)
+resolved = resolve_relation_evidence(relations, resolve=evidence_for_relation)
+
 for cluster in clusters.clusters:
     proposals.append(application_merge_policy(cluster))
 ```
+
+`BlockedPair.shared_keys` explains why comparison occurred. Cluster diagnostics
+surface the weakest accepted link and any rejected pair located inside a
+transitively merged cluster. `resolve_relation_evidence` deliberately does not
+contain an `accepted` flag: evidence presence is not a truth or sufficiency
+policy. The older `bind_relation_evidence` compatibility function retains its
+original presence-based behavior.
 
 ## What to evaluate
 

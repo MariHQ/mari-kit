@@ -104,6 +104,15 @@ def stream_pages(
         yield from hydrate(hint)
 
 
+def hydrate_hints(
+    hints: Iterable[ChangeHint], *, hydrate: HydrateChange
+) -> Iterator[PollPage]:
+    """Hydrate already-verified/coalesced hints into canonical polling pages."""
+
+    for hint in coalesce_hints(list(hints)):
+        yield from hydrate(hint)
+
+
 def _header(headers: Mapping[str, str], name: str) -> str:
     target = name.casefold()
     return next(

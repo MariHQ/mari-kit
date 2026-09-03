@@ -81,6 +81,53 @@ class ClusteringMetrics:
     support: int
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class GraphContextMetrics:
+    evidence_coverage: float
+    temporal_precision: float
+    connected_fraction: float
+    selected_count: int
+
+
+def evaluate_graph_context(
+    selected_nodes: Iterable[Hashable],
+    *,
+    evidence_required: Iterable[Hashable],
+    temporally_valid: Iterable[Hashable],
+    edges: Iterable[tuple[Hashable, Hashable]],
+) -> GraphContextMetrics:
+    """Report independent context dimensions without combining their meaning."""
+
+    selected = set(selected_nodes)
+    required = set(evidence_required)
+    valid = set(temporally_valid)
+    coverage = len(selected & required) / len(required) if required else 1.0
+    temporal = len(selected & valid) / len(selected) if selected else 1.0
+    adjacency: dict[Hashable, set[Hashable]] = {node: set() for node in selected}
+    for left, right in edges:
+        if left in selected and right in selected:
+            adjacency[left].add(right)
+            adjacency[right].add(left)
+    largest = 0
+    remaining = set(selected)
+    while remaining:
+        frontier = [remaining.pop()]
+        size = 0
+        while frontier:
+            node = frontier.pop()
+            size += 1
+            adjacent = adjacency[node] & remaining
+            remaining.difference_update(adjacent)
+            frontier.extend(adjacent)
+        largest = max(largest, size)
+    return GraphContextMetrics(
+        evidence_coverage=coverage,
+        temporal_precision=temporal,
+        connected_fraction=largest / len(selected) if selected else 1.0,
+        selected_count=len(selected),
+    )
+
+
 def evaluate_clustering(
     expected_clusters: Mapping[Hashable, Hashable],
     predicted_clusters: Mapping[Hashable, Hashable],

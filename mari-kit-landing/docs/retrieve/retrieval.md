@@ -130,6 +130,37 @@ hits = graph.search(query_vector, limit=20, ef_search=128,
     allowed_document_ids=authorized_document_ids)
 ```
 
+BM25 accepts a caller analyzer and produces per-term score contributions.
+`with_deltas` returns a new snapshot after revision-checked upserts and deletes,
+so a streaming change need not silently rebuild from unversioned input.
+
+```{code-block} python
+:caption: Explain and incrementally replace one lexical unit
+
+from mari_components.retrieval import IndexDelta, IndexOperation
+
+lexical = BM25Index(
+    passages,
+    analyzer=domain_analyzer,
+    revisions=passage_revisions,
+)
+why = lexical.explain("refund window", item_id="policy#returns")
+
+lexical = lexical.with_deltas([IndexDelta(
+    item_id="policy#returns",
+    operation=IndexOperation.UPSERT,
+    text="Returns are accepted within 14 days.",
+    expected_revision="v7",
+    revision="v8",
+)])
+```
+
+| Explanation field | Meaning |
+|---|---|
+| `term_frequency` | Matches emitted by the injected analyzer in this unit |
+| `inverse_document_frequency` | Corpus rarity at this immutable snapshot |
+| `score` | This query term's contribution after length normalization |
+
 ## Rank fusion, graph recall, and diverse packing
 
 ::::::{container} diagram context

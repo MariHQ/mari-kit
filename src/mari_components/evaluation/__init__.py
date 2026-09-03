@@ -13,9 +13,11 @@ from .catalog import Corpus, CorpusCatalog, load_catalog
 from .gates import GateCheck, GateMode, GateReport, MetricGate, regression_gate
 from .graph import (
     ClusteringMetrics,
+    GraphContextMetrics,
     LinkPredictionMetrics,
     PathMetrics,
     evaluate_clustering,
+    evaluate_graph_context,
     evaluate_link_prediction,
     evaluate_path,
     evaluate_subgraph,
@@ -40,6 +42,7 @@ from .suites import BenchmarkSuite, BenchmarkSuiteCatalog, load_suite_catalog
 __all__ = [
     "ClassificationMetrics",
     "ClusteringMetrics",
+    "GraphContextMetrics",
     "BenchmarkSuite",
     "BenchmarkSuiteCatalog",
     "Corpus",
@@ -63,6 +66,7 @@ __all__ = [
     "compare_task_outcomes",
     "evaluate_retrieval",
     "evaluate_clustering",
+    "evaluate_graph_context",
     "evaluate_link_prediction",
     "evaluate_path",
     "evaluate_subgraph",

@@ -69,6 +69,13 @@ application or LLM can compose those operations for its particular system.
   clustering, temporal joins, lineage traversal, and taint propagation.
 - Loss-visible GraphML, JSON-LD, NetworkX, RDFLib, and PyTorch Geometric
   conversion helpers using a temporary interchange projection.
+- Artifact-neutral evidence with exact visible-context validation, typed hit
+  hydration, and multi-budget context selection traces.
+- Revision-checked lexical index deltas, injectable analyzers, and per-term BM25
+  explanations.
+- Evidence-bearing temporal assertions, attribute-aware record diffs,
+  explainable blocking and clustering, adjacency projections, and multi-path
+  reachability results.
 
 ## Installation
 

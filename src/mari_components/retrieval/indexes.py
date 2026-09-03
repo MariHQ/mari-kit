@@ -7,8 +7,9 @@ import heapq
 import math
 import re
 from collections import Counter
-from collections.abc import Collection, Mapping, Sequence
+from collections.abc import Callable, Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from enum import StrEnum
 
 import numpy as np
 from numpy import typing as npt
@@ -18,6 +19,45 @@ from numpy import typing as npt
 class IndexHit:
     document_id: str
     score: float
+
+
+class IndexOperation(StrEnum):
+    UPSERT = "upsert"
+    DELETE = "delete"
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class IndexDelta:
+    item_id: str
+    operation: IndexOperation
+    revision: str = ""
+    text: str = ""
+    expected_revision: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.item_id.strip():
+            raise ValueError("index delta item ID is required")
+        if self.operation is IndexOperation.UPSERT and not self.revision:
+            raise ValueError("index upserts require a revision")
+
+
+def _default_analyzer(text: str) -> tuple[str, ...]:
+    return tuple(re.findall(r"\w+", text.casefold()))
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BM25TermContribution:
+    term: str
+    term_frequency: int
+    inverse_document_frequency: float
+    score: float
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BM25Explanation:
+    item_id: str
+    score: float
+    contributions: tuple[BM25TermContribution, ...]
 
 
 def _matrix(
@@ -154,27 +194,36 @@ class BM25Index:
     """Robertson--Walker BM25 with deterministic tokenization and tie-breaking."""
 
     def __init__(
-        self, documents: Mapping[str, str], *, k1: float = 1.2, b: float = 0.75
+        self,
+        documents: Mapping[str, str],
+        *,
+        k1: float = 1.2,
+        b: float = 0.75,
+        analyzer: Callable[[str], Iterable[str]] | None = None,
+        revisions: Mapping[str, str] | None = None,
     ) -> None:
-        if (
-            not documents
-            or not math.isfinite(k1)
-            or k1 < 0
-            or not math.isfinite(b)
-            or not 0 <= b <= 1
-        ):
-            raise ValueError("documents and valid BM25 k1/b parameters are required")
+        if not math.isfinite(k1) or k1 < 0 or not math.isfinite(b) or not 0 <= b <= 1:
+            raise ValueError("valid BM25 k1/b parameters are required")
+        if revisions is not None and set(revisions) != set(documents):
+            raise ValueError("BM25 revisions must match document IDs")
         self.k1, self.b = k1, b
+        self.documents = dict(documents)
+        self.revisions = dict(revisions or {identifier: "" for identifier in documents})
+        self.analyzer = analyzer or _default_analyzer
         self.tokens = {
-            identifier: tuple(re.findall(r"\w+", text.casefold()))
+            identifier: tuple(self.analyzer(text))
             for identifier, text in documents.items()
         }
-        if any(not identifier for identifier in self.tokens):
-            raise ValueError("document IDs must not be empty")
+        if any(not identifier for identifier in self.tokens) or any(
+            not term for tokens in self.tokens.values() for term in tokens
+        ):
+            raise ValueError("document IDs and analyzer terms must not be empty")
         self.lengths = {
             identifier: len(tokens) for identifier, tokens in self.tokens.items()
         }
-        self.average_length = sum(self.lengths.values()) / len(self.lengths)
+        self.average_length = (
+            sum(self.lengths.values()) / len(self.lengths) if self.lengths else 0.0
+        )
         frequency: Counter[str] = Counter()
         for tokens in self.tokens.values():
             frequency.update(set(tokens))
@@ -193,26 +242,87 @@ class BM25Index:
     ) -> tuple[IndexHit, ...]:
         if limit < 0:
             raise ValueError("limit must not be negative")
-        terms = re.findall(r"\w+", query.casefold())
+        terms = tuple(self.analyzer(query))
         allowed = None if allowed_document_ids is None else set(allowed_document_ids)
         hits: list[IndexHit] = []
-        for identifier, tokens in self.tokens.items():
+        for identifier in self.tokens:
             if allowed is not None and identifier not in allowed:
                 continue
-            frequencies = Counter(tokens)
-            score = 0.0
-            for term in terms:
-                tf = frequencies[term]
-                denominator = tf + self.k1 * (
-                    1
-                    - self.b
-                    + self.b * self.lengths[identifier] / (self.average_length or 1)
+            contributions = self._contributions(identifier, terms)
+            hits.append(
+                IndexHit(
+                    document_id=identifier,
+                    score=sum(item.score for item in contributions),
                 )
-                if tf:
-                    score += self.idf.get(term, 0.0) * tf * (self.k1 + 1) / denominator
-            hits.append(IndexHit(document_id=identifier, score=score))
+            )
         return tuple(
             sorted(hits, key=lambda hit: (-hit.score, hit.document_id))[:limit]
+        )
+
+    def explain(self, query: str, *, item_id: str) -> BM25Explanation:
+        """Return per-query-term contributions for one indexed item."""
+
+        if item_id not in self.tokens:
+            raise KeyError(item_id)
+        contributions = self._contributions(item_id, tuple(self.analyzer(query)))
+        return BM25Explanation(
+            item_id=item_id,
+            score=sum(item.score for item in contributions),
+            contributions=contributions,
+        )
+
+    def _contributions(
+        self, item_id: str, terms: Sequence[str]
+    ) -> tuple[BM25TermContribution, ...]:
+        frequencies = Counter(self.tokens[item_id])
+        result: list[BM25TermContribution] = []
+        for term in terms:
+            term_frequency = frequencies[term]
+            denominator = term_frequency + self.k1 * (
+                1 - self.b + self.b * self.lengths[item_id] / (self.average_length or 1)
+            )
+            contribution = (
+                self.idf.get(term, 0.0) * term_frequency * (self.k1 + 1) / denominator
+                if term_frequency
+                else 0.0
+            )
+            result.append(
+                BM25TermContribution(
+                    term=term,
+                    term_frequency=term_frequency,
+                    inverse_document_frequency=self.idf.get(term, 0.0),
+                    score=contribution,
+                )
+            )
+        return tuple(result)
+
+    def with_deltas(self, deltas: Iterable[IndexDelta]) -> BM25Index:
+        """Build a new lexical snapshot after revision-checked item changes."""
+
+        documents = dict(self.documents)
+        revisions = dict(self.revisions)
+        for delta in deltas:
+            current = revisions.get(delta.item_id)
+            if (
+                delta.expected_revision is not None
+                and current != delta.expected_revision
+            ):
+                raise ValueError(
+                    f"revision mismatch for {delta.item_id!r}: "
+                    f"expected {delta.expected_revision!r}, found {current!r}"
+                )
+            if delta.operation is IndexOperation.DELETE:
+                documents.pop(delta.item_id, None)
+                revisions.pop(delta.item_id, None)
+            else:
+                documents[delta.item_id] = delta.text
+                revisions[delta.item_id] = delta.revision
+        return BM25Index(
+            documents,
+            k1=self.k1,
+            b=self.b,
+            analyzer=self.analyzer,
+            revisions=revisions,
         )
 
 

@@ -13,7 +13,23 @@ from .answers import (
     parse_answer,
     parse_answer_candidates,
 )
-from .artifacts import Activity, KnowledgeArtifact, KnowledgeScope, ReviewState
+from .artifacts import (
+    Activity,
+    ArtifactRef,
+    KnowledgeArtifact,
+    KnowledgeScope,
+    ReviewState,
+)
+from .assertions import (
+    Assertion,
+    AssertionUpdateKind,
+    AssertionUpdatePlan,
+    all_of,
+    any_of,
+    group_assertions,
+    plan_assertion_update,
+    valid_at,
+)
 from .consolidation import (
     ConsolidationBudget,
     ConsolidationPlan,
@@ -21,6 +37,14 @@ from .consolidation import (
     plan_consolidation,
 )
 from .decisions import parse_decisions
+from .evidence import (
+    ArtifactEvidence,
+    EvidenceIssue,
+    EvidenceIssueKind,
+    EvidenceValidationReport,
+    document_evidence_ref,
+    validate_artifact_evidence,
+)
 from .excerpt import excerpt
 from .fact_scans import fact_scan_revisions, pending_fact_sections
 from .facts import (
@@ -84,6 +108,11 @@ from .tags import (
 
 __all__ = [
     "Activity",
+    "ArtifactEvidence",
+    "ArtifactRef",
+    "Assertion",
+    "AssertionUpdateKind",
+    "AssertionUpdatePlan",
     "AdmissionDecision",
     "AdmissionDisposition",
     "AdmissionSignals",
@@ -96,6 +125,9 @@ __all__ = [
     "DigestSummary",
     "DigestTopic",
     "FactAssessment",
+    "EvidenceIssue",
+    "EvidenceIssueKind",
+    "EvidenceValidationReport",
     "FreshnessReport",
     "FreshnessStatus",
     "GroundedAnswer",
@@ -119,6 +151,8 @@ __all__ = [
     "TagDefinition",
     "TopicSegment",
     "admit_candidate",
+    "all_of",
+    "any_of",
     "apply_memory_mutations",
     "assess_dependencies",
     "assess_freshness",
@@ -126,11 +160,13 @@ __all__ = [
     "derive_links",
     "deduplicate_fact_candidates",
     "document_sections",
+    "document_evidence_ref",
     "evidence_dependencies",
     "excerpt",
     "extract_explicit_links",
     "fact_scan_revisions",
     "grounding_coverage",
+    "group_assertions",
     "hybrid_topic_segments",
     "impacted_artifacts",
     "normalize_claim",
@@ -144,6 +180,7 @@ __all__ = [
     "parse_impact",
     "parse_refinement",
     "plan_memory_mutations",
+    "plan_assertion_update",
     "plan_consolidation",
     "plan_note_evolution",
     "pending_fact_sections",
@@ -151,4 +188,6 @@ __all__ = [
     "normalize_tag",
     "search_weight",
     "section_revisions",
+    "valid_at",
+    "validate_artifact_evidence",
 ]

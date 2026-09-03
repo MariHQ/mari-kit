@@ -5,9 +5,42 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Hashable, Iterable
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import Generic, TypeVar
 
 NodeT = TypeVar("NodeT", bound=Hashable)
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class BlockedPair(Generic[NodeT]):
+    left: NodeT
+    right: NodeT
+    shared_keys: tuple[Hashable, ...]
+
+
+def explain_candidate_pairs(
+    *,
+    entity_ids: Iterable[NodeT],
+    blocking_keys: Callable[[NodeT], Iterable[Hashable]],
+) -> tuple[BlockedPair[NodeT], ...]:
+    """Return candidate pairs with the caller keys that generated them."""
+
+    keys_by_entity = {
+        entity_id: set(blocking_keys(entity_id)) for entity_id in set(entity_ids)
+    }
+    entities = sorted(keys_by_entity, key=repr)
+    result: list[BlockedPair[NodeT]] = []
+    for index, left in enumerate(entities):
+        for right in entities[index + 1 :]:
+            shared = keys_by_entity[left] & keys_by_entity[right]
+            if shared:
+                result.append(
+                    BlockedPair(
+                        left=left,
+                        right=right,
+                        shared_keys=tuple(sorted(shared, key=repr)),
+                    )
+                )
+    return tuple(result)
 
 
 def candidate_pairs(
@@ -17,17 +50,12 @@ def candidate_pairs(
 ) -> tuple[tuple[NodeT, NodeT], ...]:
     """Return stable unique pairs sharing at least one caller-defined key."""
 
-    blocks: dict[Hashable, set[NodeT]] = {}
-    for entity_id in set(entity_ids):
-        for key in set(blocking_keys(entity_id)):
-            blocks.setdefault(key, set()).add(entity_id)
-    pairs: set[tuple[NodeT, NodeT]] = set()
-    for values in blocks.values():
-        ordered = sorted(values, key=repr)
-        for index, left in enumerate(ordered):
-            for right in ordered[index + 1 :]:
-                pairs.add((left, right))
-    return tuple(sorted(pairs, key=lambda pair: (repr(pair[0]), repr(pair[1]))))
+    return tuple(
+        (pair.left, pair.right)
+        for pair in explain_candidate_pairs(
+            entity_ids=entity_ids, blocking_keys=blocking_keys
+        )
+    )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -51,6 +79,32 @@ class EvidenceBoundCandidate:
     evidence: tuple[object, ...]
     accepted: bool
     reason: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class EvidenceResolution:
+    candidate: object
+    evidence: tuple[object, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ClusterDiagnostic:
+    cluster: tuple[Hashable, ...]
+    weakest_accepted_score: float | None
+    rejected_internal_links: tuple[MatchLink, ...]
+
+
+def resolve_relation_evidence(
+    candidates: Iterable[object],
+    *,
+    resolve: Callable[[object], Iterable[object]],
+) -> tuple[EvidenceResolution, ...]:
+    """Resolve evidence without turning evidence presence into acceptance."""
+
+    return tuple(
+        EvidenceResolution(candidate=candidate, evidence=tuple(resolve(candidate)))
+        for candidate in candidates
+    )
 
 
 def bind_relation_evidence(
@@ -100,7 +154,9 @@ def cluster_matches(
 
     accepted: list[MatchLink] = []
     rejected: list[MatchLink] = []
-    for left, right in sorted(set(candidate_pairs), key=lambda pair: (repr(pair[0]), repr(pair[1]))):
+    for left, right in sorted(
+        set(candidate_pairs), key=lambda pair: (repr(pair[0]), repr(pair[1]))
+    ):
         if left not in entities or right not in entities:
             raise ValueError("candidate pairs must reference supplied entity IDs")
         value = float(score(left, right))
@@ -115,6 +171,46 @@ def cluster_matches(
     grouped: dict[NodeT, list[NodeT]] = {}
     for entity in entities:
         grouped.setdefault(find(entity), []).append(entity)
-    clusters = tuple(sorted((tuple(sorted(group, key=repr)) for group in grouped.values()), key=lambda group: (-len(group), repr(group))))
-    assignments = tuple((entity, index) for index, group in enumerate(clusters) for entity in group)
-    return ClusterResult(clusters=clusters, assignments=assignments, accepted_links=tuple(accepted), rejected_links=tuple(rejected))
+    clusters = tuple(
+        sorted(
+            (tuple(sorted(group, key=repr)) for group in grouped.values()),
+            key=lambda group: (-len(group), repr(group)),
+        )
+    )
+    assignments = tuple(
+        (entity, index) for index, group in enumerate(clusters) for entity in group
+    )
+    return ClusterResult(
+        clusters=clusters,
+        assignments=assignments,
+        accepted_links=tuple(accepted),
+        rejected_links=tuple(rejected),
+    )
+
+
+def inspect_clusters(result: ClusterResult) -> tuple[ClusterDiagnostic, ...]:
+    """Expose weak accepted links and rejected links inside transitive clusters."""
+
+    diagnostics: list[ClusterDiagnostic] = []
+    for cluster in result.clusters:
+        members = set(cluster)
+        accepted = tuple(
+            link
+            for link in result.accepted_links
+            if link.left in members and link.right in members
+        )
+        rejected = tuple(
+            link
+            for link in result.rejected_links
+            if link.left in members and link.right in members
+        )
+        diagnostics.append(
+            ClusterDiagnostic(
+                cluster=cluster,
+                weakest_accepted_score=min(
+                    (link.score for link in accepted), default=None
+                ),
+                rejected_internal_links=rejected,
+            )
+        )
+    return tuple(diagnostics)

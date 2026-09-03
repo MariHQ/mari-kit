@@ -2,12 +2,16 @@
 
 # Entity resolution with explicit uncertainty
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Fellegi--Sunter contributions and thresholds | 1 | 1 / 1 pass | — |
-| WDC Products resolution | — | Not run | Pair/cluster F1 unavailable |
+| WDC held-out result | Value | Decision implication |
+|---|---:|---|
+| Pair precision | `0.623` | Roughly four in ten automatic links would still be wrong |
+| Pair recall | `0.507` | About half of true matches were linked |
+| Pair F1 | `0.559` | URL-only fields are insufficient for unattended merging |
+| Review rate | `0.476` | The review band exposes uncertainty instead of forcing a merge |
+
+This run uses only the URLs available in the compact WDC gold files. Product titles, identifiers, and attributes should materially improve the field evidence.
 
 :::{collapse} Worked resolution trace
 
@@ -19,11 +23,6 @@
 The summed score is compared with separate link and review thresholds; ambiguous records remain review candidates.
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_graph_foundations.py -k fellegi
-```
 
 
 The cascade spends expensive work only after cheap deterministic checks. It never converts an ambiguous candidate into a merge without a configured threshold or review decision.

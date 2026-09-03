@@ -2,13 +2,16 @@
 
 # Tags and links
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Tag assignment and search weighting | 1 | 1 / 1 pass | — |
-| Note link/evolution thresholds | 1 | 1 / 1 pass | — |
-| External clustering and A-MEM task quality | — | Not run | Link F1 unavailable |
+| Link source | Strength | Use |
+|---|---|---|
+| Explicit document reference | Highest | Preserve authored relationships |
+| Managed tag overlay | Policy-controlled | Add vocabulary without rewriting source metadata |
+| Similarity-derived link | Scored and bounded | Discovery; review before treating as identity |
+
+On LongMemEval, the measured A-MEM threshold produced link precision `0.436` and recall `0.944`: useful for discovery, too noisy for automatic equivalence.
+
 
 :::{collapse} Worked tag overlay example
 
@@ -18,11 +21,6 @@
 | `policy` | Add unknown tag | Rejected before mutation |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_knowledge.py tests/test_research_extensions.py -k 'tag or note_links'
-```
 
 ::: card
 ## Derived links

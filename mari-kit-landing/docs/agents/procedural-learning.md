@@ -1,15 +1,18 @@
-[]{#procedural-learning}[Current evaluation boundary]{.current-label}
+[]{#procedural-learning}[Current]{.current-label}
 
-# Procedural learning and regression gates
+# Procedural learning
 
-## Evaluation
+## At a glance
 
-| Layer | Dataset/cases | Metric | Result |
-|---|---|---|---:|
-| Memory retrieval input | LongMemEval-S; 470 questions | Recall-all@10 | 0.9021 |
-| Procedure mining | 1 deterministic case | Contract cases | 1 / 1 pass |
-| Trajectory and cache boundaries | 9 deterministic cases | Contract cases | 9 / 9 pass |
-| ACE and Reflexion procedure uplift | Held-out tasks | Task success | Not measured |
+| Candidate outcome | Promotion policy |
+|---|---|
+| Improves held-out task score and passes safety gates | Submit for review |
+| Improves score but regresses grounding or ACL isolation | Reject |
+| Matches current behavior without improvement | Keep current version |
+| Has only training-set evidence | Do not promote |
+
+The included trace study exercises procedure mining on AgentBench-shaped database interactions. It shows that Mari preserves ordered actions and promotion rules; it does not establish that a procedure improves an application's agent.
+
 
 :::{collapse} Worked promotion outcomes
 
@@ -21,12 +24,6 @@
 | No regression but no improvement | Pass | Pass | Retain active version |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_procedures.py tests/test_trajectories_agents.py
-$ python benchmarks/run_public.py longmemeval
-```
 
 
 Execution feedback can propose procedural updates, but promotion depends on held-out cases, negative outcomes, cross-procedure interference, and explicit review.

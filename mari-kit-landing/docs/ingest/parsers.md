@@ -2,14 +2,15 @@
 
 # Knowledge parsers
 
-## Evaluation
+## At a glance
 
-| Parser surface | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Facts, assessments, and evidence recovery | 8 | 8 / 8 pass | Not measured |
-| Answers, decisions, glossary, and digest | 5 | 5 / 5 pass | Not measured |
-| Links, impact, refinement, and revisions | 6 | 6 / 6 pass | Not measured |
-| QASPER, FEVER, DocRED, DeftEval, QAGS, SummaC | — | Not run | Task metrics unavailable |
+| Mari provides | Caller provides |
+|---|---|
+| Typed schemas, evidence resolution, ordering recovery, and safe fallbacks | Model prompt, inference, and task-specific quality |
+| An uncertain result when a required row or citation is invalid | The threshold for retry, review, or rejection |
+
+These are validation parsers, not bundled extraction models. Corpus evidence helps select the injected model; parser guarantees concern structure, attribution, and failure behavior.
+
 
 :::{collapse} Worked malformed-batch recovery
 
@@ -21,11 +22,6 @@
 | Claim D | Valid row returned out of order | Restored to Claim D position |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_knowledge.py
-```
 
 
 Models return JSON-like values. Parsers resolve all evidence against supplied document and section revisions and return immutable typed values. Research establishes each task formulation; Mari implements a deterministic validation boundary rather than the cited model.
@@ -64,4 +60,4 @@ print(answer.evidence[0].quote)  # exact source text
 
 Additional deterministic helpers include `normalize_claim`, `deduplicate_fact_candidates`, `grounding_coverage`, and `excerpt`. Recoverable batch drift is handled conservatively: assessment rows are restored to caller order, missing rows become uncertain, and good rows survive alongside invalid ones. Structured fact qualifiers preserve subject, relation, object, scope, validity, and conditions.
 
-**`grounding_coverage` is not entailment or confidence.**It is a Mari-specific lexical audit signal motivated by citation completeness. Exact quote validation prevents fabricated citations but does not prove that every paraphrase follows logically from its evidence.
+**`grounding_coverage` is not entailment or confidence.** It is a Mari-specific lexical audit signal motivated by citation completeness. Exact quote validation prevents fabricated citations but does not prove that every paraphrase follows logically from its evidence.

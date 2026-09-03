@@ -2,13 +2,15 @@
 
 # Unified artifact model
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Interoperability result |
-|---|---:|---:|---|
-| Store, projection, pipeline, compiler | 4 | 4 / 4 pass | — |
-| Admission, consolidation, temporal lineage | 4 | 4 / 4 pass | — |
-| Nanopublication interchange | — | Not run | Unavailable |
+| Field group | Purpose |
+|---|---|
+| Identity and revision | Address an immutable artifact version |
+| Scope and review state | Control visibility and activation |
+| Derivation and evidence | Trace an output back to source revisions |
+| Supersession and time | Preserve updates without rewriting history |
+
 
 :::{collapse} Worked artifact lineage
 
@@ -21,11 +23,6 @@
 | Review state | `approved` |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_platform.py tests/test_governed_memory.py
-```
 
 
 `KnowledgeArtifact[T]` gives facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.

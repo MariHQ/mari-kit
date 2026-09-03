@@ -2,16 +2,8 @@
 
 Validation turns generated proposals into revision-bound knowledge. These modules resolve quoted evidence, reject malformed or stale claims, localize document contradictions, select among candidate answers, invalidate derived work after source changes, and expose deliberate failure states.
 
-## Evaluation
+## Choose a governance boundary
 
-| Feature | Evaluation | Result | Not yet measured |
-|---|---|---:|---|
-| [Document contradiction](document-contradiction.md#evaluation) | Reward, range, evidence, and localization cases | 6 / 6 pass | ContraDoc corpus F1 |
-| [Evidence](evidence.md#evaluation) | Quote, revision, parser, and grounding cases | 19 / 19 pass | FEVER/QASPER/ALCE quality |
-| [Freshness](freshness.md#evaluation) | Revision, invalidation, and drift cases | 5 / 5 pass | FreshQA; time-to-consistency |
-| [Workflow reuse](workflows.md#evaluation) | Cache, staleness, and authorization cases | 7 / 7 pass | Production hit rate |
-| [Verification](verification.md#evaluation) | Candidate selection, consensus, and abstention | 5 / 5 pass | Model-quality uplift |
-| [Errors](errors.md#evaluation) | Snapshot, cursor, redaction, and event-order cases | 14 / 14 pass | Provider failure rates |
 
 ## Feature overview
 

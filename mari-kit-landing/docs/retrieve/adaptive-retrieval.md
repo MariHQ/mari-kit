@@ -2,13 +2,15 @@
 
 # Adaptive retrieval and compression
 
-## Evaluation
+## At a glance
 
-| Mechanism | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| CRAG routing and FLARE triggers | 2 | 2 / 2 pass | Not measured |
-| Self-RAG and Chain-of-Note decisions | 3 | 3 / 3 pass | Not measured |
-| FEVER, QASC, FreshQA, QASPER | — | Not run | Routing/answer/evidence quality unavailable |
+| Mechanism | Mari decides | Evidence boundary |
+|---|---|---|
+| CRAG | Use, supplement, or replace retrieved context from score thresholds | SciFact gold relevance exercised all three routes; the relevance evaluator remains yours |
+| FLARE | Whether low-confidence future tokens should trigger retrieval | QASPER answer novelty exercises masking; real calibration comes from your model |
+| Self-RAG | Candidate utility and whether retrieval is requested | Gold relevance validates score composition, not reflection-token prediction |
+| Chain-of-Note | Retrieved, parametric, or unknown answer source | Gold qrels validate deterministic source choice, not note judgment quality |
+| RECOMP | Which complete sentences fit a token budget | QASPER retained `16.6%` of tokens with evidence recall `0.330` in the measured configuration |
 
 :::{collapse} Worked routing examples
 
@@ -20,11 +22,6 @@
 | Low-confidence future tokens | Retrieve | Mask uncertain tokens and search with the remainder |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_research_extensions.py -k 'CorrectiveAndActiveRetrieval or ReflectionAndEvidenceNote'
-```
 
 
 Retrieval can be triggered, corrected, rescored, or compressed at explicit decision points instead of running as one opaque model call.

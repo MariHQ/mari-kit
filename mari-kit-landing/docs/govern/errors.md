@@ -2,13 +2,15 @@
 
 # Errors and deliberate boundaries
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result |
-|---|---:|---:|
-| Connector page and cursor failures | 3 | 3 / 3 pass |
-| Streaming verification and event failures | 6 | 6 / 6 pass |
-| Type validation and credential redaction | 5 | 5 / 5 pass |
+| Failure class | Library behavior |
+|---|---|
+| Invalid caller input | Raise a specific validation error before mutation |
+| Malformed model output | Return uncertainty or a typed parse issue where recovery is safe |
+| Transport or rate-limit failure | Classify for caller-owned retry policy |
+| Revision conflict | Reject the stale write; never overwrite silently |
+
 
 :::{collapse} Worked failure mapping
 
@@ -20,11 +22,6 @@
 | Model omits required evidence | `MalformedModelOutput` | Retry or abstain |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_connector_contract.py tests/test_connector_events.py tests/test_types.py
-```
 
 
 ## How it works
@@ -57,4 +54,4 @@ assert report.pages == len(pages)
 
 Not included: model client, prompt framework, database, scheduler, credential store, authorization engine, agent runtime, or worker queue.
 
-**Engineering contract**This taxonomy defines control flow and safe defaults. It is not a claim that provider APIs share identical failure semantics; each adapter must map its protocol into these categories and pass the connector contract checks.
+**Engineering contract.** This taxonomy defines control flow and safe defaults. It is not a claim that provider APIs share identical failure semantics; each adapter maps its protocol into these categories before application retry policy is applied.

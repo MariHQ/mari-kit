@@ -2,12 +2,15 @@
 
 # Typed knowledge pipelines
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Operational result |
-|---|---:|---:|---|
-| Fingerprints, outputs, and failure propagation | 1 | 1 / 1 pass | — |
-| Production throughput | — | Not run | Rows/second unavailable |
+| Pipeline property | Observable behavior |
+|---|---|
+| Versioned stage | Configuration contributes to the stage fingerprint |
+| Empty output | Valid successful result, distinct from failure |
+| Stage failure | Dependent stages do not execute |
+| Mutation output | Proposed first; application commits after policy checks |
+
 
 :::{collapse} Worked stage trace
 
@@ -18,11 +21,6 @@
 | Dependent stage after upstream error | — | — | Not executed |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_platform.py -k pipeline
-```
 
 
 Composable `Stage` values transform immutable batches and return outputs plus a complete `StageTrace`. Domain stages may emit reviewable artifact mutations; the runner itself performs no storage writes.

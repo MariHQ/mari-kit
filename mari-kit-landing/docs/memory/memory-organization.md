@@ -2,15 +2,13 @@
 
 # Memory organization and evidence notes
 
-## Evaluation
+## At a glance
 
-| Mechanism | Dataset/cases | Metric | Result |
-|---|---|---|---:|
-| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@5 | 0.8298 |
-| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@10 | 0.9021 |
-| Note evolution and salience | 2 deterministic cases | Contract cases | 2 / 2 pass |
-| Evidence-note decisions | 3 deterministic cases | Contract cases | 3 / 3 pass |
-| A-MEM, Generative Agents, Chain-of-Note uplift | Paper task corpora | Task quality | Not measured |
+| Organization policy | LongMemEval observation | Trade-off |
+|---|---|---|
+| Recency + importance + BM25 relevance | Evidence recall@10 `0.953`; complete recall `0.906` | Relevance dominates under the measured `0.15/0.15/0.70` weights |
+| A-MEM link thresholds | Precision `0.436`; recall `0.944`; F1 `0.597` | Broad linking finds evidence but creates many weak links |
+| Chain-of-Note source choice | Gold-judgment component check only | Replace oracle judgments with a measured classifier before claiming answer quality |
 
 :::{collapse} Actual LongMemEval retrieval differences
 
@@ -22,12 +20,6 @@
 The second case retrieves one supporting session near the top but misses the complete evidence set. `Recall-any` would hide that structural failure.
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_research_extensions.py -k 'AgenticMemory or ReflectionAndEvidenceNote'
-$ python benchmarks/run_public.py longmemeval
-```
 
 
 These functions link related notes, rank memories for recall, and decide whether retrieved evidence can support an answer.

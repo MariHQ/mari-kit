@@ -2,13 +2,17 @@
 
 # Tiered memory consolidation
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Budgeted deterministic selection | 1 | 1 / 1 pass | — |
-| Admission and temporal prerequisites | 3 | 3 / 3 pass | — |
-| LightMem and MemoryOS end-to-end quality | — | Not run | Memory accuracy unavailable |
+| Tier | Keep here when | Promotion signal |
+|---|---|---|
+| Working | Needed by the active task | Immediate relevance |
+| Episodic | A specific event may matter later | Reuse, outcome, or recency |
+| Semantic | A stable fact is supported across evidence | Confidence, recurrence, and review |
+| Procedural | A repeatable successful sequence exists | Held-out task improvement |
+
+Consolidation is a budgeted selection policy. Summary generation, importance scoring, and promotion approval remain injected decisions.
+
 
 :::{collapse} Worked budget selection
 
@@ -19,11 +23,6 @@
 | Unrelated support session | 0.18 | 1,700 | No |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_governed_memory.py
-```
 
 
 Tiers are policies over cost and lifecycle, not hard-coded stores. Mari provides topic segmentation and a deterministic promotion planner. The host supplies compression models and commits selected revisions, keeping raw observations available for audit.

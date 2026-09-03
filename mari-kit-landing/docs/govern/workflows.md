@@ -2,13 +2,17 @@
 
 # Reviewed workflows and cached answers
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Production result |
-|---|---:|---:|---|
-| Cache matching and dependency authorization | 4 | 4 / 4 pass | — |
-| Drift and selective invalidation | 3 | 3 / 3 pass | — |
-| Semantic-cache hit rate and task uplift | — | Not run | Unavailable |
+| Match state | Reuse decision |
+|---|---|
+| Similar, reviewed, authorized, and fresh | Reuse cached answer or procedure |
+| Similar but stale | Retrieve and recompute |
+| Similar but outside allowed documents | Ignore before scoring |
+| Below similarity threshold | Run the normal workflow |
+
+Cache quality depends on caller-provided query vectors and the threshold. Mari makes authorization and freshness checks part of the decision path.
+
 
 :::{collapse} Worked cache decisions
 
@@ -20,11 +24,16 @@
 | Highest score | Fresh | Unreviewed | Reject; consider lower approved match |
 :::
 
-### Reproduce
+:::::::{container} diagram thresholds
+<div>
 
-```console
-$ pytest -q tests/test_examples.py tests/test_trajectories_agents.py -k 'workflow or cache'
-```
+**0.00**[run normally]{.small}
+
+</div>
+
+::: retr
+**0.72**[start retrieval]{.small}
+:::
 
 ::: reuse
 **0.95**[consider reuse]{.small}
@@ -66,14 +75,3 @@ Reviewed workflow indexes match new requests to approved intents. Policy thresho
 ## How it works
 
 Build an index from reviewed workflow intent vectors. At query time, compute normalized similarity, retain only workflows whose dependencies are authorized, and choose the best match with stable ties. Crossing the lower threshold may start retrieval speculatively; crossing the higher threshold only makes reuse eligible. A cached response is returned only after its exact evidence dependencies pass freshness checks. Similarity never overrides ACL or revision failure.
-
-:::::::{container} diagram thresholds
-<div>
-
-**0.00**[run normally]{.small}
-
-</div>
-
-::: retr
-**0.72**[start retrieval]{.small}
-:::

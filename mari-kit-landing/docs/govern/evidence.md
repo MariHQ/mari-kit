@@ -2,13 +2,16 @@
 
 # Evidence contracts
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Quote, revision, ordering, and missing-evidence behavior | 8 | 8 / 8 pass | — |
-| Facts, answers, summaries, links, and grounding | 11 | 11 / 11 pass | — |
-| ALCE, QASPER, FActScore, FEVER | — | Not run | Citation, answer, and verdict quality unavailable |
+| Claim state | Required evidence behavior |
+|---|---|
+| Supported | At least one resolvable source span entails the claim |
+| Contradicted | At least one resolvable span conflicts with the claim |
+| Uncertain | Evidence is missing, malformed, inaccessible, or inconclusive |
+
+Mari validates references against exact document and section revisions. Entailment and citation-quality scores come from the model or evaluator you inject.
+
 
 :::{collapse} Worked evidence resolution examples
 
@@ -20,17 +23,31 @@
 | No resolvable evidence | Any | Explicit `insufficient_evidence` answer |
 :::
 
-### Reproduce
+:::::{container} diagram evidence
+::: source
+[refunds.md · rev 8f31c2a]{.small}
 
-```console
-$ pytest -q tests/test_knowledge.py
-```
+Enterprise refunds close after [30 days]{.mark}.
+:::
 
-*literal containment\
-+ unique section*
+::: bridge
+literal containment + unique section
+:::
 
 ::: record
-**Evidence**`document_id = …refunds.md``revision = 8f31c2a``quote = "30 days"``start = 31 · end = 38``section_id = enterprise``section_revision = sha256:…`
+**Evidence**
+
+`document_id = …refunds.md`
+
+`revision = 8f31c2a`
+
+`quote = "30 days"`
+
+`start = 31 · end = 38`
+
+`section_id = enterprise`
+
+`section_revision = sha256:…`
 :::
 :::::
 
@@ -57,7 +74,7 @@ assert doc.body[e.start:e.end] == e.quote
 
 `evidence_dependencies` projects each record to `(document_id, document_revision, section_id, section_revision)`, deduplicated by `(document_id, section_id)` and returned in stable order. Two records naming different revisions of the same key raise `ValueError`; silently choosing one would make reuse nondeterministic.
 
-**What this proves---and does not prove**The contract proves that the quoted characters occurred in one supplied source revision and records where. It does not prove entailment, source authority, completeness, or truth. Those require claim assessment, corroboration, authorization, and review.
+**What this proves—and does not prove.** The contract proves that the quoted characters occurred in one supplied source revision and records where. It does not prove entailment, source authority, completeness, or truth. Those require claim assessment, corroboration, authorization, and review.
 
 ::: source-block
 **Research and standards**
@@ -78,10 +95,3 @@ An evidence record is a byte-for-byte quotation bound to the exact document and 
 4.  **Resolve one section.** Split the document into current sections and find sections containing the quote. A repeated quote spanning multiple sections is rejected unless `section_id` selects exactly one.
 5.  **Derive coordinates.** Mari computes `start = section.start + section.body.index(quote)` and `end = start + len(quote)`; it does not trust model-supplied offsets or revisions.
 6.  **Bind revisions.** The accepted record receives the current `document.revision`, stable `section_id`, and content-derived `section.revision`. These become the invalidation key.
-
-:::::{container} diagram evidence
-::: source
-[refunds.md · rev 8f31c2a]{.small}
-
-Enterprise refunds close after [30 days]{.mark}.
-:::

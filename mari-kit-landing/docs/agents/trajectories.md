@@ -2,13 +2,16 @@
 
 # Trajectories and agent evaluation
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Event normalization, redaction, phases, outcomes | 5 | 5 / 5 pass | — |
-| Cache validity and speculative retrieval | 4 | 4 / 4 pass | — |
-| AgentBench environments | — | Not run | Task success unavailable |
+| Input | Stored form | Safety boundary |
+|---|---|---|
+| Tool event | Ordered normalized step | Sensitive argument names and payloads are removed |
+| Failed call | Negative outcome | Failure remains available for later evaluation |
+| Model-proposed phases | Validated ranges | Every step must be covered exactly once |
+
+The included trace study uses 60 AgentBench-shaped database interactions. It examines normalization and ordering, not live-environment task success.
+
 
 :::{collapse} Worked normalized trace
 
@@ -20,11 +23,6 @@
 | Speculative read | Recorded as a real asynchronous task |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_trajectories_agents.py
-```
 
 
 `normalize_steps` converts runtime records into privacy-bounded `TrajectoryStep` values. `parse_trajectory_analysis` validates model-proposed phases. Mari provides adapters, not an agent loop.

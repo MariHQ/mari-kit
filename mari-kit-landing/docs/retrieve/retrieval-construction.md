@@ -2,13 +2,14 @@
 
 # Hypothetical and hierarchical retrieval
 
-## Evaluation
+## At a glance
 
-| Mechanism | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| HyDE centroid construction | 2 | 2 / 2 pass | Not measured |
-| RAPTOR tree and MemWalker traversal | 3 | 3 / 3 pass | Not measured |
-| RECOMP selection and ordering | 2 | 2 / 2 pass | Not measured |
+| Mechanism | Corpus observation | What to infer |
+|---|---|---|
+| HyDE vector composition | QASPER evidence Recall@10 rose from `0.392` to `0.666` with a gold-answer proxy | The vector operation works; this is an oracle upper bound, not generator quality |
+| RAPTOR tree retrieval | QASPER evidence recall `0.426`; complete recall `0.291` | Extractive summaries lose evidence; summary quality must be evaluated |
+| MemWalker traversal | QASPER evidence recall `0.312`; about `15.7` nodes visited | A tight walk budget saves reads but can miss relevant leaves |
+| RECOMP selection | Evidence recall `0.330` while retaining `16.6%` of source tokens | Compression is useful only when the lost evidence is acceptable |
 
 :::{collapse} Worked structural differences
 
@@ -19,11 +20,6 @@
 | Scored sentences over budget | Density selection, then source-order restoration | Only selected sentences, in original document order |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_research_extensions.py -k 'Hyde or RaptorAndMemWalker or Recomp'
-```
 
 
 These functions construct alternative query representations and bounded navigation structures. Generation, encoding, clustering, summarization, and relevance models are injected; Mari owns shape validation, deterministic IDs, budgets, and traces.

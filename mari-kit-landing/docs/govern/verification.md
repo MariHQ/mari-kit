@@ -2,13 +2,15 @@
 
 # Verification portfolios
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Best-of-N selection and early stopping | 2 | 2 / 2 pass | — |
-| Consensus, abstention, and grounded scoring | 3 | 3 / 3 pass | — |
-| FEVER, ALCE, model self-consistency | — | Not run | Quality uplift unavailable |
+| Mechanism | Protects against | Does not establish |
+|---|---|---|
+| Best-of-N | A single poor sampled candidate | Correctness when every scorer is wrong |
+| Verdict consensus | One unstable judgment | Independence between judges |
+| Grounding score | Unsupported required ideas | Truth beyond the supplied evidence |
+| Selection trace | Opaque winner choice | Calibration of injected scores |
+
 
 :::{collapse} Worked consensus example
 
@@ -21,11 +23,6 @@
 The selected verdict is supported. Equal supported and contradicted weight produces abstention instead of arbitrary tie-breaking.
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_verification.py
-```
 
 ::: card
 `verdict_consensus`
@@ -48,7 +45,7 @@ Evidence, coverage, completeness, corroboration, certainty.
 :::
 ::::::::
 
-**Scores are not truth probabilities.**They are deterministic quality signals for selection and abstention.
+**Scores are not truth probabilities.** They are deterministic quality signals for selection and abstention.
 
 ::: source-block
 **Research basis**

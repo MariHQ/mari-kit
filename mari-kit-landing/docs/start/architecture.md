@@ -2,12 +2,14 @@
 
 # Architecture
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result |
-|---|---:|---:|
-| Distribution and dependency boundary | 5 | 5 / 5 pass |
-| Pipeline, projection, compiler, and store boundary | 4 | 4 / 4 pass |
+| Mari owns | Application owns |
+|---|---|
+| Immutable types, deterministic policies, traces, and metrics | Models, agent loop, scheduling, credentials, and authorization decisions |
+| Connector and store protocols | HTTP transports and production database transactions |
+| Reference in-memory algorithms | Capacity planning and distributed operations |
+
 
 :::{collapse} Worked ownership boundary
 
@@ -19,11 +21,10 @@
 | Evaluation metrics and run identity | Model invocation and deployment |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_architecture.py tests/test_platform.py
-```
+:::::::{container} diagram flow
+::: card
+**Sources**[provider APIs]{.small}
+:::
 
 *poll*
 
@@ -54,7 +55,7 @@ $ pytest -q tests/test_architecture.py tests/test_platform.py
 
 ## How it works
 
-Provider data is normalized into immutable values. Pure functions transform those values into plans, candidates, reports, or index payloads. The caller validates the return value and commits it through its own transaction boundary. Because network and storage operations are injected, the same input values can be replayed in tests before any side effect occurs.
+Provider data is normalized into immutable values. Pure functions transform those values into plans, candidates, reports, or index payloads. The caller validates the return value and commits it through its own transaction boundary. Because network and storage operations are injected, the same input values can be inspected or dry-run before any side effect occurs.
 
 ::: source-block
 **Research and standards**
@@ -67,7 +68,24 @@ Provider data is normalized into immutable values. Pure functions transform thos
 
 Values cross explicit boundaries. Mari plans and validates; the application performs side effects.
 
-:::::::{container} diagram flow
-::: card
-**Sources**[provider APIs]{.small}
-:::
+```{code-block} python
+:caption: Keep model and persistence calls outside the domain layer
+
+from mari_components import KnowledgeDocument
+from mari_components.knowledge import document_sections, parse_facts
+
+document = KnowledgeDocument(
+    source_id="handbook",
+    external_id="refunds",
+    title="Refund policy",
+    body="Enterprise refunds close after 30 days.",
+    revision="sha256:8f31c2a",
+)
+sections = document_sections(document)
+
+# The application invokes its model. Mari accepts only evidence that resolves
+# against the exact document revision supplied here.
+model_output = call_model(document, sections)
+facts = parse_facts([document], model_output)
+artifact_store.commit(facts)
+```

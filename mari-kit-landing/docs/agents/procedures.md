@@ -2,13 +2,17 @@
 
 # Procedural knowledge
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Task result |
-|---|---:|---:|---|
-| Stable subsequence and argument mining | 1 | 1 / 1 pass | — |
-| Execution, phase, and cache boundaries | 9 | 9 / 9 pass | — |
-| Voyager/Reflexion task success | — | Not run | Uplift unavailable |
+| Input evidence | Learned result |
+|---|---|
+| Repeated successful tool sequences | Stable longest common subsequence |
+| Arguments identical at every occurrence | Retained arguments |
+| Arguments vary between runs | Tool retained with arguments omitted |
+| Failed trajectories | Kept as evaluation evidence, not mined as success |
+
+Across 60 AgentBench DB tasks, controlled successful traces recovered the intended two-step sequence. This validates the mining rule, not task execution or uplift.
+
 
 :::{collapse} Worked mined procedure
 
@@ -21,11 +25,6 @@
 Learned result: `lookup_policy → issue_refund`.
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_procedures.py tests/test_trajectories_agents.py
-```
 
 
 Successful trajectories produce versioned procedure candidates. Regression gates and human review separate observed behavior from active behavior.

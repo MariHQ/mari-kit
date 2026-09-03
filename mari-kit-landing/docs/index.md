@@ -6,14 +6,8 @@ mari-components · 0.1.0.dev0
 
 # Mari documentation
 
-## Evaluation
+## Choose a system boundary
 
-| Layer | Evaluation | Result | Detail |
-|---|---|---:|---|
-| Retrieval | BEIR SciFact | nDCG@10 `0.6634` | [Indexes and ranking](retrieve/retrieval.md#evaluation) |
-| Long-term memory retrieval | LongMemEval-S | Recall-all@10 `0.9021` | [Memory evaluation](platform/memory-evaluation.md#evaluation) |
-| API behavior | Installed repository suite | 198 / 198 pass | Each feature page lists its subset |
-| Result integrity | Aggregate recomputation | 962 case records verified | `benchmarks/verify_results.py` |
 
 | Area | What it covers |
 |---|---|
@@ -24,11 +18,6 @@ mari-components · 0.1.0.dev0
 | [Graphs](graph/index.md) | Resolution, temporal facts, propagation, communities, projections |
 | [Agents](agents/index.md) | Trajectories, procedure mining, regression gates, reviewed reuse |
 | [Platform](platform/index.md) | Artifact lineage, stores, pipelines, evaluation runs, configuration compilation |
-
-```console
-$ pytest -q
-$ python benchmarks/verify_results.py
-```
 
 ```{toctree}
 :maxdepth: 2
@@ -51,8 +40,8 @@ Mari is a framework-neutral Python library for building knowledge systems from c
 Current --- importable from `mari_components`
 :::
 
-## How to read this page
+## How to use these docs
 
-Each section describes importable code in `mari_components`. Research-derived mechanisms link evidence next to the explanation; application-injected model calls, persistence boundaries, and failure behavior are identified explicitly.
+Each feature page describes importable code in `mari_components`. Research-derived mechanisms link evidence next to the explanation; application-injected model calls, persistence boundaries, and failure behavior are identified explicitly.
 
 **Package naming**`mari-components` is the distribution. Public imports use `mari_components`.

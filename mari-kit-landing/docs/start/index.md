@@ -1,11 +1,7 @@
 # Getting started
 
-## Evaluation
+## Choose a starting point
 
-| Surface | Cases | Result | Detail |
-|---|---:|---:|---|
-| Installed package | 198 | 198 / 198 pass | [Install](install.md#evaluation) |
-| Architecture boundaries | 9 | 9 / 9 pass | [Architecture](architecture.md#evaluation) |
 
 | Page | Covers |
 |---|---|

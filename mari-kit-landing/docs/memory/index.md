@@ -1,14 +1,7 @@
 # Organize memory
 
-## Evaluation
+## Choose a memory operation
 
-| Feature | Evaluation | Result | Detail |
-|---|---|---:|---|
-| [Session retrieval](memory-algorithms.md#evaluation) | LongMemEval-S | Recall-all@10 `0.9021` | 470 scored questions |
-| [Mutations and segmentation](memory-algorithms.md#evaluation) | Conformance | 4 / 4 pass | F1 not measured |
-| [Organization and salience](memory-organization.md#evaluation) | Conformance | 5 / 5 pass | Task uplift not measured |
-| [Admission](admission.md#evaluation) | Conformance | 4 / 4 pass | Detection quality not measured |
-| [Consolidation](consolidation.md#evaluation) | Conformance | 4 / 4 pass | End-to-end quality not measured |
 
 | Stage | Decision |
 |---|---|

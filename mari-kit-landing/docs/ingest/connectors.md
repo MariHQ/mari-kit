@@ -2,16 +2,15 @@
 
 # Polling and streaming connectors
 
-## Evaluation
+## At a glance
 
-| Surface | Cases | Result | Measures |
-|---|---:|---:|---|
-| Core polling contract | 3 | 3 / 3 pass | Page bounds, cursor advancement, replay |
-| Streaming contract | 6 | 6 / 6 pass | Verification order, coalescing, bounded batches |
-| Expanded batch/stream adapters | 18 | 18 / 18 pass | Tombstones, origins, canonical hints |
-| Priority providers | 9 | 9 / 9 pass | Provider pagination and identity |
-| Remaining providers | 8 | 8 / 8 pass | Provider cursor and payload shapes |
-| Upstream throughput | — | Not run | Requests/second and rate-limit behavior unavailable |
+| Mode | Use it for | Delivery contract |
+|---|---|---|
+| Polling | Complete snapshots and cursor-based change feeds | Bounded pages; checkpoint advances only after a complete page |
+| Streaming | Low-latency change notification | Verify, normalize, coalesce, then fetch canonical state; no checkpoint required |
+| Singer | Existing tap ecosystems | Convert Singer records and state messages into bounded source pages |
+
+All 18 connector definitions are exercised against recorded or synthetic provider shapes. That establishes pagination, identity, tombstone, and event-normalization behavior; it does not predict provider uptime or throughput.
 
 :::{collapse} Worked polling and streaming traces
 
@@ -23,13 +22,6 @@
 | Streaming | invalid signature → payload | nothing parsed or emitted | None |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_connector_contract.py tests/test_connector_events.py \
-    tests/test_connector_expansion.py tests/test_priority_connectors.py \
-    tests/test_remaining_connectors.py
-```
 
 ::: card
 ### Slack

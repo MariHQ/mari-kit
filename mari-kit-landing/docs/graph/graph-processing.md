@@ -2,13 +2,13 @@
 
 # Graph recall and corpus aggregation
 
-## Evaluation
+## At a glance
 
-| Mechanism | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Personalized PageRank and passage projection | 3 | 3 / 3 pass | Not measured |
-| Connected communities and map/reduce | 2 | 2 / 2 pass | Not measured |
-| QASC, KILT, DocRED | — | Not run | Multi-hop and relation metrics unavailable |
+| Mechanism | Corpus observation | Decision guidance |
+|---|---|---|
+| Personalized PageRank | QASC passage Recall@5 `0.850`; both gold facts found `0.709` | Graph expansion helps expose two-hop evidence, but does not guarantee complete chains |
+| Leiden communities | DocRED relation-community coverage `0.430`; mean modularity `0.518` | Co-mention graphs form coherent groups while splitting many gold relations |
+| Community reports | Deterministic partition and bounded map/reduce | Report quality still depends on the injected summarizer |
 
 :::{collapse} Worked graph propagation example
 
@@ -24,12 +24,6 @@
 | Same graph and resolution | Same deterministic partition |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_retrieval_algorithms.py -k GraphRetrieval
-$ pytest -q tests/test_graph_communities.py
-```
 
 
 Passage retrieval and corpus summarization are different operations. Personalized PageRank is a bounded multi-hop recall function. Deterministic community partitioning and model-injected map-reduce reports are separately versioned aggregation stages.

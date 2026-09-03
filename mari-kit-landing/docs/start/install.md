@@ -2,18 +2,15 @@
 
 # Install
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result |
-|---|---:|---:|
-| Full installed-package suite | 198 | 198 / 198 pass |
-| Architecture boundary subset | 5 | 5 / 5 pass |
+| Requirement | Value |
+|---|---|
+| Python | 3.11–3.13 |
+| Required dependency | NumPy |
+| Model, database, and HTTP SDKs | Injected by the application or installed as optional extras |
 
-### Reproduce
 
-```console
-$ pytest -q
-```
 
 
 Python 3.11--3.13 is supported. NumPy is the only runtime dependency.

@@ -27,3 +27,16 @@ def test_every_suite_references_catalogued_corpora_and_unique_ids() -> None:
         suite["api"] and suite["papers"] and suite["metrics"] for suite in suites
     )
     assert all(set(suite["corpora"]) <= corpora for suite in suites)
+
+
+def test_every_declared_suite_has_committed_result_artifacts() -> None:
+    suites = json.loads(Path("benchmarks/suites.json").read_text())["suites"]
+    results = Path("benchmarks/results")
+    missing = [
+        suffix
+        for suite in suites
+        for suffix in (f"{suite['id']}.json", f"{suite['id']}.cases.jsonl")
+        if not (results / suffix).exists()
+    ]
+
+    assert missing == []

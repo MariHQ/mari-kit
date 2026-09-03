@@ -2,15 +2,15 @@
 
 # Memory segmentation and mutation plans
 
-## Evaluation
+## At a glance
 
-| Mechanism | Dataset/cases | Metric | Result |
-|---|---|---|---:|
-| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@5 | 0.8298 |
-| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@10 | 0.9021 |
-| Mutation planning | 2 deterministic cases | Contract cases | 2 / 2 pass |
-| Topic segmentation | 2 deterministic cases | Contract cases | 2 / 2 pass |
-| Mutation and boundary quality | Public task corpora | F1 | Not measured |
+| Mechanism | Observed behavior | What remains application-owned |
+|---|---|---|
+| Mem0 mutation plan | 500 LongMemEval evidence replays preserved the latest value; 448 updates | The model that labels add, update, delete, or no-op |
+| LightMem segmentation | WikiSection boundary F1 `0.237` with lexical novelty signals | Attention and semantic-similarity models |
+| Salience ranking | LongMemEval complete evidence recall@10 `0.906` | Importance and relevance scores |
+
+The replay number validates mutation execution, not mutation classification. The segmentation score shows that a naive lexical signal is not production quality.
 
 :::{collapse} Worked mutation and segmentation examples
 
@@ -27,12 +27,6 @@
 | Lexical drift only | No | Yes | No |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_memory_algorithms.py
-$ python benchmarks/run_public.py longmemeval
-```
 
 
 `hybrid_topic_segments` splits a stream only where an attention-boundary peak and a semantic-similarity valley agree. The application extracts candidates from those bounded groups and classifies each one as add, update, delete, or no-op. `plan_memory_mutations` validates the decisions without writing storage.
@@ -85,7 +79,7 @@ plan = plan_memory_mutations(existing, candidates, {
 store.commit(plan, expected_generation=generation)
 ```
 
-**Classification remains application-owned.**Mari checks candidate coverage, target existence, add collisions, and conflicting target operations. `apply_memory_mutations` provides a pure preview for tests; it is not a database.
+**Classification remains application-owned.** Mari checks candidate coverage, target existence, add collisions, and conflicting target operations. `apply_memory_mutations` provides a side-effect-free preview; it is not a database.
 
 ::: source-block
 **Research basis**

@@ -1,13 +1,7 @@
 # Agents & procedures
 
-## Evaluation
+## Choose an agent knowledge operation
 
-| Feature | Evaluation | Result | Corpus result |
-|---|---|---:|---|
-| [Trajectories](trajectories.md#evaluation) | 9 deterministic cases | 9 / 9 pass | AgentBench not measured |
-| [Procedure learning](procedural-learning.md#evaluation) | 10 deterministic cases | 10 / 10 pass | Task uplift not measured |
-| [Procedure representation](procedures.md#evaluation) | 10 deterministic cases | 10 / 10 pass | Voyager/Reflexion success not measured |
-| Memory retrieval input | LongMemEval-S | Recall-all@10 `0.9021` | Reader accuracy not measured |
 
 | Input | Derived object | Activation boundary |
 |---|---|---|

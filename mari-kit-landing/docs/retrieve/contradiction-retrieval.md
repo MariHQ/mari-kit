@@ -2,13 +2,14 @@
 
 # SparseCL contradiction retrieval
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Not yet measured |
-|---|---:|---:|---|
-| Hoyer values and contrastive objective | 2 | 2 / 2 pass | — |
-| Prefilter, authorization, ordering, dimensions, traces | 4 | 4 / 4 pass | — |
-| ContraDoc retrieval | — | Not run | Recall@k; nDCG@10 |
+| Configuration | ContraDoc reference Recall@10 | Interpretation |
+|---|---:|---|
+| Cosine only | `0.457` | Baseline using deterministic feature-hash embeddings |
+| Cosine + Hoyer sparsity | `0.445` | The SparseCL term hurt by `0.012` without a SparseCL-trained encoder |
+
+Do not enable the sparsity contribution merely because the equation is implemented. SparseCL relies on a separately trained sparse contrastive encoder; the deterministic ablation shows that the reranker alone does not create that signal.
 
 :::{collapse} Worked sparse reranking example
 
@@ -19,11 +20,10 @@
 | Unauthorized contradiction | High | Sparse difference | Removed before scoring |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_contradiction_algorithms.py -k SparseCL
-```
+:::::::{container} diagram flow
+::: card
+**Query + corpus**[authorized passages only]{.small}
+:::
 
 *cosine*
 
@@ -65,16 +65,16 @@ for hit in hits:
     audit(hit.cosine_similarity, hit.difference_sparsity, hit.score)
 ```
 
-## Training-objective conformance
+## Training objective
 
-`sparse_contrastive_losses` evaluates the paper's Hoyer contrastive loss: contradictions are positives, similar non-contradictory passages are hard negatives, and the rest of the batch supplies soft negatives. It is a NumPy conformance oracle, not an autodiff trainer; the application trains `E_s` in PyTorch, JAX, or another framework.
+`sparse_contrastive_losses` evaluates the paper's Hoyer contrastive loss: contradictions are positives, similar non-contradictory passages are hard negatives, and the rest of the batch supplies soft negatives. It returns transparent NumPy loss terms for inspecting a training batch; the application trains `E_s` in PyTorch, JAX, or another framework.
 
 ::: source-block
 **Paper**
 
 [SparseCL: Sparse Contrastive Learning for Contradiction Retrieval](https://arxiv.org/abs/2406.10746){.paper}
 
-[Mari implements Equations 1--3, cosine prefiltering, sparse reranking, authorization ordering, validation, and score traces. Its Hoyer edge fixtures match the MIT-licensed Overcomplete implementation. The official SparseCL repository has no declared license, so no source from it is incorporated. Mari does not ship the trained encoder.]{.small}
+[Mari implements Equations 1--3, cosine prefiltering, sparse reranking, authorization ordering, validation, and score traces. The Hoyer calculation was compared with the MIT-licensed Overcomplete implementation. The official SparseCL repository has no declared license, so no source from it is incorporated. Mari does not ship the trained encoder.]{.small}
 :::
 
 
@@ -87,8 +87,3 @@ Contradiction retrieval asks which corpus passage explicitly disagrees with a qu
 3.  **Generate candidates.** Rank allowed passages by `cos(E(q), E(p))` and retain a large configurable candidate set---1,000 in the paper's example.
 4.  **Measure sparse difference.** Compute normalized Hoyer sparsity over `E_s(q) − E_s(p)`. One-coordinate differences approach 1; dense differences approach 0.
 5.  **Rerank.** Sort by `cosine + alpha × Hoyer`, with stable passage-ID ties, and retain every component in the result trace.
-
-:::::::{container} diagram flow
-::: card
-**Query + corpus**[authorized passages only]{.small}
-:::

@@ -2,13 +2,14 @@
 
 # Bi-temporal knowledge graph
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Valid-time and transaction-time queries | 2 | 2 / 2 pass | — |
-| LongMemEval temporal answers | — | Not run | Accuracy unavailable |
-| DocRED provenance | — | Not run | Recall unavailable |
+| LongMemEval temporal check | Result | Meaning |
+|---|---:|---|
+| Gold-session provenance visible at question time | `0.936` | Some gold session IDs are absent or timestamp-incompatible in the cleaned records |
+| Future-session exclusion | `1.000` | The bitemporal filter did not expose sessions dated after the question |
+
+This measures visibility semantics, not whether a model can answer temporal questions.
 
 :::{collapse} Worked bitemporal difference
 
@@ -19,11 +20,6 @@
 | Timestamp equals half-open interval end | No | — | Excluded |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_graph_foundations.py -k bitemporal
-```
 
 
 `TemporalFact` tracks valid time (when a claim applies) and transaction time (when the system knows it), supporting historical queries and late corrections.
@@ -32,7 +28,7 @@ $ pytest -q tests/test_graph_foundations.py -k bitemporal
 
 An assertion is append-only and carries two intervals. A correction learned today may close an older assertion's transaction interval while preserving its historical valid interval. Query `at` filters valid time; `known_at` filters transaction time; both must contain their requested timestamp. Contradictions create explicit edges or superseding revisions instead of destructive overwrites.
 
-**Research basis**[Zep](https://arxiv.org/abs/2501.13956){.paper} uses a temporally aware graph to maintain historical relationships for agent memory, while the [temporal knowledge-graph survey](https://arxiv.org/abs/2201.08236){.paper} catalogs representations and inference tasks for facts that change over time. Mari adds explicit valid-time and transaction-time query semantics; interval boundaries and contradiction policy require conformance tests.
+**Research basis**[Zep](https://arxiv.org/abs/2501.13956){.paper} uses a temporally aware graph to maintain historical relationships for agent memory, while the [temporal knowledge-graph survey](https://arxiv.org/abs/2201.08236){.paper} catalogs representations and inference tasks for facts that change over time. Mari adds explicit valid-time and transaction-time query semantics. Applications must choose interval-boundary and contradiction policies that match their domain.
 
 :::::{container} diagram bitemporal
 <div>

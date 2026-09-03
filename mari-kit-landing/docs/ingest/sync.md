@@ -2,14 +2,14 @@
 
 # Synchronization
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Operational result |
-|---|---:|---:|---|
-| Full/incremental reconciliation and tombstones | 4 | 4 / 4 pass | — |
-| Cursor, source, generation, and idempotence | 4 | 4 / 4 pass | — |
-| Lazy streaming state | 1 | 1 / 1 pass | — |
-| Distributed throughput and recovery time | — | Not run | Unavailable |
+| Feed semantics | Safe deletion rule | Cursor rule |
+|---|---|---|
+| Full snapshot | Absence may delete only after the final complete page | Advance after reconciliation commits |
+| Incremental feed | Delete only from an explicit tombstone | Advance after every accepted complete page |
+| Stream hint | Never infer deletion from silence | No streaming checkpoint required |
+
 
 :::{collapse} Worked reconciliation differences
 
@@ -21,11 +21,6 @@
 | Replayed incremental upsert | Same revision exists | No-op |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_sync.py
-```
 
 *→*
 

@@ -2,13 +2,16 @@
 
 # Knowledge admission and mutation planning
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Quality result |
-|---|---:|---:|---|
-| Quarantine and recalled-content rejection | 2 | 2 / 2 pass | — |
-| Consolidation budget and temporal integrity | 2 | 2 / 2 pass | — |
-| Injection detection and Mem0 extraction | — | Not run | Precision/recall unavailable |
+| Disposition | Meaning |
+|---|---|
+| Admit | Evidence, trust, novelty, and utility clear the configured thresholds |
+| Review | Potentially useful, but one or more signals are uncertain |
+| Reject | Unsafe, ungrounded, duplicate, or below the utility floor |
+
+Mari applies caller-supplied signals and preserves the decision trace. It does not claim to detect prompt injection or infer utility by itself.
+
 
 :::{collapse} Worked admission decisions
 
@@ -19,11 +22,6 @@
 | External text containing instructions | External document | Present | Quarantine before confidence |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_governed_memory.py
-```
 
 
 Admission is evaluated before reconciliation. A candidate may be valid JSON and still be unsafe, low-authority, redundant, or unsupported. Reconciliation runs only for accepted candidates.

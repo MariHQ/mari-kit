@@ -2,15 +2,15 @@
 
 # Long-horizon memory evaluation
 
-## Evaluation
+## At a glance
 
-| Dataset | Scored questions | Metric | Result |
-|---|---:|---|---:|
-| LongMemEval-S cleaned | 470 | Recall-all@5 | 0.8298 |
-| LongMemEval-S cleaned | 470 | Recall-all@10 | 0.9021 |
-| LongMemEval-S cleaned | 470 | nDCG-any@5 | 0.8835 |
-| LongMemEval-S cleaned | 470 | nDCG-any@10 | 0.8972 |
-| LongMemEval-S `_abs` | 30 excluded by official evaluator | End-to-end abstention | Not measured |
+| Retrieval depth | Complete evidence recall | Any-evidence nDCG |
+|---|---:|---:|
+| 5 sessions | `0.830` | `0.884` |
+| 10 sessions | `0.902` | `0.897` |
+
+Moving from five to ten sessions mainly helps questions whose answer spans several conversations. The table below shows where the remaining failures concentrate.
+
 
 | Question type | Questions | Recall-all@5 | Recall-all@10 |
 |---|---:|---:|---:|
@@ -31,12 +31,6 @@
 The second ranking finds relevant evidence but not the complete multi-session set. This is why the page reports `Recall-all`, not only `Recall-any`.
 :::
 
-### Reproduce
-
-```console
-$ python benchmarks/run_public.py longmemeval
-$ python benchmarks/verify_results.py
-```
 
 
 A memory system needs separate measurements for writing, updating, retrieving, temporal reasoning, abstaining, and respecting context limits. One aggregate answer score hides which subsystem failed.

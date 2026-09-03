@@ -1,16 +1,7 @@
 # Retrieve
 
-## Evaluation
+## Choose a retrieval path
 
-| Feature | Evaluation | Result | Detail |
-|---|---|---:|---|
-| [BM25](retrieval.md#evaluation) | BEIR SciFact | nDCG@10 `0.6634` | Full test split |
-| [Dense flat](retrieval.md#evaluation) | SciFact index slice | ANN Recall@10 `1.0000` | Exact oracle |
-| [HNSW](retrieval.md#evaluation) | SciFact index slice | ANN Recall@10 `0.4391` | Current measured failure |
-| [IVF-PQ](retrieval.md#evaluation) | SciFact index slice | ANN Recall@10 `0.2563` | Current measured failure |
-| [Contradiction retrieval](contradiction-retrieval.md#evaluation) | Conformance | 6 / 6 pass | ContraDoc not measured |
-| [Construction and adaptive retrieval](retrieval-construction.md#evaluation) | Conformance | 12 / 12 pass | Task corpora not measured |
-| [Context assembly](context.md#evaluation) | Conformance | 7 / 7 pass | LongBench/QASPER not measured |
 
 | Retrieval shape | Use |
 |---|---|

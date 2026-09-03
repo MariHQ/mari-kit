@@ -1,13 +1,7 @@
 # Graphs & projections
 
-## Evaluation
+## Choose a graph operation
 
-| Feature | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| [Entity resolution](entity-resolution.md#evaluation) | 1 | 1 / 1 pass | WDC Products not measured |
-| [Graph recall and communities](graph-processing.md#evaluation) | 5 | 5 / 5 pass | QASC/KILT/DocRED not measured |
-| [Projections](projections.md#evaluation) | 2 | 2 / 2 pass | Throughput not measured |
-| [Bitemporal facts](graph.md#evaluation) | 2 | 2 / 2 pass | Temporal QA not measured |
 
 | Operation | Structure |
 |---|---|

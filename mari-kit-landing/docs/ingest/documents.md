@@ -2,13 +2,15 @@
 
 # Documents, identity, and ACLs
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Boundary |
-|---|---:|---:|---|
-| Identity, ACL, timestamp, and poll limits | 4 | 4 / 4 pass | Domain-type conformance |
-| Credential-safe representation | 1 | 1 / 1 pass | Secret redaction |
-| Distributed authorization | — | Not run | Zanzibar scale/latency unavailable |
+| Concern | Representation |
+|---|---|
+| Source identity | Stable `(source, external_id)` independent of content |
+| Content identity | Revision digest for the exact evidence-bearing body |
+| Visibility | Tenant, principal, and group ACL carried with the document |
+| Deletion | Explicit tombstone rather than an empty document |
+
 
 :::{collapse} Worked document revision example
 
@@ -22,11 +24,6 @@
 The stable ID identifies the source object; the revision identifies the exact evidence-bearing content.
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_types.py
-```
 
 ::: card
 `Tombstone`

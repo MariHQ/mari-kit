@@ -2,13 +2,16 @@
 
 # Sections and incremental fact scans
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Section revision and unrelated-edit isolation | 2 | 2 / 2 pass | — |
-| Change-driven scan selection | 1 | 1 / 1 pass | — |
-| WikiSection boundaries | — | Not run | Boundary F1, Pk, WindowDiff unavailable |
+| Input change | Work selected |
+|---|---|
+| Unchanged section revision | Skip extraction |
+| New or edited section revision | Re-run section-scoped derivations |
+| Removed section | Invalidate artifacts that depend on that revision |
+
+For learned topic segmentation, the WikiSection lexical baseline reaches boundary F1 `0.237`; use it as a floor, not as evidence that lexical boundaries are adequate.
+
 
 :::{collapse} Worked section change example
 
@@ -19,11 +22,6 @@
 | `exceptions` | — | `d77` | Extract |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_knowledge.py -k 'section or quote or scan'
-```
 
 
 `document_sections` maps Markdown headings to stable section IDs and content revisions. `section_revisions` builds the current revision map. Fact scans can then skip unchanged sections.

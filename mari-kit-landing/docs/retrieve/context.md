@@ -2,13 +2,15 @@
 
 # Retrieval plans and context envelopes
 
-## Evaluation
+## At a glance
 
-| Layer | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Authorization, freshness, packing, traces | 1 | 1 / 1 pass | — |
-| RRF, MMR, and graph composition | 6 | 6 / 6 pass | — |
-| LongBench and QASPER answers | — | Not run | Answer F1 unavailable |
+| QASPER packing configuration | Observed result | Meaning |
+|---|---:|---|
+| 1,024-token, 12-document budget | Evidence recall `0.527` | About half of annotated evidence survived packing |
+| Same run | Evidence density `0.117` | Most packed tokens were context rather than annotated evidence |
+| Authorization filter | Leakage `0` | Unauthorized candidates are removed before ordering and rendering |
+
+The first two values describe this BM25-backed configuration, not a universal context-window result. Adjust budget and ranking together.
 
 :::{collapse} Worked inclusion trace
 
@@ -20,11 +22,6 @@
 | `appendix` | Yes | Yes | No | Excluded: token budget |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_context.py tests/test_retrieval_algorithms.py
-```
 
 
 Mari packs already-ranked retrieval candidates into a bounded, revision-bearing context envelope. Its trace explains every inclusion and exclusion.

@@ -1,15 +1,7 @@
 # Ingest & parse
 
-## Evaluation
+## Choose an ingestion operation
 
-| Feature | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| [Documents](documents.md#evaluation) | 5 | 5 / 5 pass | Distributed authorization not measured |
-| [Polling and streaming connectors](connectors.md#evaluation) | 44 | 44 / 44 pass | Provider throughput not measured |
-| [Synchronization](sync.md#evaluation) | 9 | 9 / 9 pass | Recovery throughput not measured |
-| [Knowledge parsers](parsers.md#evaluation) | 19 | 19 / 19 pass | Task quality not measured |
-| [Sections](sections.md#evaluation) | 3 | 3 / 3 pass | WikiSection not measured |
-| [Tags](tags.md#evaluation) | 2 | 2 / 2 pass | Link F1 not measured |
 
 | Input | Operation | Output |
 |---|---|---|

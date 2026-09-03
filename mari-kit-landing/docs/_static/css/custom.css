@@ -144,6 +144,10 @@ a { color: var(--blue); }
 .rst-content .copybtn { top: .55rem; right: .55rem; filter: invert(1); opacity: .55; }
 .rst-content .literal-block-wrapper .copybtn { top: 2.8rem; }
 .rst-content .connector-examples div[class^="highlight-"] { margin: .75rem 0 0; }
+.rst-content .evidence .bridge { color: #24784f; font: 10px/1.4 var(--mono); text-align: center; }
+.rst-content .dependency .bridge { flex: 0 0 90px; color: #24784f; font: 9px/1.35 var(--mono); text-align: center; }
+.rst-content .status-order > div { padding: 11px; border-right: 1px solid var(--line); background: #fff; }
+.rst-content .status-order > div:last-child { border-right: 0; }
 
 @media screen and (max-width: 768px) {
   .wy-nav-side { width: 300px; }
@@ -155,23 +159,19 @@ a { color: var(--blue); }
   .rst-content h2 { font-size: 24px; }
   .cards, .connector-examples { grid-template-columns: 1fr; }
   .proposed-section { padding-left: .8rem !important; }
+  .rst-content table.docutils:not(:has(th:nth-child(4))) {
+    display: table;
+    table-layout: fixed;
+  }
+  .rst-content table.docutils:not(:has(th:nth-child(4))) td,
+  .rst-content table.docutils:not(:has(th:nth-child(4))) th {
+    padding: .5rem .55rem;
+    overflow-wrap: anywhere;
+    white-space: normal !important;
+  }
+  .rst-content table.docutils code.literal {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .rst-content .status-order > div:nth-child(2) { border-right: 0; }
 }
-
-/* Every feature page opens with the corpus and pass/fail protocol. */
-.rst-content .admonition.benchmark {
-  margin: .35rem 0 1.8rem;
-  padding: 1rem 1.15rem;
-  border: 1px solid #9fc4dc;
-  border-left: 5px solid #2980b9;
-  background: #f2f8fc;
-}
-.rst-content .admonition.benchmark > .admonition-title {
-  margin: -1rem -1.15rem .8rem;
-  padding: .58rem 1.15rem;
-  color: #fff;
-  background: #2980b9;
-  font: 600 12px var(--mono);
-  letter-spacing: .025em;
-}
-.rst-content .admonition.benchmark > p:last-child { margin-bottom: 0; }
-.rst-content .admonition.benchmark a { font-weight: 600; text-decoration: underline; }

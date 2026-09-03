@@ -2,13 +2,17 @@
 
 # Freshness and impact
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Corpus result |
-|---|---:|---:|---|
-| Revision and dependency invalidation | 3 | 3 / 3 pass | — |
-| Drift and selective workflow invalidation | 2 | 2 / 2 pass | — |
-| FreshQA and update replay | — | Not run | Accuracy and time-to-consistency unavailable |
+| Dependency state | Artifact status | Action |
+|---|---|---|
+| Same document and section revision | Fresh | Reuse |
+| Unrelated section changed | Fresh for a section-scoped dependency | Reuse |
+| Referenced section changed or disappeared | Stale | Recompute or review |
+| Current revision unavailable | Unknown | Do not silently reuse |
+
+Freshness compares recorded dependencies with the current revision map. Impact is the reverse lookup: which derived artifacts mention a changed dependency.
+
 
 :::{collapse} Worked revision outcomes
 
@@ -20,13 +24,24 @@
 | Principal loses access | Dependency no longer visible | Reject reuse |
 :::
 
-### Reproduce
+::::::{container} diagram dependency
+<div>
 
-```console
-$ pytest -q tests/test_knowledge.py tests/test_examples.py -k 'revision or invalidat or drift'
-```
+**Policy answer**[depends on § window]{.small}
 
-![](data:image/svg+xml;base64,PHN2ZyB2aWV3Ym94PSIwIDAgMTIwIDQwIj48cGF0aCBkPSJNMCAyMCBDNDUgMjAgNzUgMjAgMTIwIDIwIiAvPjwvc3ZnPg==)
+</div>
+
+::: bridge
+revision lookup
+:::
+
+::: changed
+**§ window**[30 → 45 days]{.small}
+:::
+
+::: bridge
+reverse dependency lookup
+:::
 
 <div>
 
@@ -36,7 +51,10 @@ $ pytest -q tests/test_knowledge.py tests/test_examples.py -k 'revision or inval
 ::::::
 
 :::{container} status-order
-[**1 · missing**[source or section absent]{.small}]{.missing}[**2 · unversioned**[cannot compare safely]{.small}]{.unversioned}[**3 · stale**[revision differs]{.small}]{.stale}[**4 · current**[all revisions equal]{.small}]{.current}
+<div class="missing"><b>1 · missing</b><small>source or section absent</small></div>
+<div class="unversioned"><b>2 · unversioned</b><small>cannot compare safely</small></div>
+<div class="stale"><b>3 · stale</b><small>revision differs</small></div>
+<div class="current"><b>4 · current</b><small>all revisions equal</small></div>
 :::
 
 ```{code-block} python
@@ -73,7 +91,7 @@ coarse = assess_dependencies(deps, current_revisions)
 assert coarse.status == FreshnessStatus.STALE  # safe fallback
 ```
 
-**Operational consequence**Section hashes avoid regenerating an answer when an unrelated section changed. Omitting the section map intentionally increases false-positive refreshes rather than risking stale reuse. Only `current` sets `report.reusable` to true.
+**Operational consequence.** Section hashes avoid regenerating an answer when an unrelated section changed. Omitting the section map intentionally increases false-positive refreshes rather than risking stale reuse. Only `current` sets `report.reusable` to true.
 
 ::: source-block
 **Research and standards**
@@ -93,16 +111,3 @@ Freshness is an exact dependency comparison. It answers "did an input revision c
 3.  **Classify every key.** Missing document/section → `missing`; empty expected/current revision → `unversioned`; unequal revisions → `stale`; otherwise → `current`.
 4.  **Reduce deterministically.** Overall precedence is `missing > unversioned > stale > current`. Changes and IDs are sorted, so the same inputs produce the same report.
 5.  **Propagate impact.** `impacted_artifacts` evaluates each artifact independently and returns only non-current artifacts. Mari reports the set; the application chooses whether to regenerate, review, or retire them.
-
-::::::{container} diagram dependency
-<div>
-
-**Policy answer**[depends on § window]{.small}
-
-</div>
-
-![](data:image/svg+xml;base64,PHN2ZyB2aWV3Ym94PSIwIDAgMTIwIDQwIj48cGF0aCBkPSJNMCAyMCBDNDUgMjAgNzUgMjAgMTIwIDIwIiAvPjwvc3ZnPg==)
-
-::: changed
-**§ window**[30 → 45 days]{.small}
-:::

@@ -1,14 +1,18 @@
 []{#stores}[Current reference semantics]{.current-label}
 
-# Storage protocols and conformance
+# Storage protocols
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Adapter result |
-|---|---:|---:|---|
-| Scope, revisions, and point-in-time reads | 1 | 1 / 1 pass | In-memory reference |
-| Projection replay and identity | 1 | 1 / 1 pass | In-memory reference |
-| Production databases | — | Not run | Throughput and isolation unavailable |
+| Required semantic | Why it matters |
+|---|---|
+| Compare-and-swap revision | Prevent stale writers from silently winning |
+| Tenant-scoped reads | Keep authorization inside the query boundary |
+| Immutable history | Reconstruct what was known at a prior time |
+| Disposable indexes | Rebuild derived state from canonical artifacts |
+
+The included store is a reference implementation, not a production throughput claim. Database adapters should be evaluated against these semantics.
+
 
 :::{collapse} Worked compare-and-swap outcomes
 
@@ -20,18 +24,13 @@
 | Tenant A artifact | Tenant B scope | Not visible |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_platform.py -k 'store or projection'
-```
 
 
-`InMemoryArtifactStore` is the executable reference for optimistic revision checks, tenant isolation, explicit supersession, history, and point-in-time reads. Production adapters can run the same behavioral cases.
+`InMemoryArtifactStore` defines the reference behavior for optimistic revision checks, tenant isolation, explicit supersession, history, and point-in-time reads. Production adapters should preserve those semantics even when their physical schemas differ.
 
 ## How it works
 
-Protocols specify observable behavior rather than backend classes. A store implementation declares capabilities, then runs a shared conformance suite against replay, atomic revision, isolation, deletion, deterministic ordering, and point-in-time cases. Cross-store operations use an application transaction/outbox boundary; Mari does not pretend separate databases share an atomic commit. Indexes remain disposable projections that can be rebuilt from documents and artifacts.
+Protocols specify observable behavior rather than backend classes. An implementation declares whether it supports atomic revision, history, physical deletion, and point-in-time reads. Cross-store operations use an application transaction or outbox boundary; Mari does not pretend separate databases share an atomic commit. Indexes remain disposable projections that can be rebuilt from documents and artifacts.
 
 **Research basis**[Invariant confluence](https://arxiv.org/abs/1402.2237){.paper} shows that safe coordination depends on application invariants. Mari therefore specifies atomicity, replay, isolation, time-travel, and deletion behavior independently of backend methods. The protocol split is library design, not a result asserted by the paper.
 
@@ -56,4 +55,4 @@ historical = store.at_time(
 )
 ```
 
-The bundled conformance tests cover replay safety, deterministic ordering, point-in-time reads, tenant isolation, and atomic revision checks. Physical deletion and cross-database transactions remain adapter-specific capabilities and must be tested by the host backend.
+`InMemoryArtifactStore` supports replay-safe writes, deterministic ordering, point-in-time reads, tenant isolation, and atomic revision checks. Physical deletion and cross-database transactions remain adapter-specific capabilities; check a backend's declared capabilities before relying on them.

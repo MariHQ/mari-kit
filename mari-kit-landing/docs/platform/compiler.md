@@ -2,12 +2,16 @@
 
 # Evaluation and compilation
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Task result |
-|---|---:|---:|---|
-| Constraint filtering and utility selection | 1 | 1 / 1 pass | — |
-| DSPy-style held-out optimization | — | Not run | Quality uplift unavailable |
+| SciFact configuration search | nDCG@10 |
+|---|---:|
+| Selected configuration on development split | `0.639` |
+| Selected configuration on held-out split | `0.683` |
+| Default BM25 on the same held-out split | `0.695` |
+| Held-out change | `-0.011` |
+
+The selected configuration overfit this small nine-candidate search. `compile_configurations` makes that outcome visible; it does not guarantee improvement. Always reserve held-out cases and keep the current configuration when the candidate does not win there.
 
 :::{collapse} Worked configuration selection
 
@@ -20,11 +24,6 @@
 Only feasible candidates reach weighted utility comparison.
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_platform.py -k compiler
-```
 
 
 `compile_configurations` searches caller-supplied pipeline and retrieval configurations against knowledge-system objectives and returns the highest-utility feasible candidate with every trial visible.

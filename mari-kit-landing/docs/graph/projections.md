@@ -2,13 +2,16 @@
 
 # Event sourcing and disposable projections
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Operational result |
-|---|---:|---:|---|
-| Contiguous replay and build identity | 1 | 1 / 1 pass | — |
-| Dependency failure propagation | 1 | 1 / 1 pass | — |
-| Distributed replay throughput | — | Not run | Unavailable |
+| Event sequence | Projection behavior |
+|---|---|
+| Unique contiguous generations | Deterministic replay and content-derived build identity |
+| Gap or duplicate generation | Reject the build |
+| Failed dependency | Do not publish the downstream projection |
+
+Throughput and atomic pointer swaps belong to the selected backend; Mari defines replay semantics.
+
 
 :::{collapse} Worked replay differences
 
@@ -19,11 +22,6 @@
 | `1, 2, 2` | Rejected: duplicate generation/event |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_platform.py -k 'projection or pipeline'
-```
 
 
 Canonical artifacts and append-only events remain authoritative. `replay_projection` builds deterministic derived state and gives each build a content identity. A backend can validate and swap that build using its own transaction boundary.

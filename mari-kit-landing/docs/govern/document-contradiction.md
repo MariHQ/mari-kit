@@ -2,13 +2,25 @@
 
 # Document-level self-contradiction detection
 
-## Evaluation
+## At a glance
 
-| Evaluation | Cases | Result | Boundary |
-|---|---:|---:|---|
-| Sentence references and inclusive ranges | 2 | 2 / 2 pass | Compared with RRC-DSCD equations |
-| Judgment, evidence, and reward validation | 4 | 4 / 4 pass | Deterministic conformance |
-| ContraDoc | — | Not run | Macro-F1 and localization F1 unavailable |
+| Layer | Mari provides | Caller provides |
+|---|---|---|
+| Judgment validation | Positive/negative shape rules and sentence bounds | Semantic contradiction judgment |
+| Localization | Evidence IDs and overlap accounting | Candidate evidence sentences |
+| Reference coverage | Parsed reasoning citations and reward component | Reasoning text |
+| Training reward | Separate accuracy, coverage, and format signals | Optimizer and training loop |
+
+ContraDoc model quality is separate from these deterministic semantics because the judge model—not Mari’s validator—determines detection quality.
+
+| Observed judge behavior | Result | What it means |
+|---|---:|---|
+| Contradiction accuracy | `0.694` | The injected judge is usable as a baseline, not a production claim |
+| Macro-F1 | `0.685` | Positive and negative documents are both represented in the balanced slice |
+| Evidence localization recall | `0.388` | Correctly finding the conflicting sentences remains the main weakness |
+
+These results use `deepseek-chat` on a fixed 160-document ContraDoc slice. The predictions are retained because the model alias itself is not an immutable checkpoint.
+
 
 :::{collapse} Worked reward examples
 
@@ -20,11 +32,10 @@
 | No contradiction | Contradiction | Not applicable | `0` |
 :::
 
-### Reproduce
-
-```console
-$ pytest -q tests/test_contradiction_algorithms.py -k DocumentSelfContradiction
-```
+:::::::{container} diagram flow
+::: card
+**Tagged document**[\[1\] ... \[2\] ... \[n\]]{.small}
+:::
 
 *model*
 
@@ -64,7 +75,7 @@ rewards = document_contradiction_rewards(
 )
 ```
 
-**What Mari does not claim**Reference coverage measures which sentence tags appeared in reasoning; it does not prove the reasoning is valid. Mari validates and scores a proposed judgment but does not replace the teacher-distilled SFT model, GRPO trainer, or semantic contradiction verifier.
+**What Mari does not claim.** Reference coverage measures which sentence tags appeared in reasoning; it does not prove the reasoning is valid. Mari validates and scores a proposed judgment but does not replace the teacher-distilled SFT model, GRPO trainer, or semantic contradiction verifier.
 
 ::: source-block
 **Papers**
@@ -84,8 +95,3 @@ This is not corpus retrieval. It validates whether one multi-sentence document i
 3.  **Validate localization.** Mari expands ranges, rejects out-of-document references, requires evidence for positive judgments, and forbids contradiction evidence on negative judgments.
 4.  **Measure reference coverage.** Deduplicate every sentence mentioned in reasoning and compute `|S_covered| / |S_total|`.
 5.  **Compute independent rewards.** Return accuracy, reference-coverage, and format components for an external GRPO trainer. A correct positive judgment without any gold-evidence hit receives `-1`; a correct localized judgment receives `1 + matched/gold`.
-
-:::::::{container} diagram flow
-::: card
-**Tagged document**[\[1\] ... \[2\] ... \[n\]]{.small}
-:::

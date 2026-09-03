@@ -34,7 +34,7 @@ platform/index
 ```
 
 
-Mari is a framework-neutral Python library for building knowledge systems from changing, structured source material. It supplies immutable domain types, connector contracts, synchronization planning, structured document and code representations, semantic constraints, multi-vector, graph, and contradiction retrieval, lifecycle-aware context, trust and retention decisions, scoped memory promotion, source-conflict resolution, portable bundles, incremental views, trajectory analysis, and task-level evaluation utilities.
+Mari is a framework-neutral Python library of composable tools for extracting, validating, linking, retrieving, comparing, and evaluating knowledge from changing source material. It does not prescribe a knowledge graph, ontology, storage system, construction pipeline, agent framework, or model. Operations accept caller-owned values and return immutable candidates, scores, plans, reports, and traces.
 
 ::: legend
 Current --- importable from `mari_components`

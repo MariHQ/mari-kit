@@ -1,5 +1,11 @@
-"""Temporal graph, entity-resolution, and projection primitives."""
+"""Composable algorithms over caller-owned graph values and callbacks."""
 
+from .centrality import (
+    betweenness_centrality,
+    closeness_centrality,
+    degree_centrality,
+    hits,
+)
 from .communities import (
     CommunityPartition,
     CommunityReport,
@@ -7,6 +13,33 @@ from .communities import (
     leiden_communities,
     map_reduce_reports,
 )
+from .construction import (
+    ClusterResult,
+    EvidenceBoundCandidate,
+    MatchLink,
+    bind_relation_evidence,
+    candidate_pairs,
+    cluster_matches,
+)
+from .diagnostics import (
+    GraphDiff,
+    GraphQualityReport,
+    graph_diff,
+    inspect_graph_quality,
+)
+from .interop import (
+    EncodedGraph,
+    GraphProjection,
+    InterchangeReport,
+    ProjectionEdge,
+    from_networkx,
+    to_graphml,
+    to_json_ld,
+    to_networkx,
+    to_pyg_data,
+    to_rdflib,
+)
+from .provenance import LineageTrace, LineageVisit, propagated_taints, trace_lineage
 from .resolution import (
     FieldAgreement,
     ResolutionDecision,
@@ -14,20 +47,86 @@ from .resolution import (
     fellegi_sunter_score,
     resolve_entity,
 )
+from .similarity import LinkScore, score_link_candidates, simrank_scores
+from .subgraphs import SubgraphSelection, bounded_seed_expansion, prize_guided_subgraph
 from .temporal import TemporalFact, close_transaction, query_temporal_facts
+from .temporal_tools import (
+    TemporalJoinPair,
+    TimeInterval,
+    interval_intersection,
+    temporal_join,
+)
+from .traversal import (
+    CycleResult,
+    PathResult,
+    TraversalResult,
+    TraversalVisit,
+    breadth_first,
+    connected_components,
+    directed_cycles,
+    k_hop_nodes,
+    shortest_path,
+)
 
 __all__ = [
     "CommunityPartition",
     "CommunityReport",
+    "ClusterResult",
+    "CycleResult",
+    "EncodedGraph",
+    "EvidenceBoundCandidate",
     "FieldAgreement",
+    "GraphDiff",
+    "GraphProjection",
+    "GraphQualityReport",
+    "InterchangeReport",
+    "LineageTrace",
+    "LineageVisit",
+    "LinkScore",
+    "MatchLink",
+    "PathResult",
+    "ProjectionEdge",
     "ResolutionDecision",
     "ResolutionResult",
     "TemporalFact",
+    "TemporalJoinPair",
+    "TimeInterval",
+    "TraversalResult",
+    "TraversalVisit",
+    "SubgraphSelection",
+    "bounded_seed_expansion",
+    "betweenness_centrality",
+    "bind_relation_evidence",
+    "breadth_first",
     "build_community_reports",
     "close_transaction",
+    "closeness_centrality",
+    "connected_components",
+    "candidate_pairs",
+    "cluster_matches",
+    "degree_centrality",
+    "directed_cycles",
     "fellegi_sunter_score",
+    "graph_diff",
+    "from_networkx",
+    "hits",
+    "inspect_graph_quality",
+    "interval_intersection",
+    "k_hop_nodes",
     "query_temporal_facts",
     "leiden_communities",
     "map_reduce_reports",
+    "prize_guided_subgraph",
+    "propagated_taints",
     "resolve_entity",
+    "score_link_candidates",
+    "simrank_scores",
+    "shortest_path",
+    "temporal_join",
+    "to_graphml",
+    "to_json_ld",
+    "to_networkx",
+    "to_pyg_data",
+    "to_rdflib",
+    "trace_lineage",
 ]

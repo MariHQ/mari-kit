@@ -10,6 +10,10 @@
 | Connector and store protocols | HTTP transports and production database transactions |
 | Reference in-memory algorithms | Capacity planning and distributed operations |
 
+Mari does not own a knowledge graph. Graph tools accept application IDs,
+iterables, and callbacks; returned candidates, scores, plans, and traces do not
+write storage or prescribe which operation runs next.
+
 
 :::{collapse} Worked ownership boundary
 
@@ -52,6 +56,14 @@
 | Strict parsers for generated values | Model, prompts, and inference |
 | Retrieval and index serialization | Embeddings and index lifecycle |
 | Policy and evaluation functions | Authorization and agent runtime |
+
+| Mari deliberately does not define | Reason |
+|---|---|
+| Canonical node, edge, statement, or ontology | Different knowledge systems require different identity and semantics |
+| Graph-construction pipeline | Applications and LLMs can compose the individual tools for the current task |
+| Query language or planner | Storage capabilities and cost models belong to the application/data layer |
+| Automatic merge, promotion, or truth policy | Mari returns inspectable proposals; callers decide consequences |
+| Graph runtime or transaction manager | Persistence, isolation, and distributed execution belong to the data layer |
 
 ## How it works
 

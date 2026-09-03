@@ -12,7 +12,7 @@
 
 ## How it works
 
-A `KnowledgeSchema` versions concept types, property constraints, and relation constraints. Validation returns every violation with the focus object and constraint identifier. Schema migration is explicit: existing data is checked against the target schema before a migration plan can be committed.
+`KnowledgeSchema` is an optional validation value, not Mari's graph model. It describes a small set of concept, property, and relation checks. Validation returns every violation with the focus object and constraint identifier; the caller decides whether that report blocks a write, requests repair, or is ignored.
 
 ```{code-block} python
 :caption: Define a backend-neutral semantic contract
@@ -39,7 +39,7 @@ if not report.conforms:
         print(violation.focus_id, violation.constraint_id)
 ```
 
-Adapters may translate Mari schemas to LinkML, JSON Schema, SHACL, RDF/OWL, SQL DDL, or property-graph constraints. Core Mari does not require RDF or assume that every concept has a globally meaningful URI.
+Adapters may translate this utility to LinkML, JSON Schema, SHACL, RDF/OWL, SQL DDL, or property-graph constraints. Core Mari does not require a schema, RDF, globally meaningful URIs, or a particular node and edge representation.
 
 ## What to evaluate
 

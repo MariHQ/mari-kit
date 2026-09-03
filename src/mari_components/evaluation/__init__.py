@@ -11,6 +11,15 @@ from .cases import (
 )
 from .catalog import Corpus, CorpusCatalog, load_catalog
 from .gates import GateCheck, GateMode, GateReport, MetricGate, regression_gate
+from .graph import (
+    ClusteringMetrics,
+    LinkPredictionMetrics,
+    PathMetrics,
+    evaluate_clustering,
+    evaluate_link_prediction,
+    evaluate_path,
+    evaluate_subgraph,
+)
 from .metrics import (
     ClassificationMetrics,
     RetrievalMetrics,
@@ -30,6 +39,7 @@ from .suites import BenchmarkSuite, BenchmarkSuiteCatalog, load_suite_catalog
 
 __all__ = [
     "ClassificationMetrics",
+    "ClusteringMetrics",
     "BenchmarkSuite",
     "BenchmarkSuiteCatalog",
     "Corpus",
@@ -41,6 +51,8 @@ __all__ = [
     "GateReport",
     "MemoryCase",
     "MetricGate",
+    "LinkPredictionMetrics",
+    "PathMetrics",
     "RetrievalMetrics",
     "RetrievalCase",
     "SetMetrics",
@@ -50,6 +62,10 @@ __all__ = [
     "classification_metrics",
     "compare_task_outcomes",
     "evaluate_retrieval",
+    "evaluate_clustering",
+    "evaluate_link_prediction",
+    "evaluate_path",
+    "evaluate_subgraph",
     "group_memory_cases",
     "load_catalog",
     "load_beir_cases",

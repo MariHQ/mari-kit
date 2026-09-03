@@ -34,6 +34,11 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | Memory capability evaluation | `mazaiying/AgentMemBench` | MIT code; MemDialogue data is ODC-By 1.0 | Future corpus adapter; code not vendored |
 | Structured code knowledge | `DeusData/codebase-memory-mcp` | MIT; permissive graph and evaluation reference | `CodeSymbol`, `CodeEdge`, `impacted_symbols` |
 | Lifecycle capture | `Barsoomx/engram` | Apache-2.0; permissive session-hook reference | `ContextProvider` lifecycle boundary |
+| General graph algorithms | `networkx/networkx` | BSD-3-Clause; permissive differential oracle | Traversal, paths, components, centrality, link prediction, SimRank, interchange |
+| Prize-collecting subgraphs | `fraenkel-lab/pcst_fast` | MIT; permissive algorithm and adapter reference | `prize_guided_subgraph` is a distinct dependency-free heuristic; exact adapter remains optional |
+| Construction quality | `kracr/kg-quality-metric` | Apache-2.0; permissive evaluation reference | `inspect_graph_quality`, graph construction evaluation boundaries |
+| RDF interchange | `RDFLib/rdflib` | BSD-3-Clause; permissive interoperability oracle | `to_rdflib` |
+| Entity blocking | `dedupeio/dedupe` | MIT; permissive blocking reference | `candidate_pairs`, `cluster_matches` |
 
 ## Connector references
 
@@ -51,3 +56,9 @@ vendored.
 For entries marked inspect-only, Mari is based on the published mathematics and independently written conformance cases. For permissive references, compatible licensing permits comparison, but Mari still keeps independent APIs and tests rather than vendoring the systems.
 
 The first-pass lifecycle additions are clean-room, standard-library implementations. No files from the checked-out repositories are copied into `mari_components`; the repositories supply observable behavior, data-model comparisons, benchmark adapters, and future conformance fixtures.
+
+The callback-driven graph algorithms were differentially checked against the
+shallow NetworkX checkout for weighted shortest paths, connected components,
+degree, closeness, betweenness, Jaccard, Adamic--Adar, and SimRank. NetworkX and
+RDFLib projection round trips were also executed locally. Mari keeps its own
+smaller callback APIs and does not vendor either library.

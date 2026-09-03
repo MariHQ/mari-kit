@@ -1,4 +1,4 @@
-# Graphs & projections
+# Graph tools
 
 ## Choose a graph operation
 
@@ -11,6 +11,14 @@
 | Aggregate a corpus | Connected communities and bounded map/reduce reports |
 | Rebuild derived views | Ordered event replay with stable build identity |
 | Validate semantic records | Versioned concepts, properties, relations, and violations |
+| Inspect arbitrary topology | Traversal, paths, reachability, components, and cycles |
+| Select evidence | Bounded seed expansion and prize-guided connected subgraphs |
+| Propose links | Common-neighbor, Jaccard, and Adamic--Adar scores |
+| Rank structure | Degree, closeness, betweenness, HITS, and Personalized PageRank |
+| Compare graphs | Explicit node/edge additions, removals, and structural drift |
+| Diagnose quality | Orphans, dangling edges, duplicates, self-loops, and density |
+| Construct candidates | Caller-defined blocking, pair scoring, and clustering |
+| Move between libraries | Loss-visible NetworkX, GraphML, and JSON-LD projections |
 
 :::{collapse} Worked graph flow
 
@@ -28,6 +36,14 @@
 
 entity-resolution
 semantic-schemas
+traversal-paths
+subgraph-selection
+link-prediction
+structural-ranking
+graph-diff-quality
+construction-tools
+temporal-provenance
+interoperability
 graph-processing
 projections
 graph

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/MariHQ/mari-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/MariHQ/mari-kit/actions/workflows/ci.yml)
 
-Reliable product knowledge for AI agents.
+Composable knowledge-system tools for Python applications and agents.
 
 Mari Components turns changing internal and external documentation into
 versioned, evidence-linked knowledge that an application can safely retrieve,
@@ -11,6 +11,11 @@ cache, and invalidate. It is one Python distribution and one import package.
 Use it with OpenAI Agents SDK, LangGraph, PydanticAI, or any other agent
 runtime. Mari Components does not implement an agent loop, model client,
 database, scheduler, or authorization system.
+
+Mari also does not define a canonical knowledge graph, ontology, construction
+pipeline, query planner, or truth policy. Graph algorithms accept caller-owned
+IDs and callbacks and return inspectable values without writing storage. An
+application or LLM can compose those operations for its particular system.
 
 ## What it provides
 
@@ -56,6 +61,14 @@ database, scheduler, or authorization system.
   materialized-view refresh plans.
 - Paired task-outcome comparisons for success, policy compliance, turns,
   tokens, and tool calls.
+- Callback-driven traversal, shortest paths, components, bounded cycle
+  enumeration, structural centrality, link scoring, and SimRank.
+- Budgeted seed expansion and a transparent prize-guided connected-subgraph
+  heuristic, without requiring a graph container.
+- Exact graph diffs, structural quality diagnostics, blocking, threshold
+  clustering, temporal joins, lineage traversal, and taint propagation.
+- Loss-visible GraphML, JSON-LD, NetworkX, RDFLib, and PyTorch Geometric
+  conversion helpers using a temporary interchange projection.
 
 ## Installation
 

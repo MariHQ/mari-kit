@@ -42,6 +42,11 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | BM25 scoring | `dorianbrown/rank_bm25` | Apache-2.0; permissive equation and fixture reference | `BM25Index`, analyzer injection, score explanations; Mari retains its positive Robertson--Walker IDF variant |
 | Constrained/submodular selection | `decile-team/submodlib` | MIT; permissive greedy-marginal-gain reference | `select_context_diverse`; Mari adds caller groups, multiple budgets, and complete decision traces |
 | Interval queries | `chaimleib/intervaltree` | Apache-2.0; permissive half-open-overlap reference | `grouped_interval_overlaps`; Mari uses a dependency-free grouped sweep over datetime intervals |
+| Markdown blocks | `executablebooks/markdown-it-py` at `bff75ed` | MIT; permissive token/span oracle | `parse_markdown`; block kinds and four line spans differentially matched |
+| HTML recovery | `html5lib/html5lib-python` at `fd4f032` | MIT; permissive HTML5 tree oracle | `parse_html`; heading and table-cell text differentially matched |
+| Delimited data | `frictionlessdata/frictionless-py` at `5debad3` | MIT; permissive schema/dialect reference | `parse_delimited`, positioned record issues, caller identity fields |
+| Incremental syntax trees | `tree-sitter/py-tree-sitter` at `2e556e5` and `tree-sitter/tree-sitter-python` at `26855ea` | MIT; permissive syntax/span oracle | `SourceCoordinateMap`, `parse_python`; three definitions and UTF-8 byte spans differentially matched |
+| PDF extraction | `py-pdf/pypdf` at `a667e9d` | BSD-3-Clause; permissive page/text visitor reference | Neutral `StructuredDocument` adapter target; no PDF decoder is bundled |
 
 ## Connector references
 
@@ -76,3 +81,9 @@ The second composition pass inspected Submodlib's cost-sensitive greedy and
 marginal-gain interfaces and IntervalTree's half-open overlap behavior. Mari's
 implementations remain smaller value/callback algorithms and do not vendor the
 libraries or claim their optimized data structures.
+
+The ingestion pass compared Markdown block kinds and line spans with
+Markdown-It-Py, HTML heading/table text with html5lib, and Python definition
+names plus UTF-8 byte spans with Tree-sitter. The fixtures matched `4/4`, `5/5`,
+and `3/3`, respectively. Frictionless and pypdf inform adapter and diagnostic
+boundaries; Mari does not claim their complete format coverage.

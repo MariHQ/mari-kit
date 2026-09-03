@@ -79,6 +79,33 @@ doc = KnowledgeDocument(
 assert doc.document_id == "github:acme/product/file:docs/refunds.md"
 ```
 
+## Definitions and options
+
+| Value or function | Definition | Options that change behavior |
+|---|---|---|
+| `KnowledgeDocument` | Stable `source_id` + `external_id`, immutable `revision`, body and observed ACL | `updated_at`, URL, metadata and principals are descriptive |
+| `ParsedBlock` | Parser-neutral kind, text, parent, raw character span and optional table cells | `metadata` retains format-specific facts without changing the core type |
+| `ParseResult[T]` | Accepted values plus positioned warning/error issues and parser provenance | `source_revision` and parser-specific metadata |
+| `stable_source_id(parts, prefix, digest_bytes)` | Type-tags and length-prefixes caller-selected components before SHA-256 hashing | Digest size is 8–32 bytes; mapping/set order is canonicalized; Mari never chooses identity fields |
+| `SourceCoordinateMap.build(text, encoding)` | Maps character boundaries to encoded byte boundaries exactly | `to_character(..., exact=False)` floors a mid-character byte offset |
+
+The coordinate map uses the codec's incremental encoder, so BOM and stateful
+encodings are counted once. For UTF-16, `byte_length` equals the complete
+encoded source length rather than adding one BOM per character.
+
+```{code-block} python
+:caption: Preserve parser provenance and explicit coordinate units
+
+from mari_components.documents import SourceCoordinateMap, stable_source_id
+
+record_id = stable_source_id(
+    (source_id, row["policy_id"], row["jurisdiction"]),
+    prefix="record",
+)
+coordinates = SourceCoordinateMap.build(source_text, encoding="utf-8")
+character_span = coordinates.byte_span_to_characters(node.start_byte, node.end_byte)
+```
+
 ::::::: cards
 ::: card
 `PollPage`

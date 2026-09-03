@@ -29,8 +29,12 @@ schema = KnowledgeSchema(
     schema_id="commerce",
     version="2",
     concepts=(ConceptType("Customer"), ConceptType("Contract"), ConceptType("Product")),
-    properties=(PropertyConstraint("Contract", "effective_date", required=True),),
+    properties=(PropertyConstraint(
+        "Contract", "effective_date", required=True,
+        value_type="string", value_format="date",
+    ),),
     relations=(RelationConstraint("purchased", source="Customer", target="Product"),),
+    allow_unknown_properties=False,
 )
 
 report = validate_records(schema, records)
@@ -38,6 +42,20 @@ if not report.conforms:
     for violation in report.violations:
         print(violation.focus_id, violation.constraint_id)
 ```
+
+## Function definitions and options
+
+| Value / function | Options | Meaning |
+|---|---|---|
+| `PropertyConstraint` | `required`, `minimum_count`, `maximum_count` | Independent cardinality checks |
+| `PropertyConstraint` | `value_type` | Empty, string, integer, number, boolean, object, or array |
+| `PropertyConstraint` | `value_format` | Empty, ISO date, or timezone-aware ISO date-time; formats require strings |
+| `KnowledgeSchema` | `allow_unknown_properties` | Defaults true for open-world compatibility; false reports undeclared properties |
+| `validate_records` | Schema, records, optional relations | Reports duplicate IDs, concepts, properties, types, cardinality, and relation domain/range |
+
+Boolean values do not satisfy integer or number constraints, and non-finite
+floats do not satisfy number constraints. These are explicit scalar checks,
+not coercion: Mari never converts `"14"` into `14` during validation.
 
 Adapters may translate this utility to LinkML, JSON Schema, SHACL, RDF/OWL, SQL DDL, or property-graph constraints. Core Mari does not require a schema, RDF, globally meaningful URIs, or a particular node and edge representation.
 

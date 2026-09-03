@@ -61,3 +61,50 @@ print(answer.evidence[0].quote)  # exact source text
 Additional deterministic helpers include `normalize_claim`, `deduplicate_fact_candidates`, `grounding_coverage`, and `excerpt`. Recoverable batch drift is handled conservatively: assessment rows are restored to caller order, missing rows become uncertain, and good rows survive alongside invalid ones. Structured fact qualifiers preserve subject, relation, object, scope, validity, and conditions.
 
 **`grounding_coverage` is not entailment or confidence.** It is a Mari-specific lexical audit signal motivated by citation completeness. Exact quote validation prevents fabricated citations but does not prove that every paraphrase follows logically from its evidence.
+
+## Source parser functions and options
+
+| Function | Main options | Failure behavior |
+|---|---|---|
+| `parse_markdown` | `tables`, `recover_unclosed_fences`, `parser_id` | Returns an unclosed-fence warning or error while retaining the recovered block |
+| `parse_html` | `parser_id`, `recover` | Reports unmatched and implicitly closed tags; `recover=False` promotes recovery warnings to errors |
+| `parse_delimited` | `identity_fields`, delimiter or sniffing, quote character, header, `strict_width` | Rejects a malformed-width row in strict mode; valid siblings survive |
+| `parse_json_lines` | `identity_fields`, `parser_id` | Each malformed or non-object line is positioned independently |
+| `parse_json_array` | `identity_fields`, `parser_id` | Retains parsed object siblings and positions non-object or malformed members |
+| `parse_python` | Repository, revision, path and parser ID | Syntax errors produce an empty, positioned result rather than guessed symbols |
+
+`ParseIssue` contains `code`, `message`, severity, optional subject, and an
+exact character span. `ParseResult.succeeded` means no error-severity issue;
+warnings and accepted values remain available. This is parser execution
+evidence, not a document-quality verdict.
+
+```{code-block} python
+:caption: Keep accepted records beside malformed siblings
+
+from mari_components.documents import parse_json_lines
+
+result = parse_json_lines(
+    payload,
+    source_id="warehouse:policies",
+    revision=object_etag,
+    identity_fields=("policy_id", "jurisdiction"),
+)
+
+store(result.values)
+observe(result.issues)
+```
+
+| Structured-ingest fixture | Before | Current |
+|---|---:|---:|
+| Fields with exact raw spans | `0/12` | `12/12` |
+| Syntactically accepted records with record spans | `0/5` | `5/5` |
+| Schema-drift violations | `1` | `3` |
+| Invalid integer/date values rejected | `0/2` | `2/2` |
+
+::: source-block
+**Format and parser references**
+
+[CommonMark block syntax](https://spec.commonmark.org/){.paper}[WHATWG HTML parsing](https://html.spec.whatwg.org/multipage/parsing.html){.paper}[RFC 4180 CSV](https://www.rfc-editor.org/rfc/rfc4180){.paper}[JSON Lines](https://jsonlines.org/){.paper}[Python AST](https://docs.python.org/3/library/ast.html){.paper}[Tree-sitter](https://tree-sitter.github.io/tree-sitter/){.paper}
+
+[Markdown-It-Py and html5lib are MIT-licensed differential references. Tree-sitter and its Python grammar are MIT licensed.]{.small}
+:::

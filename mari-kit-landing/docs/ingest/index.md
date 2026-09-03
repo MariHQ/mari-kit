@@ -5,12 +5,24 @@
 
 | Input | Operation | Output |
 |---|---|---|
-| Provider APIs and event notifications | Poll or stream canonical source changes | `SourcePage`, `Document`, `Tombstone`, `ChangeHint` |
+| Provider APIs and event notifications | Poll or stream canonical source changes | `PollPage`, `KnowledgeDocument`, `Tombstone`, `ChangeHint` |
 | Completed source pages | Reconcile against prior snapshot | Ordered upsert/delete plan and next cursor |
 | Documents | Parse and resolve evidence | Typed facts, answers, decisions, summaries, links |
 | PDFs, slides, and spreadsheets | Preserve pages, regions, tables, figures, and derived representations | `StructuredDocument` |
 | Source repositories | Preserve symbols and structural relations | `CodeSymbol`, `CodeEdge` |
 | Markdown bodies | Split and fingerprint | Stable `KnowledgeSection` revisions |
+
+## Function map
+
+| Function | Required inputs | Principal options | Returns |
+|---|---|---|---|
+| `parse_markdown` | Text, artifact ID, revision | Table parsing, fence recovery, parser ID | `ParseResult[ParsedDocument]` |
+| `parse_html` | Text, artifact ID, revision | Parser ID | Blocks and expanded table cells with raw spans |
+| `parse_delimited` | Text, source ID, revision | Delimiter detection, quote character, header, identity fields, strict width | Independently accepted records and positioned issues |
+| `parse_json_lines` | Text, source ID, revision | Identity fields, parser ID | Positioned fields; malformed siblings remain issues |
+| `parse_json_array` | JSON array text, source ID, revision | Identity fields, parser ID | Positioned object records and member-specific issues |
+| `parse_python` | Source, repository, revision, path | Parser ID | Symbols, definition/call edges, unresolved or ambiguous references |
+| `plan_sync` | Prior state, page, source, mode | Full or incremental semantics | Side-effect-free mutations and proposed next state |
 
 :::{collapse} Worked ingestion flow
 

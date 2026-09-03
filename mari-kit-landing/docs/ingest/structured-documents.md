@@ -10,6 +10,13 @@
 | MMDocRAG | 4,055 expert questions with multimodal evidence chains | Evidence may cross text, tables, and images |
 | UniDoc-Bench | More than 70,000 PDF pages and 1,600 questions | Text-image fusion should coexist with exact structure |
 
+| Local parser fixture | Before these functions | Current result |
+|---|---:|---:|
+| Markdown table cells retained | `0/9` | `9/9` |
+| HTML recognized blocks with raw spans | `0/7` | `7/7` |
+| HTML table cells retained | `6/6` through local adapter | `6/6` through `parse_html` |
+| Invalid structural relations reported | `0/5` | `5/5` |
+
 ## How it works
 
 A `StructuredDocument` preserves a hierarchy of pages and regions. Each `DocumentRegion` has a stable ID, kind, location, optional text, and optional table structure. Generated descriptions and embeddings are `RegionRepresentation` values linked back to the canonical region; they never replace it.
@@ -56,6 +63,33 @@ for region in parsed.regions:
 ```
 
 Mari supplies the neutral document IR and validation. OCR, VLM inference, file decoding, and model downloads remain adapter responsibilities.
+
+## Definitions and validation options
+
+| Function or value | Inputs | Output / option semantics |
+|---|---|---|
+| `normalize_table(cells, ...)` | `TableCell` coordinates and row/column spans | `maximum_cells` bounds allocation; `overlap` is `first`, `last`, or `error` |
+| `validate_structured_document(document)` | Regions, hierarchy and table cells | Missing parents, parent cycles, and cell-topology violations; no acceptance policy |
+| `validate_region_evidence(evidence, document)` | Exact document/revision/region/page and optional cell | Mismatch reasons, resolved text, and all candidate cells; overlapping coordinates report `ambiguous_cell` and withhold text |
+| `DocumentRegion.searchable_text` | Region text or cells | Uses explicit region text first, otherwise joins non-empty cells |
+
+```{code-block} python
+:caption: Validate structure before indexing
+
+from mari_components.documents import (
+    normalize_table, validate_region_evidence, validate_structured_document,
+)
+
+structure = validate_structured_document(document)
+if structure.conforms:
+    matrix = normalize_table(table_region.cells)
+
+location = validate_region_evidence(citation, document)
+if not location.valid:
+    review(location.issues)
+else:
+    index(location.text)
+```
 
 For formats without pages or geometry, use `ParsedDocument` and `ParsedBlock`.
 Blocks retain stable IDs, parent relationships, optional source spans, and

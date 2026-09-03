@@ -9,6 +9,17 @@
 | Codebase-Memory, 31 repositories | 83% answer quality vs. 92% for file exploration | Structured lookup retains most answer quality |
 | Same evaluation | 10x fewer tokens and 2.1x fewer tool calls | Graph lookup can reduce exploratory context |
 
+| Local extraction fixture | Precision | Recall | F1 |
+|---|---:|---:|---:|
+| Python definitions vs. Tree-sitter | `1.000` | `1.000` | `1.000` |
+| TypeScript adapter vs. fixture | `1.000` | `0.667` | `0.800` |
+
+The Python comparison matched four relative symbols and the exact method span.
+The TypeScript miss was an interface and arrow-function kind, so extending the
+kind vocabulary remains adapter work rather than a claimed parser success.
+Use these extraction scores to choose parser coverage, while treating the
+token and tool-call figures as directional until measured on your own codebase.
+
 These results are specific to the upstream implementation. Mari exposes the representation needed to reproduce the comparison against lexical and file-based baselines.
 
 ## How it works
@@ -37,6 +48,47 @@ edge = CodeEdge(
     kind=CodeEdgeKind.CALLS,
 )
 ```
+
+## Parser definition and options
+
+`parse_python(source, *, repository, revision, path, parser_id=...)` is a
+concrete standard-library baseline. It emits a module, nested classes,
+functions and methods; `DEFINES` edges; and local call references. A call edge
+is emitted only when its local name resolves to exactly one symbol. Zero or
+multiple callable targets remain visible in `CodeReference.resolved_target_ids`;
+same-named module symbols are excluded from call candidates.
+
+| Output | Important fields |
+|---|---|
+| `CodeSymbol` | Stable qualified `symbol_id`, revision, path, kind, line span, character span, content revision, parent |
+| `CodeReference` | Owning symbol, written name, character span, zero/one/many candidate targets |
+| `CodeParseResult` | Symbols, edges, references, positioned issues, parser ID, coordinate unit |
+
+Repeated definitions retain the same qualified name but receive deterministic
+`#2`, `#3`, … symbol-ID suffixes. This prevents collision without pretending
+the definitions are semantically distinct; callers may diagnose or reject the
+duplicate.
+
+```{code-block} python
+:caption: Extract Python without requiring a language server
+
+from mari_components.documents import parse_python
+
+parsed = parse_python(
+    source,
+    repository="support-api",
+    revision=commit_sha,
+    path="src/refunds.py",
+)
+
+for reference in parsed.references:
+    if len(reference.resolved_target_ids) != 1:
+        queue_resolution(reference)
+```
+
+The built-in parser fails closed with a positioned `syntax_error`; it does not
+claim Tree-sitter-style error recovery. Other languages and partial-tree
+recovery remain adapter outputs using the same values.
 
 Incremental rebuild compares content fingerprints, reparses changed files, removes their prior symbols and edges, and then resolves cross-file references. Impact analysis traverses reverse dependency edges with an explicit depth and edge-kind budget.
 

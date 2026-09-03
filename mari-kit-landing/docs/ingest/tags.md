@@ -49,6 +49,16 @@ links = derive_links(doc.document_id, candidate_ids,
     score=lambda source, target: similarity_scores[source, target])
 ```
 
+## Function definitions and options
+
+| Function | Required inputs | Caller-controlled options |
+|---|---|---|
+| `assign_tags` | Prior assignments, document ID, definitions | Explicit add/remove keys |
+| `normalize_tag` | One raw key | Deterministic key normalization only |
+| `search_weight` | Document, assignments, definitions | Weights live in caller-created definitions |
+| `extract_explicit_links` | Source document and known IDs | Recognized authored references |
+| `derive_links` | Source ID, candidate IDs, score callback | Threshold and result limit; self-links are removed |
+
 ::: source-block
 **Research basis**
 

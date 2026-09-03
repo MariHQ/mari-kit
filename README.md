@@ -51,6 +51,12 @@ application or LLM can compose those operations for its particular system.
   tool calls, including explicit scope, purpose, budget, and update events.
 - Page-aware structured documents with regions, bounding boxes, tables,
   derived representations, and a language-neutral code symbol graph.
+- Dependency-free Markdown, HTML, CSV-like, JSON Lines, and Python structure
+  parsers with exact source coordinates, partial-result issues, stable
+  caller-key identities, table topology, and local call-resolution traces.
+- Structural document, region-evidence, schema-drift, scalar-type, and
+  stream-hydration validators that report independent violations without
+  choosing an acceptance policy.
 - Trust-aware write decisions that keep origin, interpretation, taint, scope,
   and provenance separate; plus explainable source-authority resolution.
 - Versioned semantic schemas with required-property, cardinality, and

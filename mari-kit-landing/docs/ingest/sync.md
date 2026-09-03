@@ -72,6 +72,20 @@ Mari does not supply the database or claim atomicity for a transaction that does
 not provide it. `hydrate_hints(hints, hydrate=canonical_fetch)` is the matching
 bridge when verified stream hints already exist and no event parser is needed.
 
+## Function definitions and options
+
+| Function | Required inputs | Options and guarantees |
+|---|---|---|
+| `plan_sync` | `SyncState`, one `PollPage`, source ID, `SyncMode` | Full mode reconciles absence only on a terminal page; incremental mode requires tombstones |
+| `stream_sync` | Page iterable and initial state | Rejects an empty stream or any page after a terminal page |
+| `apply_sync_plan` | Plan and caller transaction | Checks `expected_generation`; storage atomicity remains caller-owned |
+| `document_fingerprint` | `KnowledgeDocument` | Includes revision, body, ACL, timestamps, URL and metadata |
+| `validate_hint_hydration` | One `ChangeHint` and hydrated pages | Optional `revision_matches` and `external_id_matches` callbacks; reports revision, ID and deletion-shape mismatches |
+
+The revision callback is necessary for providers whose event sequence and
+canonical object revision use different encodings. Mari defaults to exact
+equality and does not infer revision ordering.
+
 ## Enforced invariants
 
 - Page replay is idempotent through content fingerprints and manifests.

@@ -17,9 +17,11 @@ class ParsedBlock:
     block_id: str
     kind: str
     text: str
+    raw: str = ""
     parent_id: str = ""
     start: int | None = None
     end: int | None = None
+    cells: tuple[TableCell, ...] = ()
     metadata: Mapping[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
@@ -31,6 +33,9 @@ class ParsedBlock:
             self.start < 0 or self.end is None or self.end < self.start
         ):
             raise ValueError("parsed block span is invalid")
+        if self.cells and self.kind != "table":
+            raise ValueError("only table blocks may contain cells")
+        object.__setattr__(self, "cells", tuple(self.cells))
         object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
 
 
@@ -55,6 +60,41 @@ class ParsedDocument:
         ):
             raise ValueError("parsed block parents must reference known blocks")
         object.__setattr__(self, "blocks", tuple(self.blocks))
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ParsedField:
+    name: str
+    value: Any
+    raw: str = ""
+    start: int | None = None
+    end: int | None = None
+
+    def __post_init__(self) -> None:
+        if not self.name.strip():
+            raise ValueError("parsed field name is required")
+        if (self.start is None) != (self.end is None):
+            raise ValueError("parsed field offsets must be supplied together")
+        if self.start is not None and (
+            self.start < 0 or self.end is None or self.end < self.start
+        ):
+            raise ValueError("parsed field offsets are invalid")
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ParsedRecord:
+    record_id: str
+    fields: tuple[ParsedField, ...]
+    start: int
+    end: int
+
+    def __post_init__(self) -> None:
+        if not self.record_id.strip() or self.start < 0 or self.end < self.start:
+            raise ValueError("parsed record identity and span are required")
+        names = [field.name for field in self.fields]
+        if len(names) != len(set(names)):
+            raise ValueError("parsed record field names must be unique")
+        object.__setattr__(self, "fields", tuple(self.fields))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -204,6 +244,11 @@ class CodeSymbol:
     kind: CodeSymbolKind
     start_line: int
     end_line: int
+    path: str = ""
+    parent_id: str = ""
+    start: int | None = None
+    end: int | None = None
+    content_revision: str = ""
 
     def __post_init__(self) -> None:
         if not all(
@@ -218,6 +263,12 @@ class CodeSymbol:
             raise ValueError("code symbol identity fields are required")
         if self.start_line < 1 or self.end_line < self.start_line:
             raise ValueError("code symbol line span is invalid")
+        if (self.start is None) != (self.end is None):
+            raise ValueError("code symbol offsets must be supplied together")
+        if self.start is not None and (
+            self.start < 0 or self.end is None or self.end < self.start
+        ):
+            raise ValueError("code symbol offsets are invalid")
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -225,6 +276,23 @@ class CodeEdge:
     source_id: str
     target_id: str
     kind: CodeEdgeKind
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class CodeReference:
+    source_id: str
+    name: str
+    kind: CodeEdgeKind
+    start: int
+    end: int
+    resolved_target_ids: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.source_id or not self.name or self.end < self.start or self.start < 0:
+            raise ValueError("code reference identity and span are required")
+        object.__setattr__(
+            self, "resolved_target_ids", tuple(sorted(set(self.resolved_target_ids)))
+        )
 
 
 def impacted_symbols(
@@ -250,3 +318,66 @@ def impacted_symbols(
                 result.append(source)
                 queue.append((source, depth + 1))
     return tuple(result)
+
+
+from .code import CodeParseResult, parse_python  # noqa: E402
+from .coordinates import SourceCoordinateMap, line_column  # noqa: E402
+from .html import parse_html  # noqa: E402
+from .markdown import parse_markdown  # noqa: E402
+from .records import parse_delimited, parse_json_array, parse_json_lines  # noqa: E402
+from .results import (  # noqa: E402
+    ParseIssue,
+    ParseIssueSeverity,
+    ParseResult,
+    stable_source_id,
+)
+from .tables import NormalizedTable, normalize_table  # noqa: E402
+from .validation import (  # noqa: E402
+    RegionEvidenceResolution,
+    StructureValidationReport,
+    StructureViolation,
+    validate_parsed_document,
+    validate_region_evidence,
+    validate_structured_document,
+)
+
+__all__ = [
+    "BoundingBox",
+    "CodeEdge",
+    "CodeEdgeKind",
+    "CodeParseResult",
+    "CodeReference",
+    "CodeSymbol",
+    "CodeSymbolKind",
+    "DocumentRegion",
+    "NormalizedTable",
+    "ParseIssue",
+    "ParseIssueSeverity",
+    "ParseResult",
+    "ParsedBlock",
+    "ParsedDocument",
+    "ParsedField",
+    "ParsedRecord",
+    "RegionEvidence",
+    "RegionEvidenceResolution",
+    "RegionKind",
+    "RegionRepresentation",
+    "SourceCoordinateMap",
+    "StructureValidationReport",
+    "StructureViolation",
+    "StructuredDocument",
+    "TableCell",
+    "impacted_symbols",
+    "line_column",
+    "normalize_table",
+    "parse_markdown",
+    "parse_python",
+    "parse_delimited",
+    "parse_html",
+    "parse_json_lines",
+    "parse_json_array",
+    "stable_source_id",
+    "validate_parsed_document",
+    "validate_region_evidence",
+    "validate_structured_document",
+]

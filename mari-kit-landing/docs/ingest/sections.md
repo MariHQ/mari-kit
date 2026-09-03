@@ -43,6 +43,15 @@ facts = [parse_facts([document], model(section.body)) for section in pending]
 next_revisions = fact_scan_revisions(pending)  # persist only after facts commit
 ```
 
+## Function definitions and options
+
+| Function | Definition | Options |
+|---|---|---|
+| `document_sections(document)` | ATX-heading path segmentation with exact body offsets and per-section SHA-256 revisions | Engineering contract; no tokenizer or model |
+| `section_revisions(documents)` | Current `(document_id, section_id) → revision` map | Last duplicate key wins only if callers supplied duplicate document identities |
+| `pending_fact_sections(documents, previous)` | Sections whose current revision differs from committed scan state | Caller owns when the returned work is committed |
+| `parse_markdown(...)` | Richer block parser for headings, paragraphs, fenced code and tables | Use when section-only granularity loses structure |
+
 ::: source-block
 **Research and standards**
 

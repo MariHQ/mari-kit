@@ -58,7 +58,15 @@ from .protocol import (
 from .rss import RSSConfig, poll_rss, validate_rss
 from .singer import singer_pages
 from .slack import SlackConfig, fetch_slack_thread_by_id, poll_slack, validate_slack
-from .streaming import hydrate_hints, stream_change_hint, stream_hints, stream_pages
+from .streaming import (
+    HintHydrationIssue,
+    HintHydrationReport,
+    hydrate_hints,
+    stream_change_hint,
+    stream_hints,
+    stream_pages,
+    validate_hint_hydration,
+)
 from .trello import TrelloConfig, poll_trello, validate_trello
 from .zendesk import ZendeskConfig, poll_zendesk, validate_zendesk
 
@@ -76,6 +84,8 @@ __all__ = [
     "GitHubConfig",
     "GitLabConfig",
     "HintCoalescingReport",
+    "HintHydrationIssue",
+    "HintHydrationReport",
     "GoogleDriveConfig",
     "GoogleDriveWatch",
     "JiraConfig",
@@ -133,6 +143,7 @@ __all__ = [
     "validate_filesystem",
     "validate_github",
     "validate_gitlab",
+    "validate_hint_hydration",
     "validate_google_drive",
     "validate_jira",
     "validate_linear",

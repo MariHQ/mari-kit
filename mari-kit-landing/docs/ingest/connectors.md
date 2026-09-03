@@ -12,6 +12,23 @@
 
 All 18 connector definitions are exercised against recorded or synthetic provider shapes. That establishes pagination, identity, tombstone, and event-normalization behavior; it does not predict provider uptime or throughput.
 
+## Shared function definitions and options
+
+| Function / value | Required inputs | Important options |
+|---|---|---|
+| `PollRequest` | None | `cursor`, `checkpoint`, positive `page_size`, positive `page_limit` |
+| `poll_*` | Frozen provider config, request, injected transport | Provider selection fields and explicit content-type scope |
+| `stream_change_hint` | One raw `StreamEvent`, verifier | `maximum_bytes`; verification always precedes parsing |
+| `stream_hints` | Event iterable, verifier | `maximum_events`, `maximum_bytes`; no checkpoint state |
+| `coalesce_hints_ordered` | Hints and caller `order_key` | Optional explicit tie resolver; unresolved keys are withheld |
+| `hydrate_hints` | Verified hints and canonical fetch callback | Converts hints to ordinary `PollPage` values |
+| `validate_hint_hydration` | Hint and hydrated pages | Optional revision-equivalence callback; no built-in ordering assumption |
+
+Every provider config has a matching `validate_*` function that returns
+configuration issues without performing network I/O. Network functions accept
+an `HttpTransport`; retry scheduling, credentials, queues, and SDK clients stay
+outside the connector contract.
+
 :::{collapse} Worked polling and streaming traces
 
 | Mode | Input sequence | Emitted sequence | Checkpoint |

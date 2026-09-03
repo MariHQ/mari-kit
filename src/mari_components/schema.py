@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import datetime as dt
+import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
@@ -24,6 +26,24 @@ class PropertyConstraint:
     required: bool = False
     minimum_count: int = 0
     maximum_count: int | None = None
+    value_type: str = ""
+    value_format: str = ""
+
+    def __post_init__(self) -> None:
+        if self.value_type not in {
+            "",
+            "string",
+            "integer",
+            "number",
+            "boolean",
+            "object",
+            "array",
+        }:
+            raise ValueError("unsupported property value_type")
+        if self.value_format not in {"", "date", "date-time"}:
+            raise ValueError("unsupported property value_format")
+        if self.value_format and self.value_type != "string":
+            raise ValueError("property formats require string values")
 
     @property
     def constraint_id(self) -> str:
@@ -48,6 +68,7 @@ class KnowledgeSchema:
     concepts: tuple[ConceptType, ...]
     properties: tuple[PropertyConstraint, ...] = ()
     relations: tuple[RelationConstraint, ...] = ()
+    allow_unknown_properties: bool = True
 
     def __post_init__(self) -> None:
         if not self.schema_id or not self.version:
@@ -107,6 +128,17 @@ def validate_records(
     by_id = {value.record_id: value for value in values}
     concepts = {item.name for item in schema.concepts}
     violations: list[SchemaViolation] = []
+    record_ids = [value.record_id for value in values]
+    for record_id in sorted(
+        {value for value in record_ids if record_ids.count(value) > 1}
+    ):
+        violations.append(
+            SchemaViolation(
+                focus_id=record_id,
+                constraint_id="unique_record_id",
+                message="record ID occurs more than once",
+            )
+        )
     for record in values:
         if record.concept not in concepts:
             violations.append(SchemaViolation(focus_id=record.record_id, constraint_id="known_concept", message=f"unknown concept {record.concept}"))
@@ -119,6 +151,39 @@ def validate_records(
             minimum = max(constraint.minimum_count, int(constraint.required))
             if count < minimum or (constraint.maximum_count is not None and count > constraint.maximum_count):
                 violations.append(SchemaViolation(focus_id=record.record_id, constraint_id=constraint.constraint_id, message=f"observed cardinality {count}"))
+            observed = raw if isinstance(raw, (tuple, list, set)) else (raw,)
+            for item in observed:
+                if item is not None and not _value_conforms(
+                    item, constraint.value_type, constraint.value_format
+                ):
+                    violations.append(
+                        SchemaViolation(
+                            focus_id=record.record_id,
+                            constraint_id=f"{constraint.constraint_id}:type",
+                            message=(
+                                f"value does not conform to {constraint.value_type}"
+                                + (
+                                    f"/{constraint.value_format}"
+                                    if constraint.value_format
+                                    else ""
+                                )
+                            ),
+                        )
+                    )
+        if not schema.allow_unknown_properties:
+            known_properties = {
+                constraint.property_name
+                for constraint in schema.properties
+                if constraint.concept == record.concept
+            }
+            for name in sorted(set(record.properties) - known_properties):
+                violations.append(
+                    SchemaViolation(
+                        focus_id=record.record_id,
+                        constraint_id=f"closed_properties:{record.concept}",
+                        message=f"unknown property {name}",
+                    )
+                )
     constraints = {item.name: item for item in schema.relations}
     for relation in relations:
         constraint = constraints.get(relation.name)
@@ -129,3 +194,38 @@ def validate_records(
         elif source is None or target is None or source.concept != constraint.source or target.concept != constraint.target:
             violations.append(SchemaViolation(focus_id=relation.relation_id, constraint_id=constraint.constraint_id, message="relation domain or range does not conform"))
     return ValidationReport(conforms=not violations, violations=tuple(violations))
+
+
+def _value_conforms(value: Any, value_type: str, value_format: str) -> bool:
+    if not value_type:
+        return True
+    if value_type == "string":
+        valid = isinstance(value, str)
+    elif value_type == "integer":
+        valid = isinstance(value, int) and not isinstance(value, bool)
+    elif value_type == "number":
+        valid = (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and math.isfinite(value)
+        )
+    elif value_type == "boolean":
+        valid = isinstance(value, bool)
+    elif value_type == "object":
+        valid = isinstance(value, Mapping)
+    else:
+        valid = isinstance(value, (tuple, list))
+    if not valid or not value_format:
+        return valid
+    if not isinstance(value, str):
+        return False
+    try:
+        if value_format == "date":
+            dt.date.fromisoformat(value)
+        else:
+            parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                return False
+    except ValueError:
+        return False
+    return True

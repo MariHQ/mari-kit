@@ -10,6 +10,7 @@
 | Organization | Link notes, rank salience, or produce evidence notes |
 | Consolidation | Select bounded offline work by utility and cost |
 | Scope promotion | Propose a new artifact at a broader scope without mutating its origin |
+| Experience | Turn observed work and expert corrections into evidence-bound knowledge proposals |
 
 :::{collapse} Actual memory-retrieval snapshot
 
@@ -26,6 +27,7 @@ Retrieving one useful session is insufficient for a question whose answer spans 
 :maxdepth: 1
 
 memory-algorithms
+experience-knowledge
 memory-organization
 admission
 scopes

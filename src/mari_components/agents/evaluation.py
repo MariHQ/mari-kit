@@ -26,14 +26,12 @@ def evaluate_tools(
 ) -> EvalResult:
     values = tuple(events)
     called = tuple(event.name for event in values if event.kind is EventKind.TOOL_CALL)
-    failures = tuple(
-        event
-        for event in values
-        if event.kind is EventKind.TOOL_RESULT and not event.ok
-    )
+    results = tuple(event for event in values if event.kind is EventKind.TOOL_RESULT)
+    failures = tuple(event for event in results if event.ok is False)
+    unknown = tuple(event for event in results if event.ok is None)
     checks = {
         "tools": called == tuple(expected_tools),
-        "success": not require_success or not failures,
+        "success": not require_success or (not failures and not unknown),
     }
     return EvalResult(passed=all(checks.values()), checks=checks)
 

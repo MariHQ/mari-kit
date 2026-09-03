@@ -9,6 +9,11 @@ Mari now has measured public-corpus baselines. The committed [result reports](re
 - BEIR SciFact: BM25 over 5,183 documents and all 300 test queries.
 - LongMemEval-S: session BM25 over all 470 scored memory questions; the 30 abstention cases are skipped per the official evaluator.
 - SciFact index comparison: dense flat, HNSW, and IVF-PQ over the same 512-document, 64-query deterministic slice.
+- Knowledge-from-experience compatibility: PlugMem's Apache-2.0 coding smoke fixture plus known-answer association and loaded-knowledge diagnosis cases.
+
+The experience fixture is intentionally reported separately from corpus-quality
+scores: it verifies event/outcome compatibility and deterministic semantics,
+not the semantic accuracy of a model-generated knowledge candidate.
 
 The remaining entries in `catalog.json` are candidates, not completed benchmarks. They must not be described as results until a corpus-backed run and case records exist.
 
@@ -48,6 +53,7 @@ python benchmarks/evaluate_retrieval.py run.jsonl --k 10
 
 ```shell
 python benchmarks/run_public.py all
+python benchmarks/run_experience_knowledge.py --plugmem-fixture /path/to/PlugMem/plugmem-coding-core/eval/fixtures/smoke.json
 python benchmarks/verify_results.py
 ```
 

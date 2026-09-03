@@ -16,7 +16,7 @@ mari-components · 0.1.0.dev0
 | [Govern](govern/index.md) | Evidence, trust-gated writes, source conflicts, retention, freshness, verification |
 | [Memory](memory/index.md) | Admission, mutation, scopes, promotion, segmentation, salience, organization, consolidation |
 | [Graphs](graph/index.md) | Semantic schemas, constraints, resolution, temporal facts, propagation, communities, projections |
-| [Agents](agents/index.md) | Trajectories, procedure mining, regression gates, reviewed reuse |
+| [Agents](agents/index.md) | Adapters and analysis for turning observed activity into knowledge evidence |
 | [Platform](platform/index.md) | Portable bundles, living views, artifact lineage, stores, pipelines, task evaluation, compilation |
 
 ```{toctree}

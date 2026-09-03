@@ -30,7 +30,7 @@ class AgentEvent:
         default_factory=lambda: MappingProxyType({}),
     )
     result: Any = None
-    ok: bool = True
+    ok: bool | None = True
     speculative: bool = False
 
     def __post_init__(self) -> None:

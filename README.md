@@ -46,15 +46,20 @@ application or LLM can compose those operations for its particular system.
   an unrelated part of a source document changes.
 - Validated add/update/delete/no-op memory plans and hybrid topic segmentation
   for application-owned online and offline consolidation flows.
-- Framework-neutral trajectory normalization and model-label validation.
-- OpenAI, Anthropic, and OpenTelemetry trajectory adapters; direct-follow
-  process models, exact variants, parallel-aware rework, reference-path
-  matching, successful-trace invariant mining, and diversity sampling.
+- Knowledge-from-experience tools: loaded-revision manifests, expert-feedback
+  diagnosis, evidence-bound facts/strategies/pitfalls/constraints, minimal edit
+  proposals, dependency validation, and targeted/regression comparisons.
+- Privacy-bounded OpenAI, Anthropic, and OpenTelemetry evidence adapters;
+  direct-follow process models, exact variants, parallel-aware rework,
+  reference-path matching, successful-run invariant mining, and sampling.
 - Evidence-bound declared, inferred, and hindsight intent candidates with
   caller-owned aggregation, independent-review summaries, and task-adaptive
   rubric validation.
 - Framework-neutral context lifecycle hooks around application-owned model and
   tool calls, including explicit scope, purpose, budget, and update events.
+- Explicit information requirements, context sufficiency and gap queries,
+  context-use and ablation accounting, contextual chunk representations, and
+  late-chunk token-span pooling.
 - Page-aware structured documents with regions, bounding boxes, tables,
   derived representations, and a language-neutral code symbol graph.
 - Dependency-free Markdown, HTML, CSV-like, JSON Lines, and Python structure

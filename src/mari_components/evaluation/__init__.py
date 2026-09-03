@@ -40,6 +40,19 @@ from .metrics import (
     set_metrics,
 )
 from .runs import EvaluationRun
+from .statistics import (
+    PairedMetric,
+    PairedMetricComparison,
+    PassKSummary,
+    RepeatedTrialResult,
+    ReviewLabel,
+    ReviewReliability,
+    SliceComparison,
+    compare_paired_metrics,
+    evaluate_slices,
+    summarize_repeated_trials,
+    summarize_review_reliability,
+)
 from .suites import BenchmarkSuite, BenchmarkSuiteCatalog, load_suite_catalog
 
 __all__ = [
@@ -60,20 +73,29 @@ __all__ = [
     "MemoryCase",
     "MetricGate",
     "LinkPredictionMetrics",
+    "PairedMetricComparison",
+    "PairedMetric",
+    "PassKSummary",
     "PathMetrics",
     "RetrievalMetrics",
     "RetrievalCase",
+    "RepeatedTrialResult",
+    "ReviewLabel",
+    "ReviewReliability",
     "SetMetrics",
     "TaskOutcome",
     "TaskOutcomeComparison",
+    "SliceComparison",
     "boundary_metrics",
     "classification_metrics",
     "compare_task_outcomes",
+    "compare_paired_metrics",
     "evaluate_retrieval",
     "evaluate_clustering",
     "evaluate_graph_context",
     "evaluate_grouped_coverage",
     "evaluate_link_prediction",
+    "evaluate_slices",
     "evaluate_path",
     "evaluate_subgraph",
     "group_memory_cases",
@@ -86,4 +108,6 @@ __all__ = [
     "reciprocal_rank",
     "regression_gate",
     "set_metrics",
+    "summarize_review_reliability",
+    "summarize_repeated_trials",
 ]

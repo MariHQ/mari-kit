@@ -83,6 +83,118 @@ plan = await provider.after_model(
 | Unsupported-memory rate | Did injected material lack valid evidence? |
 | Task success delta | Did the same task improve with the provider enabled? |
 
+## Check evidence sufficiency before answering
+
+An answer can have citations and still lack a required part. Mari therefore
+keeps query decomposition, evidence assessment, and follow-up retrieval
+separate.
+
+```{code-block} python
+:caption: Retrieve only for unresolved requirements
+
+from mari_components.retrieval import (
+    RequirementAssessment, RequirementStatus,
+    assess_context_sufficiency, parse_information_requirements,
+    parse_retrieval_gap_queries,
+)
+
+requirements = parse_information_requirements(question, decomposition_output)
+report = assess_context_sufficiency(
+    requirements,
+    [RequirementAssessment(
+        requirement_id="account-plan",
+        status=RequirementStatus.SUPPORTED,
+        evidence_ids=("account/42@r9",),
+    )],
+)
+queries = parse_retrieval_gap_queries(report, gap_query_output, maximum_queries=3)
+```
+
+| Status | Evidence rule | Retrieval consequence |
+|---|---|---|
+| Supported | At least one evidence ID | Requirement contributes to coverage |
+| Contradicted | At least one evidence ID | Stop or resolve the conflict |
+| Missing | No evidence required | May produce a bounded gap query |
+| Ambiguous | Evidence optional | May produce a query that disambiguates |
+
+Unassessed required items become missing. Gap queries may cite only missing or
+ambiguous requirement IDs, so a model cannot quietly reopen a resolved part of
+the question.
+
+::: source-block
+**Evidence**
+
+[Google: sufficient context and agentic RAG](https://research.google/blog/unlocking-dependable-responses-with-gemini-enterprise-agent-platforms-agentic-rag/){.paper}[Self-RAG](https://arxiv.org/abs/2310.11511){.paper}[FLARE](https://arxiv.org/abs/2305.06983){.paper}
+:::
+
+## Measure which context helped
+
+```{code-block} python
+:caption: Keep observed use distinct from ablation evidence
+
+from mari_components.retrieval import ContextUse, evaluate_context_contribution
+
+contribution = evaluate_context_contribution(
+    [
+        ContextUse(item_id="plans@r7", token_count=200),
+        ContextUse(item_id="history@r4", token_count=800),
+    ],
+    used_ids=["plans@r7"],
+    observed_utility=0.80,
+    ablated_utility={"plans@r7": 0.50},
+)
+
+assert contribution.utilization == 0.20
+assert contribution.ablation_deltas["plans@r7"] == 0.30
+```
+
+Selected, cited, and causally useful are different claims. `used_ids` records
+observable downstream use. Ablation deltas exist only when the caller reruns
+the case without that item; Mari does not infer them from attention or prose.
+
+::: source-block
+**Evidence**
+
+[PlugMem: utility relative to consumed context](https://arxiv.org/abs/2603.03296){.paper}[Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents){.paper}
+:::
+
+## Add context to chunks without losing source spans
+
+`parse_chunk_context(document, section, model_output)` prepends a bounded
+document-level explanation for indexing while retaining the exact original
+text, document and section revisions, and character offsets.
+`pool_token_spans(token_embeddings, spans)` implements late-chunk mean pooling
+over caller-tokenized half-open spans.
+
+```{code-block} python
+:caption: Index a contextual representation and cite the original
+
+from mari_components.retrieval import parse_chunk_context
+
+representation = parse_chunk_context(
+    document,
+    section,
+    {"context": "This section defines enterprise account limits."},
+    maximum_characters=400,
+)
+
+index.add(representation.indexing_text)
+assert document.body[
+    representation.evidence_start:representation.evidence_end
+] == representation.original_text
+```
+
+| Representation | Context mechanism | Citation text |
+|---|---|---|
+| Contextual retrieval | Generated bounded prefix per chunk | Original section only |
+| Late chunking | Embed long text, pool token spans afterward | Original section only |
+
+::: source-block
+**Evidence**
+
+[Anthropic contextual retrieval](https://www.anthropic.com/news/contextual-retrieval){.paper}[Late Chunking](https://arxiv.org/abs/2409.04701){.paper}
+:::
+
 ::: source-block
 **Papers and implementations**
 

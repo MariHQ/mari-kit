@@ -4,6 +4,15 @@ These are recorded outputs from `python benchmarks/run_public.py all`, not targe
 
 ## Results
 
+### Knowledge from experience
+
+PlugMem's Apache-2.0 coding smoke fixture contains 3 sessions and 12 events.
+Mari retained both post-tool outcomes: one explicit failure and one explicit
+success. A separate four-run known-answer fixture associated `retry` with 2/2
+failed and 0/2 successful runs (corrected risk ratio 5.00, 95% interval
+0.38–66.01). The wide interval is material: this validates arithmetic and
+evidence linkage, not production effect size.
+
 ### BEIR SciFact retrieval
 
 Full public test split: 5,183 documents and 300 judged queries.

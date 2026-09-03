@@ -1,0 +1,23 @@
+{
+  "corpus": {
+    "name": "PlugMem coding smoke fixture",
+    "license": "Apache-2.0",
+    "fixture": "smoke.json",
+    "sessions": 3,
+    "events": 12,
+    "tool_results": 2,
+    "explicit_failures": 1,
+    "explicit_successes": 1
+  },
+  "known_answer": {
+    "retry_success_support": 0,
+    "retry_failure_support": 2,
+    "retry_failure_risk_ratio": 5.000000000000001,
+    "retry_interval": [
+      0.3787137711672497,
+      66.01291503856977
+    ],
+    "diagnoses_accepted": 1,
+    "loaded_artifact_citations": 1
+  }
+}

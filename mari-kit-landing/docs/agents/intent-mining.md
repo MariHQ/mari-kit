@@ -72,6 +72,49 @@ groups = aggregate_intents(
 )
 ```
 
+## Cluster and monitor proposed intents
+
+Before relabeling, applications can group semantically similar proposals with
+caller-owned vectors. `cluster_intents` uses cosine-normalized single-link
+clustering and returns each cluster's medoid, cohesion, labels, members, and
+ambiguous members. `detect_novel_intents` measures each proposal against
+caller-owned centroids. `compare_intent_windows` compares reviewed cluster
+matches with Jensen–Shannon divergence and explicit new or retired clusters.
+
+```{code-block} python
+:caption: Discover intent families without making them Mari's ontology
+
+from mari_components.trajectories import cluster_intents, detect_novel_intents
+
+clustering = cluster_intents(
+    candidates,
+    embeddings,
+    similarity_threshold=0.82,
+    ambiguity_margin=0.03,
+)
+novel = detect_novel_intents(
+    new_candidates,
+    new_embeddings,
+    reviewed_centroids,
+    threshold=0.75,
+)
+```
+
+| Three-label vector example | Cosine relationship | Result |
+|---|---:|---|
+| “reset password” / “recover login” | `0.9999` | Same cluster at `0.90` |
+| “reset password” / “cancel account” | `0.0000` | Separate cluster |
+
+Single-link clustering can bridge distant members through intermediate points;
+cohesion and ambiguous IDs make that failure mode inspectable. Cluster matching
+across time is caller-supplied because Mari does not invent stable taxonomy IDs.
+
+::: source-block
+**Evidence**
+
+[Google: intent extraction through decomposition](https://research.google/blog/small-models-big-results-achieving-superior-intent-extraction-through-decomposition/){.paper}[EMNLP 2025 intent decomposition paper](https://aclanthology.org/2025.emnlp-main.949/){.paper}[Jensen–Shannon divergence](https://doi.org/10.1109/18.61115){.paper}
+:::
+
 ## Relabel outcomes in hindsight
 
 A failed run may still demonstrate a different achieved intent. Record that as

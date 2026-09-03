@@ -71,6 +71,18 @@ class TrajectoryAgentTests(unittest.TestCase):
         )
         self.assertFalse(evaluate_tools(events, expected_tools=("search",)).passed)
 
+    def test_unknown_framework_tool_result_is_not_assumed_successful(self):
+        events = (
+            AgentEvent(kind=EventKind.TOOL_CALL, name="search"),
+            AgentEvent(kind=EventKind.TOOL_RESULT, name="search", ok=None),
+        )
+        self.assertFalse(evaluate_tools(events, expected_tools=("search",)).passed)
+        self.assertTrue(
+            evaluate_tools(
+                events, expected_tools=("search",), require_success=False
+            ).passed
+        )
+
     def test_trajectory_redacts_arguments_and_validates_model_labels(self):
         events = [
             {

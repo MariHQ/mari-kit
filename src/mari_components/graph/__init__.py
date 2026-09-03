@@ -29,13 +29,20 @@ from .construction import (
     resolve_relation_evidence,
 )
 from .diagnostics import (
+    FieldChange,
     GraphDiff,
     GraphQualityReport,
     RecordChange,
     RecordDiff,
+    diff_record_fields,
     diff_records,
     graph_diff,
     inspect_graph_quality,
+)
+from .evidence_projection import (
+    GraphEvidenceAssociation,
+    GraphEvidenceProjection,
+    project_graph_evidence,
 )
 from .interop import (
     EncodedGraph,
@@ -69,9 +76,11 @@ from .similarity import LinkScore, score_link_candidates, simrank_scores
 from .subgraphs import SubgraphSelection, bounded_seed_expansion, prize_guided_subgraph
 from .temporal import TemporalFact, close_transaction, query_temporal_facts
 from .temporal_tools import (
+    IntervalOverlapPair,
     TemporalJoinPair,
     TimeInterval,
     close_interval,
+    grouped_interval_overlaps,
     interval_contains,
     interval_intersection,
     intervals_overlap,
@@ -79,9 +88,12 @@ from .temporal_tools import (
 )
 from .traversal import (
     CycleResult,
+    EdgeTraversalResult,
+    EdgeTraversalVisit,
     PathResult,
     PredecessorDAG,
     PredecessorEntry,
+    RejectedTraversalEdge,
     TraversalResult,
     TraversalVisit,
     breadth_first,
@@ -90,6 +102,7 @@ from .traversal import (
     k_hop_nodes,
     predecessor_dag,
     shortest_path,
+    traverse_edges,
 )
 
 __all__ = [
@@ -100,13 +113,19 @@ __all__ = [
     "ClusterResult",
     "CycleResult",
     "EncodedGraph",
+    "EdgeTraversalResult",
+    "EdgeTraversalVisit",
     "EvidenceBoundCandidate",
     "EvidenceResolution",
     "FieldAgreement",
+    "FieldChange",
+    "GraphEvidenceAssociation",
+    "GraphEvidenceProjection",
     "GraphDiff",
     "GraphProjection",
     "GraphQualityReport",
     "InterchangeReport",
+    "IntervalOverlapPair",
     "LineageTrace",
     "LineageEdge",
     "LineageEdgeTrace",
@@ -121,6 +140,7 @@ __all__ = [
     "ResolutionResult",
     "RecordChange",
     "RecordDiff",
+    "RejectedTraversalEdge",
     "TemporalFact",
     "TemporalJoinPair",
     "TimeInterval",
@@ -141,10 +161,12 @@ __all__ = [
     "cluster_matches",
     "degree_centrality",
     "diff_records",
+    "diff_record_fields",
     "directed_cycles",
     "fellegi_sunter_score",
     "explain_candidate_pairs",
     "graph_diff",
+    "grouped_interval_overlaps",
     "from_networkx",
     "hits",
     "inspect_graph_quality",
@@ -159,6 +181,7 @@ __all__ = [
     "prize_guided_subgraph",
     "predecessor_dag",
     "propagated_taints",
+    "project_graph_evidence",
     "resolve_entity",
     "resolve_relation_evidence",
     "score_link_candidates",
@@ -172,4 +195,5 @@ __all__ = [
     "to_rdflib",
     "trace_lineage",
     "trace_lineage_edges",
+    "traverse_edges",
 ]

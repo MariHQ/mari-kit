@@ -7,6 +7,14 @@ from .admission import (
     AdmissionThresholds,
     admit_candidate,
 )
+from .aggregation import (
+    ScalarEstimate,
+    WeightedContribution,
+    WeightedMean,
+    WeightedObservation,
+    weighted_mean,
+    wilson_proportion,
+)
 from .answers import (
     AnswerDisposition,
     GroundedAnswer,
@@ -105,6 +113,7 @@ from .tags import (
     normalize_tag,
     search_weight,
 )
+from .versions import VersionFamily, resolve_version_families
 
 __all__ = [
     "Activity",
@@ -113,6 +122,7 @@ __all__ = [
     "Assertion",
     "AssertionUpdateKind",
     "AssertionUpdatePlan",
+    "ScalarEstimate",
     "AdmissionDecision",
     "AdmissionDisposition",
     "AdmissionSignals",
@@ -150,6 +160,10 @@ __all__ = [
     "TagAssignments",
     "TagDefinition",
     "TopicSegment",
+    "WeightedContribution",
+    "WeightedMean",
+    "WeightedObservation",
+    "VersionFamily",
     "admit_candidate",
     "all_of",
     "any_of",
@@ -185,9 +199,12 @@ __all__ = [
     "plan_note_evolution",
     "pending_fact_sections",
     "rank_salient_memories",
+    "resolve_version_families",
     "normalize_tag",
     "search_weight",
     "section_revisions",
     "valid_at",
     "validate_artifact_evidence",
+    "weighted_mean",
+    "wilson_proportion",
 ]

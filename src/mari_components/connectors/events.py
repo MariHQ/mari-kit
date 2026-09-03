@@ -7,7 +7,8 @@ import hmac
 import json
 import time
 import urllib.parse
-from collections.abc import Mapping
+from collections.abc import Callable, Iterable, Mapping
+from dataclasses import dataclass
 from typing import Any
 
 from mari_components.errors import AuthenticationFailure, PermanentFailure
@@ -342,3 +343,62 @@ def coalesce_hints(hints: list[ChangeHint]) -> tuple[ChangeHint, ...]:
             order.append(key)
         latest[key] = hint
     return tuple(latest[key] for key in order)
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class HintCoalescingReport:
+    selected: tuple[ChangeHint, ...]
+    stale: tuple[ChangeHint, ...]
+    duplicates: tuple[ChangeHint, ...]
+    conflicts: tuple[tuple[ChangeHint, ChangeHint], ...]
+    unresolved_keys: tuple[tuple[str, str], ...]
+
+
+def coalesce_hints_ordered(
+    hints: Iterable[ChangeHint],
+    *,
+    order_key: Callable[[ChangeHint], Any],
+    resolve_conflict: Callable[[ChangeHint, ChangeHint], ChangeHint] | None = None,
+) -> HintCoalescingReport:
+    """Coalesce by caller ordering and expose stale, duplicate, and tied hints."""
+
+    order: list[tuple[str, str]] = []
+    selected: dict[tuple[str, str], ChangeHint] = {}
+    stale: list[ChangeHint] = []
+    duplicates: list[ChangeHint] = []
+    conflicts: list[tuple[ChangeHint, ChangeHint]] = []
+    unresolved: set[tuple[str, str]] = set()
+    for hint in hints:
+        key = (hint.provider, hint.aggregate_key)
+        previous = selected.get(key)
+        if previous is None:
+            order.append(key)
+            selected[key] = hint
+            continue
+        incoming_order = order_key(hint)
+        previous_order = order_key(previous)
+        if incoming_order > previous_order:
+            stale.append(previous)
+            selected[key] = hint
+            unresolved.discard(key)
+        elif incoming_order < previous_order:
+            stale.append(hint)
+        elif hint == previous:
+            duplicates.append(hint)
+        else:
+            conflicts.append((previous, hint))
+            if resolve_conflict is not None:
+                resolved = resolve_conflict(previous, hint)
+                if resolved not in (previous, hint):
+                    raise ValueError("conflict resolver must return one of the hints")
+                selected[key] = resolved
+                unresolved.discard(key)
+            else:
+                unresolved.add(key)
+    return HintCoalescingReport(
+        selected=tuple(selected[key] for key in order if key not in unresolved),
+        stale=tuple(stale),
+        duplicates=tuple(duplicates),
+        conflicts=tuple(conflicts),
+        unresolved_keys=tuple(key for key in order if key in unresolved),
+    )

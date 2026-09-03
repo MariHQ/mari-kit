@@ -40,6 +40,8 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | RDF interchange | `RDFLib/rdflib` | BSD-3-Clause; permissive interoperability oracle | `to_rdflib` |
 | Entity blocking | `dedupeio/dedupe` | MIT; permissive blocking reference | `candidate_pairs`, `cluster_matches` |
 | BM25 scoring | `dorianbrown/rank_bm25` | Apache-2.0; permissive equation and fixture reference | `BM25Index`, analyzer injection, score explanations; Mari retains its positive Robertson--Walker IDF variant |
+| Constrained/submodular selection | `decile-team/submodlib` | MIT; permissive greedy-marginal-gain reference | `select_context_diverse`; Mari adds caller groups, multiple budgets, and complete decision traces |
+| Interval queries | `chaimleib/intervaltree` | Apache-2.0; permissive half-open-overlap reference | `grouped_interval_overlaps`; Mari uses a dependency-free grouped sweep over datetime intervals |
 
 ## Connector references
 
@@ -69,3 +71,8 @@ results against NetworkX predecessor and distance output. BM25 term-frequency
 normalization and length normalization were checked against the Apache-2.0
 `rank_bm25` implementation after substituting Mari's documented positive IDF;
 per-term explanations sum exactly to returned search scores.
+
+The second composition pass inspected Submodlib's cost-sensitive greedy and
+marginal-gain interfaces and IntervalTree's half-open overlap behavior. Mari's
+implementations remain smaller value/callback algorithms and do not vendor the
+libraries or claim their optimized data structures.

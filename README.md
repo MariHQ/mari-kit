@@ -76,6 +76,12 @@ application or LLM can compose those operations for its particular system.
 - Evidence-bearing temporal assertions, attribute-aware record diffs,
   explainable blocking and clustering, adjacency projections, and multi-path
   reachability results.
+- Reason-preserving filters and candidate histories, diversity-constrained
+  context selection, many-to-many graph evidence projection, unique grouped
+  interval overlaps, and edge-preserving traversal.
+- Artifact-keyed BM25, version-family proposals, grouped coverage metrics,
+  weighted contribution traces, uncertainty intervals, and JSON-safe encoding
+  for immutable values.
 
 ## Installation
 

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Hashable, Iterable
+from collections.abc import Callable, Hashable, Iterable, Mapping
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import Any, TypeVar
 
 NodeT = TypeVar("NodeT", bound=Hashable)
 EdgeT = TypeVar("EdgeT", bound=Hashable)
@@ -58,6 +58,53 @@ class RecordDiff:
     removed_ids: frozenset[Hashable]
     modified: tuple[RecordChange, ...]
     unchanged_ids: frozenset[Hashable]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FieldChange:
+    record_id: Hashable
+    field: str
+    before: Any
+    after: Any
+
+
+def diff_record_fields(
+    before: Iterable[RecordT],
+    after: Iterable[RecordT],
+    *,
+    identity: Callable[[RecordT], Hashable],
+    fields: Mapping[str, Callable[[RecordT], Any]],
+) -> tuple[FieldChange, ...]:
+    """Explain changed caller-named fields for records present in both inputs."""
+
+    if any(not name.strip() for name in fields):
+        raise ValueError("field names must not be empty")
+
+    def index(values: Iterable[RecordT]) -> dict[Hashable, RecordT]:
+        result: dict[Hashable, RecordT] = {}
+        for value in values:
+            record_id = identity(value)
+            if record_id in result:
+                raise ValueError(f"duplicate record identity: {record_id!r}")
+            result[record_id] = value
+        return result
+
+    left, right = index(before), index(after)
+    changes: list[FieldChange] = []
+    for record_id in sorted(left.keys() & right.keys(), key=repr):
+        for field_name, extract in sorted(fields.items()):
+            before_value = extract(left[record_id])
+            after_value = extract(right[record_id])
+            if before_value != after_value:
+                changes.append(
+                    FieldChange(
+                        record_id=record_id,
+                        field=field_name,
+                        before=before_value,
+                        after=after_value,
+                    )
+                )
+    return tuple(changes)
 
 
 def diff_records(

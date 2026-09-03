@@ -54,6 +54,29 @@ for entry in paths.entries:
     print(entry.node, entry.predecessors, entry.shortest_path_count)
 ```
 
+When edge payloads carry citation intent, relation version, time, or provenance,
+use `traverse_edges`. The caller supplies edge enumeration, adjacency, node
+authorization, and an edge rejection function. Results preserve accepted edges
+and rejected edges with reasons.
+
+```{code-block} python
+:caption: Traverse citations without losing retraction decisions
+
+from mari_components.graph import traverse_edges
+
+trace = traverse_edges(
+    [review_id],
+    edges=citation_store.outgoing,
+    adjacent=lambda source, citation: citation.target,
+    reject_edge=lambda citation: "retracted" if citation.retracted else None,
+    max_depth=3,
+)
+```
+
+Outgoing edges hidden by `max_depth` are returned as rejected edges with
+`reason="depth_limit"`, and `truncated` becomes true. This distinguishes a leaf
+from an unexplored traversal boundary.
+
 Breadth-first traversal gives minimum hop count in an unweighted graph. Weighted paths use Dijkstra's algorithm and reject negative or non-finite costs. Authorization is checked before a node enters the frontier.
 
 ## What to evaluate

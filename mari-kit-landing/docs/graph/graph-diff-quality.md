@@ -56,6 +56,26 @@ for change in records.modified:
     schedule_impact_analysis(change.record_id)
 ```
 
+When a fingerprint says that a record changed, `diff_record_fields` can name
+the caller-projected fields responsible for the change.
+
+```{code-block} python
+:caption: Explain a stable policy clause revision
+
+from mari_components.graph import diff_record_fields
+
+changes = diff_record_fields(
+    previous.clauses,
+    current.clauses,
+    identity=lambda clause: clause.clause_id,
+    fields={
+        "text": lambda clause: clause.text,
+        "scope": lambda clause: clause.scope,
+        "effective": lambda clause: clause.valid_time,
+    },
+)
+```
+
 ## What to evaluate
 
 | Measure | Calculation |

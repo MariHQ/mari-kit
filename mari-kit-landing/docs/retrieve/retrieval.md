@@ -161,6 +161,32 @@ lexical = lexical.with_deltas([IndexDelta(
 | `inverse_document_frequency` | Corpus rarity at this immutable snapshot |
 | `score` | This query term's contribution after length normalization |
 
+`ArtifactBM25Index` accepts `ArtifactRef` keys and returns `ArtifactIndexHit`
+values. Multiple immutable revisions therefore remain distinct without encoding
+`artifact@revision#unit` into a field named `document_id`.
+
+```{code-block} python
+:caption: Search immutable artifact revisions directly
+
+from mari_components.retrieval import (
+    ArtifactBM25Index, ArtifactIndexDelta, IndexOperation,
+)
+
+index = ArtifactBM25Index({unit.ref: unit.text for unit in retrieval_units})
+hits = index.search(query, limit=10, allowed_refs=applicable_refs)
+why = index.explain(query, ref=hits[0].ref)
+
+index = index.with_deltas([ArtifactIndexDelta(
+    ref=current_ref,
+    previous_ref=prior_ref,
+    operation=IndexOperation.UPSERT,
+    text=current_text,
+)])
+```
+
+`previous_ref` is an exact optimistic revision check. Mari replaces only that
+unit; it does not infer which of several indexed manifestations is canonical.
+
 ## Rank fusion, graph recall, and diverse packing
 
 ::::::{container} diagram context

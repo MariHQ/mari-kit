@@ -281,6 +281,27 @@ for page in poll_github(config, request, http=http):
 
 `stream_hints` requires a verifier, rejects oversized deliveries and batches, parses provider-specific hints, and coalesces repeated aggregate keys. It has no cursor or checkpoint. The application owns the webhook server, queue, acknowledgement, retries, and optional canonical hydration.
 
+Arrival order is not necessarily revision order. `coalesce_hints_ordered`
+accepts a caller ordering key and separately reports stale hints, exact
+duplicates, and equal-order conflicts. With no conflict resolver it retains the
+first tied hint and exposes the conflict; applications can instead supply an
+explicit resolver.
+
+```{code-block} python
+:caption: Coalesce out-of-order changes without assuming last arrival is newest
+
+from mari_components.connectors import coalesce_hints_ordered
+
+report = coalesce_hints_ordered(
+    hints,
+    order_key=lambda hint: revision_clock(hint.revision),
+)
+if report.conflicts:
+    quarantine(report.conflicts)
+for hint in report.selected:
+    refetch(hint)
+```
+
 ```{code-block} python
 :caption: stream.py
 
@@ -322,6 +343,11 @@ Every catalog connector defines a frozen configuration object, validation, and b
 ## How it works
 
 A batch connector starts from the caller's cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded `ChangeHint` keys, and coalesces duplicates. Streaming has no checkpoint state. The application may canonically refetch the changed object into a `PollPage`, so partial webhook payloads cannot bypass synchronization invariants.
+
+`coalesce_hints_ordered` uses a caller-supplied revision ordering. It reports
+older deliveries, exact duplicates, and equal-order conflicts separately. An
+unresolved conflict is omitted from `selected` and its provider/aggregate key
+appears in `unresolved_keys`; a caller may instead supply an explicit resolver.
 
 | Code and work | Documents and files | Business systems | Open protocols |
 |---|---|---|---|

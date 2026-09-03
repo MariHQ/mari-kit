@@ -47,6 +47,34 @@ Evidence, coverage, completeness, corroboration, certainty.
 
 **Scores are not truth probabilities.** They are deterministic quality signals for selection and abstention.
 
+## Numerical evidence without a conclusion policy
+
+`weighted_mean` returns normalized weights and each observation's numerical
+contribution. `wilson_proportion` returns a finite point estimate and interval
+for caller-labeled binary outcomes. Neither function names an outcome good,
+selects an action, or converts uncertainty into a verdict.
+
+```{code-block} python
+:caption: Preserve outcome uncertainty as ranking features
+
+from mari_components.knowledge import WeightedObservation, weighted_mean, wilson_proportion
+
+estimate = weighted_mean([
+    WeightedObservation(observation_id="study-a", value=0.20, weight=2.0),
+    WeightedObservation(observation_id="study-b", value=-0.10, weight=1.0),
+])
+
+success_rate = wilson_proportion(successes=7, total=10)
+assert success_rate.level == 0.95
+```
+
+| Output | What it says | What it does not say |
+|---|---|---|
+| Contribution `0.133` | Observation A's weighted contribution | That A is independent or authoritative |
+| Interval containing `0.70` | Sampling uncertainty under a binomial model | That the next remediation should run |
+
+[Wilson score interval](https://doi.org/10.1080/01621459.1927.10502953){.paper}[Cochrane statistical methods](https://training.cochrane.org/handbook/current/chapter-10){.paper}
+
 ::: source-block
 **Research basis**
 

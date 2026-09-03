@@ -17,6 +17,7 @@ from .confluence import (
     validate_confluence,
 )
 from .dropbox import DropboxConfig, poll_dropbox, validate_dropbox
+from .events import HintCoalescingReport, coalesce_hints_ordered
 from .filesystem import FilesystemConfig, poll_filesystem, validate_filesystem
 from .github import (
     GitHubConfig,
@@ -74,6 +75,7 @@ __all__ = [
     "FilesystemConfig",
     "GitHubConfig",
     "GitLabConfig",
+    "HintCoalescingReport",
     "GoogleDriveConfig",
     "GoogleDriveWatch",
     "JiraConfig",
@@ -94,6 +96,7 @@ __all__ = [
     "ZendeskConfig",
     "connector_definition",
     "connector_definitions",
+    "coalesce_hints_ordered",
     "fetch_confluence_page",
     "fetch_slack_thread_by_id",
     "hydrate_hints",

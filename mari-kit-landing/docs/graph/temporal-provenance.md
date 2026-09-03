@@ -52,6 +52,26 @@ Metadata-preserving lineage edges retain input role, operation, and arbitrary
 parameters during traversal. Plain ID-only lineage remains available through
 `trace_lineage`.
 
+`grouped_interval_overlaps` uses a within-group sweep and emits each overlapping
+pair exactly once—never mirror pairs or self-pairs. An overlap remains only a
+candidate relationship; it does not mean conflict, precedence, or violation.
+
+```{code-block} python
+:caption: Find unique effective-time collisions inside caller scopes
+
+from mari_components.graph import grouped_interval_overlaps
+
+candidates = grouped_interval_overlaps(
+    clauses,
+    group=lambda clause: (clause.control, clause.jurisdiction),
+    interval=lambda clause: clause.valid_time,
+)
+```
+
+The half-open overlap condition matches the semantics used by interval-tree
+implementations: adjacent `[a, b)` and `[b, c)` intervals do not overlap.
+[IntervalTree implementation](https://github.com/chaimleib/intervaltree){.paper}
+
 ```{code-block} python
 :caption: Keep evidence and temporal accuracy as separate measurements
 

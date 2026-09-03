@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Hashable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 from .metrics import SetMetrics, set_metrics
@@ -87,6 +87,60 @@ class GraphContextMetrics:
     temporal_precision: float
     connected_fraction: float
     selected_count: int
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class GroupCoverage:
+    group: Hashable
+    expected_count: int
+    selected_count: int
+    matched_count: int
+    recall: float
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class GroupedCoverageMetrics:
+    groups: tuple[GroupCoverage, ...]
+    represented_group_fraction: float
+    redundancy_rate: float
+
+
+def evaluate_grouped_coverage(
+    selected: Iterable[Hashable],
+    expected: Iterable[Hashable],
+    *,
+    group: Callable[[Hashable], Hashable],
+) -> GroupedCoverageMetrics:
+    """Measure per-group recall and duplicate-group share separately."""
+
+    selected_values = tuple(selected)
+    selected_set = set(selected_values)
+    expected_set = set(expected)
+    groups = {group(item) for item in expected_set}
+    entries: list[GroupCoverage] = []
+    for group_id in sorted(groups, key=repr):
+        expected_group = {item for item in expected_set if group(item) == group_id}
+        selected_group = {item for item in selected_set if group(item) == group_id}
+        matched = selected_group & expected_group
+        entries.append(
+            GroupCoverage(
+                group=group_id,
+                expected_count=len(expected_group),
+                selected_count=len(selected_group),
+                matched_count=len(matched),
+                recall=len(matched) / len(expected_group),
+            )
+        )
+    represented = sum(entry.matched_count > 0 for entry in entries)
+    selected_groups = {group(item) for item in selected_values}
+    redundancy = (
+        1 - len(selected_groups) / len(selected_values) if selected_values else 0.0
+    )
+    return GroupedCoverageMetrics(
+        groups=tuple(entries),
+        represented_group_fraction=represented / len(entries) if entries else 1.0,
+        redundancy_rate=redundancy,
+    )
 
 
 def evaluate_graph_context(

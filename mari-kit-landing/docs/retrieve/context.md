@@ -17,6 +17,8 @@ Use the separate dimensions to identify the failure mode; do not treat high reca
 |---|---:|---:|---|
 | Temporal research context | `1.000` | Temporal precision `0.667` | Perfect evidence recall still admitted a historical assertion |
 | Code evidence retrieval | Recall `1.000` | MRR `0.500` | All relevant files appeared, but the first result was wrong |
+| Literature context, raw | Precision/recall `0.500` | NDCG `0.613` | Two manifestations of one study hid an independent contradiction |
+| Literature context, group-constrained | Precision/recall `1.000` | NDCG `1.000` | One manifestation per caller-defined study group preserved both stances |
 
 :::{collapse} Worked inclusion trace
 
@@ -116,3 +118,92 @@ validate_answer(visible_refs=selection.visible_refs)
 The greedy packer is one inspectable reference algorithm, not a mandated
 context policy. Token, byte, latency, and monetary costs have no built-in
 priority; their names and limits come from the caller.
+
+## Constraint and diversity selection
+
+`select_context_diverse` adds caller-defined group caps, minimum group
+coverage, and a marginal-gain callback. The algorithm greedily chooses the
+largest feasible marginal gain, prioritizing unsatisfied required groups. It
+returns selection order, group counts, selected gains, final-set counterfactual
+gains for excluded candidates, budget failures, group cap failures, and
+infeasible minimums.
+
+`rounds` records the feasible candidates and gains at each greedy iteration,
+the groups still unmet at that moment, the selected ref, and an explicit
+`below_minimum_gain` or `no_feasible_candidate` stop. The compact `trace`
+separately describes each candidate against the final selected set.
+
+```{code-block} python
+:caption: Keep independent evidence families in a two-item context
+
+from mari_components.retrieval import select_context_diverse
+
+selection = select_context_diverse(
+    candidates,
+    limits={"items": 2, "tokens": 1200},
+    groups=lambda item: (item.unit.metadata["study_id"],),
+    maximum_per_group={study_id: 1 for study_id in study_ids},
+    minimum_per_group={"trial-b": 1, "trial-c": 1},
+    marginal_gain=lambda item, selected: evidence_gain(item, selected),
+)
+```
+
+This is a constrained greedy baseline, not an optimality claim. For monotone
+submodular objectives, greedy maximization has established approximation
+results; arbitrary caller gain functions may not satisfy those assumptions.
+[Submodular maximization](https://doi.org/10.1007/BF01588971){.paper}
+
+`evaluate_grouped_coverage` reports per-group recall, represented-group
+fraction, and duplicate-group redundancy. These remain separate from item-level
+precision and relevance.
+
+```{code-block} python
+:caption: Detect a context containing two versions of one study
+
+from mari_components.evaluation import evaluate_grouped_coverage
+
+coverage = evaluate_grouped_coverage(
+    selected_ids,
+    expected_ids,
+    group=lambda paper_id: study_family[paper_id],
+)
+print(coverage.represented_group_fraction, coverage.redundancy_rate)
+```
+
+## Cross-stage decisions
+
+`filter_with_reasons` evaluates all caller predicates and retains every failed
+reason. `CandidateHistory` appends decisions from graph selection, projection,
+retrieval, reranking, and context packing without prescribing those stages or
+their order. This makes upstream attrition visible in the final audit.
+
+```{code-block} python
+:caption: Preserve an expired-item rejection before retrieval
+
+from mari_components.retrieval import (
+    CandidateHistory, FilterPredicate, decisions_from_context,
+    decisions_from_filter, filter_with_reasons,
+)
+
+applicable = filter_with_reasons(clauses, predicates=(
+    FilterPredicate(reason="expired", accepts=is_current),
+    FilterPredicate(reason="wrong_jurisdiction", accepts=in_scope),
+))
+
+hits = index.search(query, allowed_refs={clause.ref for clause in applicable.accepted})
+
+history = CandidateHistory().append(
+    *decisions_from_filter(
+        applicable, stage="applicability", identity=lambda clause: clause.ref,
+    ),
+    *decisions_from_context(selection, stage="context"),
+)
+```
+
+The adapters copy values into a common append-only trace. They do not validate
+a stage order, invoke another algorithm, or define a retrieval workflow.
+
+`diagnose_candidate_history` checks for conflicting decisions at the same
+stage, missing parents, and multiple raw IDs that map to one caller-defined
+canonical identity. Pass `canonicalize=` explicitly when stages use different
+identifier representations; Mari does not infer their equivalence.

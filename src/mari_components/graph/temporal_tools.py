@@ -10,6 +10,7 @@ from typing import Generic, TypeVar
 ValueT = TypeVar("ValueT")
 LeftT = TypeVar("LeftT")
 RightT = TypeVar("RightT")
+ItemT = TypeVar("ItemT")
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -64,6 +65,61 @@ class TemporalJoinPair(Generic[LeftT, RightT]):
     left: LeftT
     right: RightT
     overlap: TimeInterval
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class IntervalOverlapPair(Generic[ItemT]):
+    left: ItemT
+    right: ItemT
+    group: Hashable
+    overlap: TimeInterval
+
+
+def grouped_interval_overlaps(
+    items: Iterable[ItemT],
+    *,
+    group: Callable[[ItemT], Hashable],
+    interval: Callable[[ItemT], TimeInterval],
+) -> tuple[IntervalOverlapPair[ItemT], ...]:
+    """Emit each within-group overlapping pair once using a bounded sweep."""
+
+    grouped: dict[Hashable, list[ItemT]] = {}
+    for item in items:
+        grouped.setdefault(group(item), []).append(item)
+    result: list[IntervalOverlapPair[ItemT]] = []
+    for group_key in sorted(grouped, key=repr):
+        ordered = sorted(
+            grouped[group_key],
+            key=lambda item: (
+                interval(item).start is not None,
+                interval(item).start,
+                repr(item),
+            ),
+        )
+        active: list[ItemT] = []
+        for item in ordered:
+            current = interval(item)
+            if current.start is not None:
+                current_start = current.start
+                retained: list[ItemT] = []
+                for previous in active:
+                    end = interval(previous).end
+                    if end is None or end > current_start:
+                        retained.append(previous)
+                active = retained
+            for previous in active:
+                overlap = interval_intersection(interval(previous), current)
+                if overlap is not None:
+                    result.append(
+                        IntervalOverlapPair(
+                            left=previous,
+                            right=item,
+                            group=group_key,
+                            overlap=overlap,
+                        )
+                    )
+            active.append(item)
+    return tuple(result)
 
 
 def temporal_join(

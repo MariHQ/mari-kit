@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import TypeVar, cast
 
 NodeT = TypeVar("NodeT", bound=Hashable)
+EdgeT = TypeVar("EdgeT")
 
 
 def _stable(value: Hashable) -> tuple[str, str]:
@@ -63,6 +64,106 @@ class PredecessorEntry:
 class PredecessorDAG:
     entries: tuple[PredecessorEntry, ...]
     truncated: bool
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class EdgeTraversalVisit:
+    node: Hashable
+    depth: int
+    via_edges: tuple[object, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class RejectedTraversalEdge:
+    edge: object
+    reason: str
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class EdgeTraversalResult:
+    visits: tuple[EdgeTraversalVisit, ...]
+    traversed_edges: tuple[object, ...]
+    rejected_edges: tuple[RejectedTraversalEdge, ...]
+    truncated: bool
+
+
+def traverse_edges(
+    starts: Iterable[NodeT],
+    *,
+    edges: Callable[[NodeT], Iterable[EdgeT]],
+    adjacent: Callable[[NodeT, EdgeT], NodeT],
+    reject_edge: Callable[[EdgeT], str | None] = lambda _edge: None,
+    allowed_node: Callable[[NodeT], bool] = lambda _node: True,
+    max_depth: int | None = None,
+    max_nodes: int | None = None,
+) -> EdgeTraversalResult:
+    """Traverse caller edges while retaining metadata and rejection reasons."""
+
+    if max_depth is not None and max_depth < 0:
+        raise ValueError("max_depth must not be negative")
+    if max_nodes is not None and max_nodes < 1:
+        raise ValueError("max_nodes must be positive")
+    roots = tuple(
+        node for node in sorted(set(starts), key=_stable) if allowed_node(node)
+    )
+    distance: dict[NodeT, int] = {node: 0 for node in roots}
+    via: dict[NodeT, list[EdgeT]] = {node: [] for node in roots}
+    queue: deque[NodeT] = deque(roots)
+    traversed: list[EdgeT] = []
+    rejected: list[RejectedTraversalEdge] = []
+    truncated = False
+    while queue:
+        node = queue.popleft()
+        depth = distance[node]
+        outgoing = tuple(edges(node))
+        if max_depth is not None and depth >= max_depth:
+            rejected.extend(
+                RejectedTraversalEdge(edge=edge, reason="depth_limit")
+                for edge in outgoing
+            )
+            truncated = truncated or bool(outgoing)
+            continue
+        for edge in outgoing:
+            reason = reject_edge(edge)
+            if reason:
+                rejected.append(RejectedTraversalEdge(edge=edge, reason=reason))
+                continue
+            neighbor = adjacent(node, edge)
+            if not allowed_node(neighbor):
+                rejected.append(
+                    RejectedTraversalEdge(edge=edge, reason="node_not_allowed")
+                )
+                continue
+            candidate_distance = depth + 1
+            if neighbor not in distance:
+                if max_nodes is not None and len(distance) >= max_nodes:
+                    rejected.append(
+                        RejectedTraversalEdge(edge=edge, reason="node_limit")
+                    )
+                    truncated = True
+                    continue
+                distance[neighbor] = candidate_distance
+                via[neighbor] = [edge]
+                traversed.append(edge)
+                queue.append(neighbor)
+            elif distance[neighbor] == candidate_distance:
+                via[neighbor].append(edge)
+                traversed.append(edge)
+    return EdgeTraversalResult(
+        visits=tuple(
+            EdgeTraversalVisit(
+                node=node,
+                depth=distance[node],
+                via_edges=tuple(via[node]),
+            )
+            for node in sorted(
+                distance, key=lambda item: (distance[item], _stable(item))
+            )
+        ),
+        traversed_edges=tuple(traversed),
+        rejected_edges=tuple(rejected),
+        truncated=truncated,
+    )
 
 
 def predecessor_dag(

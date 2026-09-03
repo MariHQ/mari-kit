@@ -14,6 +14,8 @@ from enum import StrEnum
 import numpy as np
 from numpy import typing as npt
 
+from mari_components.knowledge.artifacts import ArtifactRef
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class IndexHit:
@@ -58,6 +60,41 @@ class BM25Explanation:
     item_id: str
     score: float
     contributions: tuple[BM25TermContribution, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ArtifactIndexHit:
+    ref: ArtifactRef
+    score: float
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ArtifactBM25Explanation:
+    ref: ArtifactRef
+    score: float
+    contributions: tuple[BM25TermContribution, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ArtifactIndexDelta:
+    """An exact artifact revision insertion, replacement, or deletion."""
+
+    ref: ArtifactRef
+    operation: IndexOperation
+    text: str = ""
+    previous_ref: ArtifactRef | None = None
+
+    def __post_init__(self) -> None:
+        if self.operation is IndexOperation.UPSERT and not self.text.strip():
+            raise ValueError("artifact index upserts require text")
+        if self.operation is IndexOperation.DELETE and self.previous_ref is not None:
+            raise ValueError("artifact index deletes do not accept previous_ref")
+        if self.previous_ref is not None and (
+            self.previous_ref.namespace,
+            self.previous_ref.artifact_id,
+            self.previous_ref.unit_id,
+        ) != (self.ref.namespace, self.ref.artifact_id, self.ref.unit_id):
+            raise ValueError("replacement refs must identify the same artifact unit")
 
 
 def _matrix(
@@ -323,6 +360,83 @@ class BM25Index:
             b=self.b,
             analyzer=self.analyzer,
             revisions=revisions,
+        )
+
+
+class ArtifactBM25Index:
+    """ArtifactRef-keyed adapter over the dependency-light BM25 implementation."""
+
+    def __init__(
+        self,
+        units: Mapping[ArtifactRef, str],
+        *,
+        k1: float = 1.2,
+        b: float = 0.75,
+        analyzer: Callable[[str], Iterable[str]] | None = None,
+    ) -> None:
+        self._units = dict(units)
+        self.k1 = k1
+        self.b = b
+        self.analyzer = analyzer
+        ordered = tuple(sorted(units, key=lambda ref: ref.key))
+        self._refs = {str(index): ref for index, ref in enumerate(ordered)}
+        self._ids = {ref: item_id for item_id, ref in self._refs.items()}
+        self._index = BM25Index(
+            {self._ids[ref]: units[ref] for ref in ordered},
+            k1=k1,
+            b=b,
+            analyzer=analyzer,
+            revisions={self._ids[ref]: ref.revision for ref in ordered},
+        )
+
+    def search(
+        self,
+        query: str,
+        *,
+        limit: int,
+        allowed_refs: Collection[ArtifactRef] | None = None,
+    ) -> tuple[ArtifactIndexHit, ...]:
+        allowed_ids = (
+            None
+            if allowed_refs is None
+            else {self._ids[ref] for ref in allowed_refs if ref in self._ids}
+        )
+        return tuple(
+            ArtifactIndexHit(ref=self._refs[hit.document_id], score=hit.score)
+            for hit in self._index.search(
+                query, limit=limit, allowed_document_ids=allowed_ids
+            )
+        )
+
+    def explain(self, query: str, *, ref: ArtifactRef) -> ArtifactBM25Explanation:
+        if ref not in self._ids:
+            raise KeyError(ref)
+        value = self._index.explain(query, item_id=self._ids[ref])
+        return ArtifactBM25Explanation(
+            ref=ref, score=value.score, contributions=value.contributions
+        )
+
+    def with_deltas(
+        self, deltas: Iterable[ArtifactIndexDelta]
+    ) -> ArtifactBM25Index:
+        """Return a new snapshot after exact revision-checked changes."""
+
+        units = dict(self._units)
+        for delta in deltas:
+            if delta.operation is IndexOperation.DELETE:
+                if delta.ref not in units:
+                    raise ValueError(f"artifact revision is absent: {delta.ref!r}")
+                del units[delta.ref]
+                continue
+            if delta.previous_ref is not None:
+                if delta.previous_ref not in units:
+                    raise ValueError(
+                        f"expected artifact revision is absent: {delta.previous_ref!r}"
+                    )
+                del units[delta.previous_ref]
+            units[delta.ref] = delta.text
+        return ArtifactBM25Index(
+            units, k1=self.k1, b=self.b, analyzer=self.analyzer
         )
 
 

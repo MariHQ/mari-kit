@@ -53,6 +53,58 @@ contain an `accepted` flag: evidence presence is not a truth or sufficiency
 policy. The older `bind_relation_evidence` compatibility function retains its
 original presence-based behavior.
 
+## Graph-to-evidence projection
+
+`project_graph_evidence` performs a many-to-many join without collapsing why an
+artifact was found. Every association retains the graph node, node score,
+caller path, artifact revision, and evidence role; nodes without evidence are
+reported separately.
+
+```{code-block} python
+:caption: Project a selected graph into auditable artifacts
+
+from mari_components.graph import project_graph_evidence
+
+projection = project_graph_evidence(
+    selected.nodes,
+    artifacts=lambda node: node_artifacts.get(node, ()),
+    score=node_scores.__getitem__,
+    path=explanation_path,
+    role=lambda node, ref: evidence_role(node, ref),
+)
+```
+
+One artifact may support several nodes and one node may resolve to several
+artifacts. `artifact_refs` is only a convenience deduplication; the complete
+association table remains available.
+
+## Version families
+
+`resolve_version_families` groups immutable manifestations by any caller key
+and proposes the highest-scored representative. Equal top scores are returned
+as explicit ties rather than resolved through hidden publication or revision
+policy.
+
+```{code-block} python
+:caption: Group a preprint, journal article, and correction
+
+from mari_components.knowledge import resolve_version_families
+
+families = resolve_version_families(
+    papers,
+    family=lambda paper: paper.work_id,
+    score=lambda paper: caller_version_priority(paper),
+)
+
+for family in families:
+    if len(family.tied_representatives) > 1:
+        review(family)
+```
+
+The family key and priority are application semantics. Mari does not assume
+that newer, published, unretracted, or canonical manifestations should win.
+[W3C PROV alternate and specialization relations](https://www.w3.org/TR/prov-dm/){.paper}
+
 ## What to evaluate
 
 | Layer | Measure |

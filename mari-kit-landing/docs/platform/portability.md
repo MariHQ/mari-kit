@@ -46,6 +46,20 @@ store.apply(plan)  # application-owned transaction
 
 Signing and encryption are optional adapters. Checksums provide integrity, not identity or secrecy.
 
+For logs, fixtures, and API boundaries, `to_json_value` recursively converts
+Mari dataclasses, enums, immutable mapping proxies, timezone-aware datetimes,
+tuples, and sets into JSON-safe values. Unsupported values and naïve datetimes
+fail explicitly.
+
+```{code-block} python
+:caption: Encode an immutable change hint without dataclasses.asdict
+
+import json
+from mari_components.json import to_json_value
+
+payload = json.dumps(to_json_value(change_hint), sort_keys=True)
+```
+
 ## What to evaluate
 
 | Invariant | Check |

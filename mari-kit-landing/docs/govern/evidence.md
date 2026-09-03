@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Nineteen knowledge cases evaluate exact-quote resolution, unknown and missing evidence, reordered model rows, structured fact preservation, grounding coverage, independent corroboration, artifact invalidation, and explicit insufficient-evidence answers. These are contract evaluations for the ALCE, QASPER, FActScore, FEVER, and provenance-derived interfaces. Corpus answer F1, verdict accuracy, and evidence F1 have not yet been run.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Quote, revision, ordering, and missing-evidence behavior | 8 | 8 / 8 pass | — |
+| Facts, answers, summaries, links, and grounding | 11 | 11 / 11 pass | — |
+| ALCE, QASPER, FActScore, FEVER | — | Not run | Citation, answer, and verdict quality unavailable |
+
+:::{collapse} Worked evidence resolution examples
+
+| Proposal | Source state | Result |
+|---|---|---|
+| Exact quote and matching offsets | Matching revision | Accepted with provenance |
+| Exact quote | Unknown revision | Rejected |
+| Paraphrase supplied as literal quote | Matching revision | Rejected |
+| No resolvable evidence | Any | Explicit `insufficient_evidence` answer |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_knowledge.py
-19 passed
 ```
 
 *literal containment\

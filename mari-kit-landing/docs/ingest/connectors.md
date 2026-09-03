@@ -4,13 +4,31 @@
 
 ## Evaluation
 
-The connector contract is evaluated with 44 deterministic polling and streaming cases: bounded pagination, checkpoint advancement, snapshot replay, tombstones, duplicate event coalescing, signature-before-parse ordering, cross-origin continuation rejection, and provider-specific cursors. Every documented connector is instantiated by the catalog tests. These tests validate Mari's normalized protocol; they do not benchmark upstream connector throughput.
+| Surface | Cases | Result | Measures |
+|---|---:|---:|---|
+| Core polling contract | 3 | 3 / 3 pass | Page bounds, cursor advancement, replay |
+| Streaming contract | 6 | 6 / 6 pass | Verification order, coalescing, bounded batches |
+| Expanded batch/stream adapters | 18 | 18 / 18 pass | Tombstones, origins, canonical hints |
+| Priority providers | 9 | 9 / 9 pass | Provider pagination and identity |
+| Remaining providers | 8 | 8 / 8 pass | Provider cursor and payload shapes |
+| Upstream throughput | — | Not run | Requests/second and rate-limit behavior unavailable |
+
+:::{collapse} Worked polling and streaming traces
+
+| Mode | Input sequence | Emitted sequence | Checkpoint |
+|---|---|---|---|
+| Polling | page 1 → page 2 → complete | upserts and tombstones | Advances only after complete page |
+| Polling | page 1 → incomplete page 2 | partial changes withheld from reconciliation | Preserved |
+| Streaming | create → duplicate create → delete | coalesced dirty hints | None |
+| Streaming | invalid signature → payload | nothing parsed or emitted | None |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_connector_contract.py tests/test_connector_events.py \
     tests/test_connector_expansion.py tests/test_priority_connectors.py \
     tests/test_remaining_connectors.py
-44 passed
 ```
 
 ::: card

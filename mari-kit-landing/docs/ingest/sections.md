@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-Section behavior is evaluated through stable revision identity, unrelated-edit isolation, exact quote resolution, and change-driven rescanning cases. These tests validate Mari's heading segmentation and digest contracts. No WikiSection boundary benchmark is claimed.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Section revision and unrelated-edit isolation | 2 | 2 / 2 pass | — |
+| Change-driven scan selection | 1 | 1 / 1 pass | — |
+| WikiSection boundaries | — | Not run | Boundary F1, Pk, WindowDiff unavailable |
+
+:::{collapse} Worked section change example
+
+| Section | Previous revision | Current revision | Scan |
+|---|---|---|---|
+| `overview` | `a12` | `a12` | Skip |
+| `enterprise-refunds` | `b34` | `c98` | Extract again |
+| `exceptions` | — | `d77` | Extract |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_knowledge.py -k 'section or quote or scan'
-3 passed
 ```
 
 

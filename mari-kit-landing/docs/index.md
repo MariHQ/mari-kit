@@ -8,13 +8,26 @@ mari-components · 0.1.0.dev0
 
 ## Evaluation
 
-Evaluation is documented beside each feature rather than in a separate catalog. The current public-corpus measurements are attached to [retrieval](retrieve/retrieval.md#evaluation) and [long-horizon memory](platform/memory-evaluation.md#evaluation). Every other research-derived page identifies its executable conformance cases and explicitly names the corpus results that remain unmeasured. The documentation audit fails if a cited page lacks an evaluation section.
+| Layer | Evaluation | Result | Detail |
+|---|---|---:|---|
+| Retrieval | BEIR SciFact | nDCG@10 `0.6634` | [Indexes and ranking](retrieve/retrieval.md#evaluation) |
+| Long-term memory retrieval | LongMemEval-S | Recall-all@10 `0.9021` | [Memory evaluation](platform/memory-evaluation.md#evaluation) |
+| API behavior | Installed repository suite | 198 / 198 pass | Each feature page lists its subset |
+| Result integrity | Aggregate recomputation | 962 case records verified | `benchmarks/verify_results.py` |
+
+| Area | What it covers |
+|---|---|
+| [Ingest](ingest/index.md) | Documents, polling/streaming connectors, synchronization, parsers, sections, tags |
+| [Retrieve](retrieve/index.md) | Lexical, dense, multi-vector, approximate, contradiction, graph, and adaptive retrieval |
+| [Govern](govern/index.md) | Evidence, contradiction validation, freshness, workflow reuse, verification, errors |
+| [Memory](memory/index.md) | Admission, mutation, segmentation, salience, organization, consolidation |
+| [Graphs](graph/index.md) | Resolution, temporal facts, propagation, communities, projections |
+| [Agents](agents/index.md) | Trajectories, procedure mining, regression gates, reviewed reuse |
+| [Platform](platform/index.md) | Artifact lineage, stores, pipelines, evaluation runs, configuration compilation |
 
 ```console
 $ pytest -q
-196 passed
 $ python benchmarks/verify_results.py
-verified 3 reports and 962 case records
 ```
 
 ```{toctree}

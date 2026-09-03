@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Two storage/projection cases verify scope and revision conflicts, temporal reads, contiguous event generations, replay identity, and tenant isolation. They test Mari's protocol semantics rather than database throughput or distributed invariant-confluence.
+| Evaluation | Cases | Result | Adapter result |
+|---|---:|---:|---|
+| Scope, revisions, and point-in-time reads | 1 | 1 / 1 pass | In-memory reference |
+| Projection replay and identity | 1 | 1 / 1 pass | In-memory reference |
+| Production databases | — | Not run | Throughput and isolation unavailable |
+
+:::{collapse} Worked compare-and-swap outcomes
+
+| Current revision | Expected revision | Mutation result |
+|---|---|---|
+| None | None | Initial commit succeeds |
+| `r1` | `r1` | Update to `r2` succeeds |
+| `r2` | `r1` | `RevisionConflict` |
+| Tenant A artifact | Tenant B scope | Not visible |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_platform.py -k 'store or projection'
-2 passed
 ```
 
 

@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Five deterministic cases exercise Self-RAG contribution accounting, all three CRAG routes, FLARE masking and no-retrieval behavior, and Chain-of-Note support/abstention decisions. This validates Mari's planning boundary, not the papers' model quality. FEVER, QASC, FreshQA, and QASPER task scores have not been run.
+| Mechanism | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| CRAG routing and FLARE triggers | 2 | 2 / 2 pass | Not measured |
+| Self-RAG and Chain-of-Note decisions | 3 | 3 / 3 pass | Not measured |
+| FEVER, QASC, FreshQA, QASPER | — | Not run | Routing/answer/evidence quality unavailable |
+
+:::{collapse} Worked routing examples
+
+| Signal pattern | Decision | Next operation |
+|---|---|---|
+| High relevance | Accept | Use retrieved corpus evidence |
+| Ambiguous relevance | Supplement | Add an external retrieval arm |
+| Low relevance | Replace | Discard current candidates and retrieve again |
+| Low-confidence future tokens | Retrieve | Mask uncertain tokens and search with the remainder |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_research_extensions.py -k 'CorrectiveAndActiveRetrieval or ReflectionAndEvidenceNote'
-5 passed
 ```
 
 

@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Nine trajectory cases cover portable framework events, redaction, exact phase coverage, tool and outcome failures, reviewed-cache selection, stale and unauthorized dependencies, and asynchronous speculative retrieval. These evaluate Mari's AgentBench/OpenTelemetry-facing adapter contract; no AgentBench environment success score is claimed.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Event normalization, redaction, phases, outcomes | 5 | 5 / 5 pass | — |
+| Cache validity and speculative retrieval | 4 | 4 / 4 pass | — |
+| AgentBench environments | — | Not run | Task success unavailable |
+
+:::{collapse} Worked normalized trace
+
+| Runtime event | Stored trajectory step |
+|---|---|
+| Tool call with token and query | Tool name retained; sensitive arguments redacted |
+| Failed tool result | Failure outcome retained |
+| Model phase covering steps `2–4` | Accepted only if phases cover every step once |
+| Speculative read | Recorded as a real asynchronous task |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_trajectories_agents.py
-9 passed
 ```
 
 

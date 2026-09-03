@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-SparseCL has 6 deterministic cases covering Hoyer values, the contrastive objective, cosine prefiltering, authorization-before-ranking, stable ordering, invalid dimensions, and score traces. Two numerical cases are checked against the permissively licensed Overcomplete reference implementation. No ContraDoc corpus score has been run, so Mari does not claim the paper's retrieval quality.
+| Evaluation | Cases | Result | Not yet measured |
+|---|---:|---:|---|
+| Hoyer values and contrastive objective | 2 | 2 / 2 pass | — |
+| Prefilter, authorization, ordering, dimensions, traces | 4 | 4 / 4 pass | — |
+| ContraDoc retrieval | — | Not run | Recall@k; nDCG@10 |
+
+:::{collapse} Worked sparse reranking example
+
+| Candidate | Cosine | Hoyer contribution | Combined outcome |
+|---|---:|---:|---|
+| Same-topic contradiction | High | Sparse difference | Promoted |
+| Same-topic agreement | High | Dense difference | Demoted |
+| Unauthorized contradiction | High | Sparse difference | Removed before scoring |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_contradiction_algorithms.py -k SparseCL
-6 passed
 ```
 
 *cosine*

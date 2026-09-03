@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-Five architecture tests inspect the package boundary: one distribution, no agent loop, no application container, no environment/process discovery, and no host-framework or storage imports in the core. Four platform cases separately evaluate pipeline, projection, compiler, and store boundaries.
+| Evaluation | Cases | Result |
+|---|---:|---:|
+| Distribution and dependency boundary | 5 | 5 / 5 pass |
+| Pipeline, projection, compiler, and store boundary | 4 | 4 / 4 pass |
+
+:::{collapse} Worked ownership boundary
+
+| Mari owns | Application owns |
+|---|---|
+| Immutable types and pure planning | Agent loop and scheduling |
+| Connector protocol and normalized pages | Credentials and HTTP transport |
+| Store protocol and reference semantics | Production database transactions |
+| Evaluation metrics and run identity | Model invocation and deployment |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_architecture.py tests/test_platform.py
-9 passed
 ```
 
 *poll*

@@ -4,11 +4,15 @@
 
 ## Evaluation
 
-The distribution is installed into the test environment and all public modules are exercised by the repository suite. Five architecture checks also prevent undeclared application/runtime responsibilities from entering the package.
+| Evaluation | Cases | Result |
+|---|---:|---:|
+| Full installed-package suite | 198 | 198 / 198 pass |
+| Architecture boundary subset | 5 | 5 / 5 pass |
+
+### Reproduce
 
 ```console
 $ pytest -q
-196 passed
 ```
 
 

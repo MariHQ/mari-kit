@@ -4,11 +4,24 @@
 
 ## Evaluation
 
-Tag evaluation checks assignment validation and deterministic search weighting, while note-evolution cases independently exercise similarity and link thresholds. No external clustering or A-MEM task score is claimed.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Tag assignment and search weighting | 1 | 1 / 1 pass | — |
+| Note link/evolution thresholds | 1 | 1 / 1 pass | — |
+| External clustering and A-MEM task quality | — | Not run | Link F1 unavailable |
+
+:::{collapse} Worked tag overlay example
+
+| Source tags | Managed change | Effective tags |
+|---|---|---|
+| `policy`, `draft` | Add `reviewed`; remove `draft` | `policy`, `reviewed` |
+| `policy` | Add unknown tag | Rejected before mutation |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_knowledge.py tests/test_research_extensions.py -k 'tag or note_links'
-2 passed
 ```
 
 ::: card

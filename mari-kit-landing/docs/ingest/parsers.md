@@ -4,11 +4,27 @@
 
 ## Evaluation
 
-Nineteen parser and knowledge-recipe cases cover all documented result types, exact evidence binding, missing and malformed batch rows, ordering recovery, fact normalization/deduplication, structured qualifiers, grounding coverage, glossary/link extraction, digest evidence, impact, and bounded refinement. This is deterministic schema and grounding evaluation. The cited task datasets' extraction, QA, summarization, and editing scores have not been reproduced.
+| Parser surface | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Facts, assessments, and evidence recovery | 8 | 8 / 8 pass | Not measured |
+| Answers, decisions, glossary, and digest | 5 | 5 / 5 pass | Not measured |
+| Links, impact, refinement, and revisions | 6 | 6 / 6 pass | Not measured |
+| QASPER, FEVER, DocRED, DeftEval, QAGS, SummaC | — | Not run | Task metrics unavailable |
+
+:::{collapse} Worked malformed-batch recovery
+
+| Requested claim | Model row | Parsed result |
+|---|---|---|
+| Claim A | Valid supported row with evidence | Supported assessment |
+| Claim B | Missing row | Uncertain assessment |
+| Claim C | Malformed evidence | Uncertain assessment with parse issue |
+| Claim D | Valid row returned out of order | Restored to Claim D position |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_knowledge.py
-19 passed
 ```
 
 

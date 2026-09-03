@@ -4,11 +4,27 @@
 
 ## Evaluation
 
-Five deterministic portfolio cases cover best-of-N generation/parsing/scoring, stable selection, early stopping, evidence-weighted consensus, abstention on ties, and bounded grounded scoring. FEVER and ALCE corpus metrics and model self-consistency gains have not been run; Mari currently validates the selection and audit boundary only.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Best-of-N selection and early stopping | 2 | 2 / 2 pass | — |
+| Consensus, abstention, and grounded scoring | 3 | 3 / 3 pass | — |
+| FEVER, ALCE, model self-consistency | — | Not run | Quality uplift unavailable |
+
+:::{collapse} Worked consensus example
+
+| Candidate | Evidence weight | Verdict |
+|---|---:|---|
+| A | 0.70 | Supported |
+| B | 0.20 | Contradicted |
+| C | 0.10 | Uncertain |
+
+The selected verdict is supported. Equal supported and contradicted weight produces abstention instead of arbitrary tie-breaking.
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_verification.py
-5 passed
 ```
 
 ::: card

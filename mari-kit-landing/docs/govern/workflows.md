@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Three end-to-end repository cases exercise workflow-step caching, selective invalidation after document drift, and rejection of stale or unauthorized dependencies. The tests validate exact reuse policy and provenance. They do not reproduce GPTCache hit-rate or task-quality measurements.
+| Evaluation | Cases | Result | Production result |
+|---|---:|---:|---|
+| Cache matching and dependency authorization | 4 | 4 / 4 pass | — |
+| Drift and selective invalidation | 3 | 3 / 3 pass | — |
+| Semantic-cache hit rate and task uplift | — | Not run | Unavailable |
+
+:::{collapse} Worked cache decisions
+
+| Similarity | Dependencies | Review state | Decision |
+|---:|---|---|---|
+| Above threshold | Fresh and readable | Approved | Reuse |
+| Above threshold | Stale | Approved | Reject |
+| Above threshold | Unauthorized | Approved | Reject |
+| Highest score | Fresh | Unreviewed | Reject; consider lower approved match |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_examples.py tests/test_trajectories_agents.py -k 'workflow or cache'
-7 passed
 ```
 
 ::: reuse

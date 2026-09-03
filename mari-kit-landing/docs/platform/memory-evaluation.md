@@ -4,15 +4,39 @@
 
 ## Evaluation
 
-The measured LongMemEval-S run uses the complete cleaned small split. Following the official evaluator, 30 `_abs` questions are excluded and 470 are scored. Session BM25 reaches `0.8298` Recall-all@5, `0.9021` Recall-all@10, `0.8835` nDCG-any@5, and `0.8972` nDCG-any@10. Per-question rankings and per-capability results are committed, and an independent verifier recomputes every aggregate.
+| Dataset | Scored questions | Metric | Result |
+|---|---:|---|---:|
+| LongMemEval-S cleaned | 470 | Recall-all@5 | 0.8298 |
+| LongMemEval-S cleaned | 470 | Recall-all@10 | 0.9021 |
+| LongMemEval-S cleaned | 470 | nDCG-any@5 | 0.8835 |
+| LongMemEval-S cleaned | 470 | nDCG-any@10 | 0.8972 |
+| LongMemEval-S `_abs` | 30 excluded by official evaluator | End-to-end abstention | Not measured |
+
+| Question type | Questions | Recall-all@5 | Recall-all@10 |
+|---|---:|---:|---:|
+| Knowledge update | 72 | 0.9444 | 0.9861 |
+| Multi-session | 121 | 0.6364 | 0.8182 |
+| Single-session assistant | 56 | 1.0000 | 1.0000 |
+| Single-session preference | 30 | 0.8667 | 0.8667 |
+| Single-session user | 64 | 1.0000 | 1.0000 |
+| Temporal reasoning | 127 | 0.7795 | 0.8504 |
+
+:::{collapse} Actual complete-versus-partial retrieval
+
+| Question ID | Type | Required sessions | Required-session ranks | Recall-all@5 |
+|---|---|---:|---|---:|
+| `e47becba` | Single-session user | 1 | `2` | 1.0 |
+| `6d550036` | Multi-session | 4 | `4`, `8`, `>10`, `>10` | 0.0 |
+
+The second ranking finds relevant evidence but not the complete multi-session set. This is why the page reports `Recall-all`, not only `Recall-any`.
+:::
+
+### Reproduce
 
 ```console
 $ python benchmarks/run_public.py longmemeval
 $ python benchmarks/verify_results.py
-verified 3 reports and 962 case records
 ```
-
-This is a retrieval evaluation. End-to-end reader accuracy, write/update quality, and abstention accuracy are not yet measured.
 
 
 A memory system needs separate measurements for writing, updating, retrieving, temporal reasoning, abstaining, and respecting context limits. One aggregate answer score hides which subsystem failed.

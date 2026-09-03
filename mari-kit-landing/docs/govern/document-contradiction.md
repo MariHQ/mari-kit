@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Six document-level cases measure sentence-range expansion, reference coverage, positive and negative rewards, zero-hit penalties, evidence validation, and localization. The numerical reward and range fixtures are compared with the MIT RRC-DSCD implementation where it agrees with the published equations. ContraDoc macro-F1 and localization F1 have not been run; no detector-quality claim is made.
+| Evaluation | Cases | Result | Boundary |
+|---|---:|---:|---|
+| Sentence references and inclusive ranges | 2 | 2 / 2 pass | Compared with RRC-DSCD equations |
+| Judgment, evidence, and reward validation | 4 | 4 / 4 pass | Deterministic conformance |
+| ContraDoc | — | Not run | Macro-F1 and localization F1 unavailable |
+
+:::{collapse} Worked reward examples
+
+| Expected | Predicted | Evidence hit | Accuracy reward |
+|---|---|---:|---:|
+| Contradiction | Contradiction | Yes | `1 + matched / gold` |
+| Contradiction | Contradiction | No | `-1` |
+| No contradiction | No contradiction | Not applicable | `1` |
+| No contradiction | Contradiction | Not applicable | `0` |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_contradiction_algorithms.py -k DocumentSelfContradiction
-6 passed
 ```
 
 *model*

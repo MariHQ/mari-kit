@@ -4,16 +4,42 @@
 
 ## Evaluation
 
-The public SciFact run uses all 5,183 documents and 300 test queries. BM25 scores `0.6634` nDCG@10 and `0.8826` Recall@100. The index run fixes one encoder over 512 SciFact documents and 64 queries: dense flat is the exact oracle; HNSW reaches `0.4391` ANN Recall@10 and IVF-PQ reaches `0.2563`. These low approximate-index results are recorded failures, not recommended defaults. MUVERA, learned sparse retrieval, fusion, and graph propagation currently have deterministic conformance coverage but no public-corpus score, so this page makes no quality claim for them.
+| Run | Corpus | Scope | Metric | Result |
+|---|---|---:|---|---:|
+| BM25 | BEIR SciFact test | 5,183 documents; 300 queries | nDCG@10 | 0.6634 |
+| BM25 | BEIR SciFact test | 5,183 documents; 300 queries | Recall@100 | 0.8826 |
+| Dense flat | SciFact index slice | 512 documents; 64 queries | ANN Recall@10 | 1.0000 |
+| HNSW | SciFact index slice | 512 documents; 64 queries | ANN Recall@10 | 0.4391 |
+| IVF-PQ | SciFact index slice | 512 documents; 64 queries | ANN Recall@10 | 0.2563 |
+| MUVERA, sparse, fusion, graph | Deterministic cases | API boundary | Corpus quality | Not measured |
+
+The index slice uses one fixed 128-dimensional feature-hashing encoder, making dense flat the exact ranking oracle. The approximate-index rows are measured failures, not production recommendations.
+
+:::{collapse} Actual SciFact ranking differences
+
+| Query | Relevant document | BM25 rank | Top BM25 documents |
+|---|---:|---:|---|
+| `100` — hematopoietic stem-cell chromosome segregation | `4381486` | 1 | `4381486`, `4398832`, `2547636`, `15728433`, `25516011` |
+| `1099` — statins and blood cholesterol | `7662206` | 3 | `21557614`, `22420524`, `7662206`, `7454794`, `9617381` |
+| `1179` — the central domain of MDA5 | `31272411` | 10 | `10627801`, `1569031`, `16058322`, `2566674`, `52095986`, … |
+| `1` — inductive properties of zero-dimensional biomaterials | `31715818` | >100 | `43385013`, `10608397`, `40212412`, `10931595`, `27049238` |
+
+For query `1`, approximate search also changes the candidate set:
+
+| Index | First five document IDs | Exact top-10 overlap |
+|---|---|---:|
+| Dense flat | `1263446`, `10670430`, `11674596`, `10365787`, `11369420` | 10 / 10 |
+| HNSW | `10365787`, `10009203`, `11484808`, `10190778`, `10518721` | 2 / 10 |
+| IVF-PQ | `11862753`, `11822354`, `11090688`, `10534299`, `12486491` | 1 / 10 |
+:::
+
+### Reproduce
 
 ```console
 $ python benchmarks/run_public.py scifact
 $ python benchmarks/run_public.py indexes
 $ pytest -q tests/test_retrieval.py tests/test_index_families.py tests/test_retrieval_algorithms.py
-20 passed
 ```
-
-The aggregate reports and all 492 SciFact query/index case records are committed under `benchmarks/results/`.
 
 
 Mari implements MUVERA fixed-dimensional candidate generation, PolarQuant compression, and exact normalized MaxSim reranking in one retrieval path.

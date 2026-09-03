@@ -4,11 +4,27 @@
 
 ## Evaluation
 
-Ten deterministic cases evaluate stable procedure subsequences, argument retention, hard regression gates, framework-neutral events, phase coverage, tool failures, authorization-aware cache selection, stale-workflow rejection, and real asynchronous prefetch. The LongMemEval-S run additionally measures the retrieval input to a memory agent at `0.9021` Recall-all@10. ACE, Reflexion, and procedure-uplift task scores have not been reproduced.
+| Layer | Dataset/cases | Metric | Result |
+|---|---|---|---:|
+| Memory retrieval input | LongMemEval-S; 470 questions | Recall-all@10 | 0.9021 |
+| Procedure mining | 1 deterministic case | Contract cases | 1 / 1 pass |
+| Trajectory and cache boundaries | 9 deterministic cases | Contract cases | 9 / 9 pass |
+| ACE and Reflexion procedure uplift | Held-out tasks | Task success | Not measured |
+
+:::{collapse} Worked promotion outcomes
+
+| Candidate result | Grounding gate | ACL gate | Promotion outcome |
+|---|---:|---:|---|
+| Better task score | Pass | Pass | Submit for human review |
+| Better task score | Fail | Pass | Reject |
+| Better task score | Pass | Fail | Reject |
+| No regression but no improvement | Pass | Pass | Retain active version |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_procedures.py tests/test_trajectories_agents.py
-10 passed
 $ python benchmarks/run_public.py longmemeval
 ```
 

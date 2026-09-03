@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-Four governed-memory cases verify quarantine before confidence scoring, rejection of recalled content as new evidence, budgeted deterministic consolidation, and temporal integrity of artifact revisions. They evaluate Mari's admission boundary and provenance requirements. Prompt-injection detection quality and Mem0 extraction quality are not claimed.
+| Evaluation | Cases | Result | Quality result |
+|---|---:|---:|---|
+| Quarantine and recalled-content rejection | 2 | 2 / 2 pass | — |
+| Consolidation budget and temporal integrity | 2 | 2 / 2 pass | — |
+| Injection detection and Mem0 extraction | — | Not run | Precision/recall unavailable |
+
+:::{collapse} Worked admission decisions
+
+| Candidate | Provenance | Injection signal | Decision |
+|---|---|---|---|
+| New user fact | Direct source evidence | None | Score for admission |
+| Recalled model context | No new source evidence | None | Reject as circular evidence |
+| External text containing instructions | External document | Present | Quarantine before confidence |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_governed_memory.py
-4 passed
 ```
 
 

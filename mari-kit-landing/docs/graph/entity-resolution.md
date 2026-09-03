@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-One focused Fellegi--Sunter case checks the full log-likelihood contribution trace and match/review/non-match decision boundary. WDC Products pair F1, cluster F1, pairs completeness, and reduction ratio have not been run, so Mari claims equation-level conformance only.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Fellegi--Sunter contributions and thresholds | 1 | 1 / 1 pass | — |
+| WDC Products resolution | — | Not run | Pair/cluster F1 unavailable |
+
+:::{collapse} Worked resolution trace
+
+| Feature | Agrees | Match probability | Non-match probability | Contribution |
+|---|---:|---:|---:|---:|
+| Email | Yes | 0.99 | 0.01 | Positive log-likelihood |
+| Name | No | 0.90 | 0.20 | Negative log-likelihood |
+
+The summed score is compared with separate link and review thresholds; ambiguous records remain review candidates.
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_graph_foundations.py -k fellegi
-1 passed
 ```
 
 

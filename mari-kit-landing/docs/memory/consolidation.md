@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-Four governed-memory cases exercise deterministic budget selection, quarantine ordering, recalled-content rejection, and revision integrity. LightMem and MemoryOS motivate the policy shape, but their end-to-end memory scores have not been reproduced.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Budgeted deterministic selection | 1 | 1 / 1 pass | — |
+| Admission and temporal prerequisites | 3 | 3 / 3 pass | — |
+| LightMem and MemoryOS end-to-end quality | — | Not run | Memory accuracy unavailable |
+
+:::{collapse} Worked budget selection
+
+| Candidate | Utility | Estimated tokens | Selected |
+|---|---:|---:|---:|
+| Refund-policy session | 0.91 | 2,400 | Yes |
+| Duplicate refund discussion | 0.42 | 2,100 | No |
+| Unrelated support session | 0.18 | 1,700 | No |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_governed_memory.py
-4 passed
 ```
 
 

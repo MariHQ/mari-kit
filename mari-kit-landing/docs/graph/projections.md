@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-Two platform cases evaluate contiguous replay generations, deterministic build identity, dependency ordering, and stopping dependent stages after failure. They cover the projection invariants motivated by provenance and invariant-confluence research; no distributed replay throughput is claimed.
+| Evaluation | Cases | Result | Operational result |
+|---|---:|---:|---|
+| Contiguous replay and build identity | 1 | 1 / 1 pass | — |
+| Dependency failure propagation | 1 | 1 / 1 pass | — |
+| Distributed replay throughput | — | Not run | Unavailable |
+
+:::{collapse} Worked replay differences
+
+| Event generations | Result |
+|---|---|
+| `1, 2, 3` | Projection returned with stable build ID |
+| `1, 3` | Rejected: generation gap |
+| `1, 2, 2` | Rejected: duplicate generation/event |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_platform.py -k 'projection or pipeline'
-2 passed
 ```
 
 

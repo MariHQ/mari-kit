@@ -4,11 +4,28 @@
 
 ## Evaluation
 
-Five type-level cases check stable document identity, immutable ACL state, UTC timestamp normalization, positive poll limits, and credential redaction. End-to-end examples additionally verify ACL isolation before retrieval. These are provenance and authorization conformance checks; Mari does not reproduce Zanzibar's distributed authorization measurements.
+| Evaluation | Cases | Result | Boundary |
+|---|---:|---:|---|
+| Identity, ACL, timestamp, and poll limits | 4 | 4 / 4 pass | Domain-type conformance |
+| Credential-safe representation | 1 | 1 / 1 pass | Secret redaction |
+| Distributed authorization | — | Not run | Zanzibar scale/latency unavailable |
+
+:::{collapse} Worked document revision example
+
+| Field | Revision A | Revision B |
+|---|---|---|
+| Stable ID | `github:acme/docs/refunds.md` | `github:acme/docs/refunds.md` |
+| Revision | `sha256:8f31` | `sha256:b714` |
+| Visibility | `support` | `support` |
+| Body | Original policy | Updated policy |
+
+The stable ID identifies the source object; the revision identifies the exact evidence-bearing content.
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_types.py
-5 passed
 ```
 
 ::: card

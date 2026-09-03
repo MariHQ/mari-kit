@@ -4,11 +4,27 @@
 
 ## Evaluation
 
-One focused learning case mines the stable tool subsequence from successful traces while excluding failures and retaining only stable arguments. Nine trajectory cases cover the execution and cache boundaries around the learned procedure. This evaluates Mari's deterministic procedure representation, not Voyager or Reflexion task success.
+| Evaluation | Cases | Result | Task result |
+|---|---:|---:|---|
+| Stable subsequence and argument mining | 1 | 1 / 1 pass | — |
+| Execution, phase, and cache boundaries | 9 | 9 / 9 pass | — |
+| Voyager/Reflexion task success | — | Not run | Uplift unavailable |
+
+:::{collapse} Worked mined procedure
+
+| Run | Tool sequence | Included in learned subsequence |
+|---|---|---|
+| Success A | `lookup_policy → issue_refund → notify` | First two stable steps |
+| Success B | `lookup_policy → issue_refund` | Both steps |
+| Failure | `issue_refund → error` | Excluded from positive subsequence |
+
+Learned result: `lookup_policy → issue_refund`.
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_procedures.py tests/test_trajectories_agents.py
-10 passed
 ```
 
 

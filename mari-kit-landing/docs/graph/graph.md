@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-Two bitemporal cases verify separation of valid time from transaction time, half-open boundaries, and timezone-aware queries. This evaluates Mari's temporal representation. LongMemEval temporal answer accuracy and DocRED provenance recall have not been run for the graph implementation.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Valid-time and transaction-time queries | 2 | 2 / 2 pass | — |
+| LongMemEval temporal answers | — | Not run | Accuracy unavailable |
+| DocRED provenance | — | Not run | Recall unavailable |
+
+:::{collapse} Worked bitemporal difference
+
+| Query | Valid at requested time | Known at requested time | Returned |
+|---|---:|---:|---:|
+| Historical state before correction arrived | Yes | Yes | Original fact |
+| Same valid date, knowledge after correction | Yes | No for original revision | Corrected fact |
+| Timestamp equals half-open interval end | No | — | Excluded |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_graph_foundations.py -k bitemporal
-2 passed
 ```
 
 

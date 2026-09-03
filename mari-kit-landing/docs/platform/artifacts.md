@@ -4,11 +4,27 @@
 
 ## Evaluation
 
-Four platform cases evaluate revision-scoped storage, point-in-time reads, projection replay, pipeline traces, and compiler constraints; four governed-memory cases add temporal lineage integrity. These test Mari's provenance carrier and revision behavior. They do not reproduce nanopublication interoperability measurements.
+| Evaluation | Cases | Result | Interoperability result |
+|---|---:|---:|---|
+| Store, projection, pipeline, compiler | 4 | 4 / 4 pass | — |
+| Admission, consolidation, temporal lineage | 4 | 4 / 4 pass | — |
+| Nanopublication interchange | — | Not run | Unavailable |
+
+:::{collapse} Worked artifact lineage
+
+| Field | Value |
+|---|---|
+| Artifact ID | `fact:refund-window:enterprise` |
+| Revision | `sha256:8f31` |
+| Derived from | `github:policy/refunds.md@8f31c2a` |
+| Supersedes | `fact:refund-window:enterprise@v2` |
+| Review state | `approved` |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_platform.py tests/test_governed_memory.py
-8 passed
 ```
 
 

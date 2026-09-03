@@ -4,11 +4,28 @@
 
 ## Evaluation
 
-Five conformance cases exercise note-link/evolution thresholds, normalized recency-importance-relevance components, Chain-of-Note decisions, and inconsistency rejection. The public LongMemEval-S run measures the downstream lexical session-retrieval boundary over 470 questions: `0.8298` Recall-all@5 and `0.9021` Recall-all@10. A-MEM, Generative Agents, and Chain-of-Note task-level gains have not been reproduced.
+| Mechanism | Dataset/cases | Metric | Result |
+|---|---|---|---:|
+| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@5 | 0.8298 |
+| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@10 | 0.9021 |
+| Note evolution and salience | 2 deterministic cases | Contract cases | 2 / 2 pass |
+| Evidence-note decisions | 3 deterministic cases | Contract cases | 3 / 3 pass |
+| A-MEM, Generative Agents, Chain-of-Note uplift | Paper task corpora | Task quality | Not measured |
+
+:::{collapse} Actual LongMemEval retrieval differences
+
+| Question ID | Type | Gold sessions | Gold ranks | Recall-all@5 |
+|---|---|---:|---|---:|
+| `e47becba` | Single-session user | 1 | `2` | 1.0 |
+| `6d550036` | Multi-session | 4 | `4`, `8`, `>10`, `>10` | 0.0 |
+
+The second case retrieves one supporting session near the top but misses the complete evidence set. `Recall-any` would hide that structural failure.
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_research_extensions.py -k 'AgenticMemory or ReflectionAndEvidenceNote'
-5 passed
 $ python benchmarks/run_public.py longmemeval
 ```
 

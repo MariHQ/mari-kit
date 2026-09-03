@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-The current context evaluation contains one deterministic case that verifies authorization and freshness filtering, whole-excerpt packing, budget enforcement, and exclusion traces. Six retrieval-composition cases separately cover RRF, MMR, and graph propagation. No LongBench or QASPER answer score has been run; the RAG, RAG-Fusion, MMR, and Lost-in-the-Middle citations support mechanisms only.
+| Layer | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Authorization, freshness, packing, traces | 1 | 1 / 1 pass | — |
+| RRF, MMR, and graph composition | 6 | 6 / 6 pass | — |
+| LongBench and QASPER answers | — | Not run | Answer F1 unavailable |
+
+:::{collapse} Worked inclusion trace
+
+| Candidate | Authorized | Fresh | Fits budget | Decision |
+|---|---:|---:|---:|---|
+| `policy-current` | Yes | Yes | Yes | Included |
+| `policy-stale` | Yes | No | Yes | Excluded: stale revision |
+| `private-note` | No | Yes | Yes | Excluded before scoring |
+| `appendix` | Yes | Yes | No | Excluded: token budget |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_context.py tests/test_retrieval_algorithms.py
-7 passed
 ```
 
 

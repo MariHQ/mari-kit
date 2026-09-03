@@ -4,12 +4,34 @@
 
 ## Evaluation
 
-Four algorithm cases cover add/update/delete/no-op mutation plans, conflicting-target rejection, the joint attention-peak/similarity-valley segmentation rule, and non-splitting counterexamples. The cleaned LongMemEval-S retrieval baseline separately scores session retrieval at `0.8298` Recall-all@5 and `0.9021` Recall-all@10 over 470 questions. Mutation F1 and segmentation boundary F1 have not yet been measured.
+| Mechanism | Dataset/cases | Metric | Result |
+|---|---|---|---:|
+| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@5 | 0.8298 |
+| Session retrieval | LongMemEval-S; 470 scored questions | Recall-all@10 | 0.9021 |
+| Mutation planning | 2 deterministic cases | Contract cases | 2 / 2 pass |
+| Topic segmentation | 2 deterministic cases | Contract cases | 2 / 2 pass |
+| Mutation and boundary quality | Public task corpora | F1 | Not measured |
+
+:::{collapse} Worked mutation and segmentation examples
+
+| Existing memory | New observation | Planned operation |
+|---|---|---|
+| No matching fact | New supported preference | Add |
+| Older value for same fact | Newer supported value | Update |
+| Existing fact explicitly withdrawn | Withdrawal evidence | Delete |
+| Same normalized fact and revision | Duplicate observation | No-op |
+
+| Boundary signal | Attention peak | Similarity valley | Split |
+|---|---:|---:|---:|
+| Topic transition | Yes | Yes | Yes |
+| Lexical drift only | No | Yes | No |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_memory_algorithms.py
 $ python benchmarks/run_public.py longmemeval
-4 passed
 ```
 
 

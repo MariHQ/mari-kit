@@ -4,11 +4,24 @@
 
 ## Evaluation
 
-The pipeline case evaluates stage fingerprints, ordered execution, captured outputs, failure recording, and dependent-stage cancellation. This is a reproducibility and failure-propagation conformance check; no production pipeline throughput is claimed.
+| Evaluation | Cases | Result | Operational result |
+|---|---:|---:|---|
+| Fingerprints, outputs, and failure propagation | 1 | 1 / 1 pass | — |
+| Production throughput | — | Not run | Rows/second unavailable |
+
+:::{collapse} Worked stage trace
+
+| Stage | Input | Output | Status |
+|---|---|---|---|
+| `normalize@1` | `" policy "` | `"policy"` | Succeeded; fingerprint recorded |
+| `discard-empty@2` | `""` | No output | Succeeded |
+| Dependent stage after upstream error | — | — | Not executed |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_platform.py -k pipeline
-1 passed
 ```
 
 

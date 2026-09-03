@@ -4,11 +4,27 @@
 
 ## Evaluation
 
-Nine synchronization cases replay incremental and full snapshots, incomplete pages, explicit tombstones, duplicate/conflicting pages, source-bound cursors, idempotence, ACL/tag changes, and streaming state. These evaluate the Dynamo/build-system-derived reconciliation invariants; they are not distributed-system throughput results.
+| Evaluation | Cases | Result | Operational result |
+|---|---:|---:|---|
+| Full/incremental reconciliation and tombstones | 4 | 4 / 4 pass | — |
+| Cursor, source, generation, and idempotence | 4 | 4 / 4 pass | — |
+| Lazy streaming state | 1 | 1 / 1 pass | — |
+| Distributed throughput and recovery time | — | Not run | Unavailable |
+
+:::{collapse} Worked reconciliation differences
+
+| Input | Previous state | Planned mutation |
+|---|---|---|
+| Full snapshot omits document, final page complete | Document exists | Delete |
+| Full snapshot omits document, page incomplete | Document exists | No delete; hold cursor |
+| Incremental page contains tombstone | Document exists | Delete |
+| Replayed incremental upsert | Same revision exists | No-op |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_sync.py
-9 passed
 ```
 
 *→*

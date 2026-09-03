@@ -4,11 +4,25 @@
 
 ## Evaluation
 
-The paper-derived construction functions have 7 focused conformance cases within `test_research_extensions.py`: HyDE centroid normalization, RAPTOR partition reduction and tree coverage, bounded MemWalker traversal, and RECOMP selection/order behavior. These tests validate the implemented equations and invariants. QASPER and LongBench task quality has not been measured, so no answer-quality claim is made.
+| Mechanism | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| HyDE centroid construction | 2 | 2 / 2 pass | Not measured |
+| RAPTOR tree and MemWalker traversal | 3 | 3 / 3 pass | Not measured |
+| RECOMP selection and ordering | 2 | 2 / 2 pass | Not measured |
+
+:::{collapse} Worked structural differences
+
+| Input structure | Transformation | Observable output |
+|---|---|---|
+| Several hypothetical-answer vectors | Weighted mean, then L2 normalization | One query vector; generated text is not stored |
+| Eight leaf sections | Repeated reducing partitions | Tree whose root transitively covers all eight leaves |
+| Scored sentences over budget | Density selection, then source-order restoration | Only selected sentences, in original document order |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_research_extensions.py -k 'Hyde or RaptorAndMemWalker or Recomp'
-7 passed
 ```
 
 

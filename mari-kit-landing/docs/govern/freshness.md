@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-The current evaluation replays source changes through section revisions, evidence-backed artifacts, dependency invalidation, and cached workflows. It checks that unrelated edits preserve reusable work and relevant edits invalidate it. FreshQA accuracy and time-to-consistency have not been measured, so the build-system and RAG citations support the invalidation model rather than a freshness-quality claim.
+| Evaluation | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Revision and dependency invalidation | 3 | 3 / 3 pass | — |
+| Drift and selective workflow invalidation | 2 | 2 / 2 pass | — |
+| FreshQA and update replay | — | Not run | Accuracy and time-to-consistency unavailable |
+
+:::{collapse} Worked revision outcomes
+
+| Change | Bound dependency | Reuse decision |
+|---|---|---|
+| Edit to cited section | Old section revision | Rebuild |
+| Edit to unrelated section | Cited section unchanged | Reuse |
+| Source removed | Missing dependency | Rebuild or withdraw |
+| Principal loses access | Dependency no longer visible | Reject reuse |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_knowledge.py tests/test_examples.py -k 'revision or invalidat or drift'
-5 passed
 ```
 
 ![](data:image/svg+xml;base64,PHN2ZyB2aWV3Ym94PSIwIDAgMTIwIDQwIj48cGF0aCBkPSJNMCAyMCBDNDUgMjAgNzUgMjAgMTIwIDIwIiAvPjwvc3ZnPg==)

@@ -4,12 +4,31 @@
 
 ## Evaluation
 
-Five deterministic cases evaluate ACL-bounded Personalized PageRank, multi-hop activation, passage projection, connected deterministic community partitions, and injected map/reduce calls. The HippoRAG, Leiden, and GraphRAG mechanisms are therefore checked at the library boundary. QASC, KILT, and DocRED task scores have not been run.
+| Mechanism | Cases | Result | Corpus result |
+|---|---:|---:|---|
+| Personalized PageRank and passage projection | 3 | 3 / 3 pass | Not measured |
+| Connected communities and map/reduce | 2 | 2 / 2 pass | Not measured |
+| QASC, KILT, DocRED | — | Not run | Multi-hop and relation metrics unavailable |
+
+:::{collapse} Worked graph propagation example
+
+| Node | Relation to seed | Allowed | Retrieval outcome |
+|---|---|---:|---|
+| `refund-policy` | Seed | Yes | Ranked |
+| `enterprise-exception` | Two hops away | Yes | Activated by propagation |
+| `private-escalation` | One hop away | No | Removed before propagation |
+
+| Community input | Output invariant |
+|---|---|
+| Disconnected candidate cluster | Split into connected components |
+| Same graph and resolution | Same deterministic partition |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_retrieval_algorithms.py -k GraphRetrieval
 $ pytest -q tests/test_graph_communities.py
-5 passed
 ```
 
 

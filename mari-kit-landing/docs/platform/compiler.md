@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-One compiler case evaluates every configuration, rejects hard-constraint violations before utility comparison, and chooses the remaining objective optimum. This validates Mari's deterministic compilation boundary; DSPy task-optimization gains have not been reproduced.
+| Evaluation | Cases | Result | Task result |
+|---|---:|---:|---|
+| Constraint filtering and utility selection | 1 | 1 / 1 pass | — |
+| DSPy-style held-out optimization | — | Not run | Quality uplift unavailable |
+
+:::{collapse} Worked configuration selection
+
+| Candidate | Grounded recall | ACL leakage | p95 latency | Decision |
+|---|---:|---:|---:|---|
+| A | 0.88 | 0.00 | 120 ms | Feasible |
+| B | 0.92 | 0.01 | 90 ms | Rejected by ACL constraint |
+| C | 0.84 | 0.00 | 70 ms | Rejected by recall minimum |
+
+Only feasible candidates reach weighted utility comparison.
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_platform.py -k compiler
-1 passed
 ```
 
 

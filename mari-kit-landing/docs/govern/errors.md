@@ -4,11 +4,26 @@
 
 ## Evaluation
 
-Connector contract and type tests cover incomplete snapshots, cursor safety, authentication redaction, invalid pages, and verified-before-parsed streaming events.
+| Evaluation | Cases | Result |
+|---|---:|---:|
+| Connector page and cursor failures | 3 | 3 / 3 pass |
+| Streaming verification and event failures | 6 | 6 / 6 pass |
+| Type validation and credential redaction | 5 | 5 / 5 pass |
+
+:::{collapse} Worked failure mapping
+
+| Observed condition | Raised boundary | Host action |
+|---|---|---|
+| Incomplete full snapshot | `IncompleteSnapshot` | Preserve prior state; do not infer deletes |
+| Expired credentials | `AuthenticationFailure` | Refresh credentials |
+| Valid request receives throttling | `TransientFailure` | Apply host retry budget |
+| Model omits required evidence | `MalformedModelOutput` | Retry or abstain |
+:::
+
+### Reproduce
 
 ```console
 $ pytest -q tests/test_connector_contract.py tests/test_connector_events.py tests/test_types.py
-14 passed
 ```
 
 

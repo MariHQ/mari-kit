@@ -1,0 +1,36 @@
+{
+  "known_answer": {
+    "adapter_cases": 3,
+    "adapter_total": 3,
+    "diverse_sample_cluster_coverage": 4,
+    "diverse_sample_clusters": 4,
+    "intent_evidence_rejections": 1,
+    "intent_group_support": 2,
+    "intent_groups": 1,
+    "intent_review_duplicates": 1,
+    "intent_review_invalid": 1,
+    "intent_review_valid": 1,
+    "invariant_precision": 1.0,
+    "invariant_recall": 1.0,
+    "invariants": 13,
+    "regression_violations": 2,
+    "rubric_missing_dimensions": 1,
+    "rubric_overall": 0.8,
+    "rubric_required_failures": 1,
+    "trajectory_match_cases": 4,
+    "trajectory_match_total": 4
+  },
+  "mari_commit": "efd2333ae9c8917bbf07393bc8614468448adeef",
+  "reference": {
+    "activities": 8,
+    "commit": "1cea591e6da5",
+    "events": 118,
+    "files": 7,
+    "license": "MIT",
+    "repository": "askalf/plumbline",
+    "rework_rate": 0.694915,
+    "trajectories": 7,
+    "variants": 6
+  },
+  "schema_version": 1
+}

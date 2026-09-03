@@ -10,7 +10,7 @@ Full public test split: 5,183 documents and 300 judged queries.
 
 | Mari implementation | nDCG@10 | MRR@10 | Recall@10 | Recall@100 | Query p50 | Query p95 |
 |---|---:|---:|---:|---:|---:|---:|
-| BM25 (`k1=1.2`, `b=0.75`) | 0.6634 | 0.6309 | 0.7876 | 0.8826 | 56.02 ms | 67.63 ms |
+| BM25 (`k1=1.2`, `b=0.75`) | 0.6634 | 0.6309 | 0.7876 | 0.8826 | 57.97 ms | 68.76 ms |
 
 ### LongMemEval-S session retrieval
 
@@ -18,7 +18,7 @@ Full cleaned public small split: 500 questions, with the benchmark's 30 `_abs` c
 
 | Mari implementation | Recall all@5 | Recall all@10 | nDCG any@5 | nDCG any@10 | Query p50 | Query p95 |
 |---|---:|---:|---:|---:|---:|---:|
-| Session BM25 | 0.8298 | 0.9021 | 0.8835 | 0.8972 | 3.16 ms | 3.69 ms |
+| Session BM25 | 0.8298 | 0.9021 | 0.8835 | 0.8972 | 3.28 ms | 3.67 ms |
 
 The weakest Recall all@10 categories are `multi-session` (0.8182), `temporal-reasoning` (0.8504), and `single-session-preference` (0.8667). The report retains all per-category measurements.
 
@@ -28,9 +28,9 @@ Index-only run over 512 real SciFact documents and 64 judged queries. A fixed 12
 
 | Mari index | Build | ANN Recall@10 | Corpus Recall@10 | Query p50 | Query p95 |
 |---|---:|---:|---:|---:|---:|
-| Dense flat | 1.3 ms | 1.0000 | 0.3906 | 0.24 ms | 0.26 ms |
-| HNSW (`m=16`, `ef_search=64`) | 240 ms | 0.4391 | 0.2214 | 0.21 ms | 0.25 ms |
-| IVF-PQ (32 lists, 8 probes, 8 subquantizers) | 46 ms | 0.2563 | 0.2318 | 1.11 ms | 1.37 ms |
+| Dense flat | 1.1 ms | 1.0000 | 0.3906 | 0.24 ms | 0.25 ms |
+| HNSW (`m=16`, `ef_search=64`) | 251 ms | 0.4391 | 0.2214 | 0.22 ms | 0.25 ms |
+| IVF-PQ (32 lists, 8 probes, 8 subquantizers) | 38 ms | 0.2563 | 0.2318 | 1.16 ms | 1.32 ms |
 
 The approximate-index defaults are not acceptable quality defaults. These results are a baseline for improving graph traversal, training, and parameter selection.
 

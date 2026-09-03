@@ -10,7 +10,7 @@ These numbers come from committed public-corpus runs. Each aggregate links to pe
 
 | nDCG@10 | MRR@10 | Recall@10 | Recall@100 | p50 query | p95 query |
 |---:|---:|---:|---:|---:|---:|
-| 0.6634 | 0.6309 | 0.7876 | 0.8826 | 56.02 ms | 67.63 ms |
+| 0.6634 | 0.6309 | 0.7876 | 0.8826 | 57.97 ms | 68.76 ms |
 
 ### LongMemEval-S session retrieval
 
@@ -18,7 +18,7 @@ The full cleaned small split contains 500 questions. The official evaluator excl
 
 | Recall all@5 | Recall all@10 | nDCG any@5 | nDCG any@10 | p50 query | p95 query |
 |---:|---:|---:|---:|---:|---:|
-| 0.8298 | 0.9021 | 0.8835 | 0.8972 | 3.16 ms | 3.69 ms |
+| 0.8298 | 0.9021 | 0.8835 | 0.8972 | 3.28 ms | 3.67 ms |
 
 `Recall all@k` is one only when every annotated evidence session appears in the top `k`. The main remaining failures are multi-session, temporal, and implicit-preference questions; a high `Recall any` would conceal those failures.
 
@@ -28,9 +28,9 @@ This index-only run holds a deterministic 128-dimensional feature-hashing encode
 
 | Index | Build | ANN Recall@10 | Corpus Recall@10 | p50 query |
 |---|---:|---:|---:|---:|
-| Dense flat | 1.3 ms | 1.0000 | 0.3906 | 0.24 ms |
-| HNSW | 240 ms | 0.4391 | 0.2214 | 0.21 ms |
-| IVF-PQ | 46 ms | 0.2563 | 0.2318 | 1.11 ms |
+| Dense flat | 1.1 ms | 1.0000 | 0.3906 | 0.24 ms |
+| HNSW | 251 ms | 0.4391 | 0.2214 | 0.22 ms |
+| IVF-PQ | 38 ms | 0.2563 | 0.2318 | 1.16 ms |
 
 The current HNSW and IVF-PQ settings lose too many exact neighbors. They are measured reference implementations, not recommended production defaults.
 

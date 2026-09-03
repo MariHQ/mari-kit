@@ -1,6 +1,6 @@
 {
   "benchmark": "beir-scifact-retrieval",
-  "created_at": "2026-09-03T06:56:39.461350+00:00",
+  "created_at": "2026-09-03T06:57:38.863200+00:00",
   "dataset": {
     "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
     "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
@@ -11,19 +11,19 @@
   "environment": {
     "cpu_count": 12,
     "index_implementation_sha256": "e7516acadac21dff5d50c28e2087b8fd1f367fc138837187e580bfcfebdd5bf5",
-    "mari_commit": "952d7e5211023eb3ca0a6b55f0e00df4986f4222",
+    "mari_commit": "77a08fdd2d650c899d201254f334ef8cdc8fee83",
     "numpy": "2.5.2",
     "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
     "python": "3.13.3",
-    "runner_sha256": "9a755d994ee04f52ffdb373c9c7a0928652e0ee1377fdcc5eb774ac277f9e08d",
-    "worktree_dirty": false
+    "runner_sha256": "f70cf19652c3361743841bb195384ef236c060685b10275e8011bed997c7b694",
+    "source_worktree_dirty": false
   },
   "metrics": {
-    "build_seconds": 0.23876216681674123,
+    "build_seconds": 0.2203637920320034,
     "mrr_at_10": 0.6308915343915344,
     "ndcg_at_10": 0.6634477520519497,
-    "query_latency_ms_p50": 58.703125,
-    "query_latency_ms_p95": 70.3675292,
+    "query_latency_ms_p50": 57.967146,
+    "query_latency_ms_p95": 68.76014615,
     "recall_at_10": 0.7876111111111112,
     "recall_at_100": 0.8825555555555555
   },

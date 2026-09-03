@@ -1,6 +1,6 @@
 {
   "benchmark": "longmemeval-s-session-retrieval",
-  "created_at": "2026-09-03T06:56:50.914207+00:00",
+  "created_at": "2026-09-03T06:57:49.551243+00:00",
   "dataset": {
     "abstention_questions_skipped": 30,
     "artifact": "https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned/resolve/main/longmemeval_s_cleaned.json",
@@ -13,12 +13,12 @@
   "environment": {
     "cpu_count": 12,
     "index_implementation_sha256": "e7516acadac21dff5d50c28e2087b8fd1f367fc138837187e580bfcfebdd5bf5",
-    "mari_commit": "952d7e5211023eb3ca0a6b55f0e00df4986f4222",
+    "mari_commit": "77a08fdd2d650c899d201254f334ef8cdc8fee83",
     "numpy": "2.5.2",
     "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
     "python": "3.13.3",
-    "runner_sha256": "9a755d994ee04f52ffdb373c9c7a0928652e0ee1377fdcc5eb774ac277f9e08d",
-    "worktree_dirty": true
+    "runner_sha256": "f70cf19652c3361743841bb195384ef236c060685b10275e8011bed997c7b694",
+    "source_worktree_dirty": false
   },
   "metrics": {
     "by_question_type": {
@@ -116,12 +116,12 @@
     "evidence_coverage_at_1": 0.5533687943262411,
     "evidence_coverage_at_10": 0.9488297872340425,
     "evidence_coverage_at_5": 0.9129078014184397,
-    "mean_index_build_ms": 13.679681203149734,
+    "mean_index_build_ms": 13.64433233021818,
     "ndcg_any_at_1": 0.8638297872340426,
     "ndcg_any_at_10": 0.8972219424695267,
     "ndcg_any_at_5": 0.883501717630773,
-    "query_latency_ms_p50": 3.314583,
-    "query_latency_ms_p95": 3.7794896999999996,
+    "query_latency_ms_p50": 3.283625,
+    "query_latency_ms_p95": 3.668391699999999,
     "recall_all_at_1": 0.2978723404255319,
     "recall_all_at_10": 0.902127659574468,
     "recall_all_at_5": 0.8297872340425532,

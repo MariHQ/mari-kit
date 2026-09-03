@@ -2,8 +2,15 @@
 
 # Bi-temporal knowledge graph
 
-```{include} ../_includes/eval/graph.md
+## Evaluation
+
+Two bitemporal cases verify separation of valid time from transaction time, half-open boundaries, and timezone-aware queries. This evaluates Mari's temporal representation. LongMemEval temporal answer accuracy and DocRED provenance recall have not been run for the graph implementation.
+
+```console
+$ pytest -q tests/test_graph_foundations.py -k bitemporal
+2 passed
 ```
+
 
 `TemporalFact` tracks valid time (when a claim applies) and transaction time (when the system knows it), supporting historical queries and late corrections.
 

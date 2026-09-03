@@ -42,3 +42,11 @@ python benchmarks/verify_results.py
 ```
 
 `verify_results.py` independently recomputes the quality aggregates from all 962 committed case records and fails on a mismatch.
+
+API conformance is recorded separately because passing deterministic cases is not corpus quality:
+
+```console
+python benchmarks/run_conformance.py
+```
+
+`documented-api-conformance.json` records the aggregate and the adjacent JSONL records every case and duration. Documentation pages link each research-derived mechanism to the relevant focused subset and state when no corpus score exists.

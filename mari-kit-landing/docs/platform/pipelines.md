@@ -2,8 +2,15 @@
 
 # Typed knowledge pipelines
 
-```{include} ../_includes/eval/platform.md
+## Evaluation
+
+The pipeline case evaluates stage fingerprints, ordered execution, captured outputs, failure recording, and dependent-stage cancellation. This is a reproducibility and failure-propagation conformance check; no production pipeline throughput is claimed.
+
+```console
+$ pytest -q tests/test_platform.py -k pipeline
+1 passed
 ```
+
 
 Composable `Stage` values transform immutable batches and return outputs plus a complete `StageTrace`. Domain stages may emit reviewable artifact mutations; the runner itself performs no storage writes.
 

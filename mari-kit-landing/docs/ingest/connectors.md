@@ -2,85 +2,16 @@
 
 # Polling and streaming connectors
 
-```{include} ../_includes/eval/ingest.md
+## Evaluation
+
+The connector contract is evaluated with 44 deterministic polling and streaming cases: bounded pagination, checkpoint advancement, snapshot replay, tombstones, duplicate event coalescing, signature-before-parse ordering, cross-origin continuation rejection, and provider-specific cursors. Every documented connector is instantiated by the catalog tests. These tests validate Mari's normalized protocol; they do not benchmark upstream connector throughput.
+
+```console
+$ pytest -q tests/test_connector_contract.py tests/test_connector_events.py \
+    tests/test_connector_expansion.py tests/test_priority_connectors.py \
+    tests/test_remaining_connectors.py
+44 passed
 ```
-
-Every catalog connector defines a frozen configuration object, validation, and batch polling. GitHub, GitLab, Slack, Google Drive, OneDrive, SharePoint, Confluence, and Box also accept verified provider events. S3, GCS, and Azure Blob use an SDK-neutral batch boundary and checkpoint-free event hints. Generic CloudEvents provide the streaming escape hatch. Network calls use an injected `HttpTransport`.
-
-## How it works
-
-A batch connector starts from the caller's cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded `ChangeHint` keys, and coalesces duplicates. Streaming has no checkpoint state. The application may canonically refetch the changed object into a `PollPage`, so partial webhook payloads cannot bypass synchronization invariants.
-
-| Code and work | Documents and files | Business systems | Open protocols |
-|---|---|---|---|
-| GitHub, GitLab, Linear, Jira | Drive, OneDrive, SharePoint, Dropbox, Box, Confluence, Notion | Slack, Airtable, Asana, Trello, Zendesk | Filesystem, JSON REST, RSS/Atom, Singer, CloudEvents, S3/GCS/Azure object stores |
-
-::::::{container} diagram flow
-<div>
-
-**Scheduled poll**[PollRequest · cursor · checkpoint]{.small}
-
-</div>
-
-*→*
-
-<div>
-
-**Canonical PollPage**[upserts · tombstones · revision]{.small}
-
-</div>
-
-*→*
-
-<div>
-
-**plan_sync**[one persistence path]{.small}
-
-</div>
-::::::
-
-::::::{container} diagram flow
-<div>
-
-**Provider stream**[raw body · headers]{.small}
-
-</div>
-
-*verify + parse*
-
-<div>
-
-**ChangeHint**[bounded · coalesced]{.small}
-
-</div>
-
-*canonical refetch*
-
-<div>
-
-**PollPage**[same synchronization path]{.small}
-
-</div>
-::::::
-
-## Provider examples
-
-All polling functions accept the same `PollRequest` and injected `HttpTransport`, and return an iterator of `PollPage` values.
-
-::::::::::::::: connector-examples
-::: card
-### GitHub
-
-Files, issues, pull requests, and commits.
-
-```python
-from mari_components.connectors import GitHubConfig, poll_github
-cfg = GitHubConfig(token=token, repository="acme/product",
-    branch="main", paths=("docs/**",),
-    content_types=("files", "issues", "pull_requests"))
-pages = poll_github(cfg, request, http=http)
-```
-:::
 
 ::: card
 ### Slack
@@ -373,4 +304,82 @@ for hint in stream_hints((event,), verify=verify_signature):
 **Permissive implementation references** [LlamaIndex connectors — MIT](https://github.com/run-llama/llama_index){.paper} [dlt filesystem/REST sources — Apache-2.0](https://github.com/dlt-hub/dlt){.paper} [Meltano Singer SDK — Apache-2.0](https://github.com/meltano/sdk){.paper} [Unstructured ingestion — Apache-2.0](https://github.com/Unstructured-IO/unstructured){.paper}
 
 [Provider pagination, cursor, and signature schemes differ. Mari normalizes their observable results; it does not claim a universal delivery guarantee.]{.small}
+:::
+
+
+Every catalog connector defines a frozen configuration object, validation, and batch polling. GitHub, GitLab, Slack, Google Drive, OneDrive, SharePoint, Confluence, and Box also accept verified provider events. S3, GCS, and Azure Blob use an SDK-neutral batch boundary and checkpoint-free event hints. Generic CloudEvents provide the streaming escape hatch. Network calls use an injected `HttpTransport`.
+
+## How it works
+
+A batch connector starts from the caller's cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded `ChangeHint` keys, and coalesces duplicates. Streaming has no checkpoint state. The application may canonically refetch the changed object into a `PollPage`, so partial webhook payloads cannot bypass synchronization invariants.
+
+| Code and work | Documents and files | Business systems | Open protocols |
+|---|---|---|---|
+| GitHub, GitLab, Linear, Jira | Drive, OneDrive, SharePoint, Dropbox, Box, Confluence, Notion | Slack, Airtable, Asana, Trello, Zendesk | Filesystem, JSON REST, RSS/Atom, Singer, CloudEvents, S3/GCS/Azure object stores |
+
+::::::{container} diagram flow
+<div>
+
+**Scheduled poll**[PollRequest · cursor · checkpoint]{.small}
+
+</div>
+
+*→*
+
+<div>
+
+**Canonical PollPage**[upserts · tombstones · revision]{.small}
+
+</div>
+
+*→*
+
+<div>
+
+**plan_sync**[one persistence path]{.small}
+
+</div>
+::::::
+
+::::::{container} diagram flow
+<div>
+
+**Provider stream**[raw body · headers]{.small}
+
+</div>
+
+*verify + parse*
+
+<div>
+
+**ChangeHint**[bounded · coalesced]{.small}
+
+</div>
+
+*canonical refetch*
+
+<div>
+
+**PollPage**[same synchronization path]{.small}
+
+</div>
+::::::
+
+## Provider examples
+
+All polling functions accept the same `PollRequest` and injected `HttpTransport`, and return an iterator of `PollPage` values.
+
+::::::::::::::: connector-examples
+::: card
+### GitHub
+
+Files, issues, pull requests, and commits.
+
+```python
+from mari_components.connectors import GitHubConfig, poll_github
+cfg = GitHubConfig(token=token, repository="acme/product",
+    branch="main", paths=("docs/**",),
+    content_types=("files", "issues", "pull_requests"))
+pages = poll_github(cfg, request, http=http)
+```
 :::

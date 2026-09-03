@@ -2,8 +2,16 @@
 
 # Graph recall and corpus aggregation
 
-```{include} ../_includes/eval/graph.md
+## Evaluation
+
+Five deterministic cases evaluate ACL-bounded Personalized PageRank, multi-hop activation, passage projection, connected deterministic community partitions, and injected map/reduce calls. The HippoRAG, Leiden, and GraphRAG mechanisms are therefore checked at the library boundary. QASC, KILT, and DocRED task scores have not been run.
+
+```console
+$ pytest -q tests/test_retrieval_algorithms.py -k GraphRetrieval
+$ pytest -q tests/test_graph_communities.py
+5 passed
 ```
+
 
 Passage retrieval and corpus summarization are different operations. Personalized PageRank is a bounded multi-hop recall function. Deterministic community partitioning and model-injected map-reduce reports are separately versioned aggregation stages.
 

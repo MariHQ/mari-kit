@@ -2,8 +2,15 @@
 
 # Knowledge admission and mutation planning
 
-```{include} ../_includes/eval/memory.md
+## Evaluation
+
+Four governed-memory cases verify quarantine before confidence scoring, rejection of recalled content as new evidence, budgeted deterministic consolidation, and temporal integrity of artifact revisions. They evaluate Mari's admission boundary and provenance requirements. Prompt-injection detection quality and Mem0 extraction quality are not claimed.
+
+```console
+$ pytest -q tests/test_governed_memory.py
+4 passed
 ```
+
 
 Admission is evaluated before reconciliation. A candidate may be valid JSON and still be unsafe, low-authority, redundant, or unsupported. Reconciliation runs only for accepted candidates.
 

@@ -2,8 +2,15 @@
 
 # Procedural knowledge
 
-```{include} ../_includes/eval/agents.md
+## Evaluation
+
+One focused learning case mines the stable tool subsequence from successful traces while excluding failures and retaining only stable arguments. Nine trajectory cases cover the execution and cache boundaries around the learned procedure. This evaluates Mari's deterministic procedure representation, not Voyager or Reflexion task success.
+
+```console
+$ pytest -q tests/test_procedures.py tests/test_trajectories_agents.py
+10 passed
 ```
+
 
 Successful trajectories produce versioned procedure candidates. Regression gates and human review separate observed behavior from active behavior.
 

@@ -2,8 +2,16 @@
 
 # Procedural learning and regression gates
 
-```{include} ../_includes/eval/agents.md
+## Evaluation
+
+Ten deterministic cases evaluate stable procedure subsequences, argument retention, hard regression gates, framework-neutral events, phase coverage, tool failures, authorization-aware cache selection, stale-workflow rejection, and real asynchronous prefetch. The LongMemEval-S run additionally measures the retrieval input to a memory agent at `0.9021` Recall-all@10. ACE, Reflexion, and procedure-uplift task scores have not been reproduced.
+
+```console
+$ pytest -q tests/test_procedures.py tests/test_trajectories_agents.py
+10 passed
+$ python benchmarks/run_public.py longmemeval
 ```
+
 
 Execution feedback can propose procedural updates, but promotion depends on held-out cases, negative outcomes, cross-procedure interference, and explicit review.
 

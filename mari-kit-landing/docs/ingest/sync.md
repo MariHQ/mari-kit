@@ -2,35 +2,14 @@
 
 # Synchronization
 
-```{include} ../_includes/eval/ingest.md
+## Evaluation
+
+Nine synchronization cases replay incremental and full snapshots, incomplete pages, explicit tombstones, duplicate/conflicting pages, source-bound cursors, idempotence, ACL/tag changes, and streaming state. These evaluate the Dynamo/build-system-derived reconciliation invariants; they are not distributed-system throughput results.
+
+```console
+$ pytest -q tests/test_sync.py
+9 passed
 ```
-
-`plan_sync` compares a durable `SyncState` with one `PollPage` and returns a side-effect-free `SyncPlan`. `stream_sync` applies the same rules across pages.
-
-## How it works
-
-For each upsert, Mari validates source ownership and compares a deterministic content fingerprint with the manifest: equal means unchanged; unequal means upsert. Explicit tombstones always become deletes. Absence becomes deletion only after the terminal page of an authoritative full snapshot. The returned plan carries the prior generation as a compare-and-swap precondition and the next manifest/cursor as proposed state; persistence must atomically commit both data and state.
-
-::::::::{container} diagram state
-<div>
-
-**Start**[generation 41]{.small}
-
-</div>
-
-*→*
-
-<div>
-
-**Pages**[upsert · tombstone · unchanged]{.small}
-
-</div>
-
-*→*
-
-::: gate
-**Complete?**[no: preserve missing docs]{.small}
-:::
 
 *→*
 
@@ -79,4 +58,32 @@ for page in provider_pages:
 [Build Systems à la Carte: fingerprints and minimal rebuilds](https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems.pdf){.paper}[Dynamo: versioning and reconciliation](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf){.paper}
 
 [Snapshot authority, deletion rules, and atomic compare-and-swap are Mari's connector/store contract.]{.small}
+:::
+
+
+`plan_sync` compares a durable `SyncState` with one `PollPage` and returns a side-effect-free `SyncPlan`. `stream_sync` applies the same rules across pages.
+
+## How it works
+
+For each upsert, Mari validates source ownership and compares a deterministic content fingerprint with the manifest: equal means unchanged; unequal means upsert. Explicit tombstones always become deletes. Absence becomes deletion only after the terminal page of an authoritative full snapshot. The returned plan carries the prior generation as a compare-and-swap precondition and the next manifest/cursor as proposed state; persistence must atomically commit both data and state.
+
+::::::::{container} diagram state
+<div>
+
+**Start**[generation 41]{.small}
+
+</div>
+
+*→*
+
+<div>
+
+**Pages**[upsert · tombstone · unchanged]{.small}
+
+</div>
+
+*→*
+
+::: gate
+**Complete?**[no: preserve missing docs]{.small}
 :::

@@ -2,8 +2,15 @@
 
 # Install
 
-```{include} ../_includes/eval/start.md
+## Evaluation
+
+The distribution is installed into the test environment and all public modules are exercised by the repository suite. Five architecture checks also prevent undeclared application/runtime responsibilities from entering the package.
+
+```console
+$ pytest -q
+196 passed
 ```
+
 
 Python 3.11--3.13 is supported. NumPy is the only runtime dependency.
 

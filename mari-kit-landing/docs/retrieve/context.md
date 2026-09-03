@@ -2,8 +2,15 @@
 
 # Retrieval plans and context envelopes
 
-```{include} ../_includes/eval/retrieve.md
+## Evaluation
+
+The current context evaluation contains one deterministic case that verifies authorization and freshness filtering, whole-excerpt packing, budget enforcement, and exclusion traces. Six retrieval-composition cases separately cover RRF, MMR, and graph propagation. No LongBench or QASPER answer score has been run; the RAG, RAG-Fusion, MMR, and Lost-in-the-Middle citations support mechanisms only.
+
+```console
+$ pytest -q tests/test_context.py tests/test_retrieval_algorithms.py
+7 passed
 ```
+
 
 Mari packs already-ranked retrieval candidates into a bounded, revision-bearing context envelope. Its trace explains every inclusion and exclusion.
 

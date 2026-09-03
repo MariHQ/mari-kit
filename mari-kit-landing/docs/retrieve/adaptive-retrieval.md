@@ -2,8 +2,15 @@
 
 # Adaptive retrieval and compression
 
-```{include} ../_includes/eval/retrieve.md
+## Evaluation
+
+Five deterministic cases exercise Self-RAG contribution accounting, all three CRAG routes, FLARE masking and no-retrieval behavior, and Chain-of-Note support/abstention decisions. This validates Mari's planning boundary, not the papers' model quality. FEVER, QASC, FreshQA, and QASPER task scores have not been run.
+
+```console
+$ pytest -q tests/test_research_extensions.py -k 'CorrectiveAndActiveRetrieval or ReflectionAndEvidenceNote'
+5 passed
 ```
+
 
 Retrieval can be triggered, corrected, rescored, or compressed at explicit decision points instead of running as one opaque model call.
 

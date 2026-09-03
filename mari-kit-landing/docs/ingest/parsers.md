@@ -2,8 +2,15 @@
 
 # Knowledge parsers
 
-```{include} ../_includes/eval/ingest.md
+## Evaluation
+
+Nineteen parser and knowledge-recipe cases cover all documented result types, exact evidence binding, missing and malformed batch rows, ordering recovery, fact normalization/deduplication, structured qualifiers, grounding coverage, glossary/link extraction, digest evidence, impact, and bounded refinement. This is deterministic schema and grounding evaluation. The cited task datasets' extraction, QA, summarization, and editing scores have not been reproduced.
+
+```console
+$ pytest -q tests/test_knowledge.py
+19 passed
 ```
+
 
 Models return JSON-like values. Parsers resolve all evidence against supplied document and section revisions and return immutable typed values. Research establishes each task formulation; Mari implements a deterministic validation boundary rather than the cited model.
 

@@ -2,8 +2,16 @@
 
 # Memory organization and evidence notes
 
-```{include} ../_includes/eval/memory.md
+## Evaluation
+
+Five conformance cases exercise note-link/evolution thresholds, normalized recency-importance-relevance components, Chain-of-Note decisions, and inconsistency rejection. The public LongMemEval-S run measures the downstream lexical session-retrieval boundary over 470 questions: `0.8298` Recall-all@5 and `0.9021` Recall-all@10. A-MEM, Generative Agents, and Chain-of-Note task-level gains have not been reproduced.
+
+```console
+$ pytest -q tests/test_research_extensions.py -k 'AgenticMemory or ReflectionAndEvidenceNote'
+5 passed
+$ python benchmarks/run_public.py longmemeval
 ```
+
 
 These functions link related notes, rank memories for recall, and decide whether retrieved evidence can support an answer.
 

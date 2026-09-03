@@ -2,8 +2,18 @@
 
 # Long-horizon memory evaluation
 
-```{include} ../_includes/eval/platform.md
+## Evaluation
+
+The measured LongMemEval-S run uses the complete cleaned small split. Following the official evaluator, 30 `_abs` questions are excluded and 470 are scored. Session BM25 reaches `0.8298` Recall-all@5, `0.9021` Recall-all@10, `0.8835` nDCG-any@5, and `0.8972` nDCG-any@10. Per-question rankings and per-capability results are committed, and an independent verifier recomputes every aggregate.
+
+```console
+$ python benchmarks/run_public.py longmemeval
+$ python benchmarks/verify_results.py
+verified 3 reports and 962 case records
 ```
+
+This is a retrieval evaluation. End-to-end reader accuracy, write/update quality, and abstention accuracy are not yet measured.
+
 
 A memory system needs separate measurements for writing, updating, retrieving, temporal reasoning, abstaining, and respecting context limits. One aggregate answer score hides which subsystem failed.
 

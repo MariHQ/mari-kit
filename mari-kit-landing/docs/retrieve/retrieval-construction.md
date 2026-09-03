@@ -2,8 +2,15 @@
 
 # Hypothetical and hierarchical retrieval
 
-```{include} ../_includes/eval/retrieve.md
+## Evaluation
+
+The paper-derived construction functions have 7 focused conformance cases within `test_research_extensions.py`: HyDE centroid normalization, RAPTOR partition reduction and tree coverage, bounded MemWalker traversal, and RECOMP selection/order behavior. These tests validate the implemented equations and invariants. QASPER and LongBench task quality has not been measured, so no answer-quality claim is made.
+
+```console
+$ pytest -q tests/test_research_extensions.py -k 'Hyde or RaptorAndMemWalker or Recomp'
+7 passed
 ```
+
 
 These functions construct alternative query representations and bounded navigation structures. Generation, encoding, clustering, summarization, and relevance models are injected; Mari owns shape validation, deterministic IDs, budgets, and traces.
 

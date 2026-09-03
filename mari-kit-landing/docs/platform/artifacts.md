@@ -2,8 +2,15 @@
 
 # Unified artifact model
 
-```{include} ../_includes/eval/platform.md
+## Evaluation
+
+Four platform cases evaluate revision-scoped storage, point-in-time reads, projection replay, pipeline traces, and compiler constraints; four governed-memory cases add temporal lineage integrity. These test Mari's provenance carrier and revision behavior. They do not reproduce nanopublication interoperability measurements.
+
+```console
+$ pytest -q tests/test_platform.py tests/test_governed_memory.py
+8 passed
 ```
+
 
 `KnowledgeArtifact[T]` gives facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.
 

@@ -2,8 +2,16 @@
 
 # Memory segmentation and mutation plans
 
-```{include} ../_includes/eval/memory.md
+## Evaluation
+
+Four algorithm cases cover add/update/delete/no-op mutation plans, conflicting-target rejection, the joint attention-peak/similarity-valley segmentation rule, and non-splitting counterexamples. The cleaned LongMemEval-S retrieval baseline separately scores session retrieval at `0.8298` Recall-all@5 and `0.9021` Recall-all@10 over 470 questions. Mutation F1 and segmentation boundary F1 have not yet been measured.
+
+```console
+$ pytest -q tests/test_memory_algorithms.py
+$ python benchmarks/run_public.py longmemeval
+4 passed
 ```
+
 
 `hybrid_topic_segments` splits a stream only where an attention-boundary peak and a semantic-similarity valley agree. The application extracts candidates from those bounded groups and classifies each one as add, update, delete, or no-op. `plan_memory_mutations` validates the decisions without writing storage.
 

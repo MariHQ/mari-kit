@@ -2,8 +2,19 @@
 
 # Multi-vector retrieval
 
-```{include} ../_includes/eval/retrieve.md
+## Evaluation
+
+The public SciFact run uses all 5,183 documents and 300 test queries. BM25 scores `0.6634` nDCG@10 and `0.8826` Recall@100. The index run fixes one encoder over 512 SciFact documents and 64 queries: dense flat is the exact oracle; HNSW reaches `0.4391` ANN Recall@10 and IVF-PQ reaches `0.2563`. These low approximate-index results are recorded failures, not recommended defaults. MUVERA, learned sparse retrieval, fusion, and graph propagation currently have deterministic conformance coverage but no public-corpus score, so this page makes no quality claim for them.
+
+```console
+$ python benchmarks/run_public.py scifact
+$ python benchmarks/run_public.py indexes
+$ pytest -q tests/test_retrieval.py tests/test_index_families.py tests/test_retrieval_algorithms.py
+20 passed
 ```
+
+The aggregate reports and all 492 SciFact query/index case records are committed under `benchmarks/results/`.
+
 
 Mari implements MUVERA fixed-dimensional candidate generation, PolarQuant compression, and exact normalized MaxSim reranking in one retrieval path.
 

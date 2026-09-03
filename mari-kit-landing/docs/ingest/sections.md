@@ -2,8 +2,15 @@
 
 # Sections and incremental fact scans
 
-```{include} ../_includes/eval/ingest.md
+## Evaluation
+
+Section behavior is evaluated through stable revision identity, unrelated-edit isolation, exact quote resolution, and change-driven rescanning cases. These tests validate Mari's heading segmentation and digest contracts. No WikiSection boundary benchmark is claimed.
+
+```console
+$ pytest -q tests/test_knowledge.py -k 'section or quote or scan'
+3 passed
 ```
+
 
 `document_sections` maps Markdown headings to stable section IDs and content revisions. `section_revisions` builds the current revision map. Fact scans can then skip unchanged sections.
 

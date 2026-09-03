@@ -2,8 +2,15 @@
 
 # Tiered memory consolidation
 
-```{include} ../_includes/eval/memory.md
+## Evaluation
+
+Four governed-memory cases exercise deterministic budget selection, quarantine ordering, recalled-content rejection, and revision integrity. LightMem and MemoryOS motivate the policy shape, but their end-to-end memory scores have not been reproduced.
+
+```console
+$ pytest -q tests/test_governed_memory.py
+4 passed
 ```
+
 
 Tiers are policies over cost and lifecycle, not hard-coded stores. Mari provides topic segmentation and a deterministic promotion planner. The host supplies compression models and commits selected revisions, keeping raw observations available for audit.
 

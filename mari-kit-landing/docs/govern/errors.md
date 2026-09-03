@@ -2,8 +2,15 @@
 
 # Errors and deliberate boundaries
 
-```{include} ../_includes/eval/govern.md
+## Evaluation
+
+Connector contract and type tests cover incomplete snapshots, cursor safety, authentication redaction, invalid pages, and verified-before-parsed streaming events.
+
+```console
+$ pytest -q tests/test_connector_contract.py tests/test_connector_events.py tests/test_types.py
+14 passed
 ```
+
 
 ## How it works
 

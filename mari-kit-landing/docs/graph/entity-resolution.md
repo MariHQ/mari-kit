@@ -2,8 +2,15 @@
 
 # Entity resolution with explicit uncertainty
 
-```{include} ../_includes/eval/graph.md
+## Evaluation
+
+One focused Fellegi--Sunter case checks the full log-likelihood contribution trace and match/review/non-match decision boundary. WDC Products pair F1, cluster F1, pairs completeness, and reduction ratio have not been run, so Mari claims equation-level conformance only.
+
+```console
+$ pytest -q tests/test_graph_foundations.py -k fellegi
+1 passed
 ```
+
 
 The cascade spends expensive work only after cheap deterministic checks. It never converts an ambiguous candidate into a merge without a configured threshold or review decision.
 

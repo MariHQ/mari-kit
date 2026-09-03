@@ -2,8 +2,15 @@
 
 # Event sourcing and disposable projections
 
-```{include} ../_includes/eval/graph.md
+## Evaluation
+
+Two platform cases evaluate contiguous replay generations, deterministic build identity, dependency ordering, and stopping dependent stages after failure. They cover the projection invariants motivated by provenance and invariant-confluence research; no distributed replay throughput is claimed.
+
+```console
+$ pytest -q tests/test_platform.py -k 'projection or pipeline'
+2 passed
 ```
+
 
 Canonical artifacts and append-only events remain authoritative. `replay_projection` builds deterministic derived state and gives each build a content identity. A backend can validate and swap that build using its own transaction boundary.
 

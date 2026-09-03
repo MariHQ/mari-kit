@@ -2,8 +2,15 @@
 
 # Storage protocols and conformance
 
-```{include} ../_includes/eval/platform.md
+## Evaluation
+
+Two storage/projection cases verify scope and revision conflicts, temporal reads, contiguous event generations, replay identity, and tenant isolation. They test Mari's protocol semantics rather than database throughput or distributed invariant-confluence.
+
+```console
+$ pytest -q tests/test_platform.py -k 'store or projection'
+2 passed
 ```
+
 
 `InMemoryArtifactStore` is the executable reference for optimistic revision checks, tenant isolation, explicit supersession, history, and point-in-time reads. Production adapters can run the same behavioral cases.
 

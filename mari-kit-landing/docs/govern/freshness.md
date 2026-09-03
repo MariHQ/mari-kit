@@ -2,31 +2,14 @@
 
 # Freshness and impact
 
-```{include} ../_includes/eval/govern.md
+## Evaluation
+
+The current evaluation replays source changes through section revisions, evidence-backed artifacts, dependency invalidation, and cached workflows. It checks that unrelated edits preserve reusable work and relevant edits invalidate it. FreshQA accuracy and time-to-consistency have not been measured, so the build-system and RAG citations support the invalidation model rather than a freshness-quality claim.
+
+```console
+$ pytest -q tests/test_knowledge.py tests/test_examples.py -k 'revision or invalidat or drift'
+5 passed
 ```
-
-Freshness is an exact dependency comparison. It answers "did an input revision change?"---not "is the answer still semantically correct?"
-
-## How it works
-
-1.  **Record dependencies.** Every derived artifact stores the document or section revision used to build it.
-2.  **Select comparison granularity.** If a dependency names a section and the caller supplies a section-revision map, compare section hashes. Otherwise compare the containing document revision as a conservative fallback.
-3.  **Classify every key.** Missing document/section → `missing`; empty expected/current revision → `unversioned`; unequal revisions → `stale`; otherwise → `current`.
-4.  **Reduce deterministically.** Overall precedence is `missing > unversioned > stale > current`. Changes and IDs are sorted, so the same inputs produce the same report.
-5.  **Propagate impact.** `impacted_artifacts` evaluates each artifact independently and returns only non-current artifacts. Mari reports the set; the application chooses whether to regenerate, review, or retire them.
-
-::::::{container} diagram dependency
-<div>
-
-**Policy answer**[depends on § window]{.small}
-
-</div>
-
-![](data:image/svg+xml;base64,PHN2ZyB2aWV3Ym94PSIwIDAgMTIwIDQwIj48cGF0aCBkPSJNMCAyMCBDNDUgMjAgNzUgMjAgMTIwIDIwIiAvPjwvc3ZnPg==)
-
-::: changed
-**§ window**[30 → 45 days]{.small}
-:::
 
 ![](data:image/svg+xml;base64,PHN2ZyB2aWV3Ym94PSIwIDAgMTIwIDQwIj48cGF0aCBkPSJNMCAyMCBDNDUgMjAgNzUgMjAgMTIwIDIwIiAvPjwvc3ZnPg==)
 
@@ -83,4 +66,28 @@ assert coarse.status == FreshnessStatus.STALE  # safe fallback
 [Build Systems à la Carte: dependency-driven recomputation](https://www.microsoft.com/en-us/research/wp-content/uploads/2018/03/build-systems.pdf){.paper}[RAG: updateable non-parametric knowledge and provenance](https://arxiv.org/abs/2005.11401){.paper}[W3C PROV: revision and derivation](https://www.w3.org/TR/prov-dm/){.paper}
 
 [Mari applies build-system invalidation to knowledge artifacts. Status precedence, section fallback, and reuse policy are explicit Mari contracts, not semantic change detection.]{.small}
+:::
+
+
+Freshness is an exact dependency comparison. It answers "did an input revision change?"---not "is the answer still semantically correct?"
+
+## How it works
+
+1.  **Record dependencies.** Every derived artifact stores the document or section revision used to build it.
+2.  **Select comparison granularity.** If a dependency names a section and the caller supplies a section-revision map, compare section hashes. Otherwise compare the containing document revision as a conservative fallback.
+3.  **Classify every key.** Missing document/section → `missing`; empty expected/current revision → `unversioned`; unequal revisions → `stale`; otherwise → `current`.
+4.  **Reduce deterministically.** Overall precedence is `missing > unversioned > stale > current`. Changes and IDs are sorted, so the same inputs produce the same report.
+5.  **Propagate impact.** `impacted_artifacts` evaluates each artifact independently and returns only non-current artifacts. Mari reports the set; the application chooses whether to regenerate, review, or retire them.
+
+::::::{container} diagram dependency
+<div>
+
+**Policy answer**[depends on § window]{.small}
+
+</div>
+
+![](data:image/svg+xml;base64,PHN2ZyB2aWV3Ym94PSIwIDAgMTIwIDQwIj48cGF0aCBkPSJNMCAyMCBDNDUgMjAgNzUgMjAgMTIwIDIwIiAvPjwvc3ZnPg==)
+
+::: changed
+**§ window**[30 → 45 days]{.small}
 :::

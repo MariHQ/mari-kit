@@ -2,8 +2,42 @@
 
 # Documents, identity, and ACLs
 
-```{include} ../_includes/eval/ingest.md
+## Evaluation
+
+Five type-level cases check stable document identity, immutable ACL state, UTC timestamp normalization, positive poll limits, and credential redaction. End-to-end examples additionally verify ACL isolation before retrieval. These are provenance and authorization conformance checks; Mari does not reproduce Zanzibar's distributed authorization measurements.
+
+```console
+$ pytest -q tests/test_types.py
+5 passed
 ```
+
+::: card
+`Tombstone`
+
+Explicit deletion by source and external ID.
+:::
+
+::: card
+`KnowledgeSection`
+
+Stable section ID, offsets, text, and section revision.
+:::
+
+::: card
+`Evidence`
+
+Exact quote plus document, revision, span, and optional section coordinates.
+:::
+:::::::
+
+::: source-block
+**Research and standards**
+
+[W3C PROV: entity identity and revision](https://www.w3.org/TR/prov-dm/){.paper}[Zanzibar: relationship-based authorization](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/){.paper}
+
+[Mari carries principals and visibility but does not implement an authorization engine. The application resolves those fields to `allowed_document_ids`.]{.small}
+:::
+
 
 `KnowledgeDocument` is the canonical provider-owned record. Its stable ID is `{source_id}/{external_id}`. Domain values are frozen dataclasses.
 
@@ -36,31 +70,4 @@ assert doc.document_id == "github:acme/product/file:docs/refunds.md"
 `PollPage`
 
 Upserts, tombstones, cursor, checkpoint, snapshot completeness, provider metadata.
-:::
-
-::: card
-`Tombstone`
-
-Explicit deletion by source and external ID.
-:::
-
-::: card
-`KnowledgeSection`
-
-Stable section ID, offsets, text, and section revision.
-:::
-
-::: card
-`Evidence`
-
-Exact quote plus document, revision, span, and optional section coordinates.
-:::
-:::::::
-
-::: source-block
-**Research and standards**
-
-[W3C PROV: entity identity and revision](https://www.w3.org/TR/prov-dm/){.paper}[Zanzibar: relationship-based authorization](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/){.paper}
-
-[Mari carries principals and visibility but does not implement an authorization engine. The application resolves those fields to `allowed_document_ids`.]{.small}
 :::

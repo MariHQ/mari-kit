@@ -2,8 +2,15 @@
 
 # Trajectories and agent evaluation
 
-```{include} ../_includes/eval/agents.md
+## Evaluation
+
+Nine trajectory cases cover portable framework events, redaction, exact phase coverage, tool and outcome failures, reviewed-cache selection, stale and unauthorized dependencies, and asynchronous speculative retrieval. These evaluate Mari's AgentBench/OpenTelemetry-facing adapter contract; no AgentBench environment success score is claimed.
+
+```console
+$ pytest -q tests/test_trajectories_agents.py
+9 passed
 ```
+
 
 `normalize_steps` converts runtime records into privacy-bounded `TrajectoryStep` values. `parse_trajectory_analysis` validates model-proposed phases. Mari provides adapters, not an agent loop.
 

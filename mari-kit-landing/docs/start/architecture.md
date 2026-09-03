@@ -2,15 +2,14 @@
 
 # Architecture
 
-```{include} ../_includes/eval/start.md
+## Evaluation
+
+Five architecture tests inspect the package boundary: one distribution, no agent loop, no application container, no environment/process discovery, and no host-framework or storage imports in the core. Four platform cases separately evaluate pipeline, projection, compiler, and store boundaries.
+
+```console
+$ pytest -q tests/test_architecture.py tests/test_platform.py
+9 passed
 ```
-
-Values cross explicit boundaries. Mari plans and validates; the application performs side effects.
-
-:::::::{container} diagram flow
-::: card
-**Sources**[provider APIs]{.small}
-:::
 
 *poll*
 
@@ -49,4 +48,12 @@ Provider data is normalized into immutable values. Pure functions transform thos
 [W3C PROV data model](https://www.w3.org/TR/prov-dm/){.paper}[Data pipeline reproducibility](https://arxiv.org/abs/2006.12117){.paper}
 
 [Provenance and reproducibility motivate explicit entities, revisions, activities, and captured configuration. The pure-planning/application-commit split is a Mari engineering contract.]{.small}
+:::
+
+
+Values cross explicit boundaries. Mari plans and validates; the application performs side effects.
+
+:::::::{container} diagram flow
+::: card
+**Sources**[provider APIs]{.small}
 :::

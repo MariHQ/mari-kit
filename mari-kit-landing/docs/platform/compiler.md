@@ -2,8 +2,15 @@
 
 # Evaluation and compilation
 
-```{include} ../_includes/eval/platform.md
+## Evaluation
+
+One compiler case evaluates every configuration, rejects hard-constraint violations before utility comparison, and chooses the remaining objective optimum. This validates Mari's deterministic compilation boundary; DSPy task-optimization gains have not been reproduced.
+
+```console
+$ pytest -q tests/test_platform.py -k compiler
+1 passed
 ```
+
 
 `compile_configurations` searches caller-supplied pipeline and retrieval configurations against knowledge-system objectives and returns the highest-utility feasible candidate with every trial visible.
 

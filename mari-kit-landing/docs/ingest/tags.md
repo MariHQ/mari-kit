@@ -2,15 +2,14 @@
 
 # Tags and links
 
-```{include} ../_includes/eval/ingest.md
+## Evaluation
+
+Tag evaluation checks assignment validation and deterministic search weighting, while note-evolution cases independently exercise similarity and link thresholds. No external clustering or A-MEM task score is claimed.
+
+```console
+$ pytest -q tests/test_knowledge.py tests/test_research_extensions.py -k 'tag or note_links'
+2 passed
 ```
-
-::::: split
-::: card
-## Managed tags
-
-`TagDefinition`, `TagAssignments`, `assign_tags`, `normalize_tag`, and `search_weight` keep curation separate from provider-owned documents, so resync does not erase it.
-:::
 
 ::: card
 ## Derived links
@@ -45,4 +44,12 @@ links = derive_links(doc.document_id, candidate_ids,
 [Similarity measures for text processing](https://doi.org/10.1145/956863.956972){.paper}[A-MEM: dynamic linked-note organization](https://arxiv.org/abs/2502.12110){.paper}
 
 [Mari's managed-tag overlay and bounded link proposal rules are deterministic curation contracts.]{.small}
+:::
+
+
+::::: split
+::: card
+## Managed tags
+
+`TagDefinition`, `TagAssignments`, `assign_tags`, `normalize_tag`, and `search_weight` keep curation separate from provider-owned documents, so resync does not erase it.
 :::

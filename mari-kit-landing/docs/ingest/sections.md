@@ -2,6 +2,9 @@
 
 # Sections and incremental fact scans
 
+```{include} ../_includes/eval/ingest.md
+```
+
 `document_sections` maps Markdown headings to stable section IDs and content revisions. `section_revisions` builds the current revision map. Fact scans can then skip unchanged sections.
 
 ## How it works

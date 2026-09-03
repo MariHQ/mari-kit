@@ -2,6 +2,9 @@
 
 # Knowledge admission and mutation planning
 
+```{include} ../_includes/eval/memory.md
+```
+
 Admission is evaluated before reconciliation. A candidate may be valid JSON and still be unsafe, low-authority, redundant, or unsupported. Reconciliation runs only for accepted candidates.
 
 ## How it works

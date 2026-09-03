@@ -2,6 +2,9 @@
 
 # Memory organization and evidence notes
 
+```{include} ../_includes/eval/memory.md
+```
+
 These functions link related notes, rank memories for recall, and decide whether retrieved evidence can support an answer.
 
 ## How it works

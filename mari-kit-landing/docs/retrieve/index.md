@@ -1,5 +1,8 @@
 # Retrieve
 
+```{include} ../_includes/eval/retrieve.md
+```
+
 ```{toctree}
 :maxdepth: 1
 

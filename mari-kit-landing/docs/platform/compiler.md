@@ -2,6 +2,9 @@
 
 # Evaluation and compilation
 
+```{include} ../_includes/eval/platform.md
+```
+
 A compiler would search pipeline and retrieval configurations against knowledge-system objectives and return a reviewable, versioned configuration proposal.
 
 ## How it works

@@ -2,6 +2,9 @@
 
 # Graph recall and corpus aggregation
 
+```{include} ../_includes/eval/graph.md
+```
+
 Passage retrieval and corpus summarization are different operations. Personalized PageRank is a current bounded multi-hop recall function. Leiden communities and map-reduce reports are proposed, separately versioned aggregation stages.
 
 ## How it works

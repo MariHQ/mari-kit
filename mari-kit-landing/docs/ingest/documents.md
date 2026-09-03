@@ -2,6 +2,9 @@
 
 # Documents, identity, and ACLs
 
+```{include} ../_includes/eval/ingest.md
+```
+
 `KnowledgeDocument` is the canonical provider-owned record. Its stable ID is `{source_id}/{external_id}`. Domain values are frozen dataclasses.
 
 ## How it works

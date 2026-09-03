@@ -2,6 +2,9 @@
 
 # Storage protocols and conformance
 
+```{include} ../_includes/eval/platform.md
+```
+
 Capability protocols would allow independent document, artifact, vector, lexical, and graph implementations.
 
 ## How it works

@@ -2,6 +2,9 @@
 
 # Knowledge parsers
 
+```{include} ../_includes/eval/ingest.md
+```
+
 Models return JSON-like values. Parsers resolve all evidence against supplied document and section revisions and return immutable typed values. Research establishes each task formulation; Mari implements a deterministic validation boundary rather than the cited model.
 
 ## How it works

@@ -9,3 +9,5 @@ build/
 dist/
 *.egg-info/
 mari-kit-landing/_build/
+benchmarks/data/
+benchmarks/results/

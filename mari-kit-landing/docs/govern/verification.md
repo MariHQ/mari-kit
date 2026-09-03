@@ -2,6 +2,9 @@
 
 # Verification portfolios
 
+```{include} ../_includes/eval/govern.md
+```
+
 Verification functions score already-parsed values and retain all successful attempts and failures for audit.
 
 ## How it works

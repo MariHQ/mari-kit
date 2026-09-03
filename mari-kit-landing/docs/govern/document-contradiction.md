@@ -2,6 +2,9 @@
 
 # Document-level self-contradiction detection
 
+```{include} ../_includes/eval/govern.md
+```
+
 This is not corpus retrieval. It validates whether one multi-sentence document is judged to contradict itself, where the conflict occurs, how much of the document the reasoning inspected, and how an external reinforcement-learning trainer should score the result.
 
 ## How it works

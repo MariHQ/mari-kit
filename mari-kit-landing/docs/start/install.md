@@ -2,6 +2,9 @@
 
 # Install
 
+```{include} ../_includes/eval/start.md
+```
+
 Python 3.11--3.13 is supported. NumPy is the only runtime dependency.
 
 ```{code-block} console

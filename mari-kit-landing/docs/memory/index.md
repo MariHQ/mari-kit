@@ -1,5 +1,8 @@
 # Organize memory
 
+```{include} ../_includes/eval/memory.md
+```
+
 ```{toctree}
 :maxdepth: 1
 

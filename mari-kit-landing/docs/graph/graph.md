@@ -2,6 +2,9 @@
 
 # Bi-temporal knowledge graph
 
+```{include} ../_includes/eval/graph.md
+```
+
 Statements would track valid time (when the claim applied) and transaction time (when the system learned it), supporting historical queries and late corrections.
 
 ## How it works

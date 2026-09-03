@@ -2,6 +2,9 @@
 
 # Unified artifact model
 
+```{include} ../_includes/eval/platform.md
+```
+
 A generic envelope would give facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.
 
 ## How it works

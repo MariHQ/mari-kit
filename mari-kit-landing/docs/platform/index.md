@@ -1,5 +1,8 @@
 # Platform & evaluation
 
+```{include} ../_includes/eval/platform.md
+```
+
 ```{toctree}
 :maxdepth: 1
 

@@ -2,6 +2,9 @@
 
 # Synchronization
 
+```{include} ../_includes/eval/ingest.md
+```
+
 `plan_sync` compares a durable `SyncState` with one `PollPage` and returns a side-effect-free `SyncPlan`. `stream_sync` applies the same rules across pages.
 
 ## How it works

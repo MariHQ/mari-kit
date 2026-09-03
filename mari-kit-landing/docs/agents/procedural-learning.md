@@ -2,6 +2,9 @@
 
 # Procedural learning and regression gates
 
+```{include} ../_includes/eval/agents.md
+```
+
 Execution feedback can propose procedural updates, but promotion depends on held-out cases, negative outcomes, cross-procedure interference, and explicit review.
 
 ## How it works

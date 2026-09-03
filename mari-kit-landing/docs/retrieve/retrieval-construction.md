@@ -2,6 +2,9 @@
 
 # Hypothetical and hierarchical retrieval
 
+```{include} ../_includes/eval/retrieve.md
+```
+
 These functions construct alternative query representations and bounded navigation structures. Generation, encoding, clustering, summarization, and relevance models are injected; Mari owns shape validation, deterministic IDs, budgets, and traces.
 
 ## How it works

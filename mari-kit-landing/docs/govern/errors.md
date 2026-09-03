@@ -2,6 +2,9 @@
 
 # Errors and deliberate boundaries
 
+```{include} ../_includes/eval/govern.md
+```
+
 ## How it works
 
 Exceptions classify which boundary failed and whether repeating the same request can help. Connector adapters translate provider responses into authentication, transient, or permanent failures. Snapshot validation raises `IncompleteSnapshot` before absence can become deletion. Knowledge parsers raise `MalformedModelOutput` before an invalid value crosses into typed state. Mari never retries automatically because retry budgets, clocks, credentials, and side effects belong to the host.

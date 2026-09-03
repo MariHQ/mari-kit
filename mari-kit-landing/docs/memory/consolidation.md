@@ -2,6 +2,9 @@
 
 # Tiered memory consolidation
 
+```{include} ../_includes/eval/memory.md
+```
+
 Tiers are policies over cost and lifecycle, not hard-coded stores. Topic segmentation is current; compression, promotion, and offline scheduling are proposed. Each promotion creates a dependency-bearing proposal, and raw observations remain available for audit.
 
 ## How it works

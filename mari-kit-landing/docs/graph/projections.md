@@ -2,6 +2,9 @@
 
 # Event sourcing and disposable projections
 
+```{include} ../_includes/eval/graph.md
+```
+
 Canonical artifacts and append-only events remain authoritative. Search indexes, backlink tables, graph views, digests, and human-readable logs are projections with explicit build identities and safe swap semantics.
 
 ## How it works

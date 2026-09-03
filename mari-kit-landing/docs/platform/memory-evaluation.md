@@ -2,6 +2,9 @@
 
 # Long-horizon memory evaluation
 
+```{include} ../_includes/eval/platform.md
+```
+
 A memory system needs separate measurements for writing, updating, retrieving, temporal reasoning, abstaining, and respecting context limits. One aggregate answer score hides which subsystem failed.
 
 ## How it works

@@ -2,6 +2,9 @@
 
 # Entity resolution with explicit uncertainty
 
+```{include} ../_includes/eval/graph.md
+```
+
 The cascade spends expensive work only after cheap deterministic checks. It never converts an ambiguous candidate into a merge without a configured threshold or review decision.
 
 ## How it works

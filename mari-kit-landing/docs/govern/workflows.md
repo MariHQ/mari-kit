@@ -2,6 +2,9 @@
 
 # Reviewed workflows and cached answers
 
+```{include} ../_includes/eval/govern.md
+```
+
 Reviewed workflow indexes match new requests to approved intents. Policy thresholds independently control speculative retrieval and direct cached-response reuse.
 
 ## How it works

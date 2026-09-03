@@ -2,6 +2,9 @@
 
 # Adaptive retrieval and compression
 
+```{include} ../_includes/eval/retrieve.md
+```
+
 Retrieval can be triggered, corrected, rescored, or compressed at explicit decision points instead of running as one opaque model call.
 
 ## How it works

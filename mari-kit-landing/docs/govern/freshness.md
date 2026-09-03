@@ -2,6 +2,9 @@
 
 # Freshness and impact
 
+```{include} ../_includes/eval/govern.md
+```
+
 Freshness is an exact dependency comparison. It answers "did an input revision change?"---not "is the answer still semantically correct?"
 
 ## How it works

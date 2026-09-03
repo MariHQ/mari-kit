@@ -2,6 +2,9 @@
 
 # Typed knowledge pipelines
 
+```{include} ../_includes/eval/platform.md
+```
+
 Composable stages would transform typed inputs and emit reviewable `ArtifactMutation` values: create, revise, supersede, retract, or leave unchanged.
 
 ## How it works

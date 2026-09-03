@@ -2,6 +2,9 @@
 
 # Trajectories and agent evaluation
 
+```{include} ../_includes/eval/agents.md
+```
+
 `normalize_steps` converts runtime records into privacy-bounded `TrajectoryStep` values. `parse_trajectory_analysis` validates model-proposed phases. Mari provides adapters, not an agent loop.
 
 ## How it works

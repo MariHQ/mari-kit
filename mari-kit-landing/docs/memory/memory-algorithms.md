@@ -2,6 +2,9 @@
 
 # Memory segmentation and mutation plans
 
+```{include} ../_includes/eval/memory.md
+```
+
 `hybrid_topic_segments` splits a stream only where an attention-boundary peak and a semantic-similarity valley agree. The application extracts candidates from those bounded groups and classifies each one as add, update, delete, or no-op. `plan_memory_mutations` validates the decisions without writing storage.
 
 ## How it works

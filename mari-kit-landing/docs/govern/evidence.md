@@ -2,6 +2,9 @@
 
 # Evidence contracts
 
+```{include} ../_includes/eval/govern.md
+```
+
 An evidence record is a byte-for-byte quotation bound to the exact document and section revision that was supplied to a parser. It is provenance, not a model confidence score.
 
 ## How it works

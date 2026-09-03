@@ -2,6 +2,9 @@
 
 # Retrieval plans and context envelopes
 
+```{include} ../_includes/eval/retrieve.md
+```
+
 A retrieval plan would run explicit arms, fuse ranks, enforce scope and freshness, rerank, and pack a bounded context envelope. Its trace explains inclusion and exclusion.
 
 ## How it works

@@ -2,6 +2,9 @@
 
 # Tags and links
 
+```{include} ../_includes/eval/ingest.md
+```
+
 ::::: split
 ::: card
 ## Managed tags

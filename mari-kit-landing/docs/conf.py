@@ -17,7 +17,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build"]
+exclude_patterns = ["_build", "_includes/**"]
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {

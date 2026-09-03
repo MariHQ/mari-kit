@@ -2,6 +2,9 @@
 
 # SparseCL contradiction retrieval
 
+```{include} ../_includes/eval/retrieve.md
+```
+
 Contradiction retrieval asks which corpus passage explicitly disagrees with a query passage. Ordinary similarity alone tends to retrieve paraphrases. SparseCL combines topical cosine similarity with the sparsity of the difference between separately trained embeddings.
 
 ## How it works

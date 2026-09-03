@@ -2,6 +2,9 @@
 
 # Architecture
 
+```{include} ../_includes/eval/start.md
+```
+
 Values cross explicit boundaries. Mari plans and validates; the application performs side effects.
 
 :::::::{container} diagram flow

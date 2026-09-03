@@ -2,6 +2,9 @@
 
 # Multi-vector retrieval
 
+```{include} ../_includes/eval/retrieve.md
+```
+
 Mari implements MUVERA fixed-dimensional candidate generation, PolarQuant compression, and exact normalized MaxSim reranking in one retrieval path.
 
 ::::::{container} diagram retrieval

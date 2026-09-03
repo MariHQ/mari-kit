@@ -2,6 +2,9 @@
 
 # Polling and streaming connectors
 
+```{include} ../_includes/eval/ingest.md
+```
+
 Every connector defines a frozen configuration object, validation, and polling. GitHub, Slack, Google Drive, and Confluence also accept verified provider events. Network calls use an injected `HttpTransport`.
 
 ## How it works

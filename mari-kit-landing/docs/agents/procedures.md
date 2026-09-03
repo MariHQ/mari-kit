@@ -2,6 +2,9 @@
 
 # Procedural knowledge
 
+```{include} ../_includes/eval/agents.md
+```
+
 Successful trajectories could produce versioned procedure candidates. Regression gates and human review would separate observed behavior from active behavior.
 
 ## How it works

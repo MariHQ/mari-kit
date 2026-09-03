@@ -1,5 +1,8 @@
 # Graphs & projections
 
+```{include} ../_includes/eval/graph.md
+```
+
 ```{toctree}
 :maxdepth: 1
 

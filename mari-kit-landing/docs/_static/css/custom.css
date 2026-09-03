@@ -116,6 +116,35 @@ a { color: var(--blue); }
 .code pre { margin: 0; padding: 1.25rem; color: #f8f8f2; background: #272822; font-size: 12px; line-height: 1.7; }
 .code .copybtn { top: 46px; }
 
+/* Native MyST code blocks: caption, highlighting, and copy control are emitted
+   by Sphinx rather than hand-authored HTML. */
+.rst-content .literal-block-wrapper,
+.rst-content div[class^="highlight-"] { margin: 1.45rem 0; }
+.rst-content .literal-block-wrapper { overflow: hidden; border: 1px solid #1f201c; border-radius: 4px; background: #272822; }
+.rst-content .literal-block-wrapper .code-block-caption { margin: 0; padding: .62rem .9rem; color: #c8c8c2; background: #1f201c; font: 11px var(--mono); font-style: normal; text-align: left; }
+.rst-content .literal-block-wrapper div[class^="highlight-"] { margin: 0; }
+.rst-content div[class^="highlight-"] { overflow: hidden; border: 1px solid #34352f; border-radius: 4px; background: #272822; }
+.rst-content div[class^="highlight-"] pre { margin: 0; padding: 1rem 1.15rem; color: #f8f8f2; background: #272822; font: 11.5px/1.65 var(--mono); }
+.rst-content .highlight .k,
+.rst-content .highlight .kc,
+.rst-content .highlight .kn,
+.rst-content .highlight .ow { color: #66d9ef; font-weight: 600; }
+.rst-content .highlight .s,
+.rst-content .highlight .s1,
+.rst-content .highlight .s2,
+.rst-content .highlight .sa { color: #e6db74; }
+.rst-content .highlight .mi,
+.rst-content .highlight .mf { color: #ae81ff; }
+.rst-content .highlight .c,
+.rst-content .highlight .c1,
+.rst-content .highlight .cm { color: #8b9385; font-style: italic; }
+.rst-content .highlight .nf,
+.rst-content .highlight .nb { color: #a6e22e; }
+.rst-content .highlight .o { color: #f92672; }
+.rst-content .copybtn { top: .55rem; right: .55rem; filter: invert(1); opacity: .55; }
+.rst-content .literal-block-wrapper .copybtn { top: 2.8rem; }
+.rst-content .connector-examples div[class^="highlight-"] { margin: .75rem 0 0; }
+
 @media screen and (max-width: 768px) {
   .wy-nav-side { width: 300px; }
   .wy-nav-content-wrap { margin-left: 0; }

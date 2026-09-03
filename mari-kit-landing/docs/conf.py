@@ -22,13 +22,12 @@ exclude_patterns = ["_build"]
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "canonical_url": "https://kit.mari.guru",
-    "collapse_navigation": False,
-    "navigation_depth": 1,
+    "collapse_navigation": True,
+    "navigation_depth": 3,
 }
 html_title = "Mari Kit documentation"
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
-html_js_files = ["js/category-nav.js"]
 html_show_sourcelink = False
 html_context = {
     "display_github": True,
@@ -40,4 +39,3 @@ html_context = {
 
 myst_enable_extensions = ["colon_fence", "attrs_inline"]
 myst_heading_anchors = 3
-

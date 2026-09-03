@@ -26,6 +26,9 @@ database, scheduler, or authorization system.
   and allowed-node Personalized PageRank with passage projection.
 - Paper-derived planning boundaries for HyDE, RAPTOR, Self-RAG, CRAG, FLARE,
   A-MEM, Generative Agents, MemWalker, Chain-of-Note, and RECOMP.
+- SparseCL contradiction retrieval with Hoyer contrastive-loss conformance,
+  cosine candidate generation, sparse reranking, and pre-score authorization;
+  plus evidence-localized document self-contradiction validation and RRC rewards.
 - Strict parsers for evidence-backed facts, decisions, answers, glossary terms,
   summaries, impact assessments, and refinement proposals.
 - Mari-managed tag definitions and assignments that survive provider resyncs.
@@ -176,6 +179,12 @@ propagation, topic segmentation, and memory mutation plans, see
 Ten additional paper-derived retrieval, memory, evidence-reading, and
 compression boundaries are documented in
 [`docs/ten-paper-extensions.md`](docs/ten-paper-extensions.md).
+Contradiction retrieval and within-document self-contradiction detection are
+documented separately in
+[`docs/contradiction-algorithms.md`](docs/contradiction-algorithms.md).
+Their permissively licensed cross-implementation checks and the RRC-DSCD
+paper/code discrepancy are recorded in
+[`docs/contradiction-reference-validation.md`](docs/contradiction-reference-validation.md).
 The evidence and validation requirements behind the proposed artifact, store,
 pipeline, context, temporal-graph, procedure, and compiler APIs are in
 [`docs/proposed-api-foundations.md`](docs/proposed-api-foundations.md).

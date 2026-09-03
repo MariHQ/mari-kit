@@ -1,26 +1,26 @@
 # Mari Kit documentation landing page
 
-This directory contains the static single-page documentation published at
-<https://kit.mari.guru>.
+The documentation published at <https://kit.mari.guru> is authored as one
+MyST Markdown page and built with Sphinx and the Read the Docs theme. The left
+navigation exposes major knowledge-system categories, then the sections within
+the active category.
 
 The page distinguishes importable, current APIs from proposed interfaces.
 Research-derived features place their papers beside the relevant mechanics and
 code instead of collecting them in a separate catalog.
 
-## Preview
+## Build
 
 ```sh
-python3 -m http.server 8000 --directory mari-kit-landing
+python -m pip install -r mari-kit-landing/requirements.txt
+make -C mari-kit-landing html
 ```
 
-Open <http://localhost:8000>.
+Open `mari-kit-landing/_build/html/index.html`, or serve the build directory:
 
-## Deploy
+```sh
+python -m http.server 8000 --directory mari-kit-landing/_build/html
+```
 
-Deployment requires an authenticated AWS CLI profile with access to the site
-bucket and CloudFront distribution. Upload all three assets, preserve their
-content types, set explicit cache policy, and invalidate the distribution only
-after every upload succeeds.
-
-The deployed source of truth is this directory. Do not edit the S3 objects
-independently.
+The Markdown source of truth is `docs/index.md`. Do not edit generated HTML or
+the deployed S3 objects independently.

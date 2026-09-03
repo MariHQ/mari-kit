@@ -19,6 +19,8 @@ algorithm boundary has code, public exports, tests, and documentation.
 | [2310.05029](https://arxiv.org/abs/2310.05029) | MemWalker | `retrieval.walk_summary_tree` | `test_research_extensions.py` | completed |
 | [2311.09210](https://arxiv.org/abs/2311.09210) | Chain-of-Note | `verification.decide_from_evidence_notes` | `test_research_extensions.py` | completed |
 | [2310.04408](https://arxiv.org/abs/2310.04408) | RECOMP | `retrieval.selective_compression` | `test_research_extensions.py` | completed |
+| [2406.10746](https://arxiv.org/abs/2406.10746) | SparseCL | `retrieval.hoyer_difference_sparsity`, `sparse_contrastive_losses`, `rank_sparse_contradictions` | `test_contradiction_algorithms.py` | completed |
+| [EMNLP 2025.67](https://aclanthology.org/2025.emnlp-main.67/) | Reinforced Reference Coverage for DSCD | `verification.validate_document_contradiction`, `document_contradiction_rewards` | `test_contradiction_algorithms.py` | completed |
 
 Implementation notes and runnable examples are in
 [`docs/research-algorithms.md`](../../docs/research-algorithms.md) and

@@ -1,5 +1,14 @@
 """Candidate generation, rank fusion, graph propagation, and exact reranking."""
 
+from .contradiction import (
+    SparseContradictionCandidate,
+    SparseContradictionHit,
+    SparseContradictionScore,
+    hoyer_difference_sparsity,
+    rank_sparse_contradictions,
+    sparse_contradiction_score,
+    sparse_contrastive_losses,
+)
 from .fusion import (
     DiversifiedHit,
     FusedHit,
@@ -43,6 +52,9 @@ __all__ = [
     "PageRankResult",
     "RankContribution",
     "RetrievalHit",
+    "SparseContradictionCandidate",
+    "SparseContradictionHit",
+    "SparseContradictionScore",
     "SummaryTree",
     "SummaryTreeNode",
     "TreeWalk",
@@ -51,14 +63,18 @@ __all__ = [
     "deserialize_index",
     "exact_maxsim",
     "hypothetical_document_embedding",
+    "hoyer_difference_sparsity",
     "maximal_marginal_relevance",
     "personalized_pagerank",
     "plan_active_retrieval",
     "plan_corrective_retrieval",
     "project_graph_scores",
     "reciprocal_rank_fusion",
+    "rank_sparse_contradictions",
     "search_index",
     "selective_compression",
     "serialize_index",
+    "sparse_contradiction_score",
+    "sparse_contrastive_losses",
     "walk_summary_tree",
 ]

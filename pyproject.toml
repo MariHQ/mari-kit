@@ -30,6 +30,14 @@ Issues = "https://github.com/MariHQ/mari-kit/issues"
 examples = ["openai>=1.79", "slack-sdk>=3.33"]
 openai-agents = ["openai-agents>=0.2"]
 langchain = ["langchain>=1.0"]
+docs = [
+  "myst-parser>=3",
+  "sphinx>=7",
+  "sphinx-copybutton>=0.5",
+  "sphinx-inline-tabs>=2023.4.21",
+  "sphinx-rtd-theme>=2",
+  "sphinx-toolbox>=3.5",
+]
 dev = ["build>=1.2", "pyright>=1.1", "pytest>=8", "ruff>=0.12"]
 
 [tool.setuptools.packages.find]

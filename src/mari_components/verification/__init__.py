@@ -1,6 +1,13 @@
 """Auditable verification algorithms for generated candidates."""
 
 from .consensus import verdict_consensus
+from .contradiction import (
+    DocumentContradictionAssessment,
+    DocumentContradictionRewards,
+    document_contradiction_rewards,
+    reasoning_sentence_references,
+    validate_document_contradiction,
+)
 from .models import (
     AttemptFailure,
     ConsensusResult,
@@ -25,6 +32,8 @@ __all__ = [
     "AttemptFailure",
     "ChainOfNoteDecision",
     "ConsensusResult",
+    "DocumentContradictionAssessment",
+    "DocumentContradictionRewards",
     "EvidenceNote",
     "ScoredAttempt",
     "SelectionResult",
@@ -32,10 +41,13 @@ __all__ = [
     "VerificationScore",
     "best_of_n",
     "decide_from_evidence_notes",
+    "document_contradiction_rewards",
     "harmonic_score",
     "idea_completeness",
     "score_self_rag_candidate",
     "score_grounded",
     "select_best",
+    "reasoning_sentence_references",
+    "validate_document_contradiction",
     "verdict_consensus",
 ]

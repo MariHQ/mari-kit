@@ -40,13 +40,19 @@ def test_reader_documentation_does_not_expose_ci_workflows() -> None:
     assert not re.search(r"(?m)^\s*(?:verified\s+)?\d+\s+(?:tests?\s+)?passed\b", markdown)
 
 
-def test_pages_open_with_an_orientation_section() -> None:
+def prose(markdown: str) -> str:
+    value = re.sub(r"```.*?```", "", markdown, flags=re.DOTALL)
+    value = re.sub(r"`[^`]+`", "", value)
+    return value
+
+
+def test_pages_open_with_a_direct_section_heading() -> None:
     invalid: list[str] = []
     for path in documented_pages():
-        first_h2 = re.search(r"(?m)^## (.+)$", path.read_text())
-        if first_h2 is None or not (
-            first_h2.group(1) == "At a glance"
-            or first_h2.group(1).startswith("Choose ")
+        headings = re.findall(r"(?m)^## (.+)$", path.read_text())
+        if not headings or any(
+            re.match(r"(?:At a glance|Choose |Summary$|Overview$|Why |What )", heading)
+            for heading in headings
         ):
             invalid.append(str(path.relative_to(DOCS)))
 
@@ -71,22 +77,31 @@ def test_numeric_comparisons_include_reader_guidance() -> None:
         sections = re.split(r"(?m)^## ", text)
         first_section = sections[1] if len(sections) > 1 else ""
         has_metric = bool(re.search(r"\b(?:nDCG|Recall|precision|F1|overlap)\b", first_section))
-        has_guidance = any(
-            phrase in first_section.casefold()
-            for phrase in (
-                "guidance",
-                "use ",
-                "choose ",
-                "appropriate",
-                "does not",
-                "trade-off",
-                "infer",
-                "application-owned",
-                "implication",
-                "helps",
-            )
-        )
+        table_rows = [line for line in first_section.splitlines() if line.startswith("|")]
+        has_guidance = any(row.count("|") >= 4 for row in table_rows)
         if has_metric and not has_guidance:
             invalid.append(str(path.relative_to(DOCS)))
 
     assert invalid == []
+
+
+def test_documentation_uses_direct_prose() -> None:
+    forbidden = re.compile(
+        r"—|;|\b(?:genuinely|really|truly|actually)\b"
+        r"|\b(?:leverages?|leveraged|leveraging)\b"
+        r"|\b(?:underscores?|underscored|underscoring)\b"
+        r"|\b(?:reflects?|reflected|reflecting)\b"
+        r"|\b(?:not|never|without|rather than|instead of)\b"
+        r"|\b(?:whereas|although|however|yet|but|neither|while)\b"
+        r"|\b(?:therefore|thus|overall|ultimately|in summary|in short)\b"
+        r"|\b(?:the key point|the result is|this shows|this demonstrates|this proves)\b"
+        r"|^(?:This page|This section|In this (?:page|section))\b",
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
+    violations = [
+        str(path.relative_to(DOCS))
+        for path in documented_pages()
+        if forbidden.search(prose(path.read_text()))
+    ]
+
+    assert violations == []

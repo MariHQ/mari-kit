@@ -2,18 +2,18 @@
 
 # Trust-aware knowledge writes
 
-## At a glance
+## Contract
 
 | Benchmark | Coverage | Failure it measures |
 |---|---|---|
 | MPBench | 6 attack classes across 7 agent domains | Malicious content is written and later retrieved |
 | MemSecBench | 310 write-execute-forget cases | Poison persists, causes action, or resists repair |
 
-The benchmarks show that a memory write is a security boundary. A relevance score or ordinary prompt-injection filter is not an authorization decision.
+The benchmarks treat a memory write as a security boundary. Authorization requires a dedicated decision. Relevance and prompt-injection scores supply separate signals.
 
 ## How it works
 
-Mari assigns independent values for origin channel, trust, interpretation, taints, and requested scope. Trust describes provenance; scope describes visibility. Neither implies the other.
+Mari assigns independent values for origin channel, trust, interpretation, taints, and requested scope. Trust describes provenance. Scope describes visibility. Each field keeps its own meaning.
 
 ```{code-block} python
 :caption: Screen before admission and preserve the decision
@@ -41,9 +41,9 @@ decision = evaluate_write(write)
 # QUARANTINE: untrusted instructions cannot become procedural memory
 ```
 
-Admission applies ordered rules: reject missing provenance and unauthorized sources; quarantine secrets, instruction-shaped external content, and attempted privilege amplification; then evaluate confidence and evidence. Derived artifacts inherit the union of their inputs' taints. A later approval appends a promotion record; it does not rewrite provenance.
+Admission applies ordered rules. It rejects missing provenance and unauthorized sources, quarantines secrets and instruction-shaped external content, records attempted privilege amplification, then evaluates confidence and evidence. Derived artifacts inherit the union of their inputs' taints. A later approval appends a promotion record and preserves the original provenance.
 
-## What to evaluate
+## Measures
 
 | Measure | Meaning |
 |---|---|
@@ -51,7 +51,7 @@ Admission applies ordered rules: reject missing provenance and unauthorized sour
 | Retrieval attack success | Poison was recalled in a later session |
 | Execution success | Recalled poison changed an external action |
 | Benign rejection rate | Safe writes incorrectly blocked |
-| Selective repair | Poison removed without deleting unrelated knowledge |
+| Selective repair | Poison removed, unrelated knowledge retained |
 
 ::: source-block
 **Papers and implementations**

@@ -2,7 +2,7 @@
 
 # Document-level self-contradiction detection
 
-## At a glance
+## Behavior
 
 | Layer | Mari provides | Caller provides |
 |---|---|---|
@@ -11,25 +11,27 @@
 | Reference coverage | Parsed reasoning citations and reward component | Reasoning text |
 | Training reward | Separate accuracy, coverage, and format signals | Optimizer and training loop |
 
-ContraDoc model quality is separate from these deterministic semantics because the judge model—not Mari’s validator—determines detection quality.
+ContraDoc model quality comes from the injected judge model. Mari’s validator supplies deterministic semantics around that judgment.
 
 | Observed judge behavior | Result | What it means |
 |---|---:|---|
-| Contradiction accuracy | `0.694` | The injected judge is usable as a baseline, not a production claim |
+| Contradiction accuracy | `0.694` | The injected judge serves as a baseline. Production use needs further validation |
 | Macro-F1 | `0.685` | Positive and negative documents are both represented in the balanced slice |
 | Evidence localization recall | `0.388` | Correctly finding the conflicting sentences remains the main weakness |
 
-These results use `deepseek-chat` on a fixed 160-document ContraDoc slice. The predictions are retained because the model alias itself is not an immutable checkpoint.
+The reported run uses `deepseek-chat` on a fixed 160-document ContraDoc slice.
+Its record names the model alias because an alias can point to different
+checkpoints over time.
 
 
-:::{collapse} Worked reward examples
+:::{collapse} Example reward examples
 
 | Expected | Predicted | Evidence hit | Accuracy reward |
 |---|---|---:|---:|
 | Contradiction | Contradiction | Yes | `1 + matched / gold` |
 | Contradiction | Contradiction | No | `-1` |
-| No contradiction | No contradiction | Not applicable | `1` |
-| No contradiction | Contradiction | Not applicable | `0` |
+| No contradiction | No contradiction | n/a | `1` |
+| No contradiction | Contradiction | n/a | `0` |
 :::
 
 :::::::{container} diagram flow
@@ -75,7 +77,7 @@ rewards = document_contradiction_rewards(
 )
 ```
 
-**What Mari does not claim.** Reference coverage measures which sentence tags appeared in reasoning; it does not prove the reasoning is valid. Mari validates and scores a proposed judgment but does not replace the teacher-distilled SFT model, GRPO trainer, or semantic contradiction verifier.
+**Scope of the contract.** Reference coverage counts sentence tags that appear in reasoning. Mari validates and scores a proposed judgment. The teacher-distilled SFT model, GRPO trainer, and semantic contradiction verifier remain caller components.
 
 ::: source-block
 **Papers**
@@ -86,7 +88,10 @@ rewards = document_contradiction_rewards(
 :::
 
 
-This is not corpus retrieval. It validates whether one multi-sentence document is judged to contradict itself, where the conflict occurs, how much of the document the reasoning inspected, and how an external reinforcement-learning trainer should score the result.
+The module handles one multi-sentence document. It validates the
+self-contradiction judgment and locates the conflict. Another field measures
+the inspected portion. Reward components feed an external reinforcement-learning
+trainer.
 
 ## How it works
 
@@ -94,4 +99,4 @@ This is not corpus retrieval. It validates whether one multi-sentence document i
 2.  **Propose a judgment.** An injected model returns a Boolean judgment, localized evidence sentence IDs, and reasoning containing `[i]`, `[i-j]`, or `[i]-[j]` references.
 3.  **Validate localization.** Mari expands ranges, rejects out-of-document references, requires evidence for positive judgments, and forbids contradiction evidence on negative judgments.
 4.  **Measure reference coverage.** Deduplicate every sentence mentioned in reasoning and compute `|S_covered| / |S_total|`.
-5.  **Compute independent rewards.** Return accuracy, reference-coverage, and format components for an external GRPO trainer. A correct positive judgment without any gold-evidence hit receives `-1`; a correct localized judgment receives `1 + matched/gold`.
+5.  **Compute independent rewards.** Return accuracy, reference-coverage, and format components for an external GRPO trainer. A correct positive judgment with zero gold-evidence hits receives `-1`. A correct localized judgment receives `1 + matched/gold`.

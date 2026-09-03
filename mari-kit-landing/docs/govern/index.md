@@ -1,8 +1,8 @@
-# Validate & govern
+# Validate and govern
 
-Validation turns generated proposals into revision-bound knowledge. These modules resolve quoted evidence, reject malformed or stale claims, localize document contradictions, select among candidate answers, invalidate derived work after source changes, and expose deliberate failure states.
+Validation turns generated proposals into revision-bound knowledge. The modules resolve quoted evidence and inspect claims against their source revisions. They also support contradiction judgments, candidate selection, dependency invalidation, and explicit failure states.
 
-## Choose a governance boundary
+## Governance operations
 
 
 ## Feature overview
@@ -20,13 +20,13 @@ Validation turns generated proposals into revision-bound knowledge. These module
 | Resolve disagreeing sources | `resolve_assertions` | Working selection or explicit dispute |
 | Expire derived knowledge | `plan_retention` | Delete, invalidate, and hold actions |
 
-:::{collapse} Worked evidence-validation example
+:::{collapse} Example evidence-validation example
 
 | Proposed quote | Source revision | Resolution |
 |---|---|---|
 | `"30 days"` at offsets `31:38` | `refunds.md@8f31c2a` | Accepted when offsets and revision match |
-| `"thirty days"` at offsets `31:42` | `refunds.md@8f31c2a` | Rejected: not literal source text |
-| `"30 days"` at offsets `31:38` | stale revision | Rejected: evidence no longer identifies current text |
+| `"thirty days"` at offsets `31:42` | `refunds.md@8f31c2a` | Rejected: literal source text differs |
+| `"30 days"` at offsets `31:38` | stale revision | Rejected: revision cannot identify current text |
 
 ```python
 from mari_components.knowledge import parse_answer

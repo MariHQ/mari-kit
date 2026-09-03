@@ -2,18 +2,18 @@
 
 # Knowledge admission and mutation planning
 
-## At a glance
+## Behavior
 
 | Disposition | Meaning |
 |---|---|
 | Admit | Evidence, trust, novelty, and utility clear the configured thresholds |
-| Review | Potentially useful, but one or more signals are uncertain |
+| Review | Potentially useful, with one or more uncertain signals |
 | Reject | Unsafe, ungrounded, duplicate, or below the utility floor |
 
-Mari applies caller-supplied signals and preserves the decision trace. It does not claim to detect prompt injection or infer utility by itself.
+Mari applies caller-supplied signals and preserves the decision trace. It evaluates caller-supplied safety and utility signals.
 
 
-:::{collapse} Worked admission decisions
+:::{collapse} Example admission decisions
 
 | Candidate | Provenance | Injection signal | Decision |
 |---|---|---|---|
@@ -24,11 +24,18 @@ Mari applies caller-supplied signals and preserves the decision trace. It does n
 
 
 
-Admission is evaluated before reconciliation. A candidate may be valid JSON and still be unsafe, low-authority, redundant, or unsupported. Reconciliation runs only for accepted candidates.
+Admission runs before reconciliation. Schema validity supplies one signal.
+Safety and source authority have their own checks. Redundancy and support also
+appear in the decision trace. Reconciliation runs for accepted candidates.
 
 ## How it works
 
-Run provenance, evidence-span, recalled-input, secret, external-instruction, authority, and confidence rules over the candidate. Aggregate rule results into `ACCEPT`, `DEFER`, `REJECT`, or `QUARANTINE` with reason codes. Only accepted candidates reach mutation reconciliation, which validates add, merge, supersede, retract, or unchanged operations against the current canonical slot without writing storage.
+Run the configured admission rules over each candidate. They can inspect
+provenance, evidence spans, and recalled inputs. Other rules cover secrets,
+external instructions, authority, and confidence. Aggregate their results into
+`ACCEPT`, `DEFER`, `REJECT`, or `QUARANTINE` with reason codes. Accepted
+candidates reach mutation reconciliation. That function checks the proposed
+operation against the current canonical slot and returns a storage-free plan.
 
 ::: source-block
 **Papers and standards**

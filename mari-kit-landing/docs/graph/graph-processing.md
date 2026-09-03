@@ -2,15 +2,15 @@
 
 # Graph recall and corpus aggregation
 
-## At a glance
+## Behavior
 
 | Mechanism | Corpus observation | Decision guidance |
 |---|---|---|
-| Personalized PageRank | QASC passage Recall@5 `0.850`; both gold facts found `0.709` | Graph expansion helps expose two-hop evidence, but does not guarantee complete chains |
-| Leiden communities | DocRED relation-community coverage `0.430`; mean modularity `0.518` | Co-mention graphs form coherent groups while splitting many gold relations |
-| Community reports | Deterministic partition and bounded map/reduce | Report quality still depends on the injected summarizer |
+| Personalized PageRank | QASC passage Recall@5 `0.850`. Both gold facts found `0.709` | Graph expansion exposed many two-hop facts. Complete chains appeared in `0.709` of cases |
+| Leiden communities | DocRED relation-community coverage `0.430`. Mean modularity `0.518` | Co-mention graphs form coherent groups and split many gold relations |
+| Community reports | Deterministic partition and bounded map/reduce | Report quality depends on the injected summarizer |
 
-:::{collapse} Worked graph propagation example
+:::{collapse} Example graph propagation example
 
 | Node | Relation to seed | Allowed | Retrieval outcome |
 |---|---|---:|---|
@@ -30,7 +30,7 @@ Passage retrieval and corpus summarization are different operations. Personalize
 
 ## How it works
 
-Link query mentions to authorized seed nodes, induce an allowed subgraph, and propagate Personalized PageRank mass until tolerance or iteration limits; project node mass back to evidence-bearing sections. Separately, Leiden partitions the graph into well-connected communities, recursive grouping forms levels, and evidence-linked community reports support global map-reduce queries. Local queries fan out from entities; drift queries start globally and open bounded local branches.
+Link query mentions to authorized seed nodes, induce an allowed subgraph, and propagate Personalized PageRank mass until tolerance or iteration limits. Project node mass back to evidence-bearing sections. Separately, Leiden partitions the graph into well-connected communities, recursive grouping forms levels, and evidence-linked community reports support global map-reduce queries. Local queries fan out from entities. Drift queries start globally and open bounded local branches.
 
 ::: source-block
 **Papers**

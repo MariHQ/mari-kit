@@ -2,13 +2,13 @@
 
 # Structured and multimodal documents
 
-## At a glance
+## Behavior
 
 | Corpus or system | Scale / observation | Design consequence |
 |---|---:|---|
 | DocLayNet | 80,863 manually annotated pages in 11 layout classes | Page geometry and region kinds need stable representation |
-| MMDocRAG | 4,055 expert questions with multimodal evidence chains | Evidence may cross text, tables, and images |
-| UniDoc-Bench | More than 70,000 PDF pages and 1,600 questions | Text-image fusion should coexist with exact structure |
+| MMDocRAG | 4,055 expert questions with multimodal evidence chains | Evidence chains span text, tables, and images |
+| UniDoc-Bench | More than 70,000 PDF pages and 1,600 questions | Measure text-image fusion beside exact structure |
 
 | Local parser fixture | Before these functions | Current result |
 |---|---:|---:|
@@ -19,7 +19,7 @@
 
 ## How it works
 
-A `StructuredDocument` preserves a hierarchy of pages and regions. Each `DocumentRegion` has a stable ID, kind, location, optional text, and optional table structure. Generated descriptions and embeddings are `RegionRepresentation` values linked back to the canonical region; they never replace it.
+A `StructuredDocument` preserves a hierarchy of pages and regions. Each `DocumentRegion` has a stable ID, kind, location, optional text, and optional table structure. Generated descriptions and embeddings are `RegionRepresentation` values linked back to the canonical region. The canonical region remains authoritative.
 
 ```{code-block} python
 :caption: Preserve a table as structure, text, and page evidence
@@ -45,12 +45,14 @@ region = DocumentRegion(
 )
 ```
 
-Evidence can address a page region or exact table cell. Retrieval may index several representations and fuse their rankings, while answer validation resolves the citation against the original region.
+Evidence can address a page region or exact table cell. Retrieval supports
+several representations and fuse their rankings. Answer validation resolves the
+citation against the original region.
 
 ## Parser contract
 
 ```{code-block} python
-:caption: Adapt any parser without making it a core dependency
+:caption: Adapt any parser through a caller-owned dependency
 
 class StructuredDocumentParser(Protocol):
     async def parse(self, source: BinaryDocument) -> StructuredDocument: ...
@@ -62,15 +64,17 @@ for region in parsed.regions:
         image_index.add(region.region_id, embed_image(region.image_ref))
 ```
 
-Mari supplies the neutral document IR and validation. OCR, VLM inference, file decoding, and model downloads remain adapter responsibilities.
+Mari supplies the neutral document IR and its validation functions. Adapters
+handle file decoding and OCR. They can also call a VLM or manage model
+downloads.
 
 ## Definitions and validation options
 
 | Function or value | Inputs | Output / option semantics |
 |---|---|---|
-| `normalize_table(cells, ...)` | `TableCell` coordinates and row/column spans | `maximum_cells` bounds allocation; `overlap` is `first`, `last`, or `error` |
-| `validate_structured_document(document)` | Regions, hierarchy and table cells | Missing parents, parent cycles, and cell-topology violations; no acceptance policy |
-| `validate_region_evidence(evidence, document)` | Exact document/revision/region/page and optional cell | Mismatch reasons, resolved text, and all candidate cells; overlapping coordinates report `ambiguous_cell` and withhold text |
+| `normalize_table(cells, ...)` | `TableCell` coordinates and row/column spans | `maximum_cells` bounds allocation. `overlap` is `first`, `last`, or `error` |
+| `validate_structured_document(document)` | Regions, hierarchy and table cells | Missing parents, parent cycles, and cell-topology violations. Acceptance policy stays with the caller |
+| `validate_region_evidence(evidence, document)` | Exact document/revision/region/page and optional cell | Mismatch reasons, resolved text, and all candidate cells. Overlapping coordinates report `ambiguous_cell` and withhold text |
 | `DocumentRegion.searchable_text` | Region text or cells | Uses explicit region text first, otherwise joins non-empty cells |
 
 ```{code-block} python
@@ -91,13 +95,13 @@ else:
     index(location.text)
 ```
 
-For formats without pages or geometry, use `ParsedDocument` and `ParsedBlock`.
-Blocks retain stable IDs, parent relationships, optional source spans, and
-format-specific metadata without pretending that chat messages, HTML nodes, or
-database rows have PDF coordinates.
+Formats that lack page geometry use `ParsedDocument` and `ParsedBlock`.
+Blocks retain stable IDs and parent relationships. Optional source spans keep
+exact locations when the format supplies them. Format-specific metadata can
+describe chat messages, HTML nodes, or database rows in their native terms.
 
 ```{code-block} python
-:caption: Represent a parsed chat thread without a document-layout fiction
+:caption: Represent a parsed chat thread with its native conversation structure
 
 from mari_components.documents import ParsedBlock, ParsedDocument
 
@@ -113,7 +117,7 @@ thread = ParsedDocument(
 )
 ```
 
-## What to evaluate
+## Measures
 
 | Layer | Measures |
 |---|---|
@@ -127,5 +131,5 @@ thread = ParsedDocument(
 
 [DocLayNet](https://arxiv.org/abs/2206.01062){.paper}[MMDocRAG](https://arxiv.org/abs/2505.16470){.paper}[UniDoc-Bench](https://arxiv.org/abs/2510.03663){.paper}[Docling](https://github.com/docling-project/docling){.paper}
 
-[Docling is MIT licensed. Mari's region types are deliberately smaller and do not copy its parser pipeline.]{.small}
+[Docling is MIT licensed. Mari's region types are deliberately smaller. Its parser pipeline remains separate.]{.small}
 :::

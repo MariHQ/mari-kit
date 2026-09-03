@@ -2,17 +2,17 @@
 
 # Memory segmentation and mutation plans
 
-## At a glance
+## Behavior
 
 | Mechanism | Observed behavior | What remains application-owned |
 |---|---|---|
-| Mem0 mutation plan | 500 LongMemEval evidence replays preserved the latest value; 448 updates | The model that labels add, update, delete, or no-op |
+| Mem0 mutation plan | 500 LongMemEval evidence replays preserved the latest value. 448 updates | The model that labels add, update, delete, or no-op |
 | LightMem segmentation | WikiSection boundary F1 `0.237` with lexical novelty signals | Attention and semantic-similarity models |
 | Salience ranking | LongMemEval complete evidence recall@10 `0.906` | Importance and relevance scores |
 
-The replay number validates mutation execution, not mutation classification. The segmentation score shows that a naive lexical signal is not production quality.
+The replay number validates mutation execution. Mutation classification remains a separate concern. The segmentation score shows that a naive lexical signal is a baseline for production use.
 
-:::{collapse} Worked mutation and segmentation examples
+:::{collapse} Example mutation and segmentation examples
 
 | Existing memory | New observation | Planned operation |
 |---|---|---|
@@ -24,16 +24,20 @@ The replay number validates mutation execution, not mutation classification. The
 | Boundary signal | Attention peak | Similarity valley | Split |
 |---|---:|---:|---:|
 | Topic transition | Yes | Yes | Yes |
-| Lexical drift only | No | Yes | No |
+| Lexical drift | false | true | false |
 :::
 
 
 
-`hybrid_topic_segments` splits a stream only where an attention-boundary peak and a semantic-similarity valley agree. The application extracts candidates from those bounded groups and classifies each one as add, update, delete, or no-op. `plan_memory_mutations` validates the decisions without writing storage.
+`hybrid_topic_segments` splits a stream where an attention-boundary peak and a
+semantic-similarity valley agree. The application extracts candidates from
+those bounded groups. It classifies each candidate with a memory operation.
+`plan_memory_mutations` validates the decisions and returns a storage-free
+plan.
 
 ## How it works
 
-Normalize boundary and adjacent-similarity arrays to the `n−1` gaps between `n` turns. A gap is eligible only when its attention score is a local peak above the configured boundary threshold and its adjacent semantic similarity is below the valley threshold. Eligible gaps split consecutive, non-overlapping segments. Mutation planning then requires exactly one decision per candidate, validates update/delete targets against current IDs, rejects duplicate adds and conflicting operations on one target, and returns a deterministic plan.
+Normalize boundary and adjacent-similarity arrays to the `n−1` gaps between `n` turns. A gap is eligible when its attention score is a local peak above the configured boundary threshold and its adjacent semantic similarity is below the valley threshold. Eligible gaps split consecutive, non-overlapping segments. Mutation planning then requires exactly one decision per candidate, validates update/delete targets against current IDs, rejects duplicate adds and conflicting operations on one target, and returns a deterministic plan.
 
 ::::::{container} diagram promotion
 <div>
@@ -79,12 +83,12 @@ plan = plan_memory_mutations(existing, candidates, {
 store.commit(plan, expected_generation=generation)
 ```
 
-**Classification remains application-owned.** Mari checks candidate coverage, target existence, add collisions, and conflicting target operations. `apply_memory_mutations` provides a side-effect-free preview; it is not a database.
+**Classification remains application-owned.** Mari checks candidate coverage, target existence, add collisions, and conflicting target operations. `apply_memory_mutations` provides a side-effect-free preview. Storage remains the host's responsibility.
 
 ::: source-block
 **Research basis**
 
 [Mem0: memory extraction and update operations](https://arxiv.org/abs/2504.19413){.paper}[LightMem: topic-aware memory consolidation](https://arxiv.org/abs/2510.18866){.paper}
 
-[The conjunctive peak/valley rule and mutation validation are Mari implementations; model-based classification remains outside the library.]{.small}
+[The conjunctive peak/valley rule and mutation validation are Mari implementations. Model-based classification remains outside the library.]{.small}
 :::

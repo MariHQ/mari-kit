@@ -2,22 +2,22 @@
 
 # Tags and links
 
-## At a glance
+## Behavior
 
 | Link source | Strength | Use |
 |---|---|---|
 | Explicit document reference | Highest | Preserve authored relationships |
-| Managed tag overlay | Policy-controlled | Add vocabulary without rewriting source metadata |
-| Similarity-derived link | Scored and bounded | Discovery; review before treating as identity |
+| Managed tag overlay | Policy-controlled | Add vocabulary and preserve source metadata |
+| Similarity-derived link | Scored and bounded | Discovery. Review before treating as identity |
 
 On LongMemEval, the measured A-MEM threshold produced link precision `0.436` and recall `0.944`: useful for discovery, too noisy for automatic equivalence.
 
 
-:::{collapse} Worked tag overlay example
+:::{collapse} Example tag overlay example
 
 | Source tags | Managed change | Effective tags |
 |---|---|---|
-| `policy`, `draft` | Add `reviewed`; remove `draft` | `policy`, `reviewed` |
+| `policy`, `draft` | Add `reviewed`. Remove `draft` | `policy`, `reviewed` |
 | `policy` | Add unknown tag | Rejected before mutation |
 :::
 
@@ -31,7 +31,7 @@ On LongMemEval, the measured A-MEM threshold produced link precision `0.436` and
 
 ## How it works
 
-Tag keys are normalized before add/remove set operations; definitions validate that assignments refer to known tags. Search weight combines assigned tag weights through deterministic policy rather than rewriting source relevance. Explicit-link extraction recognizes source references first. Similarity linking scores only caller-supplied candidate IDs, removes self-links, applies a threshold and limit, and sorts ties stably. Returned links are proposals; committing and interpreting them remains application policy.
+Tag keys are normalized before add/remove set operations. Definitions validate that assignments refer to known tags. Search weight combines assigned tag weights through deterministic policy and leaves source relevance intact. Explicit-link extraction recognizes source references first. Similarity linking scores caller-supplied candidate IDs, removes self-links, applies a threshold and limit, and sorts ties stably. Returned links are proposals. The application commits and interprets them.
 
 ```{code-block} python
 :caption: curation.py
@@ -54,10 +54,10 @@ links = derive_links(doc.document_id, candidate_ids,
 | Function | Required inputs | Caller-controlled options |
 |---|---|---|
 | `assign_tags` | Prior assignments, document ID, definitions | Explicit add/remove keys |
-| `normalize_tag` | One raw key | Deterministic key normalization only |
+| `normalize_tag` | One raw key | Deterministic key normalization |
 | `search_weight` | Document, assignments, definitions | Weights live in caller-created definitions |
 | `extract_explicit_links` | Source document and known IDs | Recognized authored references |
-| `derive_links` | Source ID, candidate IDs, score callback | Threshold and result limit; self-links are removed |
+| `derive_links` | Source ID, candidate IDs, score callback | Threshold and result limit. Self-links are removed |
 
 ::: source-block
 **Research basis**
@@ -72,5 +72,7 @@ links = derive_links(doc.document_id, candidate_ids,
 ::: card
 ## Managed tags
 
-`TagDefinition`, `TagAssignments`, `assign_tags`, `normalize_tag`, and `search_weight` keep curation separate from provider-owned documents, so resync does not erase it.
+`TagDefinition`, `TagAssignments`, `assign_tags`, `normalize_tag`, and
+`search_weight` store curation in an overlay. A provider resync preserves that
+overlay.
 :::

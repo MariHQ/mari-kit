@@ -1,6 +1,6 @@
 # Ingest & parse
 
-## Choose an ingestion operation
+## Ingestion operations
 
 
 | Input | Operation | Output |
@@ -20,17 +20,17 @@
 | `parse_markdown` | Text, artifact ID, revision | Table parsing, fence recovery, parser ID | `ParseResult[ParsedDocument]` |
 | `parse_html` | Text, artifact ID, revision | Parser ID | Blocks and expanded table cells with raw spans |
 | `parse_delimited` | Text, source ID, revision | Delimiter detection, quote character, header, identity fields, strict width | Independently accepted records and positioned issues |
-| `parse_json_lines` | Text, source ID, revision | Identity fields, parser ID | Positioned fields; malformed siblings remain issues |
+| `parse_json_lines` | Text, source ID, revision | Identity fields, parser ID | Positioned fields. Malformed siblings remain issues |
 | `parse_json_array` | JSON array text, source ID, revision | Identity fields, parser ID | Positioned object records and member-specific issues |
 | `parse_python` | Source, repository, revision, path | Parser ID | Symbols, definition/call edges, unresolved or ambiguous references |
 | `plan_sync` | Prior state, page, source, mode | Full or incremental semantics | Side-effect-free mutations and proposed next state |
 
-:::{collapse} Worked ingestion flow
+:::{collapse} Example ingestion flow
 
 | Source event | Connector output | Sync plan | Parser work |
 |---|---|---|---|
 | New file | Upsert document | Insert stable ID and revision | Parse every section |
-| Edited section | Upsert new revision | Replace prior revision | Parse changed section only |
+| Edited section | Upsert new revision | Replace prior revision | Parse the changed section |
 | Deleted file | Tombstone | Delete source document | Invalidate derived artifacts |
 :::
 

@@ -5,10 +5,10 @@
 Mari treats completed work as another changing knowledge source. A trajectory
 is evidence: it records what information was available, what happened, and
 where an expert corrected the result. The output is a reviewable fact,
-strategy, constraint, pitfall, or bounded edit—not an agent loop or prescribed
-workflow.
+strategy, constraint, pitfall, or bounded edit. It records evidence for review
+and leaves workflow design to the application.
 
-## At a glance
+## Behavior
 
 | Input | Mari operation | Output |
 |---|---|---|
@@ -22,15 +22,15 @@ workflow.
 | Input | Cases | Observed result | What it establishes |
 |---|---:|---:|---|
 | PlugMem Apache-2.0 coding fixture | 3 sessions, 12 events | 2 tool results: 1 explicit success, 1 explicit failure | The adapter retains the fixture's outcome distinction |
-| Contrastive fixture | 4 runs | `retry`: 0/2 successful, 2/2 failed; risk ratio `5.00` | Association direction and zero-cell correction are correct |
+| Contrastive fixture | 4 runs | `retry`: 0/2 successful, 2/2 failed. Risk ratio `5.00` | Association direction and zero-cell correction are correct |
 | Loaded-knowledge diagnosis | 1 correction | 1 accepted citation to 1 loaded revision | The diagnosis joins feedback to observed knowledge use |
-| Observation ledger | Retrieved + cited, no use event | Cited `1`; used `0` | Later stages are not inferred |
+| Observation ledger | Retrieved + cited, with use unobserved | Cited `1`. Used `0` | Each stage requires its own record |
 | Derivation audit | Derived summary claimed independent | `1/1` detected | Generated material cannot masquerade as a new source |
 | Coordinated edit | 2 exact edits in one document | Expected preview and 2 inverses | Edits compose against one immutable revision |
 
 The risk-ratio interval is wide (`0.38–66.01`) because four runs provide little
-statistical certainty. Mari exposes that uncertainty instead of presenting
-`5.00` alone as a conclusion.
+statistical certainty. Mari exposes that uncertainty and reports the interval
+alongside the observed ratio.
 :::
 
 ## Decide whether the knowledge was missing
@@ -38,9 +38,9 @@ statistical certainty. Mari exposes that uncertainty instead of presenting
 | Correction and observed state | Diagnosis | Next knowledge operation |
 |---|---|---|
 | Correct fact was absent from loaded artifacts | Knowledge gap | Propose factual knowledge |
-| Correct fact was loaded but applied incorrectly | Procedure gap | Propose a strategy or pitfall |
+| Correct fact was loaded and applied incorrectly | Procedure gap | Propose a strategy or pitfall |
 | Current artifacts disagree | Ambiguity | Surface the conflict for resolution |
-| Correct knowledge was selected; the API failed | Tool execution | Preserve the failure; do not manufacture knowledge |
+| Correct knowledge was selected and the API failed | Tool execution | Preserve the failure and leave the knowledge set unchanged |
 
 ```{code-block} python
 :caption: Bind a correction to the knowledge visible during the run
@@ -71,9 +71,9 @@ diagnoses = parse_feedback_diagnoses(
 ```
 
 The parser rejects unknown runs, out-of-range evidence, repeated feedback IDs,
-and citations to artifacts that were not loaded. A `procedure_gap` must be
-resolvable from loaded knowledge; a `knowledge_gap` must not be. The model
-proposes the semantic judgment; Mari validates its observable claims.
+and citations to artifacts outside the loaded set. A `procedure_gap` must be
+resolvable from loaded knowledge. A `knowledge_gap` must remain unresolved. The model
+proposes the semantic judgment. Mari validates its observable claims.
 
 ::: source-block
 **Evidence**
@@ -81,18 +81,19 @@ proposes the semantic judgment; Mari validates its observable claims.
 [Meta organizational second brain](https://engineering.fb.com/2026/09/02/ml-applications/organizational-second-brain-ai-learns-from-experts/){.paper}[ReasoningBank](https://research.google/blog/reasoningbank-enabling-agents-to-learn-from-experience/){.paper}[PlugMem](https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/){.paper}
 :::
 
-## Record what knowledge was actually observed
+## Record observed knowledge stages
 
 Retrieval, presentation, citation, and use are separate observations. A
-retriever hit does not prove that text entered the model context; a citation
-does not prove that the cited material affected the result.
+retriever hits record retrieval. A separate use event records entry into model
+context. Citations record provenance. A separate observation records influence
+on the result.
 
-| Recorded stage | Meaning | What Mari does not infer |
+| Recorded stage | Meaning | Separate measurement |
 |---|---|---|
 | `RETRIEVED` | An artifact revision was returned by retrieval | It was shown |
 | `SHOWN` | The revision entered the supplied context | It was read or used |
 | `CITED` | Output explicitly referenced the revision | The claim depended on it |
-| `USED` | The host observed a defined use signal | Causal benefit without an ablation |
+| `USED` | The host observed a defined use signal | Causal benefit requires an ablation |
 
 ```{code-block} python
 :caption: Preserve the difference between retrieval and demonstrated use
@@ -120,7 +121,7 @@ assert report.used == ()
 ```
 
 The inspector detects duplicate observation IDs, a later event recorded before
-an earlier stage, and a non-retrieval stage with no preceding observation for
+an earlier stage, and a non-retrieval stage missing a preceding observation for
 that activity and revision.
 
 ::: source-block
@@ -132,17 +133,17 @@ that activity and revision.
 ## Extract reusable knowledge
 
 `parse_experience_knowledge(runs, model_output)` accepts four neutral knowledge
-kinds. It does not decide where they live or how they are composed.
+kinds. It leaves storage and composition to the caller.
 
 | Kind | Candidate example | Limitation worth retaining |
 |---|---|---|
 | Fact | Enterprise limit is 20 seats | Effective date and account tier |
-| Strategy | Resolve tier before selecting a limit | Only applies to tiered products |
-| Pitfall | Do not infer tier from company size | Requires authoritative tier metadata |
-| Constraint | Never expose restricted plan notes | Caller must still enforce ACLs |
+| Strategy | Resolve tier before selecting a limit | Applies to tiered products |
+| Pitfall | Company size provides insufficient evidence for tier | Requires authoritative tier metadata |
+| Constraint | Hide restricted plan notes | Caller enforces ACLs |
 
 ```{code-block} python
-:caption: Parse an evidence-bound candidate without accepting it
+:caption: Parse an evidence-bound candidate for review
 
 from mari_components.knowledge import parse_experience_knowledge
 
@@ -166,17 +167,17 @@ Candidate identity hashes kind, title, content, and exact evidence ranges.
 Promotion remains a separate admission or mutation decision.
 `mine_outcome_associations` finds contiguous activity patterns and reports
 support in successful and failed runs, failure risk ratio, confidence interval,
-and source run IDs. These are descriptive associations, not causal effects.
+and source run IDs. These are descriptive associations.
 
 :::{collapse} Known-answer comparison used to verify the statistic
 
 | Pattern | Successful support | Failed support | Interpretation |
 |---|---:|---:|---|
 | `search → answer` | 2 / 2 | 0 / 2 | Associated with successful examples |
-| `retry` | 0 / 2 | 2 / 2 | Associated with failed examples; inspect those source runs |
+| `retry` | 0 / 2 | 2 / 2 | Associated with failed examples. Inspect those source runs |
 
-The fixture verifies direction, zero-cell handling, and evidence IDs. It is not
-an estimate of production risk.
+The fixture verifies direction, zero-cell handling, and evidence IDs. Production
+risk requires a separate estimate.
 :::
 
 ::: source-block
@@ -192,10 +193,10 @@ binds a model's situation, intent, action, progress, and outcome description to
 non-overlapping source ranges. `segment_episodes` groups those turns at
 caller-selected boundaries. `parse_episode_reflection` compares a focal
 episode with named peers and returns applicability, hints, pitfalls, and
-confidence; it does not promote the reflection to knowledge.
+confidence. It returns the reflection for a later knowledge decision.
 
 ```{code-block} python
-:caption: Keep segmentation separate from knowledge extraction
+:caption: Record segmentation and knowledge extraction independently
 
 from mari_components.trajectories import (
     parse_episode_reflection, parse_turn_assessments, segment_episodes,
@@ -207,14 +208,14 @@ reflection = parse_episode_reflection(
     episodes[0], episodes[1:], reflection_output
 )
 
-# A separate parser may now propose a fact, strategy, pitfall, or constraint.
+# A separate parser now proposes a fact, strategy, pitfall, or constraint.
 ```
 
 | Boundary | Owner | Validation |
 |---|---|---|
-| Turn ranges | Model proposes; Mari checks | In bounds, non-overlapping, exact evidence indices |
+| Turn ranges | Model proposes. Mari checks | In bounds, non-overlapping, exact evidence indices |
 | Episode ends | Caller | In range, increasing, includes final turn |
-| Comparison set | Model proposes; Mari checks | Existing peers only; focal episode excluded |
+| Comparison set | Model proposes. Mari checks | Existing peer IDs, excluding the focal episode |
 | Promotion | Caller | Reflection remains a candidate until separately admitted |
 
 ::: source-block
@@ -248,13 +249,13 @@ proposal = parse_knowledge_change(
 
 The original text must occur exactly once, the replacement must differ, every
 diagnosis must exist, and every edit carries the current source revision. Mari
-returns a proposal; it never writes the document.
+returns a proposal for the caller to write.
 
 | Evaluation | Comparison | Decision information |
 |---|---|---|
 | Targeted replay | Corrected cases before and after | Did the proposed knowledge fix its stated problem? |
 | Regression replay | Previously passing unrelated cases | What collateral behavior changed? |
-| Blind review | Independently scored variants | Do reviewers prefer the content without knowing which is new? |
+| Blind review | Independently scored variants | Which content do reviewers prefer when version labels are hidden? |
 | Paired bootstrap | Same cases under both revisions | What is the mean delta and its uncertainty? |
 
 `compare_paired_metrics` returns means, delta, bootstrap interval, and
@@ -273,8 +274,8 @@ agreement, kappa, and duplicate reviewer submissions.
 `validate_knowledge_changeset(documents, edits)` lifts exact edits into one
 review unit. It checks every source revision and original substring, rejects
 overlapping changes, builds complete previews, hashes proposed revisions, and
-returns inverse edits. It does not apply them or claim a cross-store
-transaction.
+returns inverse edits. The caller applies them and defines any cross-store
+transaction boundary.
 
 ```{code-block} python
 :caption: Preview a coordinated correction across two artifacts
@@ -303,7 +304,7 @@ for entry in changeset.entries:
     review(entry.preview, entry.inverse_edits)
 ```
 
-| Failure | Why the changeset is not valid |
+| Failure | Validation reason |
 |---|---|
 | Unknown document | Target cannot be resolved |
 | Revision mismatch | Edit was prepared against stale material |
@@ -318,8 +319,8 @@ for entry in changeset.entries:
 
 ## Validate caller-designed knowledge structures
 
-`inspect_knowledge_structure(files, maximum_tokens=None)` checks a structure;
-it does not choose one.
+`inspect_knowledge_structure(files, maximum_tokens=None)` checks a structure.
+The report returns available choices for caller selection.
 
 | Check | Mechanism | Returned evidence |
 |---|---|---|
@@ -330,7 +331,7 @@ it does not choose one.
 | Context density | Sum observed token counts | Total and optional budget issue |
 
 ```{code-block} python
-:caption: Inspect a structure without prescribing its hierarchy
+:caption: Inspect a caller-defined file hierarchy
 
 from mari_components.knowledge import KnowledgeFile, inspect_knowledge_structure
 
@@ -356,8 +357,8 @@ assert report.valid and report.total_tokens == 1_050
 
 ## Detect derivation feedback loops
 
-Generated summaries and facts may be useful evidence, but they are not new
-independent sources. `inspect_knowledge_derivations` checks immutable revision
+Generated summaries and facts can supply evidence. Their origin remains
+derived material. `inspect_knowledge_derivations` checks immutable revision
 references, missing inputs, derivation cycles, and any derived input labeled
 `claimed_independent=True`.
 
@@ -387,7 +388,7 @@ report = inspect_knowledge_derivations([
 ])
 ```
 
-This check does not forbid using derived material. It prevents a caller from
+The check permits derived material and prevents a caller from
 counting that material as independent corroboration and makes cyclic ancestry
 visible before admission or aggregation.
 
@@ -419,8 +420,8 @@ if integrity.valid:
     run = project_tool_trajectory(trace, outcome="failure")
 ```
 
-Unknown status remains `None`, distinct from success. Mari neither stores the
-trace nor infers outcomes from text.
+Unknown status remains `None`. Success requires an explicit positive value.
+Mari stores the trace. Outcome inference from text belongs in a caller adapter.
 
 ::: source-block
 **Evidence**

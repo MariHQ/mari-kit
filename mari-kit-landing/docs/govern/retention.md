@@ -2,18 +2,22 @@
 
 # Retention, deletion, and purpose
 
-## At a glance
+## Contract
 
 | Knowledge | Policy | At evaluation time | Result |
 |---|---|---|---|
 | Session transcript | 30-day TTL | 31 days old | Expire and remove from retrieval |
 | Derived preference | Depends on transcript | Parent deleted | Tombstone and invalidate projection |
-| Compliance evidence | Seven-year retention | User requests ordinary deletion | Hold; record policy reason |
+| Compliance evidence | Seven-year retention | User requests ordinary deletion | Hold. Record policy reason |
 | Support address | Purpose: order fulfillment | Marketing retrieval | Deny for incompatible purpose |
 
 ## How it works
 
-Retention is evaluated independently from freshness. Expiration removes knowledge from ordinary reads. A tombstone records identity, reason, time, and reachable derived artifacts without retaining deleted content. Legal holds take precedence over routine expiration but remain visible in the decision trace.
+Retention and freshness produce independent decisions. Expiration removes
+knowledge from ordinary reads. A tombstone records identity and reason. It also
+keeps the event time and reachable derived artifacts. Deleted content leaves
+the record. Legal holds take priority over routine expiration and remain
+visible in the decision trace.
 
 ```{code-block} python
 :caption: Plan deletion through derivation edges
@@ -36,9 +40,11 @@ for action in plan.actions:
     store.apply_retention(action)
 ```
 
-Mari produces a plan; the storage adapter performs physical deletion. This keeps database-specific erasure and legal policy outside the core while making dependency handling testable.
+Mari produces a plan. The storage adapter performs physical deletion.
+Database-specific erasure and legal policy stay outside the core. Mari's
+dependency records keep that part testable.
 
-## What to evaluate
+## Measures
 
 | Invariant | Expected result |
 |---|---|
@@ -46,7 +52,7 @@ Mari produces a plan; the storage adapter performs physical deletion. This keeps
 | Dependency cascade | Every reachable derivative invalidated |
 | Legal hold | No destructive action emitted |
 | Purpose mismatch | Access denied before ranking |
-| Repeated planning | Same idempotency keys and no duplicate deletion |
+| Repeated planning | Same idempotency keys and zero duplicate deletions |
 
 ::: source-block
 **Papers and implementations**

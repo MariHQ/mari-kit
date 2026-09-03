@@ -2,7 +2,7 @@
 
 # Source authority, conflicts, and uncertainty
 
-## At a glance
+## Contract
 
 | Assertion | Source policy | Valid time | Working result |
 |---|---:|---|---|
@@ -10,14 +10,14 @@
 | Headquarters is San Francisco | Regulatory filing: 0.95 | 2025 onward | Selected for the current answer |
 | Headquarters was Oakland | Regulatory filing: 0.95 | Until 2025 | Retained as historically valid |
 
-The resolver never deletes losing assertions. It returns a working selection, alternatives, component scores, and the policy version that produced the decision.
+The resolver keeps every assertion. Its result contains a working selection, alternatives, component scores, and the policy version behind the decision.
 
 ## How it works
 
-For one entity and predicate, partition assertions by overlapping valid time. Combine source authority, directness, independence, corroboration, and recency. If the winning margin is below the policy threshold, return `DISPUTED` rather than forcing a value.
+For one entity and predicate, partition assertions by overlapping valid time. The policy combines source authority, directness, independence, corroboration, and recency. A margin below the policy threshold yields `DISPUTED`, preserving the unresolved state.
 
 ```{code-block} python
-:caption: Resolve a claim while preserving disagreement
+:caption: Resolve a claim and preserve disagreement
 
 from mari_components.governance import AuthorityPolicy, SourceAssertion, resolve_assertions
 
@@ -36,9 +36,9 @@ else:
     answer = result.selected.value
 ```
 
-Source weights are application policy, not universal truth. Mari validates and explains the calculation. It also records whether an assertion was observed, quoted, extracted, inferred, or generated.
+Source weights belong to the application. Mari validates and explains the calculation, then records whether each assertion was observed, quoted, extracted, inferred, or generated.
 
-## What to evaluate
+## Measures
 
 | Evaluation | Measure |
 |---|---|

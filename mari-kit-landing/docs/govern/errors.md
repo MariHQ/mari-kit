@@ -2,21 +2,21 @@
 
 # Errors and deliberate boundaries
 
-## At a glance
+## Contract
 
 | Failure class | Library behavior |
 |---|---|
 | Invalid caller input | Raise a specific validation error before mutation |
 | Malformed model output | Return uncertainty or a typed parse issue where recovery is safe |
 | Transport or rate-limit failure | Classify for caller-owned retry policy |
-| Revision conflict | Reject the stale write; never overwrite silently |
+| Revision conflict | Reject the stale write. Preserve the current value |
 
 
-:::{collapse} Worked failure mapping
+:::{collapse} Example failure mapping
 
 | Observed condition | Raised boundary | Host action |
 |---|---|---|
-| Incomplete full snapshot | `IncompleteSnapshot` | Preserve prior state; do not infer deletes |
+| Incomplete full snapshot | `IncompleteSnapshot` | Preserve prior state. Deletion requires an authoritative snapshot |
 | Expired credentials | `AuthenticationFailure` | Refresh credentials |
 | Valid request receives throttling | `TransientFailure` | Apply host retry budget |
 | Model omits required evidence | `MalformedModelOutput` | Retry or abstain |
@@ -26,14 +26,20 @@
 
 ## How it works
 
-Exceptions classify which boundary failed and whether repeating the same request can help. Connector adapters translate provider responses into authentication, transient, or permanent failures. Snapshot validation raises `IncompleteSnapshot` before absence can become deletion. Knowledge parsers raise `MalformedModelOutput` before an invalid value crosses into typed state. Mari never retries automatically because retry budgets, clocks, credentials, and side effects belong to the host.
+Exceptions identify the failed boundary and its retry signal. Connector adapters
+translate provider responses into authentication failures or transient errors.
+Permanent failures use another category. Snapshot validation raises
+`IncompleteSnapshot`. Absence has its own state, apart from deletion. Knowledge
+parsers raise `MalformedModelOutput` before an invalid value enters typed state.
+The host owns retry budgets and clocks. Credentials and side effects also stay
+there, along with retry execution.
 
 | Error | Meaning | Typical handling |
 |----|----|----|
 | `AuthenticationFailure` | Credentials rejected | Request new credentials |
 | `TransientFailure` | Temporary provider failure | Retry using app policy |
 | `PermanentFailure` | Request cannot succeed unchanged | Require intervention |
-| `IncompleteSnapshot` | Listing is not authoritative | Do not infer deletion |
+| `IncompleteSnapshot` | Listing lacks authority | Deletion requires an authoritative snapshot |
 | `MalformedModelOutput` | Generated value violates parser contract | Retry or abstain |
 
 ## Safe representations and connector contracts
@@ -52,6 +58,7 @@ report = check_connector_contract(pages, mode=SyncMode.FULL,
 assert report.pages == len(pages)
 ```
 
-Not included: model client, prompt framework, database, scheduler, credential store, authorization engine, agent runtime, or worker queue.
+Application components: model client, prompt framework, database, scheduler,
+credential store, authorization engine, agent runtime, and worker queue.
 
-**Engineering contract.** This taxonomy defines control flow and safe defaults. It is not a claim that provider APIs share identical failure semantics; each adapter maps its protocol into these categories before application retry policy is applied.
+**Engineering contract.** This taxonomy defines control flow and safe defaults. Provider APIs have distinct failure semantics. Each adapter maps its protocol into these categories before application retry policy runs.

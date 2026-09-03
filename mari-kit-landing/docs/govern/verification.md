@@ -2,9 +2,9 @@
 
 # Verification portfolios
 
-## At a glance
+## Contract
 
-| Mechanism | Protects against | Does not establish |
+| Mechanism | Protects against | Contract boundary |
 |---|---|---|
 | Best-of-N | A single poor sampled candidate | Correctness when every scorer is wrong |
 | Verdict consensus | One unstable judgment | Independence between judges |
@@ -12,7 +12,7 @@
 | Selection trace | Opaque winner choice | Calibration of injected scores |
 
 
-:::{collapse} Worked consensus example
+:::{collapse} Example consensus example
 
 | Candidate | Evidence weight | Verdict |
 |---|---:|---|
@@ -20,7 +20,7 @@
 | B | 0.20 | Contradicted |
 | C | 0.10 | Uncertain |
 
-The selected verdict is supported. Equal supported and contradicted weight produces abstention instead of arbitrary tie-breaking.
+The selected verdict is supported. Equal supported and contradicted weight produces abstention, leaving the tie explicit.
 :::
 
 
@@ -45,14 +45,13 @@ Evidence, coverage, completeness, corroboration, certainty.
 :::
 ::::::::
 
-**Scores are not truth probabilities.** They are deterministic quality signals for selection and abstention.
+**Score meaning.** Scores are deterministic quality signals for selection and abstention. Probability calibration belongs to a separate analysis.
 
-## Numerical evidence without a conclusion policy
+## Numerical evidence and conclusion policy
 
 `weighted_mean` returns normalized weights and each observation's numerical
 contribution. `wilson_proportion` returns a finite point estimate and interval
-for caller-labeled binary outcomes. Neither function names an outcome good,
-selects an action, or converts uncertainty into a verdict.
+for caller-labeled binary outcomes. The caller names outcomes, selects actions, and interprets uncertainty.
 
 ```{code-block} python
 :caption: Preserve outcome uncertainty as ranking features
@@ -68,10 +67,10 @@ success_rate = wilson_proportion(successes=7, total=10)
 assert success_rate.level == 0.95
 ```
 
-| Output | What it says | What it does not say |
+| Output | What it says | Boundary |
 |---|---|---|
 | Contribution `0.133` | Observation A's weighted contribution | That A is independent or authoritative |
-| Interval containing `0.70` | Sampling uncertainty under a binomial model | That the next remediation should run |
+| Interval containing `0.70` | Sampling uncertainty under a binomial model | Next remediation choice |
 
 [Wilson score interval](https://doi.org/10.1080/01621459.1927.10502953){.paper}[Cochrane statistical methods](https://training.cochrane.org/handbook/current/chapter-10){.paper}
 
@@ -80,15 +79,20 @@ assert success_rate.level == 0.95
 
 [Self-consistency improves chain-of-thought reasoning](https://arxiv.org/abs/2203.11171){.paper}[FEVER: evidence-based verification](https://arxiv.org/abs/1803.05355){.paper}[ALCE: citation quality evaluation](https://arxiv.org/abs/2305.14627){.paper}
 
-[Mari exposes an auditable selection portfolio; it does not reproduce model sampling or benchmark metrics.]{.small}
+[Mari exposes an auditable selection portfolio. Model sampling and benchmark metrics belong to the surrounding evaluation system.]{.small}
 :::
 
 
-Verification functions score already-parsed values and retain all successful attempts and failures for audit.
+Verification functions score parsed values and retain successful attempts and failures for audit.
 
 ## How it works
 
-`best_of_n` calls the producer up to `n` times, parses each output, records parse failures without discarding successful siblings, scores valid candidates, and selects the highest score with stable first-wins ties; it may stop once the threshold is met. `verdict_consensus` counts typed verdicts rather than free text. Grounding scores combine declared deterministic components; they are used for ranking or abstention, never calibrated as probabilities.
+`best_of_n` calls the producer up to `n` times and parses each output. Parse
+failures remain beside successful siblings. Valid candidates receive scores,
+followed by selection with stable first-wins ties. A configured threshold stops
+production early. `verdict_consensus` counts typed verdicts. Grounding scores
+combine declared deterministic components for ranking or abstention.
+Probability calibration requires separate work.
 
 ```{code-block} python
 :caption: verify.py

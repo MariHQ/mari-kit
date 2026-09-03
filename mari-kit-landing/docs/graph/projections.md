@@ -2,18 +2,18 @@
 
 # Event sourcing and disposable projections
 
-## At a glance
+## Behavior
 
 | Event sequence | Projection behavior |
 |---|---|
 | Unique contiguous generations | Deterministic replay and content-derived build identity |
 | Gap or duplicate generation | Reject the build |
-| Failed dependency | Do not publish the downstream projection |
+| Failed dependency | Hold the downstream projection |
 
-Throughput and atomic pointer swaps belong to the selected backend; Mari defines replay semantics.
+Throughput and atomic pointer swaps belong to the selected backend. Mari defines replay semantics.
 
 
-:::{collapse} Worked replay differences
+:::{collapse} Example replay differences
 
 | Event generations | Result |
 |---|---|

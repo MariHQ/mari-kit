@@ -2,16 +2,18 @@
 
 # SparseCL contradiction retrieval
 
-## At a glance
+## Behavior
 
 | Configuration | ContraDoc reference Recall@10 | Interpretation |
 |---|---:|---|
-| Cosine only | `0.457` | Baseline using deterministic feature-hash embeddings |
-| Cosine + Hoyer sparsity | `0.445` | The SparseCL term hurt by `0.012` without a SparseCL-trained encoder |
+| Cosine baseline | `0.457` | Deterministic feature-hash embeddings |
+| Cosine + Hoyer sparsity | `0.445` | The SparseCL term fell by `0.012` with a deterministic encoder |
 
-Do not enable the sparsity contribution merely because the equation is implemented. SparseCL relies on a separately trained sparse contrastive encoder; the deterministic ablation shows that the reranker alone does not create that signal.
+Enable the sparsity contribution with a separately trained sparse contrastive
+encoder. In this deterministic ablation, the plain encoder produced a `0.012`
+drop after the Hoyer term was added.
 
-:::{collapse} Worked sparse reranking example
+:::{collapse} Example sparse reranking example
 
 | Candidate | Cosine | Hoyer contribution | Combined outcome |
 |---|---:|---:|---|
@@ -22,7 +24,7 @@ Do not enable the sparsity contribution merely because the equation is implement
 
 :::::::{container} diagram flow
 ::: card
-**Query + corpus**[authorized passages only]{.small}
+**Query + corpus**[authorized passages]{.small}
 :::
 
 *cosine*
@@ -67,14 +69,18 @@ for hit in hits:
 
 ## Training objective
 
-`sparse_contrastive_losses` evaluates the paper's Hoyer contrastive loss: contradictions are positives, similar non-contradictory passages are hard negatives, and the rest of the batch supplies soft negatives. It returns transparent NumPy loss terms for inspecting a training batch; the application trains `E_s` in PyTorch, JAX, or another framework.
+`sparse_contrastive_losses` evaluates the paper's Hoyer contrastive loss: contradictions are positives, similar non-contradictory passages are hard negatives, and the rest of the batch supplies soft negatives. It returns transparent NumPy loss terms for inspecting a training batch. The application trains `E_s` in PyTorch, JAX, or another framework.
 
 ::: source-block
 **Paper**
 
 [SparseCL: Sparse Contrastive Learning for Contradiction Retrieval](https://arxiv.org/abs/2406.10746){.paper}
 
-[Mari implements Equations 1--3, cosine prefiltering, sparse reranking, authorization ordering, validation, and score traces. The Hoyer calculation was compared with the MIT-licensed Overcomplete implementation. The official SparseCL repository has no declared license, so no source from it is incorporated. Mari does not ship the trained encoder.]{.small}
+[Mari implements Equations 1--3, cosine prefiltering, sparse reranking,
+authorization ordering, validation, and score traces. The Hoyer calculation
+was compared with the MIT-licensed Overcomplete implementation. The official
+SparseCL repository lacks a declared license. Mari ships the retrieval path and
+expects the caller to provide the trained encoder.]{.small}
 :::
 
 
@@ -82,8 +88,8 @@ Contradiction retrieval asks which corpus passage explicitly disagrees with a qu
 
 ## How it works
 
-1.  **Encode twice.** A standard encoder `E` produces similarity vectors; a SparseCL-trained encoder `E_s` produces vectors where contradictions differ in a small semantic subspace.
+1.  **Encode twice.** A standard encoder `E` produces similarity vectors. A SparseCL-trained encoder `E_s` produces vectors where contradictions differ in a small semantic subspace.
 2.  **Authorize first.** Remove every passage outside `allowed_passage_ids` before computing scores.
-3.  **Generate candidates.** Rank allowed passages by `cos(E(q), E(p))` and retain a large configurable candidate set---1,000 in the paper's example.
-4.  **Measure sparse difference.** Compute normalized Hoyer sparsity over `E_s(q) − E_s(p)`. One-coordinate differences approach 1; dense differences approach 0.
+3.  **Generate candidates.** Rank allowed passages by `cos(E(q), E(p))` and retain a large configurable candidate set. The paper's example uses 1,000.
+4.  **Measure sparse difference.** Compute normalized Hoyer sparsity over `E_s(q) − E_s(p)`. One-coordinate differences approach 1. Dense differences approach 0.
 5.  **Rerank.** Sort by `cosine + alpha × Hoyer`, with stable passage-ID ties, and retain every component in the result trace.

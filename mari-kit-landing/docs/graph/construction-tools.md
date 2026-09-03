@@ -2,9 +2,9 @@
 
 # Entity and relation construction tools
 
-## At a glance
+## Behavior
 
-| Stage | Mari operation | Does not do |
+| Stage | Mari operation | Caller responsibility |
 |---|---|---|
 | Blocking | Group IDs by one or more caller keys | Decide identity |
 | Candidate generation | Emit unique within-block pairs | Score pairs |
@@ -14,7 +14,10 @@
 
 ## How it works
 
-Blocking reduces an all-pairs comparison from quadratic work to candidate pairs likely to match. Scoring stays injectable because names, addresses, identifiers, embeddings, and domain rules behave differently across corpora. Threshold clustering returns assignments plus every accepted link, making transitive merges visible.
+Blocking reduces an all-pairs comparison from quadratic work to pairs that
+share a configured key. Scoring stays injectable because each corpus gives its
+fields different meaning. Threshold clustering returns assignments plus every
+accepted link. The link set exposes transitive merges.
 
 ```{code-block} python
 :caption: Compose construction primitives explicitly
@@ -48,16 +51,16 @@ for cluster in clusters.clusters:
 
 `BlockedPair.shared_keys` explains why comparison occurred. Cluster diagnostics
 surface the weakest accepted link and any rejected pair located inside a
-transitively merged cluster. `resolve_relation_evidence` deliberately does not
-contain an `accepted` flag: evidence presence is not a truth or sufficiency
-policy. The older `bind_relation_evidence` compatibility function retains its
+transitively merged cluster. `resolve_relation_evidence` omits an `accepted`
+flag. Evidence presence carries evidence. The caller defines truth and
+sufficiency policy. The older `bind_relation_evidence` compatibility function retains its
 original presence-based behavior.
 
 ## Graph-to-evidence projection
 
-`project_graph_evidence` performs a many-to-many join without collapsing why an
+`project_graph_evidence` performs a many-to-many join and retains why an
 artifact was found. Every association retains the graph node, node score,
-caller path, artifact revision, and evidence role; nodes without evidence are
+caller path, artifact revision, and evidence role. Nodes lacking evidence are
 reported separately.
 
 ```{code-block} python
@@ -74,16 +77,15 @@ projection = project_graph_evidence(
 )
 ```
 
-One artifact may support several nodes and one node may resolve to several
-artifacts. `artifact_refs` is only a convenience deduplication; the complete
+The mapping supports several nodes from one artifact. A node can resolve to several
+artifacts. `artifact_refs` is a convenience deduplication. The complete
 association table remains available.
 
 ## Version families
 
 `resolve_version_families` groups immutable manifestations by any caller key
 and proposes the highest-scored representative. Equal top scores are returned
-as explicit ties rather than resolved through hidden publication or revision
-policy.
+as explicit ties. Publication and revision policy remain visible to the caller.
 
 ```{code-block} python
 :caption: Group a preprint, journal article, and correction
@@ -101,11 +103,11 @@ for family in families:
         review(family)
 ```
 
-The family key and priority are application semantics. Mari does not assume
-that newer, published, unretracted, or canonical manifestations should win.
+The family key and priority are application semantics. The caller chooses the
+preferred manifestation among newer, published, unretracted, or canonical records.
 [W3C PROV alternate and specialization relations](https://www.w3.org/TR/prov-dm/){.paper}
 
-## What to evaluate
+## Measures
 
 | Layer | Measure |
 |---|---|

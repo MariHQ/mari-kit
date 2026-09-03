@@ -2,19 +2,19 @@
 
 # Tiered memory consolidation
 
-## At a glance
+## Behavior
 
 | Tier | Keep here when | Promotion signal |
 |---|---|---|
 | Working | Needed by the active task | Immediate relevance |
-| Episodic | A specific event may matter later | Reuse, outcome, or recency |
+| Episodic | A specific event retained for later use | Reuse, outcome, or recency |
 | Semantic | A stable fact is supported across evidence | Confidence, recurrence, and review |
 | Procedural | A repeatable successful sequence exists | Held-out task improvement |
 
 Consolidation is a budgeted selection policy. Summary generation, importance scoring, and promotion approval remain injected decisions.
 
 
-:::{collapse} Worked budget selection
+:::{collapse} Example budget selection
 
 | Candidate | Utility | Estimated tokens | Selected |
 |---|---:|---:|---:|
@@ -25,7 +25,7 @@ Consolidation is a budgeted selection policy. Summary generation, importance sco
 
 
 
-Tiers are policies over cost and lifecycle, not hard-coded stores. Mari provides topic segmentation and a deterministic promotion planner. The host supplies compression models and commits selected revisions, keeping raw observations available for audit.
+Tiers are policies over cost and lifecycle. Mari provides topic segmentation and a deterministic promotion planner. The host supplies compression models and commits selected revisions, keeping raw observations available for audit.
 
 ## How it works
 

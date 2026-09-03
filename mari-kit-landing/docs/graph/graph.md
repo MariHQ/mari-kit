@@ -2,22 +2,23 @@
 
 # Bi-temporal knowledge graph
 
-## At a glance
+## Behavior
 
 | LongMemEval temporal check | Result | Meaning |
 |---|---:|---|
 | Gold-session provenance visible at question time | `0.936` | Some gold session IDs are absent or timestamp-incompatible in the cleaned records |
-| Future-session exclusion | `1.000` | The bitemporal filter did not expose sessions dated after the question |
+| Future-session exclusion | `1.000` | The bitemporal filter excluded every session dated after the question |
 
-This measures visibility semantics, not whether a model can answer temporal questions.
+The reported value measures visibility semantics. Model answer quality has its
+own measure.
 
-:::{collapse} Worked bitemporal difference
+:::{collapse} Example bitemporal difference
 
 | Query | Valid at requested time | Known at requested time | Returned |
 |---|---:|---:|---:|
 | Historical state before correction arrived | Yes | Yes | Original fact |
 | Same valid date, knowledge after correction | Yes | No for original revision | Corrected fact |
-| Timestamp equals half-open interval end | No | — | Excluded |
+| Timestamp equals half-open interval end | No | n/a | Excluded |
 :::
 
 
@@ -26,9 +27,20 @@ This measures visibility semantics, not whether a model can answer temporal ques
 
 ## How it works
 
-An assertion is append-only and carries two intervals. A correction learned today may close an older assertion's transaction interval while preserving its historical valid interval. Query `at` filters valid time; `known_at` filters transaction time; both must contain their requested timestamp. Contradictions create explicit edges or superseding revisions instead of destructive overwrites.
+An assertion is append-only and carries two intervals. A correction learned
+today closes an older assertion's transaction interval. Its historical valid
+interval remains in the record. Query `at` filters valid time. Query `known_at`
+filters transaction time. Each interval must contain its requested timestamp.
+Contradictions create explicit edges or superseding revisions. Prior revisions
+stay available.
 
-**Research basis**[Zep](https://arxiv.org/abs/2501.13956){.paper} uses a temporally aware graph to maintain historical relationships for agent memory, while the [temporal knowledge-graph survey](https://arxiv.org/abs/2201.08236){.paper} catalogs representations and inference tasks for facts that change over time. Mari adds explicit valid-time and transaction-time query semantics. Applications must choose interval-boundary and contradiction policies that match their domain.
+**Research basis**[Zep](https://arxiv.org/abs/2501.13956){.paper} uses a
+temporally aware graph to maintain historical relationships for agent memory.
+The [temporal knowledge-graph survey](https://arxiv.org/abs/2201.08236){.paper}
+catalogs representations and inference tasks for facts that change over time.
+Mari adds explicit valid-time and transaction-time query semantics.
+Applications choose interval boundaries and contradiction policies for their
+domain.
 
 :::::{container} diagram bitemporal
 <div>

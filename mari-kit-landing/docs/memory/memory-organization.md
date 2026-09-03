@@ -2,13 +2,13 @@
 
 # Memory organization and evidence notes
 
-## At a glance
+## Behavior
 
-| Organization policy | LongMemEval observation | Trade-off |
+| Organization policy | LongMemEval observation | Reading |
 |---|---|---|
-| Recency + importance + BM25 relevance | Evidence recall@10 `0.953`; complete recall `0.906` | Relevance dominates under the measured `0.15/0.15/0.70` weights |
-| A-MEM link thresholds | Precision `0.436`; recall `0.944`; F1 `0.597` | Broad linking finds evidence but creates many weak links |
-| Chain-of-Note source choice | Gold-judgment component check only | Replace oracle judgments with a measured classifier before claiming answer quality |
+| Recency + importance + BM25 relevance | Evidence recall@10 `0.953`. Complete recall `0.906` | Relevance dominates under the measured `0.15/0.15/0.70` weights |
+| A-MEM link thresholds | Precision `0.436`. Recall `0.944`. F1 `0.597` | Broad linking finds evidence and creates many weak links |
+| Chain-of-Note source choice | Gold-judgment component check | Add a measured classifier before making an answer-quality claim |
 
 :::{collapse} Actual LongMemEval retrieval differences
 
@@ -17,12 +17,15 @@
 | `e47becba` | Single-session user | 1 | `2` | 1.0 |
 | `6d550036` | Multi-session | 4 | `4`, `8`, `>10`, `>10` | 0.0 |
 
-The second case retrieves one supporting session near the top but misses the complete evidence set. `Recall-any` would hide that structural failure.
+The second case retrieves one supporting session near the top. The complete
+evidence set remains missing. `Recall-any` records the early hit, so inspect
+`Recall-all` for this failure.
 :::
 
 
 
-These functions link related notes, rank memories for recall, and decide whether retrieved evidence can support an answer.
+The functions link related notes and rank memories for recall. Another function
+decides whether retrieved evidence can support an answer.
 
 ## How it works
 

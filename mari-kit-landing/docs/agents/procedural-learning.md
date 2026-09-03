@@ -2,35 +2,45 @@
 
 # Procedural learning
 
-## At a glance
+## Promotion inputs
 
 | Candidate outcome | Promotion policy |
 |---|---|
 | Improves held-out task score and passes safety gates | Submit for review |
-| Improves score but regresses grounding or ACL isolation | Reject |
-| Matches current behavior without improvement | Keep current version |
-| Has only training-set evidence | Do not promote |
+| Improves score and regresses grounding or ACL isolation | Reject |
+| Matches current behavior | Keep current version |
+| Has training-set evidence | Require held-out evidence |
 
-The included trace study exercises procedure mining on AgentBench-shaped database interactions. It shows that Mari preserves ordered actions and promotion rules; it does not establish that a procedure improves an application's agent.
+The included trace study exercises procedure mining on AgentBench-shaped
+database interactions. Mari preserves the action order and applies the stated
+promotion rules. Agent improvement requires an application-level evaluation.
 
 
-:::{collapse} Worked promotion outcomes
+:::{collapse} Promotion examples
 
 | Candidate result | Grounding gate | ACL gate | Promotion outcome |
 |---|---:|---:|---|
 | Better task score | Pass | Pass | Submit for human review |
 | Better task score | Fail | Pass | Reject |
 | Better task score | Pass | Fail | Reject |
-| No regression but no improvement | Pass | Pass | Retain active version |
+| Same task score | Pass | Pass | Retain active version |
 :::
 
 
 
-Execution feedback can propose procedural updates, but promotion depends on held-out cases, negative outcomes, cross-procedure interference, and explicit review.
+Execution feedback supplies evidence for a procedural update. Promotion reads
+held-out results and prior failures. It also checks related procedures before
+an explicit review.
 
 ## How it works
 
-Reflect over a trajectory and observed outcome, turn the reflection into atomic add/update/tag/remove operations, and apply the patch to a copy of the active skillbook. Evaluate that candidate on its own cases, related-procedure cases, and known failures. Hard gates reject grounding or ACL regressions; passing creates a review proposal rather than activating it automatically. Worked, failed, and partial attempts remain separately retrievable.
+An application asks a model to examine a trajectory and its observed outcome.
+Mari parses the response into atomic skillbook operations, then applies them to
+a copy of the active version. Evaluation covers the target procedure and known
+failures. Related procedures supply regression cases. Hard gates catch
+grounding or ACL regressions. A passing report creates a review proposal.
+Successful attempts keep one identity class. Failures use another. A partial
+attempt carries its own record type.
 
 ::: source-block
 **Papers**
@@ -53,7 +63,7 @@ report = regression_gate(
     ],
 )
 if report.passed:
-    submit_for_review(candidate, report)  # application action, never automatic
+    submit_for_review(candidate, report)  # application action
 ```
 
 ## Supporting mining functions
@@ -61,9 +71,10 @@ if report.passed:
 | Function | Role before promotion |
 |---|---|
 | `mine_trajectory_process(runs, activity_aliases=...)` | Shows repeated variants, transitions, parallel calls, and rework before a procedure is proposed |
-| `mine_trajectory_invariants(..., minimum_support=1.0, minimum_applicable=2)` | Produces reviewable regularities from explicitly successful traces only |
-| `compare_trajectories(..., mode=..., matches=...)` | Measures candidate paths against a reference without assuming one exact argument representation |
+| `mine_trajectory_invariants(..., minimum_support=1.0, minimum_applicable=2)` | Produces reviewable regularities from explicitly successful traces |
+| `compare_trajectories(..., mode=..., matches=...)` | Measures candidate paths with caller-defined argument equivalence |
 | `select_diverse_trajectories(vectors, limit=..., relevance=..., density=...)` | Selects behaviorally separated review cases from caller embeddings |
 
-These functions expose evidence and unmatched cases. They do not decide that a
-frequent behavior is desirable or that a procedure should be activated.
+The functions return evidence and unmatched cases. The caller decides which
+behavior is desirable. Activation happens through the application's commit
+path.

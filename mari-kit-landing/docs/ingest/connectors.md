@@ -2,15 +2,15 @@
 
 # Polling and streaming connectors
 
-## At a glance
+## Behavior
 
 | Mode | Use it for | Delivery contract |
 |---|---|---|
-| Polling | Complete snapshots and cursor-based change feeds | Bounded pages; checkpoint advances only after a complete page |
-| Streaming | Low-latency change notification | Verify, normalize, coalesce, then fetch canonical state; no checkpoint required |
+| Polling | Complete snapshots and cursor-based change feeds | Bounded pages. Checkpoint advances after a complete page |
+| Streaming | Low-latency change notification | Verify, normalize, coalesce, then fetch canonical state. No checkpoint required |
 | Singer | Existing tap ecosystems | Convert Singer records and state messages into bounded source pages |
 
-All 18 connector definitions are exercised against recorded or synthetic provider shapes. That establishes pagination, identity, tombstone, and event-normalization behavior; it does not predict provider uptime or throughput.
+All 18 connector definitions are exercised against recorded or synthetic provider shapes. That establishes pagination, identity, tombstone, and event-normalization behavior. Provider uptime and throughput require provider-specific measurements.
 
 ## Shared function definitions and options
 
@@ -18,22 +18,22 @@ All 18 connector definitions are exercised against recorded or synthetic provide
 |---|---|---|
 | `PollRequest` | None | `cursor`, `checkpoint`, positive `page_size`, positive `page_limit` |
 | `poll_*` | Frozen provider config, request, injected transport | Provider selection fields and explicit content-type scope |
-| `stream_change_hint` | One raw `StreamEvent`, verifier | `maximum_bytes`; verification always precedes parsing |
-| `stream_hints` | Event iterable, verifier | `maximum_events`, `maximum_bytes`; no checkpoint state |
-| `coalesce_hints_ordered` | Hints and caller `order_key` | Optional explicit tie resolver; unresolved keys are withheld |
+| `stream_change_hint` | One raw `StreamEvent`, verifier | `maximum_bytes`. Verification always precedes parsing |
+| `stream_hints` | Event iterable, verifier | `maximum_events`, `maximum_bytes`. No checkpoint state |
+| `coalesce_hints_ordered` | Hints and caller `order_key` | Optional explicit tie resolver. Unresolved keys are withheld |
 | `hydrate_hints` | Verified hints and canonical fetch callback | Converts hints to ordinary `PollPage` values |
-| `validate_hint_hydration` | Hint and hydrated pages | Optional revision-equivalence callback; no built-in ordering assumption |
+| `validate_hint_hydration` | Hint and hydrated pages | Optional revision-equivalence callback. No built-in ordering assumption |
 
 Every provider config has a matching `validate_*` function that returns
-configuration issues without performing network I/O. Network functions accept
-an `HttpTransport`; retry scheduling, credentials, queues, and SDK clients stay
+configuration issues before network I/O. Network functions accept
+an `HttpTransport`. Retry scheduling, credentials, queues, and SDK clients stay
 outside the connector contract.
 
-:::{collapse} Worked polling and streaming traces
+:::{collapse} Example polling and streaming traces
 
 | Mode | Input sequence | Emitted sequence | Checkpoint |
 |---|---|---|---|
-| Polling | page 1 → page 2 → complete | upserts and tombstones | Advances only after complete page |
+| Polling | page 1 → page 2 → complete | upserts and tombstones | Advances after complete page |
 | Polling | page 1 → incomplete page 2 | partial changes withheld from reconciliation | Preserved |
 | Streaming | create → duplicate create → delete | coalesced dirty hints | None |
 | Streaming | invalid signature → payload | nothing parsed or emitted | None |
@@ -296,16 +296,19 @@ for page in poll_github(config, request, http=http):
 
 ## Streaming
 
-`stream_hints` requires a verifier, rejects oversized deliveries and batches, parses provider-specific hints, and coalesces repeated aggregate keys. It has no cursor or checkpoint. The application owns the webhook server, queue, acknowledgement, retries, and optional canonical hydration.
+`stream_hints` requires a verifier and rejects oversized deliveries. It parses
+provider-specific hints, then coalesces repeated aggregate keys. Streaming
+state consists of those hints. The application owns the webhook server and
+queue. It also handles acknowledgement, retries, and optional canonical
+hydration.
 
-Arrival order is not necessarily revision order. `coalesce_hints_ordered`
+Arrival order can differ from revision order. `coalesce_hints_ordered`
 accepts a caller ordering key and separately reports stale hints, exact
-duplicates, and equal-order conflicts. With no conflict resolver it retains the
-first tied hint and exposes the conflict; applications can instead supply an
-explicit resolver.
+duplicates, and equal-order conflicts. The default retains the first tied hint
+and exposes the conflict. An explicit resolver can choose another value.
 
 ```{code-block} python
-:caption: Coalesce out-of-order changes without assuming last arrival is newest
+:caption: Coalesce out-of-order changes using explicit revision keys
 
 from mari_components.connectors import coalesce_hints_ordered
 
@@ -335,8 +338,8 @@ for hint in stream_hints((event,), verify=verify_signature):
 - Eighteen catalog connectors: batch polling, validation, pagination limits, and normalized documents.
 - GitHub, GitLab, Slack, Google Drive, OneDrive, SharePoint, Confluence, and Box: verified, checkpoint-free streaming hints.
 - S3, GCS, and Azure Blob: injected SDK batch operations plus checkpoint-free provider-event parsing.
-- CloudEvents: verified generic dirty hints with no checkpoint state.
-- Singer/Meltano: bounded RECORD pages and surfaced STATE checkpoints without subprocess ownership.
+- CloudEvents: verified generic dirty hints with checkpoint-free delivery.
+- Singer/Meltano: bounded RECORD pages and surfaced STATE checkpoints with subprocess ownership left to the host.
 - Local filesystem: content-hashed snapshots with change detection across resumed batches.
 - JSON REST: bounded same-origin pages with application-defined document normalization.
 - Slack: canonical thread fetch by ID.
@@ -349,9 +352,9 @@ for hint in stream_hints((event,), verify=verify_signature):
 
 [OpenAPI: HTTP operation contracts](https://spec.openapis.org/oas/latest.html){.paper}[CloudEvents: event envelopes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md){.paper}[RFC 2104: HMAC verification](https://www.rfc-editor.org/rfc/rfc2104){.paper}
 
-**Permissive implementation references** [LlamaIndex connectors — MIT](https://github.com/run-llama/llama_index){.paper} [dlt filesystem/REST sources — Apache-2.0](https://github.com/dlt-hub/dlt){.paper} [Meltano Singer SDK — Apache-2.0](https://github.com/meltano/sdk){.paper} [Unstructured ingestion — Apache-2.0](https://github.com/Unstructured-IO/unstructured){.paper}
+**Permissive implementation references** [LlamaIndex connectors, MIT](https://github.com/run-llama/llama_index){.paper} [dlt filesystem/REST sources, Apache-2.0](https://github.com/dlt-hub/dlt){.paper} [Meltano Singer SDK, Apache-2.0](https://github.com/meltano/sdk){.paper} [Unstructured ingestion, Apache-2.0](https://github.com/Unstructured-IO/unstructured){.paper}
 
-[Provider pagination, cursor, and signature schemes differ. Mari normalizes their observable results; it does not claim a universal delivery guarantee.]{.small}
+[Provider pagination, cursor, and signature schemes differ. Mari normalizes their observable results. Delivery guarantees remain provider-specific.]{.small}
 :::
 
 
@@ -359,12 +362,18 @@ Every catalog connector defines a frozen configuration object, validation, and b
 
 ## How it works
 
-A batch connector starts from the caller's cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded `ChangeHint` keys, and coalesces duplicates. Streaming has no checkpoint state. The application may canonically refetch the changed object into a `PollPage`, so partial webhook payloads cannot bypass synchronization invariants.
+A batch connector starts from the caller's cursor and requests bounded pages.
+It normalizes provider objects, emits explicit tombstones, and returns the next
+cursor. A streaming connector verifies the raw delivery before parsing. It
+reduces provider payloads to bounded `ChangeHint` keys and coalesces duplicates.
+Each event stands on its own. The application refetches the changed object
+into a canonical `PollPage`. This keeps partial webhook payloads inside sync
+invariants.
 
 `coalesce_hints_ordered` uses a caller-supplied revision ordering. It reports
 older deliveries, exact duplicates, and equal-order conflicts separately. An
 unresolved conflict is omitted from `selected` and its provider/aggregate key
-appears in `unresolved_keys`; a caller may instead supply an explicit resolver.
+appears in `unresolved_keys`. An explicit resolver can select a tied hint.
 
 | Code and work | Documents and files | Business systems | Open protocols |
 |---|---|---|---|

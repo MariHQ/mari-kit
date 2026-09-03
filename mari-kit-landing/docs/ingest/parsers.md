@@ -2,17 +2,18 @@
 
 # Knowledge parsers
 
-## At a glance
+## Behavior
 
 | Mari provides | Caller provides |
 |---|---|
 | Typed schemas, evidence resolution, ordering recovery, and safe fallbacks | Model prompt, inference, and task-specific quality |
 | An uncertain result when a required row or citation is invalid | The threshold for retry, review, or rejection |
 
-These are validation parsers, not bundled extraction models. Corpus evidence helps select the injected model; parser guarantees concern structure, attribution, and failure behavior.
+The parsers validate injected extraction results. Corpus evidence helps select
+the model. Parser guarantees cover structure, attribution, and failure behavior.
 
 
-:::{collapse} Worked malformed-batch recovery
+:::{collapse} Example malformed-batch recovery
 
 | Requested claim | Model row | Parsed result |
 |---|---|---|
@@ -24,11 +25,18 @@ These are validation parsers, not bundled extraction models. Corpus evidence hel
 
 
 
-Models return JSON-like values. Parsers resolve all evidence against supplied document and section revisions and return immutable typed values. Research establishes each task formulation; Mari implements a deterministic validation boundary rather than the cited model.
+Models return JSON-like values. Parsers resolve evidence against supplied
+document and section revisions and return immutable typed values. Research
+establishes each task formulation. Mari implements the deterministic validation
+boundary around the cited model.
 
 ## How it works
 
-Each parser first requires the recipe's top-level collection, then validates every required field and enum, resolves evidence through the exact contract below, derives deterministic audit signals, and constructs frozen result types. It never repairs a claim's meaning. Batch claim assessment is the exception to fail-fast parsing: rows are keyed back to caller order, absent rows become `uncertain`, and individually malformed rows do not erase valid siblings.
+Each parser requires the recipe's top-level collection, validates every required
+field and enum, resolves evidence through the contract below, derives audit
+signals, and constructs frozen result types. Claim meaning stays with the
+caller. Batch claim assessment keys rows to caller order. Absent rows become
+`uncertain`, and malformed rows leave valid siblings available.
 
 :::{container} diagram stages
 model proposal*→*schema*→*exact evidence*→*revision binding*→*typed candidate
@@ -37,13 +45,13 @@ model proposal*→*schema*→*exact evidence*→*revision binding*→*typed cand
 | Parser | Produces | Research-backed task | Academic sources |
 |----|----|----|----|
 | `parse_facts` | `FactCandidate` | Atomic claims and optional document-level relations with evidence | [FActScore](https://arxiv.org/abs/2305.14251){.paper} · [DocRED](https://arxiv.org/abs/1906.06127){.paper} |
-| `parse_claim_assessments` | `FactAssessment` | Supported, contradicted, or uncertain verdicts; decisive rows require evidence | [FEVER](https://arxiv.org/abs/1803.05355){.paper} |
-| `parse_decisions` | `DecisionCandidate` | Decision-related utterance extraction without treating topical language as proof | [Hsueh & Moore](https://aclanthology.org/N07-1004/){.paper} · [Karan et al.](https://aclanthology.org/2021.sigdial-1.56/){.paper} |
+| `parse_claim_assessments` | `FactAssessment` | Supported, contradicted, or uncertain verdicts. Decisive rows require evidence | [FEVER](https://arxiv.org/abs/1803.05355){.paper} |
+| `parse_decisions` | `DecisionCandidate` | Decision-related utterance extraction with evidence-based interpretation | [Hsueh & Moore](https://aclanthology.org/N07-1004/){.paper} · [Karan et al.](https://aclanthology.org/2021.sigdial-1.56/){.paper} |
 | `parse_answer` | `GroundedAnswer` | Evidence-selected document QA, citations, or explicit insufficient evidence | [QASPER](https://arxiv.org/abs/2105.03011){.paper} · [ALCE](https://arxiv.org/abs/2305.14627){.paper} |
 | `parse_answer_candidates` | `AnswerCandidate[]` | Reusable question-answer pairs bound to supporting passages | [QASPER](https://arxiv.org/abs/2105.03011){.paper} |
 | `parse_glossary` | `GlossaryCandidate[]` | Term-definition relations, aliases, and source spans | [DeftEval](https://arxiv.org/abs/2008.13694){.paper} |
-| `parse_digest` | `DigestSummary` | Overall and topic summaries with separately inspectable evidence | [QAGS](https://arxiv.org/abs/2004.04228){.paper} · [SummaC](https://arxiv.org/abs/2111.09525){.paper} |
-| `parse_impact` | `ImpactAssessment` | In-scope affected-document proposals followed by deterministic dependency checks | Mari contract; no claimed benchmark reproduction |
+| `parse_digest` | `DigestSummary` | Document-wide and topic summaries with separately inspectable evidence | [QAGS](https://arxiv.org/abs/2004.04228){.paper} · [SummaC](https://arxiv.org/abs/2111.09525){.paper} |
+| `parse_impact` | `ImpactAssessment` | In-scope affected-document proposals followed by deterministic dependency checks | Mari contract. No claimed benchmark reproduction |
 | `parse_refinement` | `RefinementEdit[]` | Bounded, attribution-aware, fact-preserving edit proposals | [RARR](https://arxiv.org/abs/2210.08726){.paper} · [FactEditor](https://arxiv.org/abs/2007.00916){.paper} |
 
 ```{code-block} python
@@ -60,23 +68,25 @@ print(answer.evidence[0].quote)  # exact source text
 
 Additional deterministic helpers include `normalize_claim`, `deduplicate_fact_candidates`, `grounding_coverage`, and `excerpt`. Recoverable batch drift is handled conservatively: assessment rows are restored to caller order, missing rows become uncertain, and good rows survive alongside invalid ones. Structured fact qualifiers preserve subject, relation, object, scope, validity, and conditions.
 
-**`grounding_coverage` is not entailment or confidence.** It is a Mari-specific lexical audit signal motivated by citation completeness. Exact quote validation prevents fabricated citations but does not prove that every paraphrase follows logically from its evidence.
+**`grounding_coverage` measures lexical coverage.** It is a Mari-specific audit
+signal motivated by citation completeness. Exact quote validation catches
+fabricated citations. Logical entailment remains a separate evaluation.
 
 ## Source parser functions and options
 
 | Function | Main options | Failure behavior |
 |---|---|---|
-| `parse_markdown` | `tables`, `recover_unclosed_fences`, `parser_id` | Returns an unclosed-fence warning or error while retaining the recovered block |
-| `parse_html` | `parser_id`, `recover` | Reports unmatched and implicitly closed tags; `recover=False` promotes recovery warnings to errors |
-| `parse_delimited` | `identity_fields`, delimiter or sniffing, quote character, header, `strict_width` | Rejects a malformed-width row in strict mode; valid siblings survive |
+| `parse_markdown` | `tables`, `recover_unclosed_fences`, `parser_id` | Returns an unclosed-fence warning or error and retains the recovered block |
+| `parse_html` | `parser_id`, `recover` | Reports unmatched and implicitly closed tags. `recover=False` promotes recovery warnings to errors |
+| `parse_delimited` | `identity_fields`, delimiter or sniffing, quote character, header, `strict_width` | Rejects a malformed-width row in strict mode. Valid siblings survive |
 | `parse_json_lines` | `identity_fields`, `parser_id` | Each malformed or non-object line is positioned independently |
 | `parse_json_array` | `identity_fields`, `parser_id` | Retains parsed object siblings and positions non-object or malformed members |
-| `parse_python` | Repository, revision, path and parser ID | Syntax errors produce an empty, positioned result rather than guessed symbols |
+| `parse_python` | Repository, revision, path and parser ID | Syntax errors produce an empty, positioned result. Symbol extraction requires valid syntax |
 
-`ParseIssue` contains `code`, `message`, severity, optional subject, and an
-exact character span. `ParseResult.succeeded` means no error-severity issue;
-warnings and accepted values remain available. This is parser execution
-evidence, not a document-quality verdict.
+`ParseIssue` contains `code` and `message`. Severity and an optional subject
+add context. The record also carries an exact character span.
+`ParseResult.succeeded` becomes true when every issue stays below error
+severity. Warnings and accepted values remain available in the result.
 
 ```{code-block} python
 :caption: Keep accepted records beside malformed siblings

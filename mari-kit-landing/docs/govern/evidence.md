@@ -2,7 +2,7 @@
 
 # Evidence contracts
 
-## At a glance
+## Contract
 
 | Claim state | Required evidence behavior |
 |---|---|
@@ -10,14 +10,14 @@
 | Contradicted | At least one resolvable span conflicts with the claim |
 | Uncertain | Evidence is missing, malformed, inaccessible, or inconclusive |
 
-Mari validates references against exact document and section revisions. Entailment and citation-quality scores come from the model or evaluator you inject.
+Mari validates references against exact document and section revisions. The injected model or evaluator supplies entailment and citation-quality scores.
 
 `ArtifactRef` and `ArtifactEvidence` provide the same contract for passages,
 symbols, rows, messages, assertions, and generated artifacts. The older
 document-specific `Evidence` remains available as a compatibility adapter.
 
 
-:::{collapse} Worked evidence resolution examples
+:::{collapse} Example evidence resolution examples
 
 | Proposal | Source state | Result |
 |---|---|---|
@@ -98,14 +98,14 @@ assert report.accepted
 ```
 
 The report separates `not_visible`, `unresolved`, `invalid_span`, and
-`quote_mismatch`. It reports mechanical validity only. Applications decide
+`quote_mismatch`. It reports mechanical validity. Applications decide
 whether the evidence is sufficient, independent, authorized, or persuasive.
 
 ## Dependency conversion
 
-`evidence_dependencies` projects each record to `(document_id, document_revision, section_id, section_revision)`, deduplicated by `(document_id, section_id)` and returned in stable order. Two records naming different revisions of the same key raise `ValueError`; silently choosing one would make reuse nondeterministic.
+`evidence_dependencies` projects each record to `(document_id, document_revision, section_id, section_revision)`, deduplicated by `(document_id, section_id)` and returned in stable order. Two records naming different revisions of the same key raise `ValueError`. Silently choosing one would make reuse nondeterministic.
 
-**What this proves—and does not prove.** The contract proves that the quoted characters occurred in one supplied source revision and records where. It does not prove entailment, source authority, completeness, or truth. Those require claim assessment, corroboration, authorization, and review.
+**Contract boundary.** The record proves that quoted characters occurred in one supplied source revision and records their location. Entailment, source authority, completeness, and truth require claim assessment, corroboration, authorization, and review.
 
 ::: source-block
 **Research and standards**
@@ -116,13 +116,13 @@ whether the evidence is sufficient, independent, authorized, or persuasive.
 :::
 
 
-An evidence record is a byte-for-byte quotation bound to the exact document and section revision that was supplied to a parser. It is provenance, not a model confidence score.
+An evidence record is a byte-for-byte quotation bound to the exact document and section revision supplied to a parser. It carries provenance. A model confidence score comes from a separate field.
 
 ## How it works
 
-1.  **Restrict the corpus.** Build an allowed map from only the `KnowledgeDocument` values passed by the caller. A model cannot cite an ID outside that map.
-2.  **Resolve the document.** Require `document_id`. If exactly one allowed document contains the quote, Mari may recover a missing ID; zero or multiple holders is rejected.
-3.  **Match exact text.** Require a non-empty quote and test literal containment in the canonical document body. Fuzzy, normalized, or semantic matches are not accepted.
+1.  **Restrict the corpus.** Build an allowed map from the `KnowledgeDocument` values passed by the caller. Reject model citations outside that map.
+2.  **Resolve the document.** Require `document_id`. If exactly one allowed document contains the quote, Mari recovers a missing ID. Zero or multiple holders is rejected.
+3.  **Match exact text.** Require a non-empty quote and test literal containment in the canonical document body. The contract requires literal text.
 4.  **Resolve one section.** Split the document into current sections and find sections containing the quote. A repeated quote spanning multiple sections is rejected unless `section_id` selects exactly one.
-5.  **Derive coordinates.** Mari computes `start = section.start + section.body.index(quote)` and `end = start + len(quote)`; it does not trust model-supplied offsets or revisions.
+5.  **Derive coordinates.** Mari computes `start = section.start + section.body.index(quote)` and `end = start + len(quote)`. Model-supplied offsets and revisions are ignored.
 6.  **Bind revisions.** The accepted record receives the current `document.revision`, stable `section_id`, and content-derived `section.revision`. These become the invalidation key.

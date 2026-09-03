@@ -2,37 +2,41 @@
 
 # Context lifecycle and selective intervention
 
-## At a glance
+## Behavior
 
 | Comparison | Result | Design consequence |
 |---|---:|---|
 | Proactive memory agent vs. base agent, Terminal-Bench 2.0 | +8.3 percentage points | Recall must be able to intervene before a model call |
-| Proactive memory agent vs. base agent, tau2-Bench | +6.8 percentage points | Intervention policy is separate from retrieval |
-| PlugMem | Evaluates utility relative to context consumed | Record tokens and selected knowledge, not only task accuracy |
+| Proactive memory agent vs. base agent, tau2-Bench | +6.8 percentage points | Intervention policy has its own evaluation |
+| PlugMem | Evaluates utility relative to context consumed | Record tokens and selected knowledge alongside task accuracy |
 
-These are reported upstream results, not Mari measurements. Use them to justify measuring selective injection; they do not prescribe a model or agent loop.
+The table reports upstream results. Use those values when planning measurements
+of selective injection. The application supplies its model and agent loop.
 
 :::{collapse} Known-answer disclosure checks
 
 | Case | Expected | Observed |
 |---|---|---|
 | Incident condition: matching / non-matching facts | `true / false` | `true / false` |
-| Seven-token progressive budget | index + summary | index + summary selected; source skipped |
+| Seven-token progressive budget | index + summary | index + summary selected. Source skipped |
 
-These checks establish predicate and budget semantics. They do not measure
-retrieval relevance or override independent authorization tests.
+The checks cover predicate and budget semantics. Retrieval relevance and
+authorization require separate evaluations.
 :::
 
 ## How it works
 
-Mari separates four records that applications often collapse:
+Mari separates four records:
 
 1. `SessionEvent` is the durable sequence of messages, tools, results, and errors.
 2. `ContextRequest` describes the next model call, its purpose, scope, and budget.
-3. `ContextEnvelope` contains only the knowledge selected for that call, with inclusion and exclusion traces.
-4. `MemoryUpdatePlan` proposes what the completed model or tool event may change.
+3. `ContextEnvelope` contains the knowledge selected for that call, with inclusion and exclusion traces.
+4. `MemoryUpdatePlan` proposes changes after a model or tool event completes.
 
-The provider may return `ABSTAIN`. Silence is a successful decision when retrieved knowledge is weak, redundant, unauthorized, stale, or more expensive than its predicted utility.
+The provider accepts `ABSTAIN` as a result. Silence is a successful decision
+when retrieved knowledge is weak or redundant. Authorization and freshness can
+also block injection. Cost policy handles cases where predicted utility falls
+below the retrieval expense.
 
 :::::::::{container} diagram flow
 :::{container} card
@@ -84,24 +88,24 @@ plan = await provider.after_model(
 
 `ContextProvider` is an async protocol with `before_model`, `after_model`, `after_tool`, and `end_session`. Mari owns the values passed through that boundary. The host owns model execution, retry policy, persistence, and whether an accepted update plan is committed.
 
-## What to evaluate
+## Measures
 
 | Measure | Question |
 |---|---|
-| Intervention precision | When Mari injected memory, how often did it help? |
-| Missed-intervention rate | How often was useful memory available but withheld? |
+| Intervention precision | What fraction of memory injections helped? |
+| Missed-intervention rate | What fraction of useful available memory was withheld? |
 | Utility per 1,000 tokens | Did the result improve enough to justify the context? |
 | Unsupported-memory rate | Did injected material lack valid evidence? |
 | Task success delta | Did the same task improve with the provider enabled? |
 
 ## Check evidence sufficiency before answering
 
-An answer can have citations and still lack a required part. Mari therefore
+An answer can contain citations and lack a required part. Mari
 keeps query decomposition, evidence assessment, and follow-up retrieval
 separate.
 
 ```{code-block} python
-:caption: Retrieve only for unresolved requirements
+:caption: Retrieve for unresolved requirements
 
 from mari_components.retrieval import (
     RequirementAssessment, RequirementStatus,
@@ -128,9 +132,9 @@ queries = parse_retrieval_gap_queries(report, gap_query_output, maximum_queries=
 | Missing | No evidence required | May produce a bounded gap query |
 | Ambiguous | Evidence optional | May produce a query that disambiguates |
 
-Unassessed required items become missing. Gap queries may cite only missing or
-ambiguous requirement IDs, so a model cannot quietly reopen a resolved part of
-the question.
+An unassessed required item receives `Missing` status. Gap queries reference
+open requirement IDs, including ambiguous ones. Resolved requirements stay
+closed.
 
 ::: source-block
 **Evidence**
@@ -141,7 +145,7 @@ the question.
 ## Measure which context helped
 
 ```{code-block} python
-:caption: Keep observed use distinct from ablation evidence
+:caption: Record observed use and ablation evidence
 
 from mari_components.retrieval import ContextUse, evaluate_context_contribution
 
@@ -160,8 +164,8 @@ assert contribution.ablation_deltas["plans@r7"] == 0.30
 ```
 
 Selected, cited, and causally useful are different claims. `used_ids` records
-observable downstream use. Ablation deltas exist only when the caller reruns
-the case without that item; Mari does not infer them from attention or prose.
+observable downstream use. Ablation deltas require a caller rerun that omits the
+item. Mari reads them from the supplied measurements.
 
 ::: source-block
 **Evidence**
@@ -172,8 +176,8 @@ the case without that item; Mari does not infer them from attention or prose.
 ## Evaluate conditional disclosure separately from authorization
 
 A disclosure condition describes when knowledge is relevant enough to reveal
-or expand. It is not permission. Applications must apply ACL filtering before
-or alongside this predicate.
+or expand. Permission comes from application ACL filtering before or alongside
+this predicate.
 
 ```{code-block} python
 :caption: Evaluate an inspectable trigger over caller facts
@@ -209,7 +213,7 @@ decision = evaluate_disclosure(
 | `IN` | Present value belongs to the rule's tuple, list, or set |
 
 Rules can require all or any conditions and return every condition result.
-They cannot grant visibility, inspect user permissions, or execute retrieval.
+Visibility, permission inspection, and retrieval execution belong to the application.
 
 ::: source-block
 **Evidence**
@@ -217,10 +221,10 @@ They cannot grant visibility, inspect user permissions, or execute retrieval.
 [NIST attribute-based access control](https://doi.org/10.6028/NIST.SP.800-162){.paper}[Nocturne conditional disclosure implementation](https://github.com/Dataojitori/nocturne_memory){.paper}
 :::
 
-## Add context to chunks without losing source spans
+## Add context to chunks with source spans
 
 `parse_chunk_context(document, section, model_output)` prepends a bounded
-document-level explanation for indexing while retaining the exact original
+document-level explanation for indexing. The exact original
 text, document and section revisions, and character offsets.
 `pool_token_spans(token_embeddings, spans)` implements late-chunk mean pooling
 over caller-tokenized half-open spans.
@@ -245,8 +249,8 @@ assert document.body[
 
 | Representation | Context mechanism | Citation text |
 |---|---|---|
-| Contextual retrieval | Generated bounded prefix per chunk | Original section only |
-| Late chunking | Embed long text, pool token spans afterward | Original section only |
+| Contextual retrieval | Generated bounded prefix per chunk | Original section |
+| Late chunking | Embed long text, pool token spans afterward | Original section |
 
 ::: source-block
 **Evidence**
@@ -258,10 +262,10 @@ assert document.body[
 
 A `ProgressiveDisclosureManifest` connects small index entries to summaries,
 sections, and full source units at the same artifact revision. The manifest
-does not prescribe how those units were generated or ranked.
+leaves unit generation and ranking to the caller.
 
 ```{code-block} python
-:caption: Spend seven tokens on an index and summary, not the full source
+:caption: Spend seven tokens on an index and summary before expanding to source
 
 from mari_components.retrieval import (
     DisclosureLevel, DisclosureUnit, ProgressiveDisclosureManifest,
@@ -319,5 +323,5 @@ ranking, and deciding whether more detail is needed remain separate steps.
 
 [Remember When It Matters](https://arxiv.org/abs/2607.08716){.paper}[Official proactive-memory implementation](https://github.com/yifannnwu/proactive-memory-agent){.paper}[PlugMem](https://www.microsoft.com/en-us/research/publication/plugmem-a-task-agnostic-plugin-memory-module-for-llm-agents/){.paper}[OpenAI Agents lifecycle hooks](https://openai.github.io/openai-agents-python/ref/lifecycle/){.paper}
 
-[Mari generalizes the lifecycle seam. It does not include an agent runtime or require an LLM-based intervention policy.]{.small}
+[Mari generalizes the lifecycle seam. The host supplies the agent runtime and intervention policy.]{.small}
 :::

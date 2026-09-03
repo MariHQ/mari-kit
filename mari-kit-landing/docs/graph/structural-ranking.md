@@ -2,7 +2,7 @@
 
 # Structural ranking
 
-## At a glance
+## Behavior
 
 | Algorithm | Signal | Appropriate comparison |
 |---|---|---|
@@ -14,10 +14,10 @@
 
 ## How it works
 
-All functions receive node IDs and neighbor callbacks. They return scores, not labels such as “important.” Betweenness uses the unweighted Brandes algorithm. HITS and PageRank expose iteration and convergence settings so approximate results are reproducible.
+All functions receive node IDs and neighbor callbacks. They return scores, with labels left to callers. Betweenness uses the unweighted Brandes algorithm. HITS and PageRank expose iteration and convergence settings so approximate results are reproducible.
 
 ```{code-block} python
-:caption: Compare structural signals without choosing one globally
+:caption: Compare caller-selected structural signals
 
 from mari_components.graph import (
     betweenness_centrality,
@@ -38,7 +38,7 @@ features = {
 }
 ```
 
-## What to evaluate
+## Measures
 
 | Property | Check |
 |---|---|
@@ -46,12 +46,13 @@ features = {
 | Directionality | Run asymmetric graphs with explicit successor callbacks |
 | Disconnected graphs | Verify closeness normalization and unreachable nodes |
 | Convergence | Record iterations, tolerance, and residual |
-| Retrieval value | Compare evidence recall with and without structural score |
+| Retrieval value | Compare evidence recall across baseline and structural-score runs |
 
 ::: source-block
 **Papers and implementations**
 
 [Brandes betweenness](https://doi.org/10.1080/0022250X.2001.9990249){.paper}[HITS](https://www.cs.cornell.edu/home/kleinber/auth.pdf){.paper}[PageRank](https://ilpubs.stanford.edu:8090/422/1/1999-66.pdf){.paper}[NetworkX](https://github.com/networkx/networkx){.paper}
 
-[NetworkX is the BSD-3-Clause differential oracle. Mari retains no graph object and no global ranking policy.]{.small}
+[NetworkX is the BSD-3-Clause differential oracle. Mari accepts graph access
+through callbacks. The caller sets any global ranking policy.]{.small}
 :::

@@ -1,6 +1,6 @@
 # Organize memory
 
-## Choose a memory operation
+## Memory operations
 
 
 | Stage | Decision |
@@ -9,7 +9,7 @@
 | Mutation | Add, update, delete, or no-op against existing memory |
 | Organization | Link notes, rank salience, or produce evidence notes |
 | Consolidation | Select bounded offline work by utility and cost |
-| Scope promotion | Propose a new artifact at a broader scope without mutating its origin |
+| Scope promotion | Propose a broader-scope artifact linked to its origin |
 | Experience | Turn observed work and expert corrections into evidence-bound knowledge proposals |
 
 :::{collapse} Actual memory-retrieval snapshot

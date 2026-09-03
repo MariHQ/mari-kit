@@ -2,27 +2,34 @@
 
 # Architecture
 
-## At a glance
+## Ownership
 
-| Mari owns | Application owns |
+| Component | Supplied by |
 |---|---|
-| Immutable types, deterministic policies, traces, and metrics | Models, agent loop, scheduling, credentials, and authorization decisions |
-| Connector and store protocols | HTTP transports and production database transactions |
-| Reference in-memory algorithms | Capacity planning and distributed operations |
+| Immutable types, deterministic policy functions, traces, and metrics | Mari |
+| Connector protocols and store protocols | Mari |
+| Reference in-memory algorithms | Mari |
+| Models, agent loop, scheduler, credentials, and authorization decisions | Application |
+| HTTP transport and production database transactions | Application |
+| Capacity planning and distributed operations | Application |
 
-Mari does not own a knowledge graph. Graph tools accept application IDs,
-iterables, and callbacks; returned candidates, scores, plans, and traces do not
-write storage or prescribe which operation runs next.
+The application defines its knowledge graph. Mari's graph tools accept its IDs,
+iterables, and callbacks. Functions return data for inspection. The application
+chooses storage writes and the next operation.
 
 
-:::{collapse} Worked ownership boundary
+:::{collapse} Ownership example
 
-| Mari owns | Application owns |
+| Work | Supplied by |
 |---|---|
-| Immutable types and pure planning | Agent loop and scheduling |
-| Connector protocol and normalized pages | Credentials and HTTP transport |
-| Store protocol and reference semantics | Production database transactions |
-| Evaluation metrics and run identity | Model invocation and deployment |
+| Immutable types and pure planning | Mari |
+| Connector protocol and normalized pages | Mari |
+| Store protocol and reference semantics | Mari |
+| Evaluation metrics and run identity | Mari |
+| Agent loop and scheduling | Application |
+| Credentials and HTTP transport | Application |
+| Production database transactions | Application |
+| Model invocation and deployment | Application |
 :::
 
 :::::::{container} diagram flow
@@ -49,36 +56,43 @@ write storage or prescribe which operation runs next.
 :::
 :::::::
 
-| Mari supplies | Application supplies |
-|----|----|
-| Typed values and pure planning functions | Database and transactions |
-| Connector polling and cursor contracts | Credentials, HTTP transport, retries, scheduler |
-| Strict parsers for generated values | Model, prompts, and inference |
-| Retrieval and index serialization | Embeddings and index lifecycle |
-| Policy and evaluation functions | Authorization and agent runtime |
-
-| Mari deliberately does not define | Reason |
+| Component | Provider |
 |---|---|
-| Canonical node, edge, statement, or ontology | Different knowledge systems require different identity and semantics |
-| Graph-construction pipeline | Applications and LLMs can compose the individual tools for the current task |
-| Query language or planner | Storage capabilities and cost models belong to the application/data layer |
-| Automatic merge, promotion, or truth policy | Mari returns inspectable proposals; callers decide consequences |
-| Graph runtime or transaction manager | Persistence, isolation, and distributed execution belong to the data layer |
+| Typed values and pure planning functions | Mari |
+| Connector polling and cursor contracts | Mari |
+| Strict parsers for generated values | Mari |
+| Retrieval and index serialization | Mari |
+| Policy functions and evaluation functions | Mari |
+| Database and transactions | Application |
+| Credentials, HTTP transport, retries, and scheduler | Application |
+| Model, prompts, and inference | Application |
+| Embeddings and index lifecycle | Application |
+| Authorization and agent runtime | Application |
+
+| Application-defined concept | Why it stays with the application |
+|---|---|
+| Node, edge, statement, and ontology semantics | Every knowledge system has its own identity rules |
+| Graph construction order | The current task determines how tools compose |
+| Query language and planner | Storage capabilities shape query costs |
+| Merge, promotion, and truth policy | The caller assigns consequences to Mari's proposals |
+| Graph runtime and transaction manager | The data layer controls persistence and isolation |
 
 ## How it works
 
-Provider data is normalized into immutable values. Pure functions transform those values into plans, candidates, reports, or index payloads. The caller validates the return value and commits it through its own transaction boundary. Because network and storage operations are injected, the same input values can be inspected or dry-run before any side effect occurs.
+Provider data enters Mari as immutable values. Pure functions produce plans,
+candidates, reports, or index payloads. The caller inspects a result, then sends
+approved writes through its transaction boundary. Injected network and storage
+functions also let the caller run the same inputs in a dry run.
 
 ::: source-block
 **Research and standards**
 
 [W3C PROV data model](https://www.w3.org/TR/prov-dm/){.paper}[Data pipeline reproducibility](https://arxiv.org/abs/2006.12117){.paper}
 
-[Provenance and reproducibility motivate explicit entities, revisions, activities, and captured configuration. The pure-planning/application-commit split is a Mari engineering contract.]{.small}
+[Provenance work motivates explicit entities and immutable revisions. Mari also
+records the activity and configuration that produced a value. Its API contract
+places planning in library functions and commits in application code.]{.small}
 :::
-
-
-Values cross explicit boundaries. Mari plans and validates; the application performs side effects.
 
 ```{code-block} python
 :caption: Keep model and persistence calls outside the domain layer
@@ -95,7 +109,7 @@ document = KnowledgeDocument(
 )
 sections = document_sections(document)
 
-# The application invokes its model. Mari accepts only evidence that resolves
+# The application invokes its model. Mari requires evidence that resolves
 # against the exact document revision supplied here.
 model_output = call_model(document, sections)
 facts = parse_facts([document], model_output)

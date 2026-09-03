@@ -2,7 +2,7 @@
 
 # Graph comparison and quality diagnostics
 
-## At a glance
+## Behavior
 
 | Input condition | Diagnostic | Interpretation left to caller |
 |---|---|---|
@@ -13,7 +13,9 @@
 
 ## How it works
 
-`graph_diff` compares caller-provided node IDs and hashable edge keys. `inspect_graph_quality` calculates structural observations without declaring the graph good or bad. Thresholds and acceptance policy remain outside Mari.
+`graph_diff` compares caller-provided node IDs and hashable edge keys.
+`inspect_graph_quality` calculates structural observations. The caller sets
+thresholds and acceptance policy.
 
 ```{code-block} python
 :caption: Inspect two arbitrary graph projections
@@ -34,7 +36,8 @@ quality = inspect_graph_quality(
 )
 ```
 
-The diff uses exact identity and set semantics. It does not infer that renamed nodes are equivalent; callers can run entity resolution before comparison when that is appropriate.
+The diff uses exact identity and set semantics. Callers can run entity
+resolution before comparison when that is appropriate.
 
 `diff_records` detects changes that preserve node identity, such as a modified
 function body or an updated entity attribute. Identity and fingerprints remain
@@ -76,7 +79,7 @@ changes = diff_record_fields(
 )
 ```
 
-## What to evaluate
+## Measures
 
 | Measure | Calculation |
 |---|---|
@@ -91,5 +94,5 @@ changes = diff_record_fields(
 
 [KGCQual](https://arxiv.org/abs/2607.10212){.paper}[KGCQual implementation](https://github.com/kracr/kg-quality-metric){.paper}[Structural quality metrics](https://arxiv.org/abs/2211.10011){.paper}[Knowledge graph quality survey](https://doi.org/10.1145/3360901){.paper}
 
-[KGCQual is Apache-2.0. Mari's built-in report is structural and model-free; semantic fidelity evaluators remain injectable.]{.small}
+[KGCQual is Apache-2.0. Mari's built-in report is structural and model-free. Semantic fidelity evaluators remain injectable.]{.small}
 :::

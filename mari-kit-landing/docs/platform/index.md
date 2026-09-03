@@ -1,6 +1,6 @@
 # Platform
 
-## Choose a platform boundary
+## Components
 
 
 | Platform object | Responsibility |
@@ -14,7 +14,7 @@
 | Materialized view | Minimal dependency-aware refresh plan |
 | Task comparison | Paired success, compliance, turns, tokens, and tool calls |
 
-:::{collapse} Worked artifact flow
+:::{collapse} Artifact flow example
 
 | Operation | Observable record |
 |---|---|

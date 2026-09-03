@@ -2,17 +2,17 @@
 
 # Unified artifact model
 
-## At a glance
+## Artifact fields
 
 | Field group | Purpose |
 |---|---|
 | Identity and revision | Address an immutable artifact version |
 | Scope and review state | Control visibility and activation |
 | Derivation and evidence | Trace an output back to source revisions |
-| Supersession and time | Preserve updates without rewriting history |
+| Supersession and time | Preserve every historical revision |
 
 
-:::{collapse} Worked artifact lineage
+:::{collapse} Artifact lineage example
 
 | Field | Value |
 |---|---|
@@ -25,13 +25,26 @@
 
 
 
-`KnowledgeArtifact[T]` gives facts, answers, decisions, summaries, procedures, and graph statements common identity, scope, provenance, review, temporal, and supersession semantics.
+`KnowledgeArtifact[T]` gives each knowledge value a shared envelope. Facts and
+answers use it. Decisions, summaries, procedures, and graph statements use the
+same fields for identity and scope. The envelope also carries provenance,
+review state, time bounds, and supersession links.
 
 ## How it works
 
-The payload type `T` holds domain content; the envelope holds governance. Artifact identity stays stable while each revision is immutable. Evidence and `derived_from` capture inputs, `generated_by` captures the producing activity/configuration, validity bounds describe when the claim applies, and `supersedes` closes a lineage edge without erasing history. Stores reject a revision if its evidence, scope, or predecessor is invalid.
+The payload type `T` holds domain content. Its envelope records the controls
+around that content. Artifact identity stays stable across immutable revisions.
+Evidence links record inputs. `generated_by` identifies the producing activity
+and configuration. Validity bounds mark when a claim applies. A `supersedes`
+link closes the lineage edge and keeps the earlier revision. Stores reject a
+revision when evidence, scope, or predecessor checks fail.
 
-**Research basis**[W3C PROV](https://www.w3.org/TR/prov-overview/){.paper} models entities, activities, agents, derivation, revision, and responsibility. [Nanopublications](https://arxiv.org/abs/1809.06532){.paper} attach provenance and metadata to atomic assertions. These results require first-class lineage; the single generic Python envelope is a Mari design choice to validate across artifact types.
+**Research basis**[W3C PROV](https://www.w3.org/TR/prov-overview/){.paper}
+models entities and their revisions. It also records activities, agents,
+derivation, and responsibility. [Nanopublications](https://arxiv.org/abs/1809.06532){.paper}
+attach provenance and metadata to atomic assertions. These results motivate
+first-class lineage. Mari uses one generic Python envelope so the same checks
+work across artifact types.
 
 :::::{container} diagram artifact
 <div>

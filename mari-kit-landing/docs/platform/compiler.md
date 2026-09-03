@@ -2,7 +2,7 @@
 
 # Evaluation and compilation
 
-## At a glance
+## Measured configuration search
 
 | SciFact configuration search | nDCG@10 |
 |---|---:|
@@ -11,9 +11,12 @@
 | Default BM25 on the same held-out split | `0.695` |
 | Held-out change | `-0.011` |
 
-The selected configuration overfit this small nine-candidate search. `compile_configurations` makes that outcome visible; it does not guarantee improvement. Always reserve held-out cases and keep the current configuration when the candidate does not win there.
+The selected configuration overfit this nine-candidate search.
+`compile_configurations` records the development result and the held-out
+result. Reserve held-out cases for each search. Keep the current configuration
+when its held-out score remains higher.
 
-:::{collapse} Worked configuration selection
+:::{collapse} Configuration selection example
 
 | Candidate | Grounded recall | ACL leakage | p95 latency | Decision |
 |---|---:|---:|---:|---|
@@ -21,7 +24,7 @@ The selected configuration overfit this small nine-candidate search. `compile_co
 | B | 0.92 | 0.01 | 90 ms | Rejected by ACL constraint |
 | C | 0.84 | 0.00 | 70 ms | Rejected by recall minimum |
 
-Only feasible candidates reach weighted utility comparison.
+Weighted utility is computed for candidates that satisfy every constraint.
 :::
 
 
@@ -30,7 +33,13 @@ Only feasible candidates reach weighted utility comparison.
 
 ## How it works
 
-Declare tunable parameters, hard constraints, and optimization metrics. For each candidate configuration, run the same frozen training cases, cache stage results by configuration/input fingerprints, reject any candidate that violates provenance, update fidelity, or ACL constraints, and rank feasible candidates on grounded recall, cost, and latency. Validate the selected configuration once on held-out cases; compilation returns a report and proposal, never a deployment side effect.
+Declare the tunable parameters and hard constraints. Add metrics used for
+selection. Each candidate runs on the same frozen development cases. Mari can
+cache stage results through configuration and input fingerprints. Constraint
+failures remove a candidate from selection. Feasible candidates receive a
+weighted utility score. Run the selected candidate once on held-out cases.
+Compilation returns a report and proposal. Deployment stays in application
+code.
 
 **Research basis**[DSPy](https://arxiv.org/abs/2310.03714){.paper} compiles parameterized LM pipelines against a declared metric. Mari generalizes the search space to retrieval, indexing, parsing, graph, consolidation, and packing configuration. Hard provenance, update-fidelity, and ACL constraints are Mari requirements and must be evaluated independently.
 

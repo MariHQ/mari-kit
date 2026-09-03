@@ -2,7 +2,7 @@
 
 # Storage protocols
 
-## At a glance
+## Required semantics
 
 | Required semantic | Why it matters |
 |---|---|
@@ -11,28 +11,41 @@
 | Immutable history | Reconstruct what was known at a prior time |
 | Disposable indexes | Rebuild derived state from canonical artifacts |
 
-The included store is a reference implementation, not a production throughput claim. Database adapters should be evaluated against these semantics.
+The included store defines reference semantics. Measure production database
+adapters for throughput and verify the same behavior.
 
 
-:::{collapse} Worked compare-and-swap outcomes
+:::{collapse} Compare-and-swap examples
 
 | Current revision | Expected revision | Mutation result |
 |---|---|---|
 | None | None | Initial commit succeeds |
 | `r1` | `r1` | Update to `r2` succeeds |
 | `r2` | `r1` | `RevisionConflict` |
-| Tenant A artifact | Tenant B scope | Not visible |
+| Tenant A artifact | Tenant B scope | Hidden by scope filter |
 :::
 
 
 
-`InMemoryArtifactStore` defines the reference behavior for optimistic revision checks, tenant isolation, explicit supersession, history, and point-in-time reads. Production adapters should preserve those semantics even when their physical schemas differ.
+`InMemoryArtifactStore` defines the reference behavior for optimistic revision
+checks and tenant isolation. It also covers explicit supersession, history, and
+point-in-time reads. Production adapters preserve these semantics through
+their own physical schemas.
 
 ## How it works
 
-Protocols specify observable behavior rather than backend classes. An implementation declares whether it supports atomic revision, history, physical deletion, and point-in-time reads. Cross-store operations use an application transaction or outbox boundary; Mari does not pretend separate databases share an atomic commit. Indexes remain disposable projections that can be rebuilt from documents and artifacts.
+Protocols specify behavior that callers can observe. Each implementation
+declares its support for atomic revision and history. Capability fields also
+cover physical deletion and point-in-time reads. Cross-store operations use an
+application transaction or outbox boundary. Each database keeps its own commit
+semantics. Indexes remain disposable projections built from documents and
+artifacts.
 
-**Research basis**[Invariant confluence](https://arxiv.org/abs/1402.2237){.paper} shows that safe coordination depends on application invariants. Mari therefore specifies atomicity, replay, isolation, time-travel, and deletion behavior independently of backend methods. The protocol split is library design, not a result asserted by the paper.
+**Research basis**[Invariant confluence](https://arxiv.org/abs/1402.2237){.paper}
+shows that safe coordination depends on application invariants. Mari specifies
+atomicity and replay through observable behavior. Isolation, time travel, and
+deletion each have explicit capability fields. The protocol split is a Mari
+library design.
 
 ```{code-block} python
 :caption: Compare-and-swap revisions with explicit lineage
@@ -55,4 +68,7 @@ historical = store.at_time(
 )
 ```
 
-`InMemoryArtifactStore` supports replay-safe writes, deterministic ordering, point-in-time reads, tenant isolation, and atomic revision checks. Physical deletion and cross-database transactions remain adapter-specific capabilities; check a backend's declared capabilities before relying on them.
+`InMemoryArtifactStore` supports replay-safe writes and deterministic ordering.
+It provides point-in-time reads, tenant isolation, and atomic revision checks.
+Adapters declare their physical-deletion and cross-database transaction
+capabilities. Check those fields before using these operations.

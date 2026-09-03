@@ -1,6 +1,6 @@
 # Getting started
 
-## Choose a starting point
+## Pages
 
 
 | Page | Covers |
@@ -8,7 +8,7 @@
 | [Install](install.md) | Base package, optional integrations, injected dependencies |
 | [Architecture](architecture.md) | Layer ownership, data flow, framework and storage boundaries |
 
-:::{collapse} Package boundary at a glance
+:::{collapse} Package boundary
 
 | Supplied by Mari | Injected by the application |
 |---|---|

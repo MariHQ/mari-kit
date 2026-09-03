@@ -2,21 +2,19 @@
 
 # Intent mining
 
-## At a glance
+## Measured behavior
 
 | Evaluation | Result | Interpretation |
 |---|---:|---|
 | Two cosmetic label variants across two runs | One aggregate with support `2` | Default grouping normalizes case, punctuation, and spacing |
 | Out-of-range model evidence | `1/1` rejected | An intent cannot cite steps outside its source trajectory |
-| Conflicting independent reviews | `1` valid, `1` invalid | Disagreement remains visible rather than becoming a verdict |
-| Duplicate reviewer | `1/1` reported | Repeated output from one reviewer cannot manufacture support |
-| Two-dimension rubric with required grounding omitted | Overall `0.800`; `1` missing and `1` required failure | The aggregate remains useful while the absent required dimension stays explicit |
+| Conflicting independent reviews | `1` valid, `1` invalid | The result records both reviews |
+| Duplicate reviewer | `1/1` reported | Support counts each reviewer once |
+| Two-dimension rubric with required grounding omitted | Aggregate `0.800`, with `1` missing and `1` required failure | The aggregate keeps the absent required dimension explicit |
 
-These checks establish evidence and aggregation behavior. They do not measure
-semantic intent accuracy: Mari never claims a model-generated label is correct
-because it satisfies the schema.
-Use a labeled domain corpus and independent reviewers to measure that semantic
-accuracy for the model and taxonomy selected by the application.
+The checks cover evidence bounds and aggregation. Semantic accuracy depends
+on the model and taxonomy chosen by the application. Measure it with a labeled
+domain corpus and independent reviewers.
 
 ## Represent an inferred intent
 
@@ -47,14 +45,14 @@ candidates = parse_intent_candidates(
 
 | Field | Meaning |
 |---|---|
-| `intent` | Human-readable proposed intent, not a canonical ontology value |
+| `intent` | Human-readable proposed intent |
 | `kind` | `declared`, `inferred`, or `hindsight` |
 | `evidence` | Existing trajectory ID and an inclusive, in-bounds step range |
-| `actual_outcome` | What the run achieved; especially useful for hindsight proposals |
-| `limitations` | What the cited behavior did not accomplish |
+| `actual_outcome` | What the run achieved. Especially useful for hindsight proposals |
+| `limitations` | Gaps between the cited behavior and the proposed intent |
 | `candidate_id` | Stable hash of kind, normalized label, and evidence ranges |
 
-## Aggregate without choosing an ontology
+## Group intent candidates
 
 `aggregate_intents(candidates, *, key=normalize_intent)` groups proposals and
 returns all observed labels, candidate IDs, trajectory IDs, kinds, and support.
@@ -62,7 +60,7 @@ Replace `key` with a taxonomy lookup, embedding cluster assignment, or reviewed
 mapping owned by the application.
 
 ```{code-block} python
-:caption: Supply a reviewed grouping instead of accepting lexical identity
+:caption: Supply a reviewed grouping
 
 from mari_components.trajectories import aggregate_intents
 
@@ -82,7 +80,7 @@ caller-owned centroids. `compare_intent_windows` compares reviewed cluster
 matches with Jensen–Shannon divergence and explicit new or retired clusters.
 
 ```{code-block} python
-:caption: Discover intent families without making them Mari's ontology
+:caption: Discover intent families from caller-owned vectors
 
 from mari_components.trajectories import cluster_intents, detect_novel_intents
 
@@ -105,9 +103,9 @@ novel = detect_novel_intents(
 | “reset password” / “recover login” | `0.9999` | Same cluster at `0.90` |
 | “reset password” / “cancel account” | `0.0000` | Separate cluster |
 
-Single-link clustering can bridge distant members through intermediate points;
-cohesion and ambiguous IDs make that failure mode inspectable. Cluster matching
-across time is caller-supplied because Mari does not invent stable taxonomy IDs.
+Single-link clustering can bridge distant members through intermediate points.
+Cohesion scores and ambiguous IDs expose that behavior. The caller supplies
+stable taxonomy IDs when it matches clusters across time.
 
 ::: source-block
 **Evidence**
@@ -117,13 +115,13 @@ across time is caller-supplied because Mari does not invent stable taxonomy IDs.
 
 ## Relabel outcomes in hindsight
 
-A failed run may still demonstrate a different achieved intent. Record that as
-`kind="hindsight"`, retain the original failure elsewhere, and cite the steps
-that support the proposed alternative. Mari does not rewrite the source run or
-package it as training data.
+A hindsight record describes an achieved intent found in a failed run. Set
+`kind="hindsight"` and cite the supporting steps. Keep the original run under
+its existing identity. A training system can consume the candidate through an
+adapter owned by the application.
 
 ```{code-block} python
-:caption: Keep independent semantic reviews separate from schema validation
+:caption: Summarize independent semantic reviews
 
 from mari_components.trajectories import IntentReview, summarize_intent_reviews
 
@@ -138,15 +136,14 @@ reviews = summarize_intent_reviews(
 assert reviews[0].agreement == 0.5
 ```
 
-`summarize_intent_reviews(candidates, reviews)` deduplicates reviewer identity
-and reports valid, invalid, and duplicate counts. It intentionally has no
-acceptance threshold.
+`summarize_intent_reviews(candidates, reviews)` deduplicates reviewer identity.
+The result reports valid and invalid counts along with duplicates. The caller
+sets any acceptance threshold.
 
 ## Task-adaptive evaluation dimensions
 
-Intent labels describe what behavior was trying to accomplish; a rubric
-describes what matters when judging that behavior. The two values remain
-separate.
+An intent label describes the aim inferred from behavior. A rubric carries the
+criteria used to judge that behavior. Mari stores each as a separate value.
 
 ```{code-block} python
 :caption: Generate elsewhere, validate and score here
@@ -171,21 +168,21 @@ print(score.overall, score.required_failures, score.missing_dimensions)
 
 | Function | Options and behavior |
 |---|---|
-| `parse_trajectory_rubric(task, model_output)` | Requires unique dimensions with positive weights; preserves `required` dimensions |
-| `parse_rubric_assessments(run, rubric, model_output)` | Accepts scores/confidence in `[0,1]`; validates every evidence-step index |
-| `score_trajectory_rubric(..., required_minimum=0.5)` | Confidence-weights repeated assessments; reports missing and required failures separately from the weighted mean |
+| `parse_trajectory_rubric(task, model_output)` | Requires unique dimensions with positive weights. Preserves `required` dimensions |
+| `parse_rubric_assessments(run, rubric, model_output)` | Accepts scores/confidence in `[0,1]`. Validates every evidence-step index |
+| `score_trajectory_rubric(..., required_minimum=0.5)` | Confidence-weights repeated assessments. Reports missing and required failures separately from the weighted mean |
 
-The separate `required_failures` field prevents a high score on easy
-dimensions from hiding a missing grounding or safety dimension. The caller
-still decides whether any score or failure changes behavior.
+The `required_failures` field lists required dimensions below the configured
+minimum. A caller can inspect it beside the weighted score before changing
+application behavior.
 
 :::{collapse} One scored rubric, as data
 
 | Dimension | Weight | Required | Assessment | Result |
 |---|---:|---:|---:|---|
 | Grounding | `2` | yes | missing | Listed in both `missing_dimensions` and `required_failures` |
-| Efficiency | `1` | no | `0.800` at confidence `0.750` | Included in the weighted mean |
-| Overall | — | — | — | `0.800` over assessed dimensions; not presented as a passing verdict |
+| Efficiency | `1` | false | `0.800` at confidence `0.750` | Included in the weighted mean |
+| Aggregate | n/a | n/a | n/a | `0.800` over assessed dimensions. Pass status remains caller policy |
 :::
 
 ::: source-block
@@ -193,5 +190,7 @@ still decides whether any score or failure changes behavior.
 
 [AgentHER](https://arxiv.org/abs/2603.21357){.paper}[Apache-2.0 implementation](https://github.com/alphadl/AgentHER){.paper}[Hindsight Supervised Learning](https://arxiv.org/abs/2607.04235){.paper}[AdaRubric](https://arxiv.org/abs/2603.21362){.paper}[Apache-2.0 implementation](https://github.com/alphadl/AdaRubrics){.paper}[Hindsight Experience Replay](https://arxiv.org/abs/1707.01495){.paper}
 
-[Mari implements evidence-bound proposals, independent review summaries, and rubric arithmetic. It does not implement their training pipelines or model judges.]{.small}
+[Mari implements evidence-bound proposals and independent review summaries.
+Rubric arithmetic is deterministic. Training pipelines and model judges enter
+through application code.]{.small}
 :::

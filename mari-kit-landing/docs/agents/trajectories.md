@@ -2,7 +2,7 @@
 
 # Trajectories and agent evaluation
 
-## At a glance
+## Recorded behavior
 
 | Input | Stored form | Safety boundary |
 |---|---|---|
@@ -11,26 +11,37 @@
 | Failed call | Negative outcome | Failure remains available for later evaluation |
 | Model-proposed phases | Validated ranges | Every step must be covered exactly once |
 
-The included trace study uses 60 AgentBench-shaped database interactions. It examines normalization and ordering, not live-environment task success.
+The included trace study uses 60 AgentBench-shaped database interactions. It
+measures normalization and ordering. Live task success needs an evaluation in
+the target environment.
 
 
-:::{collapse} Worked normalized trace
+:::{collapse} Normalized trace example
 
 | Runtime event | Stored trajectory step |
 |---|---|
-| Tool call with token and query | Tool name retained; sensitive arguments redacted |
+| Tool call with token and query | Tool name retained. Sensitive arguments redacted |
 | Failed tool result | Failure outcome retained |
-| Model phase covering steps `2–4` | Accepted only if phases cover every step once |
+| Model phase covering steps `2–4` | Accepted when phases cover every step once |
 | Speculative read | Recorded as a real asynchronous task |
 :::
 
 
 
-`normalize_steps` converts runtime records into privacy-bounded `TrajectoryStep` values. `parse_trajectory_analysis` validates model-proposed phases. Common export adapters feed the same representation. Mari provides adapters and algorithms, not an agent loop.
+`normalize_steps` converts runtime records into privacy-bounded
+`TrajectoryStep` values. `parse_trajectory_analysis` validates phases proposed
+by a model. Export adapters feed the same representation. The application
+supplies its agent loop.
 
 ## How it works
 
-Adapters map framework events into ordered `AgentEvent` values. Normalization assigns stable step positions, keeps allowlisted metadata, and redacts sensitive argument names and transport fields. Tool evaluation compares observed names and counts against expectations; outcome evaluation compares terminal paths and completion. A proposed phase analysis must cover every observed event exactly once with contiguous, non-overlapping ranges and known tool families.
+Adapters map framework events into ordered `AgentEvent` values. Normalization
+assigns each step a stable position. It keeps allowlisted metadata. Sensitive
+argument names and transport fields are redacted. Tool evaluation
+compares observed calls with expected names and counts. Outcome evaluation
+checks terminal paths and completion. A proposed phase analysis must cover
+every observed event once. Its ranges must be contiguous and disjoint, with a
+known family for each tool.
 
 ::::::{container} diagram timeline
 <div>
@@ -64,7 +75,7 @@ outcome = evaluate_outcome(paths=("resolved",),
     expected_paths=("resolved",), completed=True)
 ```
 
-`AgentEvent` and `EventKind` are framework-neutral. Optional adapters cover OpenAI Agents and LangChain/LangGraph. Normalization redacts common sensitive arguments; phase validation requires the returned ranges to cover observed events exactly.
+`AgentEvent` and `EventKind` are framework-neutral. Optional adapters cover OpenAI Agents and LangChain/LangGraph. Normalization redacts common sensitive arguments. Phase validation requires the returned ranges to cover observed events exactly.
 
 ```{code-block} python
 :caption: trajectory_analysis.py
@@ -80,14 +91,14 @@ analysis = parse_trajectory_analysis(normalized_events, model_labels,
 
 | Function | Important options | Result |
 |---|---|---|
-| `normalize_steps(events, *, family_map=DEFAULT_FAMILY_MAP)` | Replace the tool-to-family mapping; unknown tools become `other` | Ordered steps with safe scalar arguments, outcome, IDs, parent, time, tokens, and cost |
+| `normalize_steps(events, *, family_map=DEFAULT_FAMILY_MAP)` | Replace the tool-to-family mapping. Unknown tools become `other` | Ordered steps with safe scalar arguments, outcome, IDs, parent, time, tokens, and cost |
 | `normalize_openai_trajectory(records, *, maximum_events=10_000)` | Bounded Chat Completions or Responses input | Adapter issues plus normalized tool calls |
 | `normalize_anthropic_trajectory(messages, *, maximum_events=10_000)` | Bounded `tool_use`/`tool_result` input | Explicit `is_error` outcomes are preserved |
 | `normalize_otel_trajectory(spans, *, maximum_events=10_000)` | OpenTelemetry GenAI attribute aliases | Time-ordered tool spans |
 | `parse_trajectory_analysis(events, model_output, *, family_map=...)` | Caller-supplied phase labels | Contiguous phases covering every normalized step exactly once |
 
-An absent status is `None`, not `False`. This prevents unknown telemetry from
-becoming negative training data or supporting a success invariant.
+An absent status maps to `None`. Mining functions require an explicit success
+value, so unknown telemetry stays outside successful-run evidence.
 
 ::: source-block
 **Research and standards**

@@ -2,9 +2,10 @@
 
 # Long-horizon memory evaluation
 
-This page covers both retrieval-oriented memory corpora and task-level comparisons. Retrieval metrics locate failures inside the knowledge system; task metrics determine whether those changes helped the application.
+Retrieval-oriented memory corpora locate failures inside the knowledge system.
+Task-level comparisons measure application outcomes after a change.
 
-## At a glance
+## LongMemEval result
 
 | Retrieval depth | Complete evidence recall | Any-evidence nDCG |
 |---|---:|---:|
@@ -30,16 +31,28 @@ Moving from five to ten sessions mainly helps questions whose answer spans sever
 | `e47becba` | Single-session user | 1 | `2` | 1.0 |
 | `6d550036` | Multi-session | 4 | `4`, `8`, `>10`, `>10` | 0.0 |
 
-The second ranking finds relevant evidence but not the complete multi-session set. This is why the page reports `Recall-all`, not only `Recall-any`.
+The second ranking finds part of the relevant evidence. Some required sessions
+fall below rank ten. `Recall-all` records that incomplete set. `Recall-any`
+would score the same query from its first relevant hit.
 :::
 
 
 
-A memory system needs separate measurements for writing, updating, retrieving, temporal reasoning, abstaining, and respecting context limits. One aggregate answer score hides which subsystem failed.
+A memory evaluation measures each operation through its own output. Write-time
+scores cover extraction and updates. Retrieval metrics inspect evidence ranks.
+Temporal questions exercise ordering and date logic. Abstention cases contain
+missing evidence. Token counts capture pressure from the context limit. Keeping
+these fields separate locates the subsystem behind a failed answer.
 
 ## How it works
 
-Freeze conversations, source revisions, expected evidence, and change events into cases. Replay each case under several corpus sizes and context budgets. Score extraction at write time, evidence recall at query time, cross-session synthesis, ordering and date reasoning, correction after source updates, abstention when evidence is absent, and ACL leakage. Store per-stage traces with every score so a regression points to the responsible parser, index, policy, or packing decision.
+Freeze conversations and source revisions into cases. Each case also records
+expected evidence and change events. Replay it under the corpus size and
+context budget named in the run configuration. Score extraction during writes.
+At query time, record evidence recall and cross-session synthesis. Separate
+fields cover temporal reasoning, updates, abstention, and ACL leakage. Store a
+trace beside each score. A regression can then point to the parser, index,
+policy, or packing decision that produced it.
 
 ::::::::: metric-grid
 <div>
@@ -113,10 +126,13 @@ run = EvaluationRun(
 
 ## Compare application outcomes
 
-STATE-Bench evaluates stateful tasks in customer support, travel, and shopping. Its 450 tasks combine deterministic assertions, policy compliance, user interaction, and efficiency. The important comparison is paired: the same task and agent configuration with and without a Mari knowledge strategy.
+STATE-Bench evaluates 450 stateful tasks across customer support, travel, and
+shopping. Cases contain deterministic assertions and policy checks. They also
+measure user interaction and efficiency. Run the same task with a fixed agent
+configuration for each knowledge strategy. Pair results by task ID.
 
 ```{code-block} python
-:caption: Compare variants without collapsing the result into one score
+:caption: Compare paired variants across separate measures
 
 from mari_components.evaluation import TaskOutcome, compare_task_outcomes
 
@@ -131,9 +147,9 @@ print(comparison.mean_token_delta)  # -2300.0
 
 | Measure | Keep separate because |
 |---|---|
-| Task success | The application may fail despite perfect retrieval |
-| Policy compliance | A fast answer can still violate procedure |
+| Task success | Retrieval quality and application success have separate fields |
+| Policy compliance | Answer speed and policy compliance have separate fields |
 | Interaction quality | Correct work can impose unnecessary user effort |
-| Turns and tool calls | Memory may reduce or increase operational work |
+| Turns and tool calls | Measure the change in operational work |
 | Context and total tokens | Retrieval savings can be offset by memory maintenance |
 | Memory write/retrieval cost | Agent tokens and memory-system tokens have different causes |

@@ -6,7 +6,7 @@ mari-components · 0.1.0.dev0
 
 # Mari documentation
 
-## Choose a system boundary
+## Browse by area
 
 
 | Area | What it covers |
@@ -34,14 +34,21 @@ platform/index
 ```
 
 
-Mari is a framework-neutral Python library of composable tools for extracting, validating, linking, retrieving, comparing, and evaluating knowledge from changing source material. It does not prescribe a knowledge graph, ontology, storage system, construction pipeline, agent framework, or model. Operations accept caller-owned values and return immutable candidates, scores, plans, reports, and traces.
+Mari is a framework-neutral Python library for knowledge from changing source
+material. Its functions extract facts, validate evidence, connect records, run
+retrieval, and measure results. The caller supplies graph semantics, storage,
+models, and execution order. Each operation accepts caller-owned values and
+returns immutable data that the caller can inspect.
 
 ::: legend
-Current --- importable from `mari_components`
+Current: importable from `mari_components`
 :::
 
 ## How to use these docs
 
-Each feature page describes importable code in `mari_components`. Research-derived mechanisms link evidence next to the explanation; application-injected model calls, persistence boundaries, and failure behavior are identified explicitly.
+Each feature page describes importable code in `mari_components`. Sources sit
+beside the mechanism they support. Code samples mark calls supplied by the
+application. They also show where data crosses a persistence boundary and how
+failures appear.
 
 **Package naming**`mari-components` is the distribution. Public imports use `mari_components`.

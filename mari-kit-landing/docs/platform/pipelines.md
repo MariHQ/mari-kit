@@ -2,34 +2,47 @@
 
 # Typed knowledge pipelines
 
-## At a glance
+## Stage behavior
 
 | Pipeline property | Observable behavior |
 |---|---|
 | Versioned stage | Configuration contributes to the stage fingerprint |
-| Empty output | Valid successful result, distinct from failure |
-| Stage failure | Dependent stages do not execute |
-| Mutation output | Proposed first; application commits after policy checks |
+| Empty output | Valid successful result with an empty batch |
+| Stage failure | Dependent stages remain pending |
+| Mutation output | Proposal followed by an application policy check and commit |
 
 
-:::{collapse} Worked stage trace
+:::{collapse} Stage trace example
 
 | Stage | Input | Output | Status |
 |---|---|---|---|
-| `normalize@1` | `" policy "` | `"policy"` | Succeeded; fingerprint recorded |
+| `normalize@1` | `" policy "` | `"policy"` | Succeeded, fingerprint recorded |
 | `discard-empty@2` | `""` | No output | Succeeded |
-| Dependent stage after upstream error | — | — | Not executed |
+| Dependent stage after upstream error | n/a | n/a | Pending |
 :::
 
 
 
-Composable `Stage` values transform immutable batches and return outputs plus a complete `StageTrace`. Domain stages may emit reviewable artifact mutations; the runner itself performs no storage writes.
+Composable `Stage` values transform immutable batches. Each run returns outputs
+and a complete `StageTrace`. Domain stages emit reviewable artifact
+mutations. Storage writes belong to the application.
 
 ## How it works
 
-Each stage declares input/output types, a versioned configuration fingerprint, and whether it is pure or calls an injected service. The runner topologically orders stages, passes immutable batches, records input revisions and stage results, and stops dependent stages after failure. Outputs are mutation proposals; a final policy validates evidence, scope, and expected artifact revision before the application commits them.
+Each stage declares its input and output types. A versioned fingerprint captures
+configuration. The stage also states whether it calls an injected service. The
+runner orders stages from their dependencies and passes immutable batches. It
+records input revisions and stage results. A failure leaves dependent stages
+pending. Outputs are mutation proposals. A final policy checks evidence and
+scope, then compares the expected artifact revision before the application
+commits them.
 
-**Research basis**[Pipeline provenance research](https://arxiv.org/abs/2006.12117){.paper} ties reproducibility to captured inputs, transformations, and configuration. [Data Cascades](https://doi.org/10.1145/3411764.3445518){.paper} documents how upstream data failures compound downstream. This motivates stage identities, dependency traces, and visible failures; the generic stage and mutation types are Mari\'s composition boundary.
+**Research basis**[Pipeline provenance research](https://arxiv.org/abs/2006.12117){.paper}
+ties reproducibility to captured inputs and transformations. Configuration is
+part of the record. [Data Cascades](https://doi.org/10.1145/3411764.3445518){.paper}
+documents how upstream data failures compound downstream. This motivates stage
+identities and dependency traces. Visible failures complete the record. Mari
+expresses this boundary through generic stage and mutation types.
 
 :::{container} diagram stages
 extract*→*resolve*→*link*→*review*→*index

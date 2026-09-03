@@ -2,26 +2,26 @@
 
 # Reviewed workflows and cached answers
 
-## At a glance
+## Contract
 
 | Match state | Reuse decision |
 |---|---|
 | Similar, reviewed, authorized, and fresh | Reuse cached answer or procedure |
-| Similar but stale | Retrieve and recompute |
-| Similar but outside allowed documents | Ignore before scoring |
+| Similar and stale | Retrieve and recompute |
+| Similar and outside allowed documents | Ignore before scoring |
 | Below similarity threshold | Run the normal workflow |
 
-Cache quality depends on caller-provided query vectors and the threshold. Mari makes authorization and freshness checks part of the decision path.
+Cache quality depends on caller-provided query vectors and the threshold. Mari places authorization and freshness checks on the decision path.
 
 
-:::{collapse} Worked cache decisions
+:::{collapse} Example cache decisions
 
 | Similarity | Dependencies | Review state | Decision |
 |---:|---|---|---|
 | Above threshold | Fresh and readable | Approved | Reuse |
 | Above threshold | Stale | Approved | Reject |
 | Above threshold | Unauthorized | Approved | Reject |
-| Highest score | Fresh | Unreviewed | Reject; consider lower approved match |
+| Highest score | Fresh | Unreviewed | Reject. Consider lower approved match |
 :::
 
 :::::::{container} diagram thresholds
@@ -70,8 +70,13 @@ Related APIs: `match_reviewed_workflow`, `start_speculative_retrieval`, `match_c
 :::
 
 
-Reviewed workflow indexes match new requests to approved intents. Policy thresholds independently control speculative retrieval and direct cached-response reuse.
+Reviewed workflow indexes match new requests to approved intents. Separate policy thresholds control speculative retrieval and direct cached-response reuse.
 
 ## How it works
 
-Build an index from reviewed workflow intent vectors. At query time, compute normalized similarity, retain only workflows whose dependencies are authorized, and choose the best match with stable ties. Crossing the lower threshold may start retrieval speculatively; crossing the higher threshold only makes reuse eligible. A cached response is returned only after its exact evidence dependencies pass freshness checks. Similarity never overrides ACL or revision failure.
+Build an index from reviewed workflow intent vectors. At query time, compute
+normalized similarity and filter workflows by dependency authorization. Choose
+the best match with stable ties. The lower threshold makes speculative
+retrieval eligible. The higher threshold makes reuse eligible. A cached
+response requires fresh exact evidence dependencies. ACL and revision checks
+govern the final decision.

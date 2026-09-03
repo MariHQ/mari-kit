@@ -2,20 +2,20 @@
 
 # Semantic atoms and retrieval-time chunks
 
-## At a glance
+## Behavior
 
 One deterministic edit was applied to the MIT-licensed Pi LLM Wiki README:
 insert one paragraph near the start and change one existing phrase.
 
 | Storage unit | Units before / after | Reused | Changed units to encode | Invalidated fixed units |
 |---|---:|---:|---:|---:|
-| Semantic atoms | 221 / 222 | 220 atoms in both representations | 2 raw + 2 contextual vectors | 1 old atom tombstoned; 2 parent sections invalidated |
+| Semantic atoms | 221 / 222 | 220 atoms in both representations | 2 raw + 2 contextual vectors | 1 old atom tombstoned. 2 parent sections invalidated |
 | Fixed 500-token chunks | 7 / 7 | 0 | 7 | 7 |
 
 The source is pinned at revision `55510fac8e17` and SHA-256
-`1ab44172…b4ea97`. This measures invalidation under one controlled edit, not
-retrieval quality or embedding latency. The result demonstrates the boundary
-shift: atoms are stored and indexed; chunks are assembled for presentation.
+`1ab44172…b4ea97`. This measures invalidation under one controlled edit.
+Retrieval quality and embedding latency require separate measurements. Atoms
+are stored and indexed. Chunks are assembled for presentation.
 
 :::::::::::::{container} diagram flow
 :::{container} card
@@ -41,8 +41,8 @@ shift: atoms are stored and indexed; chunks are assembled for presentation.
 
 ## Extract semantic atoms
 
-`semantic_atoms` consumes Mari's parsed-document IR. Headings supply context;
-they are not themselves stored as knowledge atoms. Paragraphs, list items,
+`semantic_atoms` consumes Mari's parsed-document IR. Headings supply context.
+Paragraphs, list items,
 table rows, and code blocks become independently versionable units.
 
 ```{code-block} python
@@ -69,16 +69,16 @@ print(markdown[atom.start:atom.end])
 | Field | Identity behavior |
 |---|---|
 | `source_id` | Stable caller-owned page identity |
-| `source_revision` | Immutable source version; not part of `atom_id` |
+| `source_revision` | Immutable source version. Excluded from `atom_id` |
 | `section_id` / `heading_path` | Semantic location and contextual embedding prefix |
-| `ordinal` | Current ordering only; never part of identity |
+| `ordinal` | Current ordering field. Identity uses content and location |
 | `content_hash` | SHA-256 of NFKC text with cosmetic whitespace collapsed |
 | `atom_id` | Source + section + kind + content hash + local duplicate occurrence |
 | `start`, `end` | Exact character span in the current source revision |
 
 Repeated identical atoms in one section receive a local occurrence suffix so
-IDs remain unique. Inserting unrelated content earlier in the page does not
-alter their identity.
+IDs remain unique. Inserting unrelated content earlier in the page preserves
+their identity.
 
 ::: source-block
 **Evidence**
@@ -86,14 +86,14 @@ alter their identity.
 [Markdown syntax trees and source maps](https://github.com/executablebooks/markdown-it-py){.paper}[W3C Web Annotation selectors](https://www.w3.org/TR/annotation-model/#selectors){.paper}
 :::
 
-## Fall back to content-defined spans only for oversized blocks
+## Use content-defined spans for oversized blocks
 
 Semantic boundaries take precedence. When a paragraph or code block exceeds
 `maximum_atom_characters`, `content_defined_spans` applies a deterministic
 Gear-hash-style boundary rule between minimum, average, and maximum sizes.
 
 ```{code-block} python
-:caption: Bound a giant block without fixed-offset cascading
+:caption: Bound a giant block with content-defined boundaries
 
 from mari_components.documents import content_defined_spans
 
@@ -106,9 +106,10 @@ spans = content_defined_spans(
 segments = [giant_code_block[start:end] for start, end in spans]
 ```
 
-This is a small FastCDC-inspired fallback, not a byte-compatible FastCDC
-implementation: it uses Gear-style rolling state and skips cuts before the
-minimum, but does not reproduce FastCDC's normalized dual-mask distribution.
+The small fallback draws from FastCDC. It uses Gear-style rolling state and
+skips cuts before the minimum. Its character-span contract uses one mask. A
+byte-compatible adapter can supply FastCDC's normalized dual-mask
+distribution.
 
 ::: source-block
 **Evidence**
@@ -141,7 +142,7 @@ alignment = align_atoms(
 
 | Algorithm | Mechanics | Useful property |
 |---|---|---|
-| Myers | Expands edit-distance frontiers and backtracks a shortest insert/delete script | Minimal edit script; worst-case `O((N+M)D)` time |
+| Myers | Expands edit-distance frontiers and backtracks a shortest insert/delete script | Minimal edit script. Worst-case `O((N+M)D)` time |
 | Patience | Selects values unique on both sides, finds their longest increasing subsequence, recursively aligns gaps, and falls back to Myers | Stable anchors in reordered or repetitive documents |
 
 :::{collapse} Exact alignment for the motivating sequence
@@ -149,17 +150,16 @@ alignment = align_atoms(
 | Old | New | Result |
 |---|---|---|
 | A | A | unchanged |
-| — | X | inserted |
+| n/a | X | inserted |
 | B | B | unchanged |
-| C | C′ | replacement region; lexical matching pairs it as modified |
+| C | C′ | replacement region. Lexical matching pairs it as modified |
 | D | D | unchanged |
 | E | E | unchanged |
 :::
 
 Within replacement regions, `align_atoms` greedily pairs same-kind atoms under
 the same heading when token-set Jaccard similarity clears the caller threshold.
-That pairing exists for provenance; changed text always receives a new
-embedding.
+The pairing records provenance. Changed text receives a new embedding.
 
 ::: source-block
 **Evidence**
@@ -167,7 +167,7 @@ embedding.
 [Myers: An O(ND) Difference Algorithm and Its Variations](https://doi.org/10.1007/BF01840446){.paper}[Patience diff implementation history](https://git-scm.com/docs/diff-options#Documentation/diff-options.txt---diff-algorithmpatience){.paper}
 :::
 
-## Plan invalidation without rebuilding the page
+## Plan selective invalidation
 
 ```{code-block} python
 :caption: Reuse exact atoms and defer parent vectors
@@ -192,12 +192,12 @@ atom_store.tombstone_many(plan.tombstone_atom_ids)
 | Unchanged | Reuse | Reuse when heading path is unchanged | Keep unless another child changed |
 | Unchanged text moved to another heading | Reuse | Rebuild with the new heading path | Invalidate old and new parents |
 | Inserted | Create | Create | Invalidate parent |
-| Modified | Create new; tombstone old | Create new; tombstone old | Invalidate parent |
+| Modified | Create new, tombstone old | Create new, tombstone old | Invalidate parent |
 | Deleted | Tombstone | Tombstone | Invalidate parent |
 
-The refresh plan contains IDs and invalidations, not embeddings or writes.
-Atom retrieval can remain authoritative while parent embeddings are rebuilt
-lazily.
+The refresh plan contains IDs and invalidations. It leaves embeddings and writes
+to the host. Atom retrieval remains authoritative. The host can rebuild parent
+embeddings lazily.
 
 ::: source-block
 **Evidence**
@@ -237,9 +237,9 @@ assert parents[0].parent_id == "pricing#enterprise"
 assert parents[0].score == 0.92 + 0.4 * 0.87
 ```
 
-Only the top `len(weights)` unique atom hits contribute. A mean over every atom
-is deliberately absent because it penalizes larger sections with unrelated
-material. Mari returns the contributing atom IDs and scores for inspection.
+The top `len(weights)` unique atom hits contribute. A mean across every atom
+would penalize larger sections that contain unrelated material. Mari returns the
+contributing atom IDs and scores for inspection.
 
 ::: source-block
 **Evidence**
@@ -286,7 +286,7 @@ MaxSim.
 [ColBERTv2 multi-vector retrieval](https://arxiv.org/abs/2112.01488){.paper}[MUVERA paper](https://arxiv.org/abs/2405.19504){.paper}[Google MUVERA explanation](https://research.google/blog/muvera-making-multi-vector-retrieval-as-fast-as-single-vector-search/){.paper}
 :::
 
-## Assemble chunks only when presenting context
+## Assemble chunks at query time
 
 ```{code-block} python
 :caption: Expand a hit to neighboring atoms under a token budget
@@ -305,10 +305,11 @@ for chunk in context.chunks:
     model_context.append(chunk.text)
 ```
 
-Hits are budgeted before neighbors, so expansion cannot evict the reason the
-section was retrieved. Neighbors are selected by increasing ordinal distance,
-deduplicated, restored to source order inside each section, and returned with
-hit IDs and exact token accounting. No presentation chunk is persisted.
+Hits receive budget before their neighbors. The selected retrieval evidence
+stays in context. Neighbor selection follows increasing ordinal
+distance. Mari deduplicates the result and restores source order inside each
+section. Returned chunks include hit IDs and exact token accounting.
+Presentation chunks live in the returned value for that query.
 
 ::: source-block
 **Evidence**
@@ -348,9 +349,9 @@ february = active_atoms(history, at=feb_1, known_at=apr_1)
 current = active_atoms(history, at=apr_1, known_at=apr_1)
 ```
 
-Ordinary current retrieval indexes only versions whose validity and transaction
-intervals contain the query times. History remains available without mixing
-stale atoms into present-day results.
+Ordinary current retrieval indexes versions whose validity and transaction
+intervals contain the query times. History remains available as a separate
+view, keeping stale atoms out of present-day results.
 
 ::: source-block
 **Evidence**
@@ -362,11 +363,11 @@ stale atoms into present-day results.
 
 | Function | Important options | Returns |
 |---|---|---|
-| `semantic_atoms(document, *, maximum_atom_characters=2000, fallback_average_characters=1000)` | Semantic first; CDC fallback only for oversized blocks | Stable source-spanned atoms |
+| `semantic_atoms(document, *, maximum_atom_characters=2000, fallback_average_characters=1000)` | Semantic first. CDC fallback for oversized blocks | Stable source-spanned atoms |
 | `myers_diff(old, new)` | Arbitrary hashable sequences | Shortest coalesced spans |
-| `patience_diff(old, new)` | Unique anchors; Myers fallback | Coalesced stable-anchor spans |
+| `patience_diff(old, new)` | Unique anchors. Myers fallback | Coalesced stable-anchor spans |
 | `align_atoms(old, new, *, algorithm=PATIENCE, modification_threshold=.55)` | Exact hash anchors plus local lexical pairing | Unchanged, inserted, deleted, modified |
-| `plan_atom_refresh(alignment, *, rebuild_parent_embeddings_eagerly=False)` | Separates raw/contextual reuse; lazy or eager parent policy is recorded, not executed | Reuse, embed, tombstone, invalidate IDs |
+| `plan_atom_refresh(alignment, *, rebuild_parent_embeddings_eagerly=False)` | Separates raw/contextual reuse. Lazy or eager parent policy is recorded for the host | Reuse, embed, tombstone, invalidate IDs |
 | `aggregate_atom_hits(hits, *, parent="section", weights=(1,.4,.2))` | Top-score aggregation | Ranked parents and contributing atoms |
 | `maxsim_section_score(query_vectors, section, *, contextual=True)` | Raw or contextual atoms | Exact late-interaction score |
 | `assemble_atom_context(..., token_budget, neighbors=2)` | Hits precede neighbors | Ephemeral source-ordered chunks |

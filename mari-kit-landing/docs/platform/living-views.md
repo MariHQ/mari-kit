@@ -2,7 +2,7 @@
 
 # Living knowledge views
 
-## At a glance
+## Refresh decisions
 
 | Source change | Dependency relation | View action |
 |---|---|---|
@@ -16,7 +16,7 @@
 A view definition fingerprints its transform and configuration. A materialization records exact input revisions and output artifacts. On change, Mari walks the reverse dependency graph and produces the smallest safe rebuild plan. Execution and storage remain caller-owned.
 
 ```{code-block} python
-:caption: Plan an incremental refresh without hiding dependencies
+:caption: Plan an incremental refresh with recorded dependencies
 
 from mari_components.platform import MaterializedView, plan_view_refresh
 
@@ -36,15 +36,16 @@ for task in plan.tasks:
     pipeline.run(task)
 ```
 
-This is dependency-driven recomputation, not autonomous rewriting. Generated summaries remain evidence-bound artifacts and are never treated as source observations.
+Dependencies drive recomputation. Generated summaries remain evidence-bound
+artifacts. Their provenance marks them as derived values.
 
-## What to evaluate
+## Measures
 
 | Measure | Meaning |
 |---|---|
-| Rebuild precision | Rebuilt artifacts that actually depended on a change |
+| Rebuild precision | Rebuilt artifacts with a dependency on the change |
 | Rebuild recall | Changed derivatives that were correctly invalidated |
-| Reuse ratio | Safe materializations reused without recomputation |
+| Reuse ratio | Safe materializations reused across the refresh |
 | Equivalence | Incremental output equals a clean full rebuild |
 
 ::: source-block
@@ -52,5 +53,6 @@ This is dependency-driven recomputation, not autonomous rewriting. Generated sum
 
 [Differential Dataflow](https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf){.paper}[DBSP](https://arxiv.org/abs/2203.16684){.paper}[Self-adjusting computation](https://doi.org/10.1145/1040305.1040311){.paper}[Semiont projections](https://github.com/The-AI-Alliance/semiont){.paper}
 
-[Mari implements invalidation and planning over its existing provenance graph; it does not implement a streaming database engine.]{.small}
+[Mari implements invalidation and planning over its provenance graph. A
+streaming database can execute those plans through an adapter.]{.small}
 :::

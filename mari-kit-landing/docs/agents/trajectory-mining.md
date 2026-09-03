@@ -2,40 +2,40 @@
 
 # Trajectory mining
 
-## At a glance
+## Measured behavior
 
 | Evaluation | Input | Result | What it establishes |
 |---|---:|---:|---|
-| Public Plumbline corpus | 7 trajectories, 118 events | 8 activities, 6 exact variants | The process miner accepts a real, heterogeneous action log without a runtime adapter |
+| Public Plumbline corpus | 7 trajectories, 118 events | 8 activities, 6 exact variants | The process miner accepts a heterogeneous action log through its data API |
 | Planted successful-path corpus | 13 known invariants | Precision `1.000`, recall `1.000` | Every planted call, order, ceiling, outcome, and absence rule was recovered |
 | Path matching fixtures | 4 comparisons | `4/4` expected decisions | Strict, unordered, subsequence, and negative comparisons retain their intended semantics |
-| Four-cluster vector fixture | 12 trajectories, 4 selected | `4/4` clusters represented | Greedy farthest-point selection does not spend the inspection budget on one dense neighborhood |
+| Four-cluster vector fixture | 12 trajectories, 4 selected | `4/4` clusters represented | Greedy farthest-point selection covers every planted neighborhood |
 | Trace adapters | OpenAI, Anthropic, OTLP | `3/3` tool calls normalized | The three adapters preserve tool identity and explicit versus unknown outcomes |
 
-The public corpus is deliberately rich in repeated adversarial actions, so its
-measured rework rate (`0.695`) is a description of that corpus, not a target or
-baseline for ordinary agents.
-Use the known-answer rows to check algorithm semantics and the public-corpus
-row to judge data-shape compatibility; neither predicts application quality.
+The public corpus contains many repeated adversarial actions. Its measured
+rework rate of `0.695` describes that input. Known-answer rows check algorithm
+semantics. The public-corpus row covers data-shape compatibility. Application
+quality requires evaluation with the target agent and workload.
 
-:::{collapse} One process model, as data
+:::{collapse} Process model example
 
 | Run | Observed activities | Process result |
 |---|---|---|
 | A | `search → read → answer` | Variant A, three direct-follow edges |
 | B | `search → read → answer` | Variant A support becomes two |
 | C | `search → search → answer` | One sequential rework event |
-| D | two `search` calls sharing one parent | Parallel batch; not counted as sequential rework |
+| D | two `search` calls sharing one parent | Parallel batch, excluded from sequential rework |
 :::
 
 ## Normalize trace exports
 
-The adapters translate common export shapes into `TrajectoryStep`. They do not
-retain tool-result bodies, call a model, infer task success from prose, or
-write a trace store.
+The adapters translate common export shapes into `TrajectoryStep`. Their output
+keeps metadata selected by the schema. Tool-result bodies stay with the host.
+Model calls and trace storage also remain application operations. Success
+requires an explicit source field.
 
 ```{code-block} python
-:caption: Preserve an unknown tool outcome instead of guessing
+:caption: Preserve an unknown tool outcome
 
 from mari_components.trajectories import normalize_openai_trajectory
 
@@ -43,25 +43,25 @@ result = normalize_openai_trajectory(messages, maximum_events=10_000)
 step = result.steps[0]
 
 assert step.tool == "search"
-assert step.ok is None  # an ordinary tool message has no portable status
+assert step.ok is None  # portable status unavailable
 ```
 
 | Function | Input and options | Output |
 |---|---|---|
 | `normalize_openai_trajectory(records, *, maximum_events=10_000)` | Chat Completions messages or Responses API items | Steps, positioned adapter issues, dropped-record count |
-| `normalize_anthropic_trajectory(messages, *, maximum_events=10_000)` | `tool_use` and `tool_result` blocks | Same result; `is_error` supplies an explicit outcome |
+| `normalize_anthropic_trajectory(messages, *, maximum_events=10_000)` | `tool_use` and `tool_result` blocks | Same result. `is_error` supplies an explicit outcome |
 | `normalize_otel_trajectory(spans, *, maximum_events=10_000)` | OpenTelemetry GenAI attribute spellings | Time-ordered steps with IDs, parents, token counts, cost, and status when supplied |
 | `normalize_steps(events, *, family_map=...)` | Mari's small `{name, args, summary, ok}` record | Privacy-bounded `TrajectoryStep` values |
 
 Sensitive argument names are removed by `normalize_steps`. A missing outcome
-remains `None`; procedure and success-invariant mining never treat it as a
-successful call.
+remains `None`. Procedure mining and success-invariant mining require an
+explicit successful outcome.
 
 ## Mine process structure
 
 `canonicalize_activity` removes call arguments, generated numeric IDs, path
 arguments, and retry suffixes. Resource names such as `chat:model-name` reduce
-to the activity `chat`; the caller can retain the model separately.
+to the activity `chat`. The caller can retain the model separately.
 
 ```{code-block} python
 :caption: Direct-follow edges, exact path variants, rework, and cost
@@ -80,16 +80,16 @@ for edge in process.transitions:
 | Value | How it is computed |
 |---|---|
 | Direct-follow transition | Adjacent canonical activities, plus explicit start and end nodes |
-| Exact variant | Complete canonical activity tuple; no edit-distance collapse |
+| Exact variant | Complete canonical activity tuple with exact equality |
 | Sequential rework | A repeated activity within one run |
-| Parallel event | Sibling steps with the same non-empty parent; excluded from sequential rework |
+| Parallel event | Sibling steps with the same non-empty parent. Excluded from sequential rework |
 | Variant reuse | Fraction of runs belonging to a variant observed more than once |
-| Cost and duration | Sums of caller-observed values; missing measurements contribute zero |
+| Cost and duration | Sums of caller-observed values. Missing measurements contribute zero |
 
 ## Compare paths
 
 ```{code-block} python
-:caption: Accept a shorter valid path while showing the omitted step
+:caption: Compare a shorter observed path with its reference
 
 from mari_components.trajectories import (
     TrajectoryMatchMode,
@@ -111,17 +111,19 @@ print(match.missing_reference_indices)
 |---|---|
 | `strict` | Same length and matching steps at every position |
 | `unordered` | Same multiset under the supplied matcher |
-| `subsequence` | Every observed step appears in reference order; reference may contain extras |
-| `supersequence` | Every reference step appears in observed order; observed may contain extras |
+| `subsequence` | Every observed step appears in reference order. Reference extras are allowed |
+| `supersequence` | Every reference step appears in observed order. Observed extras are allowed |
 
-Every result also includes aligned index pairs, unmatched positions,
-Levenshtein edit distance, and normalized similarity. Tool arguments are exact
-by default; pass `matches=` to define domain-specific equivalence.
+Every result includes aligned index pairs and unmatched positions. It also
+reports Levenshtein edit distance with normalized similarity. Tool arguments
+use exact equality by default. Pass `matches=` to define domain-specific
+equivalence.
 
 ## Mine and check invariants
 
-`mine_trajectory_invariants` considers only runs explicitly marked `success`.
-It emits evidence-bearing candidates rather than tests, policies, or gates.
+`mine_trajectory_invariants` requires runs explicitly marked `success`.
+It emits evidence-bearing candidates. Callers can turn reviewed candidates
+into tests, policies, or gates.
 
 ```{code-block} python
 :caption: Inspect learned regularities before deciding whether to enforce them
@@ -148,12 +150,12 @@ violations = [
 
 | Candidate kind | Applicability and evidence |
 |---|---|
-| `always_calls` | All successful runs; support names runs containing the tool |
-| `never_calls` | Only tools in caller-supplied `available_tools`; absence cannot be learned from an unknown universe |
-| `precedes` | Runs containing both tools; every occurrence of the first must precede every occurrence of the second |
-| `max_calls` | Runs containing the tool; ceiling is the maximum observed successful count |
-| `always_succeeds` | Runs containing the tool; unknown outcomes do not count as support |
-| `argument_domain` | Opt-in argument names only; observed scalar values remain visible |
+| `always_calls` | All successful runs. Support names runs containing the tool |
+| `never_calls` | Tools in caller-supplied `available_tools`. The declared universe defines absence |
+| `precedes` | Runs containing the paired tools. Every occurrence of the first must precede every occurrence of the second |
+| `max_calls` | Runs containing the tool. Ceiling is the maximum observed successful count |
+| `always_succeeds` | Runs containing the tool. Support requires explicit successful outcomes |
+| `argument_domain` | Caller-selected argument names. Observed scalar values remain visible |
 
 ## Select trajectories for inspection
 
@@ -168,5 +170,7 @@ minimum distance, rank, and every excluded ID.
 
 [Hodoscope: action abstraction and diverse trajectory inspection](https://github.com/AR-FORUM/hodoscope){.paper}[AgentEvals trajectory matching](https://github.com/langchain-ai/agentevals){.paper}[TraceRoutine process mining](https://github.com/gurov/traceroutine){.paper}[Trace-to-Evals invariant mining](https://github.com/a-bhimava/agent-trace-to-evals){.paper}[Plumbline intent-relative trajectory analysis](https://github.com/askalf/plumbline){.paper}[Process Mining: Data Science in Action](https://doi.org/10.1007/978-3-662-49851-4){.paper}
 
-[Mari uses independent immutable values and pure functions. It does not include the reference dashboards, model clients, CI generation, enforcement, or trace storage.]{.small}
+[Mari uses independent immutable values and pure functions. Applications supply
+dashboards and model clients. CI generation, enforcement, and trace storage
+connect through the returned records.]{.small}
 :::

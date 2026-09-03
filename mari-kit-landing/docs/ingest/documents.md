@@ -2,17 +2,17 @@
 
 # Documents, identity, and ACLs
 
-## At a glance
+## Behavior
 
 | Concern | Representation |
 |---|---|
 | Source identity | Stable `(source, external_id)` independent of content |
 | Content identity | Revision digest for the exact evidence-bearing body |
 | Visibility | Tenant, principal, and group ACL carried with the document |
-| Deletion | Explicit tombstone rather than an empty document |
+| Deletion | Explicit tombstone for a removed source object |
 
 
-:::{collapse} Worked document revision example
+:::{collapse} Example document revision example
 
 | Field | Revision A | Revision B |
 |---|---|---|
@@ -21,7 +21,7 @@
 | Visibility | `support` | `support` |
 | Body | Original policy | Updated policy |
 
-The stable ID identifies the source object; the revision identifies the exact evidence-bearing content.
+The stable ID identifies the source object. The revision identifies the exact evidence-bearing content.
 :::
 
 
@@ -49,7 +49,7 @@ Exact quote plus document, revision, span, and optional section coordinates.
 
 [W3C PROV: entity identity and revision](https://www.w3.org/TR/prov-dm/){.paper}[Zanzibar: relationship-based authorization](https://research.google/pubs/zanzibar-googles-consistent-global-authorization-system/){.paper}
 
-[Mari carries principals and visibility but does not implement an authorization engine. The application resolves those fields to `allowed_document_ids`.]{.small}
+[Mari carries principals and visibility. The application resolves those fields to `allowed_document_ids`. Authorization remains an application concern.]{.small}
 :::
 
 
@@ -57,7 +57,7 @@ Exact quote plus document, revision, span, and optional section coordinates.
 
 ## How it works
 
-`source_id` names one configured source; `external_id` is the provider's stable object key. Their pair prevents two providers from colliding. `revision` identifies content version, while `updated_at` is descriptive metadata and is never used as identity. ACL visibility and principals travel with the document so an allowed-ID set can be computed before retrieval scoring. Frozen values prevent an indexed object from changing behind its recorded revision.
+`source_id` names one configured source. `external_id` is the provider's stable object key. Their pair keeps provider identities distinct. `revision` identifies content version. `updated_at` is descriptive metadata. ACL visibility and principals travel with the document so an allowed-ID set can be computed before retrieval scoring. Frozen values keep an indexed object aligned with its recorded revision.
 
 ```{code-block} python
 :caption: document.py
@@ -84,14 +84,14 @@ assert doc.document_id == "github:acme/product/file:docs/refunds.md"
 | Value or function | Definition | Options that change behavior |
 |---|---|---|
 | `KnowledgeDocument` | Stable `source_id` + `external_id`, immutable `revision`, body and observed ACL | `updated_at`, URL, metadata and principals are descriptive |
-| `ParsedBlock` | Parser-neutral kind, text, parent, raw character span and optional table cells | `metadata` retains format-specific facts without changing the core type |
+| `ParsedBlock` | Parser-neutral kind, text, parent, raw character span and optional table cells | `metadata` retains format-specific facts beside the core type |
 | `ParseResult[T]` | Accepted values plus positioned warning/error issues and parser provenance | `source_revision` and parser-specific metadata |
-| `stable_source_id(parts, prefix, digest_bytes)` | Type-tags and length-prefixes caller-selected components before SHA-256 hashing | Digest size is 8–32 bytes; mapping/set order is canonicalized; Mari never chooses identity fields |
+| `stable_source_id(parts, prefix, digest_bytes)` | Type-tags and length-prefixes caller-selected components before SHA-256 hashing | Digest size is 8–32 bytes. Mapping/set order is canonicalized. Identity fields come from the caller |
 | `SourceCoordinateMap.build(text, encoding)` | Maps character boundaries to encoded byte boundaries exactly | `to_character(..., exact=False)` floors a mid-character byte offset |
 
 The coordinate map uses the codec's incremental encoder, so BOM and stateful
 encodings are counted once. For UTF-16, `byte_length` equals the complete
-encoded source length rather than adding one BOM per character.
+encoded source length, with one BOM for the complete source.
 
 ```{code-block} python
 :caption: Preserve parser provenance and explicit coordinate units

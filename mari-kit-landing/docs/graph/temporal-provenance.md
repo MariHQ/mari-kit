@@ -2,7 +2,7 @@
 
 # Temporal and provenance utilities
 
-## At a glance
+## Behavior
 
 | Operation | Inputs | Output |
 |---|---|---|
@@ -11,11 +11,14 @@
 | Lineage traversal | Artifact ID and `parents(id)` | Ancestors with depth |
 | Taint composition | Input artifact IDs and `taints(id)` | Stable union with source trace |
 
-Use these operations when the application supplies the temporal and provenance semantics; Mari does not infer them.
+Use these operations when the application supplies temporal and provenance semantics. The caller supplies those policies.
 
 ## How it works
 
-Temporal functions treat intervals as half-open `[start, end)`, avoiding ambiguity at adjacent boundaries. Provenance functions walk IDs through caller callbacks and do not require Mari artifacts. Cycle and visit limits make malformed lineage observable instead of hanging traversal.
+Temporal functions treat intervals as half-open `[start, end)`, which gives
+adjacent boundaries one interpretation. Provenance functions walk IDs through
+caller callbacks and work with caller-owned artifacts. Cycle reports expose
+malformed lineage. Visit limits bound traversal.
 
 ```{code-block} python
 :caption: Join temporal records and explain a derived result
@@ -44,17 +47,17 @@ eligible_assertions = [assertion for assertion in assertions if current(assertio
 
 `Assertion` binds caller-defined subject, predicate, and value fields to valid
 time, transaction time, artifact evidence, and explicit supersession IDs.
-`group_assertions` groups by caller semantics. `plan_assertion_update` only
+`group_assertions` groups by caller semantics. `plan_assertion_update`
 implements mechanics after the caller selects `supersede`, `retract`,
-`coexist`, or `dispute`; it does not infer which disposition is true.
+`coexist`, or `dispute`. It leaves disposition semantics to the caller.
 
 Metadata-preserving lineage edges retain input role, operation, and arbitrary
-parameters during traversal. Plain ID-only lineage remains available through
+parameters during traversal. Plain ID lineage remains available through
 `trace_lineage`.
 
-`grouped_interval_overlaps` uses a within-group sweep and emits each overlapping
-pair exactly once—never mirror pairs or self-pairs. An overlap remains only a
-candidate relationship; it does not mean conflict, precedence, or violation.
+`grouped_interval_overlaps` uses a within-group sweep. Each overlapping pair
+appears once. Self-pairs are excluded. An overlap is a candidate relationship.
+The caller assigns conflict, precedence, and violation semantics.
 
 ```{code-block} python
 :caption: Find unique effective-time collisions inside caller scopes
@@ -69,7 +72,7 @@ candidates = grouped_interval_overlaps(
 ```
 
 The half-open overlap condition matches the semantics used by interval-tree
-implementations: adjacent `[a, b)` and `[b, c)` intervals do not overlap.
+implementations: adjacent `[a, b)` and `[b, c)` intervals avoid overlap.
 [IntervalTree implementation](https://github.com/chaimleib/intervaltree){.paper}
 
 ```{code-block} python
@@ -85,17 +88,17 @@ metrics = evaluate_graph_context(
 )
 
 assert metrics.evidence_coverage == 1.0
-print(metrics.temporal_precision)  # may still be below 1.0
+print(metrics.temporal_precision)  # measured precision
 ```
 
-## What to evaluate
+## Measures
 
 | Property | Cases |
 |---|---|
 | Interval semantics | Adjacent, open-ended, contained, and zero-overlap intervals |
 | Temporal join | Multiple overlaps and stable ordering |
 | Provenance completeness | Every declared parent reachable in the trace |
-| Cycle handling | Cycle reported once without infinite traversal |
+| Cycle handling | Cycle reported once, followed by bounded traversal exit |
 | Taint conservation | Derived output contains the union of source taints |
 | Temporal context | Report evidence coverage and temporal precision separately |
 
@@ -104,5 +107,5 @@ print(metrics.temporal_precision)  # may still be below 1.0
 
 [Temporal databases](https://doi.org/10.1016/0306-4379(86)90030-1){.paper}[Temporal knowledge graph survey](https://arxiv.org/abs/2201.08236){.paper}[W3C PROV](https://www.w3.org/TR/prov-overview/){.paper}[Graphiti temporal model](https://github.com/getzep/graphiti){.paper}
 
-[These are value and traversal utilities. Mari does not mandate bitemporality or a provenance storage layout.]{.small}
+[These are value and traversal utilities. Mari leaves bitemporality and provenance storage layout to the application.]{.small}
 :::

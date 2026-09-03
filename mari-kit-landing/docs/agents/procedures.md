@@ -2,19 +2,21 @@
 
 # Procedural knowledge
 
-## At a glance
+## Measured behavior
 
 | Input evidence | Learned result |
 |---|---|
 | Repeated successful tool sequences | Stable longest common subsequence |
 | Arguments identical at every occurrence | Retained arguments |
 | Arguments vary between runs | Tool retained with arguments omitted |
-| Failed trajectories | Kept as evaluation evidence, not mined as success |
+| Failed trajectories | Kept as evaluation evidence and excluded from successful-path mining |
 
-Across 60 AgentBench DB tasks, controlled successful traces recovered the intended two-step sequence. This validates the mining rule, not task execution or uplift.
+Across 60 AgentBench DB tasks, controlled successful traces recovered the
+intended two-step sequence. The measurement covers the mining rule. Task
+execution and uplift require an agent-level study.
 
 
-:::{collapse} Worked mined procedure
+:::{collapse} Mined procedure example
 
 | Run | Tool sequence | Included in learned subsequence |
 |---|---|---|
@@ -27,13 +29,25 @@ Learned result: `lookup_policy → issue_refund`.
 
 
 
-Successful trajectories produce versioned procedure candidates. Regression gates and human review separate observed behavior from active behavior.
+Successful trajectories produce versioned procedure candidates. Regression
+gates check their measured behavior. Human review controls activation.
 
 ## How it works
 
-Cluster successful traces by reviewed intent, extract a parameterized tool/action sequence with preconditions and failure exits, and retain links to the source traces. Replay the candidate on held-out cases, compare task success, tool correctness, grounding, cost, and regressions with the active version, then produce a review proposal. Only an explicit application commit can activate a version; failed attempts remain negative evidence.
+Start with successful traces grouped by a reviewed intent. `learn_procedure`
+extracts a parameterized action sequence and retains source links. The caller
+adds preconditions and failure exits as domain values. Replay evaluates the
+candidate on held-out cases. Its report includes task success, grounding,
+cost, tool correctness, and regressions against the active version. A review
+proposal can then enter the application's commit path. Failed attempts stay
+available as negative evidence.
 
-**Research basis**[Voyager](https://arxiv.org/abs/2305.16291){.paper} stores compositional skills and improves them using execution feedback, errors, and self-verification. [Reflexion](https://arxiv.org/abs/2303.11366){.paper} retains verbal feedback for later trials. They motivate persistent procedural candidates; held-out regression gates and human promotion are conservative Mari policies, not conclusions of either paper.
+**Research basis**[Voyager](https://arxiv.org/abs/2305.16291){.paper} stores
+compositional skills and updates them from execution feedback. Its process also
+uses errors and self-verification. [Reflexion](https://arxiv.org/abs/2303.11366){.paper}
+retains verbal feedback for later trials. Persistent procedural candidates draw
+on these mechanisms. Mari adds held-out regression gates and human promotion
+as library policies.
 
 :::{container} diagram lifecycle
 trajectories*→*candidate*→*regression suite*→*review*→*active version
@@ -67,11 +81,11 @@ assert [step.tool for step in candidate.steps] == [
 
 `learn_procedure(trajectories, *, intent)` accepts a mapping from caller-owned
 trajectory IDs to ordered `TrajectoryStep` sequences. Every input run must be
-non-empty and every step must have `ok is True`; failed and unknown outcomes
-must be retained separately. The function computes a deterministic longest
-common tool subsequence. Arguments survive only when every aligned occurrence
+non-empty and every step must have `ok is True`. Keep failed and unknown
+outcomes in separate input records. The function computes a deterministic longest
+common tool subsequence. Arguments are retained when every aligned occurrence
 contains the same safe normalized values.
 
 The result contains a content-derived procedure ID and revision, the source
-trajectory IDs, and immutable `ProcedureStep` values. It is a candidate—not an
-executable workflow or promotion decision.
+trajectory IDs, and immutable `ProcedureStep` values. The returned value is a
+candidate. Execution and promotion happen in application code.

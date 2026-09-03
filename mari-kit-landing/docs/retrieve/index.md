@@ -1,6 +1,6 @@
 # Retrieve
 
-## Choose a retrieval path
+## Retrieval paths
 
 
 | Retrieval shape | Use |
@@ -22,7 +22,8 @@
 | SciFact `1099` | `7662206` | 3 | Relevant result follows two distractors |
 | SciFact `1` | `31715818` | >100 | Current BM25 misses at evaluation depth |
 
-The detailed page exposes complete top-five candidates and exact-versus-approximate overlap.
+The detailed page exposes complete top-five candidates and overlap with exact
+search.
 :::
 
 

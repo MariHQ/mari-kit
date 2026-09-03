@@ -2,7 +2,7 @@
 
 # Structural link candidates
 
-## At a glance
+## Behavior
 
 For neighborhoods Γ(u) and Γ(v):
 
@@ -11,14 +11,17 @@ For neighborhoods Γ(u) and Γ(v):
 | Common neighbors | `|Γ(u) ∩ Γ(v)|` | Favors many shared neighbors |
 | Jaccard | Intersection divided by union | Normalizes neighborhood size |
 | Adamic--Adar | Sum of `1 / log(degree(w))` | Gives rare shared neighbors more weight |
-| SimRank | Recursive similarity of incoming neighborhoods | Finds structurally similar nodes without a shared immediate neighbor |
+| SimRank | Recursive similarity of incoming neighborhoods | Finds similarity through the wider incoming structure |
 
 ## How it works
 
-These functions score candidate pairs supplied by the caller. Mari does not generate edges or assume that a high score means a relationship exists. Direction, edge types, temporal filtering, and authorization are expressed by the `neighbors` callback.
+The functions score candidate pairs supplied by the caller. Edge creation
+remains a caller decision. The caller also interprets each score. Direction and
+edge types are expressed by the `neighbors` callback. It can apply temporal
+filters and authorization before returning adjacent nodes.
 
 ```{code-block} python
-:caption: Rank only application-approved candidate pairs
+:caption: Rank application-approved candidate pairs
 
 from mari_components.graph import score_link_candidates
 
@@ -35,12 +38,12 @@ for candidate in scores:
 
 `simrank_scores` is available separately because it scores all pairs in a bounded node set and iterates over incoming-neighbor similarity. It is substantially more expensive than local scores.
 
-## What to evaluate
+## Measures
 
 | Split | Measure |
 |---|---|
 | Held-out observed links | Hits@k, MRR, ROC-AUC, average precision |
-| Time-based split | Future-link precision without temporal leakage |
+| Time-based split | Future-link precision with a cutoff at evaluation time |
 | Candidate generator | Recall before structural scoring |
 | Degree slices | Performance for sparse and hub nodes separately |
 
@@ -49,5 +52,5 @@ for candidate in scores:
 
 [Link prediction problem](https://doi.org/10.1002/asi.20591){.paper}[Adamic--Adar](https://doi.org/10.1016/S0378-8733(03)00009-1){.paper}[SimRank](https://doi.org/10.1145/775047.775126){.paper}[NetworkX link prediction](https://networkx.org/documentation/stable/reference/algorithms/link_prediction.html){.paper}
 
-[Scores are topology-only evidence and should not be presented as semantic facts.]{.small}
+[Scores provide topological evidence. The caller assigns semantic meaning.]{.small}
 :::

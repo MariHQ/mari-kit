@@ -1,6 +1,6 @@
 # Graph tools
 
-## Choose a graph operation
+## Graph operations
 
 
 | Operation | Structure |
@@ -20,7 +20,7 @@
 | Construct candidates | Caller-defined blocking, pair scoring, and clustering |
 | Move between libraries | Loss-visible NetworkX, GraphML, and JSON-LD projections |
 
-:::{collapse} Worked graph flow
+:::{collapse} Example graph flow
 
 | Starting object | Graph operation | Returned structure |
 |---|---|---|

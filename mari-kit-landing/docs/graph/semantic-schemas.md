@@ -2,17 +2,17 @@
 
 # Semantic schemas and constraints
 
-## At a glance
+## Behavior
 
 | Input | Constraint | Result |
 |---|---|---|
 | Contract with one customer | Exactly one `customer` relation | Conforms |
-| Contract without effective date | Required `effective_date` property | Violation at that property |
+| Contract missing an effective date | Required `effective_date` property | Violation at that property |
 | `purchased` from Policy to Product | Domain must be Customer | Type violation |
 
 ## How it works
 
-`KnowledgeSchema` is an optional validation value, not Mari's graph model. It describes a small set of concept, property, and relation checks. Validation returns every violation with the focus object and constraint identifier; the caller decides whether that report blocks a write, requests repair, or is ignored.
+`KnowledgeSchema` is an optional validation value alongside Mari's graph model. It describes a small set of concept, property, and relation checks. Validation returns every violation with the focus object and constraint identifier. The caller decides whether that report blocks a write, requests repair, or is ignored.
 
 ```{code-block} python
 :caption: Define a backend-neutral semantic contract
@@ -49,17 +49,20 @@ if not report.conforms:
 |---|---|---|
 | `PropertyConstraint` | `required`, `minimum_count`, `maximum_count` | Independent cardinality checks |
 | `PropertyConstraint` | `value_type` | Empty, string, integer, number, boolean, object, or array |
-| `PropertyConstraint` | `value_format` | Empty, ISO date, or timezone-aware ISO date-time; formats require strings |
-| `KnowledgeSchema` | `allow_unknown_properties` | Defaults true for open-world compatibility; false reports undeclared properties |
+| `PropertyConstraint` | `value_format` | Empty, ISO date, or timezone-aware ISO date-time. Formats require strings |
+| `KnowledgeSchema` | `allow_unknown_properties` | Defaults true for open-world compatibility. False reports undeclared properties |
 | `validate_records` | Schema, records, optional relations | Reports duplicate IDs, concepts, properties, types, cardinality, and relation domain/range |
 
-Boolean values do not satisfy integer or number constraints, and non-finite
-floats do not satisfy number constraints. These are explicit scalar checks,
-not coercion: Mari never converts `"14"` into `14` during validation.
+Boolean values fail integer and number constraints, and non-finite floats fail
+number constraints. These are explicit scalar checks. Mari leaves values such as
+`"14"` unchanged during validation.
 
-Adapters may translate this utility to LinkML, JSON Schema, SHACL, RDF/OWL, SQL DDL, or property-graph constraints. Core Mari does not require a schema, RDF, globally meaningful URIs, or a particular node and edge representation.
+Adapters translate this utility to formats such as LinkML and JSON Schema.
+SHACL and RDF/OWL adapters can use the same values. SQL DDL or property-graph
+constraints need their own mapping. The application controls schema choice,
+URI meaning, and its node and edge representation.
 
-## What to evaluate
+## Measures
 
 | Layer | Measure |
 |---|---|

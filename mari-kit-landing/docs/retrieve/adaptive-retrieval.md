@@ -2,17 +2,17 @@
 
 # Adaptive retrieval and compression
 
-## At a glance
+## Behavior
 
 | Mechanism | Mari decides | Evidence boundary |
 |---|---|---|
-| CRAG | Use, supplement, or replace retrieved context from score thresholds | SciFact gold relevance exercised all three routes; the relevance evaluator remains yours |
-| FLARE | Whether low-confidence future tokens should trigger retrieval | QASPER answer novelty exercises masking; real calibration comes from your model |
-| Self-RAG | Candidate utility and whether retrieval is requested | Gold relevance validates score composition, not reflection-token prediction |
-| Chain-of-Note | Retrieved, parametric, or unknown answer source | Gold qrels validate deterministic source choice, not note judgment quality |
+| CRAG | Use, supplement, or replace retrieved context from score thresholds | SciFact gold relevance exercised all three routes. The relevance evaluator remains yours |
+| FLARE | Retrieval trigger for low-confidence future tokens | QASPER answer novelty exercises masking. Real calibration comes from your model |
+| Self-RAG | Candidate utility and whether retrieval is requested | Gold relevance validates score composition. Reflection-token prediction needs a separate measure |
+| Chain-of-Note | Retrieved, parametric, or unknown answer source | Gold qrels validate deterministic source choice. Note judgment quality needs a separate measure |
 | RECOMP | Which complete sentences fit a token budget | QASPER retained `16.6%` of tokens with evidence recall `0.330` in the measured configuration |
 
-:::{collapse} Worked routing examples
+:::{collapse} Example routing examples
 
 | Signal pattern | Decision | Next operation |
 |---|---|---|
@@ -24,7 +24,8 @@
 
 
 
-Retrieval can be triggered, corrected, rescored, or compressed at explicit decision points instead of running as one opaque model call.
+Retrieval can be triggered, revised, rescored, or compressed at explicit
+decision points across a model call.
 
 ## How it works
 

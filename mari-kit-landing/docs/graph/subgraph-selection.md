@@ -2,22 +2,22 @@
 
 # Bounded evidence subgraphs
 
-## At a glance
+## Behavior
 
 | Method | Preserves connectivity | Optimization claim | Use |
 |---|---:|---|---|
-| `bounded_seed_expansion` | Not required | None | Collect readable k-hop evidence under a node budget |
+| `bounded_seed_expansion` | Optional | Bounded traversal | Collect readable k-hop evidence under a node budget |
 | `prize_guided_subgraph` | Yes | Deterministic greedy heuristic | Trade relevance prize against edge cost |
 | `pcst_fast` adapter | Yes | Upstream approximation guarantee | Larger prize-collecting problems |
 
-Mari's built-in method is explicitly a heuristic. It does not claim to solve prize-collecting Steiner tree optimally.
+Mari's built-in prize-collecting method is a deterministic greedy heuristic.
 
 ## How it works
 
 Seed expansion ranks frontier nodes using a caller score and stops at a hard node/depth budget. Prize-guided selection starts with the best seed, then repeatedly adds the cheapest path whose newly collected prize exceeds its edge cost. The result records the accepted nodes, edges, total prize, total cost, and rejected frontier candidates.
 
 ```{code-block} python
-:caption: Select connected evidence without adopting a graph framework
+:caption: Select connected evidence through callbacks
 
 from mari_components.graph import prize_guided_subgraph
 
@@ -30,7 +30,7 @@ selection = prize_guided_subgraph(
 )
 ```
 
-## What to evaluate
+## Measures
 
 | Measure | Meaning |
 |---|---|

@@ -1,13 +1,13 @@
 {
-  "created_at": "2026-09-03T17:07:34.426922+00:00",
+  "created_at": "2026-09-03T17:23:45.533749+00:00",
   "evaluation": "documented-api-conformance",
   "failed": 0,
-  "mari_commit": "b66e9ac2ba0d1927b82c3d73a380f9325f563722",
-  "passed": 196,
+  "mari_commit": "7fb3df9e2a921ef1f9a95871326a17e6af5e2894",
+  "passed": 198,
   "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
   "python": "3.13.3",
   "schema_version": 1,
   "skipped": 0,
-  "tests": 196,
-  "wall_seconds": 0.7911993339657784
+  "tests": 198,
+  "wall_seconds": 0.8350757919251919
 }

@@ -13,6 +13,14 @@ failed and 0/2 successful runs (corrected risk ratio 5.00, 95% interval
 0.38–66.01). The wide interval is material: this validates arithmetic and
 evidence linkage, not production effect size.
 
+### Knowledge boundary semantics
+
+Five known-answer cases pass for exact observation-stage accounting,
+derived-as-independent detection, conditional disclosure, coordinated edit
+previews, and budgeted progressive expansion. The adjacent JSONL preserves
+expected and observed values for every case. This is semantic conformance, not
+an application-quality score.
+
 ### BEIR SciFact retrieval
 
 Full public test split: 5,183 documents and 300 judged queries.

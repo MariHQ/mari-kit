@@ -49,6 +49,9 @@ application or LLM can compose those operations for its particular system.
 - Knowledge-from-experience tools: loaded-revision manifests, expert-feedback
   diagnosis, evidence-bound facts/strategies/pitfalls/constraints, minimal edit
   proposals, dependency validation, and targeted/regression comparisons.
+- Knowledge observation ledgers, derivation-loop checks, cross-document edit
+  previews and inverses, conditional-disclosure predicates, and progressive
+  index-to-source manifests.
 - Privacy-bounded OpenAI, Anthropic, and OpenTelemetry evidence adapters;
   direct-follow process models, exact variants, parallel-aware rework,
   reference-path matching, successful-run invariant mining, and sampling.

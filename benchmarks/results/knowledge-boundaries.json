@@ -1,0 +1,6 @@
+{
+  "evaluation_type": "known-answer semantic conformance",
+  "cases": 5,
+  "passed": 5,
+  "limitations": "Validates deterministic semantics, not application quality."
+}

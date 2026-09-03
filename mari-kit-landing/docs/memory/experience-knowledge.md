@@ -24,6 +24,9 @@ workflow.
 | PlugMem Apache-2.0 coding fixture | 3 sessions, 12 events | 2 tool results: 1 explicit success, 1 explicit failure | The adapter retains the fixture's outcome distinction |
 | Contrastive fixture | 4 runs | `retry`: 0/2 successful, 2/2 failed; risk ratio `5.00` | Association direction and zero-cell correction are correct |
 | Loaded-knowledge diagnosis | 1 correction | 1 accepted citation to 1 loaded revision | The diagnosis joins feedback to observed knowledge use |
+| Observation ledger | Retrieved + cited, no use event | Cited `1`; used `0` | Later stages are not inferred |
+| Derivation audit | Derived summary claimed independent | `1/1` detected | Generated material cannot masquerade as a new source |
+| Coordinated edit | 2 exact edits in one document | Expected preview and 2 inverses | Edits compose against one immutable revision |
 
 The risk-ratio interval is wide (`0.38–66.01`) because four runs provide little
 statistical certainty. Mari exposes that uncertainty instead of presenting
@@ -76,6 +79,54 @@ proposes the semantic judgment; Mari validates its observable claims.
 **Evidence**
 
 [Meta organizational second brain](https://engineering.fb.com/2026/09/02/ml-applications/organizational-second-brain-ai-learns-from-experts/){.paper}[ReasoningBank](https://research.google/blog/reasoningbank-enabling-agents-to-learn-from-experience/){.paper}[PlugMem](https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/){.paper}
+:::
+
+## Record what knowledge was actually observed
+
+Retrieval, presentation, citation, and use are separate observations. A
+retriever hit does not prove that text entered the model context; a citation
+does not prove that the cited material affected the result.
+
+| Recorded stage | Meaning | What Mari does not infer |
+|---|---|---|
+| `RETRIEVED` | An artifact revision was returned by retrieval | It was shown |
+| `SHOWN` | The revision entered the supplied context | It was read or used |
+| `CITED` | Output explicitly referenced the revision | The claim depended on it |
+| `USED` | The host observed a defined use signal | Causal benefit without an ablation |
+
+```{code-block} python
+:caption: Preserve the difference between retrieval and demonstrated use
+
+from mari_components.knowledge import (
+    KnowledgeObservation, KnowledgeObservationStage,
+    inspect_knowledge_observations,
+)
+
+report = inspect_knowledge_observations([
+    KnowledgeObservation(
+        observation_id="obs-1", activity_id="answer-42",
+        artifact_id="plans", revision="r7",
+        stage=KnowledgeObservationStage.RETRIEVED, ordinal=0,
+    ),
+    KnowledgeObservation(
+        observation_id="obs-2", activity_id="answer-42",
+        artifact_id="plans", revision="r7",
+        stage=KnowledgeObservationStage.SHOWN, ordinal=1,
+    ),
+])
+
+assert report.retrieved == (("plans", "r7"),)
+assert report.used == ()
+```
+
+The inspector detects duplicate observation IDs, a later event recorded before
+an earlier stage, and a non-retrieval stage with no preceding observation for
+that activity and revision.
+
+::: source-block
+**Evidence**
+
+[W3C PROV activities, entities, and derivations](https://www.w3.org/TR/prov-dm/){.paper}[Letta context hierarchy and observed memory](https://github.com/letta-ai/letta-code){.paper}[PlugMem context-relative utility](https://arxiv.org/abs/2603.03296){.paper}
 :::
 
 ## Extract reusable knowledge
@@ -217,6 +268,54 @@ agreement, kappa, and duplicate reviewer submissions.
 [Meta on minimal edits, independent review, validation, and replay](https://engineering.fb.com/2026/09/02/ml-applications/organizational-second-brain-ai-learns-from-experts/){.paper}[Anthropic agent evaluations](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents){.paper}[Bootstrap confidence intervals](https://doi.org/10.1214/ss/1177013815){.paper}
 :::
 
+## Validate a multi-document changeset
+
+`validate_knowledge_changeset(documents, edits)` lifts exact edits into one
+review unit. It checks every source revision and original substring, rejects
+overlapping changes, builds complete previews, hashes proposed revisions, and
+returns inverse edits. It does not apply them or claim a cross-store
+transaction.
+
+```{code-block} python
+:caption: Preview a coordinated correction across two artifacts
+
+from mari_components.knowledge import (
+    KnowledgeEdit, validate_knowledge_changeset,
+)
+
+changeset = validate_knowledge_changeset(
+    {limits.document_id: limits, routing.document_id: routing},
+    [
+        KnowledgeEdit(
+            document_id=limits.document_id, source_revision=limits.revision,
+            original="Limit is 10", replacement="Limit is 20",
+            reason="Correct enterprise limit",
+        ),
+        KnowledgeEdit(
+            document_id=routing.document_id, source_revision=routing.revision,
+            original="basic queue", replacement="enterprise queue",
+            reason="Keep routing consistent",
+        ),
+    ],
+)
+
+for entry in changeset.entries:
+    review(entry.preview, entry.inverse_edits)
+```
+
+| Failure | Why the changeset is not valid |
+|---|---|
+| Unknown document | Target cannot be resolved |
+| Revision mismatch | Edit was prepared against stale material |
+| Original is absent or repeated | Replacement location is ambiguous |
+| Edits overlap | Order would change their meaning |
+
+::: source-block
+**Evidence**
+
+[JSON Patch](https://www.rfc-editor.org/rfc/rfc6902){.paper}[HTTP conditional requests and lost-update prevention](https://www.rfc-editor.org/rfc/rfc9110.html#name-conditional-requests){.paper}[Meta on minimal edits and deterministic validation](https://engineering.fb.com/2026/09/02/ml-applications/organizational-second-brain-ai-learns-from-experts/){.paper}
+:::
+
 ## Validate caller-designed knowledge structures
 
 `inspect_knowledge_structure(files, maximum_tokens=None)` checks a structure;
@@ -253,6 +352,49 @@ assert report.valid and report.total_tokens == 1_050
 **Evidence**
 
 [Meta on explicit dependencies and structural validation](https://engineering.fb.com/2026/09/02/ml-applications/organizational-second-brain-ai-learns-from-experts/){.paper}[W3C PROV data model](https://www.w3.org/TR/prov-dm/){.paper}
+:::
+
+## Detect derivation feedback loops
+
+Generated summaries and facts may be useful evidence, but they are not new
+independent sources. `inspect_knowledge_derivations` checks immutable revision
+references, missing inputs, derivation cycles, and any derived input labeled
+`claimed_independent=True`.
+
+```{code-block} python
+:caption: Keep a generated summary linked to its source
+
+from mari_components.knowledge import (
+    DerivationInput, KnowledgeDerivation, KnowledgeOrigin,
+    inspect_knowledge_derivations,
+)
+
+report = inspect_knowledge_derivations([
+    KnowledgeDerivation(output=source_ref, origin=KnowledgeOrigin.SOURCE),
+    KnowledgeDerivation(
+        output=summary_ref,
+        origin=KnowledgeOrigin.DERIVED,
+        inputs=(DerivationInput(ref=source_ref),),
+    ),
+    KnowledgeDerivation(
+        output=new_fact_ref,
+        origin=KnowledgeOrigin.DERIVED,
+        inputs=(DerivationInput(
+            ref=summary_ref,
+            claimed_independent=False,
+        ),),
+    ),
+])
+```
+
+This check does not forbid using derived material. It prevents a caller from
+counting that material as independent corroboration and makes cyclic ancestry
+visible before admission or aggregation.
+
+::: source-block
+**Evidence**
+
+[W3C PROV derivation](https://www.w3.org/TR/prov-dm/#term-Derivation){.paper}[Nanopublication provenance](https://arxiv.org/abs/1809.06532){.paper}[The Curse of Recursion](https://arxiv.org/abs/2305.17493){.paper}
 :::
 
 ## Normalize activity as evidence

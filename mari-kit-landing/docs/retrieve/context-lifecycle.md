@@ -12,6 +12,17 @@
 
 These are reported upstream results, not Mari measurements. Use them to justify measuring selective injection; they do not prescribe a model or agent loop.
 
+:::{collapse} Known-answer disclosure checks
+
+| Case | Expected | Observed |
+|---|---|---|
+| Incident condition: matching / non-matching facts | `true / false` | `true / false` |
+| Seven-token progressive budget | index + summary | index + summary selected; source skipped |
+
+These checks establish predicate and budget semantics. They do not measure
+retrieval relevance or override independent authorization tests.
+:::
+
 ## How it works
 
 Mari separates four records that applications often collapse:
@@ -158,6 +169,54 @@ the case without that item; Mari does not infer them from attention or prose.
 [PlugMem: utility relative to consumed context](https://arxiv.org/abs/2603.03296){.paper}[Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents){.paper}
 :::
 
+## Evaluate conditional disclosure separately from authorization
+
+A disclosure condition describes when knowledge is relevant enough to reveal
+or expand. It is not permission. Applications must apply ACL filtering before
+or alongside this predicate.
+
+```{code-block} python
+:caption: Evaluate an inspectable trigger over caller facts
+
+from mari_components.retrieval import (
+    DisclosureCondition, DisclosureOperator, DisclosureRule,
+    evaluate_disclosure,
+)
+
+rule = DisclosureRule(
+    rule_id="severe-incident-runbook",
+    conditions=(
+        DisclosureCondition(
+            field="task_kind", operator=DisclosureOperator.EQUALS,
+            value="incident",
+        ),
+        DisclosureCondition(
+            field="severity", operator=DisclosureOperator.IN,
+            value=("sev0", "sev1"),
+        ),
+    ),
+)
+decision = evaluate_disclosure(
+    rule, {"task_kind": "incident", "severity": "sev1"}
+)
+```
+
+| Operator | True when |
+|---|---|
+| `EXISTS` | Field is present, including a present `None` value |
+| `EQUALS` | Present value equals the rule value |
+| `NOT_EQUALS` | Field is present and differs |
+| `IN` | Present value belongs to the rule's tuple, list, or set |
+
+Rules can require all or any conditions and return every condition result.
+They cannot grant visibility, inspect user permissions, or execute retrieval.
+
+::: source-block
+**Evidence**
+
+[NIST attribute-based access control](https://doi.org/10.6028/NIST.SP.800-162){.paper}[Nocturne conditional disclosure implementation](https://github.com/Dataojitori/nocturne_memory){.paper}
+:::
+
 ## Add context to chunks without losing source spans
 
 `parse_chunk_context(document, section, model_output)` prepends a bounded
@@ -193,6 +252,66 @@ assert document.body[
 **Evidence**
 
 [Anthropic contextual retrieval](https://www.anthropic.com/news/contextual-retrieval){.paper}[Late Chunking](https://arxiv.org/abs/2409.04701){.paper}
+:::
+
+## Expand progressively from index to source
+
+A `ProgressiveDisclosureManifest` connects small index entries to summaries,
+sections, and full source units at the same artifact revision. The manifest
+does not prescribe how those units were generated or ranked.
+
+```{code-block} python
+:caption: Spend seven tokens on an index and summary, not the full source
+
+from mari_components.retrieval import (
+    DisclosureLevel, DisclosureUnit, ProgressiveDisclosureManifest,
+    expand_disclosure, inspect_disclosure_manifest,
+)
+
+manifest = ProgressiveDisclosureManifest(
+    root_ids=("plans:index",),
+    units=(
+        DisclosureUnit(
+            unit_id="plans:index", artifact_id="plans", revision="r7",
+            level=DisclosureLevel.INDEX, text="Plan limits", token_count=2,
+            expands_to=("plans:summary",),
+        ),
+        DisclosureUnit(
+            unit_id="plans:summary", artifact_id="plans", revision="r7",
+            level=DisclosureLevel.SUMMARY,
+            text="Limits vary by plan.", token_count=5,
+            expands_to=("plans:source",),
+        ),
+        DisclosureUnit(
+            unit_id="plans:source", artifact_id="plans", revision="r7",
+            level=DisclosureLevel.SOURCE,
+            text=full_policy, token_count=600,
+        ),
+    ),
+)
+
+assert inspect_disclosure_manifest(manifest).valid
+selection = expand_disclosure(manifest, token_budget=7)
+assert [unit.unit_id for unit in selection.selected] == [
+    "plans:index", "plans:summary",
+]
+```
+
+| Manifest invariant | Reason |
+|---|---|
+| Unique unit IDs | Expansion targets are unambiguous |
+| Same artifact and revision along an edge | Detail cannot silently cross versions |
+| Strictly increasing level | Expansion always adds detail |
+| No missing targets or cycles | Traversal is finite and inspectable |
+| Explicit token counts | Every selected and skipped unit is budget-visible |
+
+Expansion is breadth-first and caller-started. Authorization, relevance
+ranking, and deciding whether more detail is needed remain separate steps.
+
+::: source-block
+**Evidence**
+
+[MemWalker](https://arxiv.org/abs/2310.05029){.paper}[RAPTOR](https://arxiv.org/abs/2401.18059){.paper}[Pi LLM Wiki layered source and canonical pages](https://github.com/zosmaai/pi-llm-wiki){.paper}
 :::
 
 ::: source-block

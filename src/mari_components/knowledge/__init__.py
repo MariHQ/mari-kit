@@ -38,6 +38,14 @@ from .assertions import (
     plan_assertion_update,
     valid_at,
 )
+from .changesets import (
+    ChangesetIssue,
+    ChangesetIssueKind,
+    KnowledgeChangeEntry,
+    KnowledgeChangeset,
+    PositionedKnowledgeEdit,
+    validate_knowledge_changeset,
+)
 from .consolidation import (
     ConsolidationBudget,
     ConsolidationPlan,
@@ -45,6 +53,15 @@ from .consolidation import (
     plan_consolidation,
 )
 from .decisions import parse_decisions
+from .derivations import (
+    DerivationInput,
+    DerivationIssue,
+    DerivationIssueKind,
+    DerivationReport,
+    KnowledgeDerivation,
+    KnowledgeOrigin,
+    inspect_knowledge_derivations,
+)
 from .evidence import (
     ArtifactEvidence,
     EvidenceIssue,
@@ -111,6 +128,14 @@ from .mutations import (
     apply_memory_mutations,
     plan_memory_mutations,
 )
+from .observations import (
+    KnowledgeObservation,
+    KnowledgeObservationReport,
+    KnowledgeObservationStage,
+    ObservationIssue,
+    ObservationIssueKind,
+    inspect_knowledge_observations,
+)
 from .refinement import RefinementEdit, parse_refinement
 from .research import (
     MemorySignal,
@@ -152,11 +177,17 @@ __all__ = [
     "AdmissionThresholds",
     "ConsolidationBudget",
     "ConsolidationPlan",
+    "ChangesetIssue",
+    "ChangesetIssueKind",
     "DEFAULT_SIMILARITY_LIMIT",
     "DEFAULT_SIMILARITY_THRESHOLD",
     "AnswerDisposition",
     "DigestSummary",
     "DigestTopic",
+    "DerivationInput",
+    "DerivationIssue",
+    "DerivationIssueKind",
+    "DerivationReport",
     "FactAssessment",
     "EvidenceIssue",
     "EvidenceIssueKind",
@@ -172,6 +203,13 @@ __all__ = [
     "FreshnessStatus",
     "GroundedAnswer",
     "KnowledgeDependency",
+    "KnowledgeDerivation",
+    "KnowledgeOrigin",
+    "KnowledgeChangeEntry",
+    "KnowledgeChangeset",
+    "KnowledgeObservation",
+    "KnowledgeObservationReport",
+    "KnowledgeObservationStage",
     "KnowledgeChangeProposal",
     "KnowledgeEdit",
     "KnowledgeFile",
@@ -190,6 +228,9 @@ __all__ = [
     "MemoryOperation",
     "MemorySignal",
     "NoteEvolutionPlan",
+    "ObservationIssue",
+    "ObservationIssueKind",
+    "PositionedKnowledgeEdit",
     "PromotionSignal",
     "RefinementEdit",
     "RevisionChange",
@@ -223,6 +264,8 @@ __all__ = [
     "group_assertions",
     "hybrid_topic_segments",
     "inspect_knowledge_structure",
+    "inspect_knowledge_derivations",
+    "inspect_knowledge_observations",
     "impacted_artifacts",
     "normalize_claim",
     "parse_answer",
@@ -249,6 +292,7 @@ __all__ = [
     "section_revisions",
     "valid_at",
     "validate_artifact_evidence",
+    "validate_knowledge_changeset",
     "weighted_mean",
     "wilson_proportion",
 ]

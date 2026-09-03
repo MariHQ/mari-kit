@@ -1,0 +1,5 @@
+{"case_id": "observation-no-inferred-use", "expected": {"cited": 1, "used": 0}, "observed": {"cited": 1, "used": 0}, "passed": true}
+{"case_id": "derived-evidence-not-independent", "expected": true, "observed": true, "passed": true}
+{"case_id": "conditional-disclosure", "expected": [true, false], "observed": [true, false], "passed": true}
+{"case_id": "multi-edit-preview", "expected": "Limit 20. Route enterprise.", "observed": "Limit 20. Route enterprise.", "passed": true}
+{"case_id": "progressive-budget", "expected": ["index", "summary"], "observed": ["index", "summary"], "passed": true}

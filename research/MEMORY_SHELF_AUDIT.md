@@ -29,20 +29,19 @@ mean upstream code was vendored or that Mari reproduces an upstream product.
 | Semiont, portable-memory, Apertomemory | Append-only projections, portable bundles, checksums, signatures, and import validation |
 | Connector and parser references | Polling and streaming protocols, canonical documents, sync planning, structured document IR, and positioned parser diagnostics |
 
-## Useful primitives still missing
+## Implemented after the initial audit
 
-| Priority | Primitive | Reference value | Boundary |
-|---:|---|---|---|
-| 1 | Knowledge observation ledger | Distinguish retrieved, shown, cited, and used artifacts across one outcome | Immutable records only; no runtime hooks or store |
-| 2 | Derivation-loop detection | Prevent generated knowledge from returning as independent source evidence | Provenance graph check; caller decides rejection |
-| 3 | Conditional disclosure predicate | Express “include only when condition X holds” separately from authorization | Selection predicate only; never an ACL substitute |
-| 4 | Knowledge changeset validation | Validate several artifact revisions, preconditions, and inverse operations together | Plan and report only; transactions and rollback remain store-owned |
-| 5 | Progressive disclosure manifest | Connect a compact index entry to summaries, sections, and full source at increasing cost | Portable values and selection accounting, not a UI or wiki |
+| Primitive | Current implementation | Boundary |
+|---|---|---|
+| Knowledge observation ledger | Exact retrieved, shown, cited, and used stage records plus ordering diagnostics | Immutable records only; no runtime hooks or store |
+| Derivation-loop detection | Missing-input, cycle, and derived-as-independent reports over exact revisions | Caller decides rejection |
+| Conditional disclosure predicate | Inspectable `exists`, equality, inequality, and membership conditions | Never an ACL substitute |
+| Knowledge changeset validation | Multi-document preconditions, overlap checks, previews, proposed hashes, and inverse edits | Transactions and rollback remain store-owned |
+| Progressive disclosure manifest | Validated index → summary → section → source expansion with token accounting | No UI, retrieval model, or generation pipeline |
 
-These remain credible additions from `letta-code`, `memoripy`,
-`nocturne_memory`, `pi-llm-wiki`, and related shelf projects. They are smaller
-than a framework and compose with Mari's current artifacts, evidence, and
-context selection.
+These are derived from narrow reusable ideas in `letta-code`, `memoripy`,
+`nocturne_memory`, `pi-llm-wiki`, and related shelf projects. None imports an
+upstream framework, runtime, or storage design.
 
 ## Intentionally excluded
 

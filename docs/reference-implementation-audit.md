@@ -24,4 +24,17 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | HyDE | `texttron/hyde` | No repository license detected; inspect only | `hypothetical_document_embedding` |
 | CRAG | `HuskyInSalt/CRAG` | No repository license detected; inspect only | `plan_corrective_retrieval` |
 
+## Connector references
+
+| Reference | License decision | Mari contribution |
+|---|---|---|
+| `run-llama/llama_index` | MIT; permissive catalog/reference | Provider coverage audit for cloud stores, Microsoft drives, and RSS |
+| `dlt-hub/dlt` | Apache-2.0; permissive reference | SDK-neutral object listing/reading boundary for S3, GCS, and Azure Blob |
+| `meltano/sdk` | Apache-2.0; permissive reference | Singer RECORD/STATE interoperability boundary |
+| `Unstructured-IO/unstructured` | Apache-2.0; permissive reference | Separation of source ingestion from downstream parsing |
+
+Mari's connector implementations use provider HTTP contracts and independent
+normalization code. No upstream connector code or optional SDK dependency is
+vendored.
+
 For entries marked inspect-only, Mari is based on the published mathematics and independently written conformance cases. For permissive references, compatible licensing permits comparison, but Mari still keeps independent APIs and tests rather than vendoring the systems.

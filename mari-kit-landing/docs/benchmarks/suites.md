@@ -2,6 +2,14 @@
 
 Each algorithm has a named suite in `benchmarks/suites.json`. A repository test fails when a completed paper has no suite, a suite names an unknown corpus, or suite IDs collide. The JSON file is the machine-readable source; this page explains what each suite measures.
 
+## Connectors
+
+### Batch and streaming conformance
+
+**Benchmark:** bundled scrubbed provider fixtures; full-snapshot equivalence, stable-ID rate, duplicate rate, checkpoint safety, hint coverage, verification order, and duplicate coalescing.
+
+Every batch connector is exercised through bounded pages, resume, update, and deletion shapes. Streaming replays create/update/delete deliveries with duplicates and verifies that signature validation happens before parsing. The streaming suite additionally asserts that `ChangeHint` has no checkpoint state. [OpenAPI](https://spec.openapis.org/oas/latest.html){.paper} [CloudEvents](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md){.paper} [RFC 2104](https://www.rfc-editor.org/rfc/rfc2104){.paper}
+
 ## Indexes and ranking
 
 ### Dense exact search

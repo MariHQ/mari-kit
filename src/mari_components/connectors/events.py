@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 import time
+import urllib.parse
 from collections.abc import Mapping
 from typing import Any
 
@@ -176,6 +177,158 @@ def slack_change_hint(payload: Mapping[str, Any]) -> ChangeHint:
             "thread_timestamp": thread_ts,
             "user": str(event.get("user") or ""),
         },
+    )
+
+
+def gitlab_change_hint(payload: Mapping[str, Any]) -> ChangeHint:
+    project = _object(payload.get("project"))
+    project_path = str(project.get("path_with_namespace") or "")[:300]
+    event_type = str(payload.get("object_kind") or payload.get("event_name") or "")[:80]
+    if not project_path or not event_type:
+        raise PermanentFailure("GitLab event and project are required")
+    attributes = _object(payload.get("object_attributes"))
+    external_id = str(attributes.get("id") or attributes.get("iid") or "")[:200]
+    paths: list[str] = []
+    for commit in list(payload.get("commits") or [])[:250]:
+        if not isinstance(commit, dict):
+            continue
+        for key in ("added", "modified", "removed"):
+            for value in list(commit.get(key) or []):
+                path = str(value)[:1000]
+                if path and path not in paths:
+                    paths.append(path)
+                if len(paths) >= MAX_DIRTY_PATHS:
+                    break
+    return ChangeHint(
+        provider="gitlab",
+        aggregate_key=f"project:{project_path.casefold()}",
+        event_type=event_type,
+        external_id=external_id,
+        revision=str(payload.get("after") or attributes.get("updated_at") or "")[:200],
+        metadata={
+            "project": project_path,
+            "ref": str(payload.get("ref") or "")[:500],
+            "paths": tuple(paths),
+            "paths_truncated": len(paths) >= MAX_DIRTY_PATHS,
+        },
+    )
+
+
+def box_change_hint(payload: Mapping[str, Any]) -> ChangeHint:
+    source = _object(payload.get("source"))
+    item_id = str(source.get("id") or "")[:200]
+    event_type = str(payload.get("trigger") or payload.get("event_type") or "")[:100]
+    if not item_id or not event_type:
+        raise PermanentFailure("Box event source and trigger are required")
+    deleted = event_type.casefold() in {"trash", "delete", "file.trash", "file.delete"}
+    return ChangeHint(
+        provider="box",
+        aggregate_key=f"item:{item_id}",
+        event_type=event_type,
+        external_id=item_id,
+        revision=str(source.get("sha1") or source.get("etag") or "")[:200],
+        deleted=deleted,
+        metadata={"item_type": str(source.get("type") or "")[:80]},
+    )
+
+
+def microsoft_graph_change_hint(
+    payload: Mapping[str, Any], *, provider: str
+) -> ChangeHint:
+    notifications = payload.get("value")
+    if not isinstance(notifications, list) or not notifications:
+        raise PermanentFailure("Microsoft Graph event contains no notifications")
+    first = _object(notifications[0])
+    resource_data = _object(first.get("resourceData"))
+    subscription = str(first.get("subscriptionId") or "")[:200]
+    resource = str(first.get("resource") or "")[:1000]
+    item_id = str(resource_data.get("id") or "")[:200]
+    if not subscription or not resource:
+        raise PermanentFailure("Microsoft Graph notification is incomplete")
+    return ChangeHint(
+        provider=provider,
+        aggregate_key=f"subscription:{subscription}",
+        event_type=str(first.get("changeType") or "changed")[:80],
+        external_id=item_id,
+        revision=str(resource_data.get("@odata.etag") or "")[:200],
+        deleted=str(first.get("changeType") or "").casefold() == "deleted",
+        metadata={"resource": resource, "notification_count": len(notifications)},
+    )
+
+
+def object_storage_change_hint(
+    payload: Mapping[str, Any], *, provider: str
+) -> ChangeHint:
+    keys: list[str] = []
+    container = ""
+    event_type = "changed"
+    revision = ""
+    deleted = False
+    if provider == "s3":
+        records = payload.get("Records")
+        if not isinstance(records, list) or not records:
+            raise PermanentFailure("S3 event contains no records")
+        for record in records[:MAX_DIRTY_PATHS]:
+            value = _object(record)
+            s3 = _object(value.get("s3"))
+            container = container or str(_object(s3.get("bucket")).get("name") or "")
+            object_data = _object(s3.get("object"))
+            key = urllib.parse.unquote_plus(str(object_data.get("key") or ""))[:1000]
+            if key:
+                keys.append(key)
+            event_type = str(value.get("eventName") or event_type)
+            revision = str(
+                object_data.get("versionId") or object_data.get("eTag") or revision
+            )
+        deleted = "remove" in event_type.casefold()
+    elif provider == "gcs":
+        container = str(payload.get("bucket") or "")
+        key = str(payload.get("name") or "")[:1000]
+        keys = [key] if key else []
+        event_type = str(payload.get("type") or payload.get("eventType") or event_type)
+        revision = str(payload.get("generation") or payload.get("etag") or "")
+        deleted = "delete" in event_type.casefold()
+    elif provider == "azure_blob":
+        data = _object(payload.get("data"))
+        subject = str(payload.get("subject") or "")
+        parts = subject.split("/blobs/", 1)
+        container = parts[0].rsplit("/containers/", 1)[-1] if parts else ""
+        keys = [parts[1]] if len(parts) == 2 and parts[1] else []
+        event_type = str(payload.get("eventType") or event_type)
+        revision = str(data.get("eTag") or "")
+        deleted = "deleted" in event_type.casefold()
+    else:
+        raise ValueError(f"unsupported object-storage provider: {provider!r}")
+    if not container:
+        raise PermanentFailure("object-storage event has no container")
+    return ChangeHint(
+        provider=provider,
+        aggregate_key=f"container:{container}",
+        event_type=event_type[:120],
+        external_id=keys[0][:1000] if len(keys) == 1 else "",
+        revision=revision[:200],
+        deleted=deleted and len(keys) == 1,
+        metadata={"container": container[:300], "keys": tuple(keys)},
+    )
+
+
+def cloudevent_change_hint(payload: Mapping[str, Any]) -> ChangeHint:
+    event_id = str(payload.get("id") or "")[:300]
+    source = str(payload.get("source") or "")[:1000]
+    event_type = str(payload.get("type") or "")[:300]
+    subject = str(payload.get("subject") or "")[:1000]
+    if not event_id or not source or not event_type:
+        raise PermanentFailure("CloudEvent requires id, source, and type")
+    data = _object(payload.get("data"))
+    deleted = any(value in event_type.casefold() for value in ("deleted", "removed"))
+    return ChangeHint(
+        provider="cloudevents",
+        aggregate_key=f"{source}:{subject or event_id}",
+        event_type=event_type,
+        external_id=subject,
+        revision=str(data.get("revision") or data.get("etag") or "")[:200],
+        deleted=deleted,
+        metadata={"event_id": event_id, "source": source},
     )
 
 

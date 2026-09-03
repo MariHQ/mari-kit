@@ -39,3 +39,14 @@ No inspect-only code, weights, or fixtures are shipped in Mari. `SparseVectorInd
 ## What conformance means
 
 The unit suite checks deterministic ranking, tie handling, filtering before document scoring, interval boundaries, contiguous replay, revision conflicts, metric formulas, and regression-gate behavior. Corpus benchmarks then measure task quality, cost, latency, and safety. Agreement with a reference implementation is evidence about a boundary—not proof that a complete upstream system has been reproduced.
+
+## Connector references
+
+The connector coverage audit uses only permissively licensed projects:
+
+- LlamaIndex (MIT): provider coverage for Microsoft drives, cloud stores, RSS, and specialist readers.
+- dlt (Apache-2.0): filesystem, cloud-object, SQL, and declarative REST source boundaries.
+- Meltano Singer SDK (Apache-2.0): RECORD/STATE interoperability across external taps.
+- Unstructured (Apache-2.0): separation between source ingestion and document parsing.
+
+Mari does not vendor their connector code. Direct connectors use provider HTTP contracts; object stores use injected SDK operations; Singer taps remain external processes. Recorded provider fixtures validate pagination, resume, deletion, normalization, and checkpoint-free event parsing.

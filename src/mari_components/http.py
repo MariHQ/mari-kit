@@ -8,7 +8,18 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
 
-_SENSITIVE_HEADERS = frozenset({"authorization", "proxy-authorization", "x-api-key"})
+_SENSITIVE_HEADERS = frozenset(
+    {
+        "authorization",
+        "private-token",
+        "proxy-authorization",
+        "x-api-key",
+        "x-gitlab-token",
+        "x-hub-signature",
+        "x-hub-signature-256",
+        "x-slack-signature",
+    }
+)
 _SENSITIVE_QUERY = frozenset({"access_token", "api_key", "apikey", "key", "token"})
 
 

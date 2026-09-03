@@ -30,13 +30,19 @@ class CatalogTests(unittest.TestCase):
         expected = {
             "airtable",
             "asana",
+            "box",
             "confluence",
             "dropbox",
+            "filesystem",
             "gdrive",
             "github",
+            "gitlab",
             "jira",
             "linear",
             "notion",
+            "onedrive",
+            "rss",
+            "sharepoint",
             "slack",
             "trello",
             "zendesk",
@@ -50,15 +56,24 @@ class CatalogTests(unittest.TestCase):
                 "slack",
                 "gdrive",
                 "confluence",
-                "notion",
-                "jira",
+                "gitlab",
+                "onedrive",
             ],
         )
         self.assertTrue(all(definition.fields for definition in ordered))
         self.assertTrue(all(item.supports(ConnectorMode.POLL) for item in ordered))
         self.assertEqual(
             {item.key for item in ordered if item.supports(ConnectorMode.STREAM)},
-            {"github", "slack", "gdrive", "confluence"},
+            {
+                "box",
+                "confluence",
+                "gdrive",
+                "github",
+                "gitlab",
+                "onedrive",
+                "sharepoint",
+                "slack",
+            },
         )
 
     def test_connector_credentials_are_absent_from_representations(self):

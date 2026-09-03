@@ -8,10 +8,15 @@ from typing import Any
 from mari_components.types import ChangeHint, PollPage
 
 from .events import (
+    box_change_hint,
+    cloudevent_change_hint,
     coalesce_hints,
     confluence_change_hint,
     gdrive_change_hint,
     github_change_hint,
+    gitlab_change_hint,
+    microsoft_graph_change_hint,
+    object_storage_change_hint,
     parse_json_object,
     slack_change_hint,
 )
@@ -40,7 +45,38 @@ def stream_change_hint(
         return slack_change_hint(payload)
     if event.provider == "confluence":
         return confluence_change_hint(payload)
+    if event.provider == "gitlab":
+        return gitlab_change_hint(payload)
+    if event.provider == "box":
+        return box_change_hint(payload)
+    if event.provider in {"onedrive", "sharepoint"}:
+        return microsoft_graph_change_hint(payload, provider=event.provider)
+    if event.provider in {"s3", "gcs", "azure_blob"}:
+        return object_storage_change_hint(payload, provider=event.provider)
+    if event.provider == "cloudevents":
+        return cloudevent_change_hint(payload)
     raise ValueError(f"unsupported streaming provider: {event.provider!r}")
+
+
+def stream_hints(
+    events: Iterable[StreamEvent],
+    *,
+    verify: VerifyStreamEvent,
+    maximum_events: int = 500,
+    maximum_bytes: int = 1_048_576,
+) -> Iterator[ChangeHint]:
+    """Emit coalesced change hints without owning a cursor or checkpoint."""
+
+    if maximum_events < 1:
+        raise ValueError("maximum_events must be positive")
+    hints: list[ChangeHint] = []
+    for index, event in enumerate(events):
+        if index >= maximum_events:
+            raise ValueError("stream batch exceeds maximum_events")
+        hints.append(
+            stream_change_hint(event, verify=verify, maximum_bytes=maximum_bytes)
+        )
+    yield from coalesce_hints(hints)
 
 
 def stream_pages(
@@ -59,14 +95,12 @@ def stream_pages(
     """
     if maximum_events < 1:
         raise ValueError("maximum_events must be positive")
-    hints: list[ChangeHint] = []
-    for index, event in enumerate(events):
-        if index >= maximum_events:
-            raise ValueError("stream batch exceeds maximum_events")
-        hints.append(
-            stream_change_hint(event, verify=verify, maximum_bytes=maximum_bytes)
-        )
-    for hint in coalesce_hints(hints):
+    for hint in stream_hints(
+        events,
+        verify=verify,
+        maximum_events=maximum_events,
+        maximum_bytes=maximum_bytes,
+    ):
         yield from hydrate(hint)
 
 

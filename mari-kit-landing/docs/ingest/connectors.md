@@ -5,16 +5,15 @@
 ```{include} ../_includes/eval/ingest.md
 ```
 
-Every connector defines a frozen configuration object, validation, and polling. GitHub, Slack, Google Drive, and Confluence also accept verified provider events. Network calls use an injected `HttpTransport`.
+Every catalog connector defines a frozen configuration object, validation, and batch polling. GitHub, GitLab, Slack, Google Drive, OneDrive, SharePoint, Confluence, and Box also accept verified provider events. S3, GCS, and Azure Blob use an SDK-neutral batch boundary and checkpoint-free event hints. Generic CloudEvents provide the streaming escape hatch. Network calls use an injected `HttpTransport`.
 
 ## How it works
 
-A polling connector starts from the caller's cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded `ChangeHint` keys, coalesces duplicates, and canonically refetches the object. Both routes produce `PollPage`, so event order, partial webhook payloads, and provider retry behavior cannot bypass synchronization invariants.
+A batch connector starts from the caller's cursor, requests bounded pages, normalizes provider objects, emits explicit tombstones, and returns the next cursor/checkpoint. A streaming connector verifies the raw delivery before parsing it, reduces provider payloads to bounded `ChangeHint` keys, and coalesces duplicates. Streaming has no checkpoint state. The application may canonically refetch the changed object into a `PollPage`, so partial webhook payloads cannot bypass synchronization invariants.
 
-| GitHub | Slack | Google Drive | Confluence |
+| Code and work | Documents and files | Business systems | Open protocols |
 |---|---|---|---|
-| Dropbox | Notion | Airtable | Asana |
-| Jira | Linear | Trello | Zendesk |
+| GitHub, GitLab, Linear, Jira | Drive, OneDrive, SharePoint, Dropbox, Box, Confluence, Notion | Slack, Airtable, Asana, Trello, Zendesk | Filesystem, JSON REST, RSS/Atom, Singer, CloudEvents, S3/GCS/Azure object stores |
 
 ::::::{container} diagram flow
 <div>
@@ -220,6 +219,106 @@ cfg = ZendeskConfig(subdomain="acme",
 pages = poll_zendesk(cfg, request, http=http)
 ```
 :::
+
+::: card
+### GitLab
+
+Repository documents with head cursors and resumable tree pages.
+
+```python
+from mari_components.connectors import GitLabConfig, poll_gitlab
+cfg = GitLabConfig(token=token, project="acme/handbook",
+    branch="main", paths=("docs/**", "README.md"))
+pages = poll_gitlab(cfg, request, http=http)
+```
+:::
+
+::: card
+### OneDrive and SharePoint
+
+Microsoft Graph drive deltas, downloads, and deleted items.
+
+```python
+from mari_components.connectors import MicrosoftDriveConfig, poll_microsoft_drive
+cfg = MicrosoftDriveConfig(access_token=token, drive_id="drive-id",
+    folder_id="root", provider="sharepoint")
+pages = poll_microsoft_drive(cfg, request, http=http)
+```
+:::
+
+::: card
+### Box
+
+Folder files with marker pagination.
+
+```python
+from mari_components.connectors import BoxConfig, poll_box
+cfg = BoxConfig(access_token=token, folder_id="0")
+pages = poll_box(cfg, request, http=http)
+```
+:::
+
+::: card
+### RSS / Atom
+
+Bounded XML feeds with ETag and Last-Modified conditional polling.
+
+```python
+from mari_components.connectors import RSSConfig, poll_rss
+cfg = RSSConfig(feed_url="https://example.com/feed.xml")
+pages = poll_rss(cfg, request, http=http)
+```
+:::
+
+::: card
+### S3, GCS, and Azure Blob
+
+SDK-neutral object listing and reading.
+
+```python
+from mari_components.connectors import ObjectStoreConfig, poll_object_store
+cfg = ObjectStoreConfig(provider="s3", container="knowledge", prefix="docs/")
+pages = poll_object_store(cfg, request,
+    list_objects=s3_adapter.list_objects, read_object=s3_adapter.read_object)
+```
+:::
+
+::: card
+### Singer / Meltano
+
+Singer RECORD and STATE messages from external taps.
+
+```python
+from mari_components.connectors import singer_pages
+pages = singer_pages(tap_stdout, document=normalize_record, page_size=100)
+```
+:::
+
+::: card
+### Local filesystem
+
+Stable snapshots with content revisions and resumable bounded pages.
+
+```python
+from pathlib import Path
+from mari_components.connectors import FilesystemConfig, poll_filesystem
+cfg = FilesystemConfig(root=Path("knowledge"), patterns=("*.md", "*.txt"))
+pages = poll_filesystem(cfg, request)
+```
+:::
+
+::: card
+### JSON REST collections
+
+Same-origin pagination with an injected record-to-document mapping.
+
+```python
+from mari_components.connectors import JSONAPIConfig, poll_json_api
+cfg = JSONAPIConfig(url="https://api.example.com/articles",
+    records_path=("data",), next_path=("paging", "next"))
+pages = poll_json_api(cfg, request, http=http, document=normalize_article)
+```
+:::
 :::::::::::::::
 
 ```{code-block} python
@@ -239,29 +338,28 @@ for page in poll_github(config, request, http=http):
 
 ## Streaming
 
-`stream_pages` requires a verifier, rejects oversized deliveries and batches, parses provider-specific hints, coalesces repeated aggregate keys, and calls an injected hydration function. The application owns the webhook server, queue, acknowledgement, and retries.
+`stream_hints` requires a verifier, rejects oversized deliveries and batches, parses provider-specific hints, and coalesces repeated aggregate keys. It has no cursor or checkpoint. The application owns the webhook server, queue, acknowledgement, retries, and optional canonical hydration.
 
 ```{code-block} python
 :caption: stream.py
 
-from mari_components.connectors import StreamEvent, stream_pages
+from mari_components.connectors import StreamEvent, stream_hints
 
 event = StreamEvent(provider="slack", raw_body=raw_body, headers=headers)
 
-def hydrate(hint):
-    document, complete = fetch_slack_thread_by_id(config,
-        hint.metadata["channel"], hint.metadata["thread_timestamp"], http=http)
-    return (PollPage(upserts=(document,) if document else (),
-        snapshot_complete=complete),)
-
-for page in stream_pages((event,), verify=verify_signature, hydrate=hydrate):
-    consume(page)
+for hint in stream_hints((event,), verify=verify_signature):
+    enqueue_canonical_refetch(hint)
 ```
 
 ## Connector-specific capabilities
 
-- All twelve connectors: polling, validation, pagination limits, normalized documents, and explicit deletion handling.
-- GitHub, Slack, Google Drive, and Confluence: verified streaming change hints plus canonical refetch.
+- Eighteen catalog connectors: batch polling, validation, pagination limits, and normalized documents.
+- GitHub, GitLab, Slack, Google Drive, OneDrive, SharePoint, Confluence, and Box: verified, checkpoint-free streaming hints.
+- S3, GCS, and Azure Blob: injected SDK batch operations plus checkpoint-free provider-event parsing.
+- CloudEvents: verified generic dirty hints with no checkpoint state.
+- Singer/Meltano: bounded RECORD pages and surfaced STATE checkpoints without subprocess ownership.
+- Local filesystem: content-hashed snapshots with change detection across resumed batches.
+- JSON REST: bounded same-origin pages with application-defined document normalization.
 - Slack: canonical thread fetch by ID.
 - Google Drive: native Changes polling and push-watch registration.
 - Confluence: direct canonical page fetch.
@@ -271,6 +369,8 @@ for page in stream_pages((event,), verify=verify_signature, hydrate=hydrate):
 **Standards and protocol basis**
 
 [OpenAPI: HTTP operation contracts](https://spec.openapis.org/oas/latest.html){.paper}[CloudEvents: event envelopes](https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md){.paper}[RFC 2104: HMAC verification](https://www.rfc-editor.org/rfc/rfc2104){.paper}
+
+**Permissive implementation references** [LlamaIndex connectors — MIT](https://github.com/run-llama/llama_index){.paper} [dlt filesystem/REST sources — Apache-2.0](https://github.com/dlt-hub/dlt){.paper} [Meltano Singer SDK — Apache-2.0](https://github.com/meltano/sdk){.paper} [Unstructured ingestion — Apache-2.0](https://github.com/Unstructured-IO/unstructured){.paper}
 
 [Provider pagination, cursor, and signature schemes differ. Mari normalizes their observable results; it does not claim a universal delivery guarantee.]{.small}
 :::

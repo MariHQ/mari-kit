@@ -14,9 +14,12 @@ database, scheduler, or authorization system.
 
 ## What it provides
 
-- Polling connectors for GitHub, Slack, Google Drive, Confluence, Dropbox,
-  Notion, Airtable, Asana, Jira, Linear, Trello, and Zendesk; verified streaming
-  event connectors for GitHub, Slack, Google Drive, and Confluence.
+- Batch connectors for GitHub, GitLab, Slack, Google Drive, OneDrive,
+  SharePoint, Confluence, Dropbox, Box, local files, Notion, RSS/Atom, Airtable, Asana,
+  Jira, Linear, Trello, and Zendesk; SDK-neutral S3/GCS/Azure object storage;
+  declarative JSON REST; and Singer/Meltano interoperability.
+- Checkpoint-free streaming hints for GitHub, GitLab, Slack, Google Drive,
+  OneDrive, SharePoint, Confluence, Box, S3, GCS, Azure Blob, and CloudEvents.
 - Replay-safe synchronization with canonical document identity, revisions,
   tombstones, checkpoints, and full-snapshot reconciliation.
 - Provider-observed ACL metadata and retrieval-time candidate filtering.
@@ -457,11 +460,11 @@ not hide a trajectory prompt or execute an agent.
 Connector functions accept an injected `HttpTransport`. This keeps network
 policy, retries, observability, and testing under application control.
 
-Each provider exposes a configuration value plus validation and polling
-functions. GitHub, Slack, Google Drive, and Confluence additionally expose
-streaming event parsing. Events become bounded `ChangeHint` values and trigger
-a canonical provider refetch; they are never treated as complete documents.
-Both modes yield `PollPage` values for the same synchronization planner.
+Each catalog provider exposes a configuration value plus validation and batch
+polling functions. Providers with event APIs additionally expose verified,
+checkpoint-free `ChangeHint` parsing. Events trigger a canonical provider
+refetch; they are never treated as complete documents. `stream_pages` can
+hydrate hints into `PollPage` values for the same synchronization planner.
 
 See [`docs/connectors.md`](docs/connectors.md) for both contracts, capability
 discovery, verification, hydration, and code examples. Executable integrations

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
+from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
@@ -18,9 +19,19 @@ from mari_components.types import ChangeHint, PollPage, PollRequest
 
 from .airtable import AirtableConfig, poll_airtable, validate_airtable
 from .asana import AsanaConfig, poll_asana, validate_asana
+from .box import BoxConfig, poll_box, validate_box
 from .confluence import ConfluenceConfig, poll_confluence, validate_confluence
 from .dropbox import DropboxConfig, poll_dropbox, validate_dropbox
+from .filesystem import (
+    DEFAULT_PATTERNS as DEFAULT_FILESYSTEM_PATTERNS,
+)
+from .filesystem import (
+    FilesystemConfig,
+    poll_filesystem,
+    validate_filesystem,
+)
 from .github import DEFAULT_KNOWLEDGE_PATHS, GitHubConfig, poll_github, validate_github
+from .gitlab import GitLabConfig, poll_gitlab, validate_gitlab
 from .google_drive import (
     GoogleDriveConfig,
     GoogleOAuthRefresh,
@@ -30,8 +41,14 @@ from .google_drive import (
 )
 from .jira import JiraConfig, poll_jira, validate_jira
 from .linear import LinearConfig, poll_linear, validate_linear
+from .microsoft_drive import (
+    MicrosoftDriveConfig,
+    poll_microsoft_drive,
+    validate_microsoft_drive,
+)
 from .notion import NotionConfig, poll_notion, validate_notion
 from .protocol import ConnectorMode, StreamEvent, ValidationResult, VerifyStreamEvent
+from .rss import RSSConfig, poll_rss, validate_rss
 from .slack import SlackConfig, poll_slack, validate_slack
 from .streaming import stream_change_hint
 from .trello import TrelloConfig, poll_trello, validate_trello
@@ -298,6 +315,139 @@ _DEFINITIONS = (
         ("site_url", "space_key"),
         40,
         stream_operation=stream_change_hint,
+    ),
+    ConnectorDefinition(
+        "gitlab",
+        "GitLab",
+        "Documentation files from a GitLab project repository.",
+        (
+            _field("token", "Project or personal access token", secret=True),
+            _field("project", "Project", placeholder="group/project"),
+            _field("branch", "Branch", required=False, placeholder="main"),
+            _field(
+                "paths",
+                "Knowledge file globs",
+                required=False,
+                placeholder="*.md, *.rst, *.txt",
+            ),
+            _field(
+                "base_url",
+                "GitLab URL",
+                required=False,
+                placeholder="https://gitlab.com",
+            ),
+        ),
+        "https://docs.gitlab.com/api/",
+        lambda v: GitLabConfig(
+            _text(v, "token"),
+            _text(v, "project"),
+            _text(v, "branch"),
+            _csv(v, "paths") or DEFAULT_KNOWLEDGE_PATHS,
+            _text(v, "base_url") or "https://gitlab.com",
+        ),
+        validate_gitlab,
+        poll_gitlab,
+        ("project",),
+        45,
+        stream_operation=stream_change_hint,
+    ),
+    ConnectorDefinition(
+        "onedrive",
+        "OneDrive",
+        "Files from a Microsoft Graph drive using native delta links.",
+        (
+            _field("access_token", "OAuth access token", secret=True),
+            _field("drive_id", "Drive ID"),
+            _field("folder_id", "Folder ID", required=False, placeholder="root"),
+        ),
+        "https://learn.microsoft.com/graph/api/driveitem-delta",
+        lambda v: MicrosoftDriveConfig(
+            _text(v, "access_token"),
+            _text(v, "drive_id"),
+            _text(v, "folder_id") or "root",
+            "onedrive",
+        ),
+        validate_microsoft_drive,
+        poll_microsoft_drive,
+        ("drive_id", "folder_id"),
+        46,
+        stream_operation=stream_change_hint,
+    ),
+    ConnectorDefinition(
+        "sharepoint",
+        "SharePoint",
+        "Files from a SharePoint document library using Microsoft Graph deltas.",
+        (
+            _field("access_token", "OAuth access token", secret=True),
+            _field("drive_id", "Document library drive ID"),
+            _field("folder_id", "Folder ID", required=False, placeholder="root"),
+        ),
+        "https://learn.microsoft.com/graph/api/driveitem-delta",
+        lambda v: MicrosoftDriveConfig(
+            _text(v, "access_token"),
+            _text(v, "drive_id"),
+            _text(v, "folder_id") or "root",
+            "sharepoint",
+        ),
+        validate_microsoft_drive,
+        poll_microsoft_drive,
+        ("drive_id", "folder_id"),
+        47,
+        stream_operation=stream_change_hint,
+    ),
+    ConnectorDefinition(
+        "box",
+        "Box",
+        "Files from a Box folder using marker pagination.",
+        (
+            _field("access_token", "OAuth access token", secret=True),
+            _field("folder_id", "Folder ID", required=False, placeholder="0"),
+        ),
+        "https://developer.box.com/reference/",
+        lambda v: BoxConfig(_text(v, "access_token"), _text(v, "folder_id") or "0"),
+        validate_box,
+        poll_box,
+        ("folder_id",),
+        48,
+        stream_operation=stream_change_hint,
+    ),
+    ConnectorDefinition(
+        "rss",
+        "RSS / Atom",
+        "Entries from a bounded RSS or Atom feed using conditional requests.",
+        (_field("feed_url", "Feed URL", placeholder="https://example.com/feed.xml"),),
+        "https://www.rssboard.org/rss-specification",
+        lambda v: RSSConfig(_text(v, "feed_url")),
+        validate_rss,
+        poll_rss,
+        ("feed_url",),
+        49,
+    ),
+    ConnectorDefinition(
+        "filesystem",
+        "Local filesystem",
+        "Text and documentation files below an explicit local root.",
+        (
+            _field("root", "Root directory"),
+            _field(
+                "patterns",
+                "File globs",
+                required=False,
+                placeholder="*.md, *.rst, *.txt",
+            ),
+            _field("source_name", "Source name", required=False, placeholder="local"),
+        ),
+        "https://docs.python.org/3/library/pathlib.html",
+        lambda v: FilesystemConfig(
+            Path(_text(v, "root")),
+            _csv(v, "patterns") or DEFAULT_FILESYSTEM_PATTERNS,
+            True,
+            _text(v, "source_name") or "local",
+        ),
+        validate_filesystem,
+        poll_filesystem,
+        ("root",),
+        50,
     ),
     ConnectorDefinition(
         "notion",

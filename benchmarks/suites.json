@@ -1,6 +1,8 @@
 {
   "schema_version": 1,
   "suites": [
+    {"id":"connector-batch","api":"connector_definitions/poll_object_store/poll_json_api/singer_pages","papers":["openapi-3.2","singer-spec"],"corpora":["connector-fixtures"],"metrics":["snapshot_equivalence","stable_id_rate","duplicate_rate","checkpoint_safety"]},
+    {"id":"connector-stream","api":"stream_change_hint/stream_hints/stream_pages","papers":["cloudevents-1.0","rfc2104"],"corpora":["connector-fixtures"],"metrics":["hint_coverage","verification_order","duplicate_coalescing","checkpoint_state"]},
     {"id":"dense-flat","api":"DenseFlatIndex","papers":["2004.04906"],"corpora":["beir","lotte"],"metrics":["ndcg@10","recall@100","latency_p95","index_bytes"]},
     {"id":"hnsw","api":"HNSWIndex","papers":["10.1109/TPAMI.2018.2889473"],"corpora":["beir"],"metrics":["recall_vs_exact@k","latency_p95","index_bytes"]},
     {"id":"ivfpq","api":"IVFPQIndex","papers":["10.1109/TPAMI.2010.57"],"corpora":["beir"],"metrics":["recall_vs_exact@k","latency_p95","bytes_per_vector"]},

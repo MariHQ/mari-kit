@@ -1,0 +1,43 @@
+{
+  "dataset": {
+    "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+    "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
+    "cases": 32,
+    "documents": 256,
+    "id": "beir-scifact",
+    "split": "test"
+  },
+  "elapsed_seconds": 0.2816917500458658,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "Uses deterministic token feature hashes to isolate MUVERA candidate generation and exact MaxSim reranking.",
+    "Fixed 256-document, 32-query slice; not a ColBERT model-quality claim."
+  ],
+  "metrics": {
+    "corpus_recall_at_10": 0.4010416666666667,
+    "recall_vs_exact_at_10": 0.340625
+  },
+  "reproduce": "python benchmarks/run_research.py --suite muvera-maxsim",
+  "schema_version": 2,
+  "suite": "muvera-maxsim",
+  "system": {
+    "config": {
+      "candidate_limit": 32,
+      "fill_empty_partitions": true,
+      "projection_dimension": 4,
+      "repetitions": 4,
+      "seed": 7,
+      "simhash_bits": 3,
+      "token_vectors": "signed-feature-hash-32"
+    },
+    "implementation": "mari_components.retrieval.build_index/search_index"
+  }
+}

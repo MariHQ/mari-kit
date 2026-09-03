@@ -1,0 +1,38 @@
+{
+  "dataset": {
+    "artifact": "https://raw.githubusercontent.com/ddhruvkr/CONTRADOC/main/ContraDoc.json",
+    "artifact_sha256": "def2213b8c6314353614ddadd0c8bbefeb883a2ccd4ebfcacacf10e8754e158c",
+    "cases": 256,
+    "id": "contradoc",
+    "split": "positive:first-256-with-reference-sentences"
+  },
+  "elapsed_seconds": 0.6537871251348406,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "Deterministic feature hashes replace both trained encoders; this measures Mari's Equation-3 reranker and exposes whether sparsity helps under that ablation."
+  ],
+  "metrics": {
+    "cosine_contradiction_recall_at_10": 0.45703125,
+    "gain_vs_cosine": -0.01171875,
+    "sparsecl_contradiction_recall_at_10": 0.4453125
+  },
+  "reproduce": "python benchmarks/run_research.py --suite sparsecl",
+  "schema_version": 2,
+  "suite": "sparsecl",
+  "system": {
+    "config": {
+      "alpha": 1.0,
+      "similarity_embedding": "signed-feature-hash-128",
+      "sparse_embedding": "signed-feature-hash-128"
+    },
+    "implementation": "mari_components.retrieval.rank_sparse_contradictions"
+  }
+}

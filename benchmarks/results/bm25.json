@@ -1,0 +1,43 @@
+{
+  "dataset": {
+    "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+    "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
+    "cases": 300,
+    "documents": 5183,
+    "id": "beir-scifact",
+    "split": "test"
+  },
+  "elapsed_seconds": 18.11442633299157,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "In-memory Python implementation; latency is machine-specific."
+  ],
+  "metrics": {
+    "build_seconds": 0.22465220792219043,
+    "mrr_at_10": 0.6308915343915344,
+    "ndcg_at_10": 0.6634477520519497,
+    "query_latency_ms_p50": 58.8175415,
+    "query_latency_ms_p95": 69.1747556,
+    "recall_at_10": 0.7876111111111112,
+    "recall_at_100": 0.8825555555555555
+  },
+  "reproduce": "python benchmarks/run_research.py --suite bm25",
+  "schema_version": 2,
+  "suite": "bm25",
+  "system": {
+    "config": {
+      "b": 0.75,
+      "k1": 1.2,
+      "limit": 100
+    },
+    "implementation": "mari_components.retrieval.BM25Index"
+  }
+}

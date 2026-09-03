@@ -1,0 +1,67 @@
+{
+  "dataset": {
+    "artifacts": [
+      {
+        "filename": "wdc-gs-watches.txt",
+        "sha256": "bc77e787c180e4ecefb44eed62e6f6f29bf4759c7da1e56acc8ac4fbaf50dc3f",
+        "url": "https://data.dws.informatik.uni-mannheim.de/largescaleproductcorpus/data/gs_watches.txt"
+      },
+      {
+        "filename": "wdc-gs-shoes.txt",
+        "sha256": "e419ff2f1c2100d799926c4a140619e42d5bff83919288d44f5754348d6c099c",
+        "url": "https://data.dws.informatik.uni-mannheim.de/largescaleproductcorpus/data/gs_shoes.txt"
+      }
+    ],
+    "cases": 550,
+    "id": "wdc-products",
+    "split": "odd rows per label; even rows train probabilities/threshold"
+  },
+  "elapsed_seconds": 0.29355062497779727,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "trained-classical",
+  "limitations": [
+    "Only URL-derived fields are available in the compact official gold files."
+  ],
+  "metrics": {
+    "accuracy": 0.7818181818181819,
+    "pair_f1": 0.5588235294117647,
+    "pair_precision": 0.6229508196721312,
+    "pair_recall": 0.5066666666666667,
+    "review_rate": 0.4763636363636364
+  },
+  "reproduce": "python benchmarks/run_research.py --suite entity-resolution",
+  "schema_version": 2,
+  "suite": "entity-resolution",
+  "system": {
+    "config": {
+      "fields": [
+        "host",
+        "path_tokens",
+        "product_code"
+      ],
+      "link_threshold": 0.26584084162649524,
+      "probabilities": {
+        "host": [
+          0.21052631578947367,
+          0.44527363184079605
+        ],
+        "path_tokens": [
+          0.5394736842105263,
+          0.38308457711442784
+        ],
+        "product_code": [
+          0.375,
+          0.03980099502487562
+        ]
+      }
+    },
+    "implementation": "mari_components.graph.resolve_entity"
+  }
+}

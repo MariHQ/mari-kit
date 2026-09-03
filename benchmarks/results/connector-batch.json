@@ -1,0 +1,66 @@
+{
+  "dataset": {
+    "artifact": "tests/test_connector_*.py",
+    "cases": 28,
+    "id": "connector-fixtures",
+    "split": "batch"
+  },
+  "elapsed_seconds": 0.4260369169060141,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "fixture-conformance",
+  "limitations": [
+    "Uses recorded/synthetic provider shapes; it does not claim upstream service throughput or availability."
+  ],
+  "metrics": {
+    "connector_definitions": 18,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "passed": 28
+  },
+  "reproduce": "python benchmarks/run_research.py --suite connector-batch",
+  "schema_version": 2,
+  "suite": "connector-batch",
+  "system": {
+    "config": {
+      "connectors": 18,
+      "pytest_nodes": [
+        "tests/test_connector_contract.py::ConnectorContractKitTests::test_rejects_cursor_advance_on_incomplete_page",
+        "tests/test_connector_contract.py::ConnectorContractKitTests::test_reports_stable_replay_and_counts",
+        "tests/test_connector_expansion.py::test_object_store_batch_is_sdk_neutral_bounded_and_checkpointed",
+        "tests/test_connector_expansion.py::test_singer_bridge_pages_records_and_surfaces_state",
+        "tests/test_connector_expansion.py::test_rss_batch_parses_atom_and_emits_conditional_cursor",
+        "tests/test_connector_expansion.py::test_gitlab_batch_uses_head_as_cursor_and_reads_matching_files",
+        "tests/test_connector_expansion.py::test_microsoft_drive_delta_normalizes_files_and_tombstones",
+        "tests/test_connector_expansion.py::test_box_batch_uses_marker_pagination",
+        "tests/test_connector_expansion.py::test_gitlab_authentication_header_is_redacted",
+        "tests/test_connector_expansion.py::test_filesystem_batch_has_stable_snapshot_and_bounded_pages",
+        "tests/test_connector_expansion.py::test_json_api_bridge_bounds_pages_and_keeps_same_origin_continuations",
+        "tests/test_connector_expansion.py::test_json_api_bridge_rejects_cross_origin_continuations",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_confluence_validation_and_ordered_checkpoint",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_github_path_filters_are_connector_configuration",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_github_repo_discovery_and_file_deletion",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_github_team_validation_is_a_reusable_connector_operation",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_google_drive_snapshot_then_changes_tombstone",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_slack_channel_root_is_restricted_and_incremental",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_slack_polling_refetches_root_for_a_new_reply_row",
+        "tests/test_priority_connectors.py::PriorityConnectorTests::test_storage_conversion",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_airtable_reads_all_record_pages",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_asana_task_cursor",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_dropbox_native_tombstone",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_jira_cursor_and_body",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_linear_graphql_pagination",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_notion_page_and_blocks",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_trello_board_snapshot",
+        "tests/test_remaining_connectors.py::RemainingConnectorTests::test_zendesk_article_cursor"
+      ]
+    },
+    "implementation": "mari_components.connectors"
+  }
+}

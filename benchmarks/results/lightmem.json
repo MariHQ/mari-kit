@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "artifact": "https://raw.githubusercontent.com/sebastianarnold/WikiSection/master/wikisection_dataset_json.tar.gz",
+    "artifact_sha256": "f37810a95702737b153a3034dbb877d08ecc699900f1a01c70110d47a5a016b8",
+    "cases": 154,
+    "id": "wikisection",
+    "split": "en_disease_validation:first-160"
+  },
+  "elapsed_seconds": 0.6298396249767393,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "Uses lexical novelty as the attention signal; no learned LightMem boundary model is included.",
+    "Exact sentence-aligned boundaries only."
+  ],
+  "metrics": {
+    "boundary_f1": 0.2369146737180651,
+    "boundary_precision": 0.1940207844879729,
+    "boundary_recall": 0.35394496640702056
+  },
+  "reproduce": "python benchmarks/run_research.py --suite lightmem",
+  "schema_version": 2,
+  "suite": "lightmem",
+  "system": {
+    "config": {
+      "attention": "one-minus-similarity",
+      "similarity": "token-jaccard",
+      "threshold": 0.12
+    },
+    "implementation": "mari_components.knowledge.hybrid_topic_segments"
+  }
+}

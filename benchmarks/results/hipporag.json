@@ -1,0 +1,38 @@
+{
+  "dataset": {
+    "artifact": "https://huggingface.co/datasets/allenai/qasc/resolve/refs%2Fconvert%2Fparquet/default/validation/0000.parquet",
+    "artifact_sha256": "d1ae34ae13c5fce2c55305372c203c6cdb789728d0d7e5ea2956d55bc33f40ae",
+    "cases": 254,
+    "id": "qasc",
+    "split": "validation:first-256"
+  },
+  "elapsed_seconds": 0.63208341691643,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "Small per-question candidate pools; relation extraction is token based."
+  ],
+  "metrics": {
+    "convergence_rate": 1.0,
+    "multi_hop_success": 0.7086614173228346,
+    "passage_recall_at_5": 0.8503937007874016
+  },
+  "reproduce": "python benchmarks/run_research.py --suite hipporag",
+  "schema_version": 2,
+  "suite": "hipporag",
+  "system": {
+    "config": {
+      "distractors_per_case": 8,
+      "graph": "term-passage bipartite",
+      "limit": 5
+    },
+    "implementation": "mari_components.retrieval.personalized_pagerank/project_graph_scores"
+  }
+}

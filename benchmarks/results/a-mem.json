@@ -1,0 +1,38 @@
+{
+  "dataset": {
+    "artifact_sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+    "cases": 470,
+    "id": "longmemeval",
+    "split": "cleaned-s:non-abstention"
+  },
+  "elapsed_seconds": 9.39833441702649,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "Uses BM25 similarity rather than an A-MEM embedding model."
+  ],
+  "metrics": {
+    "link_f1": 0.5967892866125466,
+    "link_precision": 0.436225937183384,
+    "link_recall": 0.9443971631205674
+  },
+  "reproduce": "python benchmarks/run_research.py --suite a-mem",
+  "schema_version": 2,
+  "suite": "a-mem",
+  "system": {
+    "config": {
+      "evolution_threshold": 0.75,
+      "limit": 10,
+      "link_threshold": 0.35,
+      "scorer": "BM25Index"
+    },
+    "implementation": "mari_components.knowledge.plan_note_evolution"
+  }
+}

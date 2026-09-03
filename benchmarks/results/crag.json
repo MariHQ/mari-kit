@@ -1,0 +1,39 @@
+{
+  "dataset": {
+    "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+    "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
+    "cases": 300,
+    "documents": 5183,
+    "id": "beir-scifact",
+    "split": "test"
+  },
+  "elapsed_seconds": 18.58962304191664,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "component-oracle",
+  "limitations": [
+    "Gold relevance defines confidence buckets; this validates Mari's routing boundary, not a learned CRAG evaluator."
+  ],
+  "metrics": {
+    "combine_rate": 0.35333333333333333,
+    "replace_rate": 0.11,
+    "routing_accuracy": 1.0,
+    "use_rate": 0.5366666666666666
+  },
+  "reproduce": "python benchmarks/run_research.py --suite crag",
+  "schema_version": 2,
+  "suite": "crag",
+  "system": {
+    "config": {
+      "lower_threshold": 0.25,
+      "upper_threshold": 0.75
+    },
+    "implementation": "mari_components.retrieval.plan_corrective_retrieval"
+  }
+}

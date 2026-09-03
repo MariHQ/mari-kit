@@ -1,0 +1,43 @@
+{
+  "dataset": {
+    "artifact": "https://raw.githubusercontent.com/ddhruvkr/CONTRADOC/main/ContraDoc.json",
+    "artifact_sha256": "def2213b8c6314353614ddadd0c8bbefeb883a2ccd4ebfcacacf10e8754e158c",
+    "cases": 160,
+    "id": "contradoc",
+    "split": "lexicographic-first-80-per-label"
+  },
+  "elapsed_seconds": 0.043057417031377554,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "model-assisted-end-to-end",
+  "limitations": [
+    "DeepSeek's moving deepseek-chat alias is not an immutable model checkpoint; predictions are preserved per case.",
+    "Fixed balanced 160-document slice; sentence splitting differs from the benchmark's original evaluator."
+  ],
+  "metrics": {
+    "accuracy": 0.69375,
+    "format_valid_rate": 1.0,
+    "localization_recall": 0.3875,
+    "macro_f1": 0.6847734309034619,
+    "negative_f1": 0.7379679144385026,
+    "positive_f1": 0.631578947368421
+  },
+  "reproduce": "python benchmarks/run_research.py --suite document-contradiction",
+  "schema_version": 2,
+  "suite": "document-contradiction",
+  "system": {
+    "config": {
+      "batch_size": 1,
+      "judge": "deepseek-chat",
+      "sentencing": "regex",
+      "temperature": 0
+    },
+    "implementation": "mari_components.verification.validate_document_contradiction/document_contradiction_rewards"
+  }
+}

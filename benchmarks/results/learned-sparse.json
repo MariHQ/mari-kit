@@ -1,0 +1,38 @@
+{
+  "dataset": {
+    "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+    "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
+    "cases": 300,
+    "documents": 5183,
+    "id": "beir-scifact",
+    "split": "test"
+  },
+  "elapsed_seconds": 9.757578833959997,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "end-to-end-deterministic",
+  "limitations": [
+    "Exercises model-neutral sparse serving with TF-IDF weights, not a trained SPLADE encoder."
+  ],
+  "metrics": {
+    "ndcg_at_10": 0.6288182106391385,
+    "nonzero_query_terms_mean": 12.076666666666666,
+    "recall_at_100": 0.8882222222222221
+  },
+  "reproduce": "python benchmarks/run_research.py --suite learned-sparse",
+  "schema_version": 2,
+  "suite": "learned-sparse",
+  "system": {
+    "config": {
+      "limit": 100,
+      "weighting": "sublinear-tf-idf"
+    },
+    "implementation": "mari_components.retrieval.SparseVectorIndex"
+  }
+}

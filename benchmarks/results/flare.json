@@ -1,0 +1,37 @@
+{
+  "dataset": {
+    "artifact": "https://huggingface.co/datasets/allenai/qasper/resolve/refs%2Fconvert%2Fparquet/qasper/validation/0000.parquet",
+    "artifact_sha256": "089781b91c337d348dd9e8b57cc8adc100ed2d9cab84a6127402bcccf1559222",
+    "cases": 131,
+    "id": "qasper",
+    "split": "validation:first-160-answerable-questions"
+  },
+  "elapsed_seconds": 0.06485274992883205,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "component-oracle",
+  "limitations": [
+    "Gold answer novelty supplies token probabilities; this validates masking and trigger semantics, not a language model's calibration."
+  ],
+  "metrics": {
+    "masked_tokens_mean": 11.442748091603054,
+    "trigger_accuracy": 1.0,
+    "trigger_rate": 0.9847328244274809
+  },
+  "reproduce": "python benchmarks/run_research.py --suite flare",
+  "schema_version": 2,
+  "suite": "flare",
+  "system": {
+    "config": {
+      "probabilities": "gold-answer novelty profile",
+      "threshold": 0.2
+    },
+    "implementation": "mari_components.retrieval.plan_active_retrieval"
+  }
+}

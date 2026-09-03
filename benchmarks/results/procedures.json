@@ -1,0 +1,36 @@
+{
+  "dataset": {
+    "artifact": "https://raw.githubusercontent.com/THUDM/AgentBench/d1e4a10db08c87075c78972e48ecc182be03e2d5/data/dbbench/dev.jsonl",
+    "artifact_sha256": "eb941c58a7a5651357b19e46aa05070f6cd5a7d83ce70cefd24aa3581e1e1130",
+    "cases": 60,
+    "id": "agentbench",
+    "split": "dbbench:dev"
+  },
+  "elapsed_seconds": 0.025814624968916178,
+  "environment": {
+    "mari_commit": "138eec071818b6b62ac853b423e68167b6c8d06f",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "python": "3.13.3",
+    "runner_sha256": "355b5c020b842effd52b34f52016fd83b672fa2621d9f00c3ca0393cecfa7721",
+    "source_worktree_dirty": false
+  },
+  "evaluation_type": "component-corpus",
+  "limitations": [
+    "AgentBench tasks seed controlled successful traces; no agent is executed in the live benchmark environments."
+  ],
+  "metrics": {
+    "procedures_learned": 60,
+    "tool_sequence_f1": 1.0
+  },
+  "reproduce": "python benchmarks/run_research.py --suite procedures",
+  "schema_version": 2,
+  "suite": "procedures",
+  "system": {
+    "config": {
+      "stable_sequence": "longest common subsequence",
+      "trajectories_per_task": 2
+    },
+    "implementation": "mari_components.trajectories.normalize_steps/learn_procedure"
+  }
+}

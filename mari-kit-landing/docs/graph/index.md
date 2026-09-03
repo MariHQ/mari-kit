@@ -10,6 +10,7 @@
 | Expand retrieval | Authorized Personalized PageRank and passage projection |
 | Aggregate a corpus | Connected communities and bounded map/reduce reports |
 | Rebuild derived views | Ordered event replay with stable build identity |
+| Validate semantic records | Versioned concepts, properties, relations, and violations |
 
 :::{collapse} Worked graph flow
 
@@ -26,6 +27,7 @@
 :maxdepth: 1
 
 entity-resolution
+semantic-schemas
 graph-processing
 projections
 graph

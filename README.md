@@ -42,6 +42,20 @@ database, scheduler, or authorization system.
 - Validated add/update/delete/no-op memory plans and hybrid topic segmentation
   for application-owned online and offline consolidation flows.
 - Framework-neutral trajectory normalization and model-label validation.
+- Framework-neutral context lifecycle hooks around application-owned model and
+  tool calls, including explicit scope, purpose, budget, and update events.
+- Page-aware structured documents with regions, bounding boxes, tables,
+  derived representations, and a language-neutral code symbol graph.
+- Trust-aware write decisions that keep origin, interpretation, taint, scope,
+  and provenance separate; plus explainable source-authority resolution.
+- Versioned semantic schemas with required-property, cardinality, and
+  relation-domain/range validation.
+- Scope grants and reviewable cross-scope promotion proposals; dependency-aware
+  retention, legal-hold, deletion, and invalidation plans.
+- Deterministic, checksum-verified portable knowledge bundles and incremental
+  materialized-view refresh plans.
+- Paired task-outcome comparisons for success, policy compliance, turns,
+  tokens, and tool calls.
 
 ## Installation
 

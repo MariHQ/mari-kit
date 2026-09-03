@@ -16,6 +16,9 @@ Validation turns generated proposals into revision-bound knowledge. These module
 | Choose among generated candidates | `best_of_n`, `evidence_consensus` | Winner plus component scores |
 | Decide whether derived work is reusable | `freshness_status` | Status and changed dependencies |
 | Reuse a reviewed workflow | `match_workflow` | Match plus rejection trace |
+| Gate an untrusted write | `evaluate_write` | Disposition, reasons, and inherited taints |
+| Resolve disagreeing sources | `resolve_assertions` | Working selection or explicit dispute |
+| Expire derived knowledge | `plan_retention` | Delete, invalidate, and hold actions |
 
 :::{collapse} Worked evidence-validation example
 
@@ -41,6 +44,9 @@ answer = parse_answer(
 
 document-contradiction
 evidence
+trust-writes
+authority-conflicts
+retention
 freshness
 workflows
 verification

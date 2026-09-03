@@ -34,6 +34,53 @@ class SetMetrics:
     false_negative: int
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class TaskOutcome:
+    task_id: str
+    success: bool
+    turns: int
+    tokens: int
+    tool_calls: int = 0
+    policy_compliant: bool = True
+
+    def __post_init__(self) -> None:
+        if not self.task_id or min(self.turns, self.tokens, self.tool_calls) < 0:
+            raise ValueError("task ID is required and counts must not be negative")
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class TaskOutcomeComparison:
+    task_count: int
+    success_delta: float
+    policy_compliance_delta: float
+    mean_turn_delta: float
+    mean_token_delta: float
+    mean_tool_call_delta: float
+
+
+def compare_task_outcomes(
+    *, baseline: Iterable[TaskOutcome], candidate: Iterable[TaskOutcome]
+) -> TaskOutcomeComparison:
+    """Compare paired task outcomes; positive success deltas favor candidate."""
+
+    left = {value.task_id: value for value in baseline}
+    right = {value.task_id: value for value in candidate}
+    if not left or left.keys() != right.keys():
+        raise ValueError("baseline and candidate must contain the same non-empty task IDs")
+    count = len(left)
+    pairs = [(left[key], right[key]) for key in sorted(left)]
+    def mean_delta(attr: str) -> float:
+        return sum(getattr(b, attr) - getattr(a, attr) for a, b in pairs) / count
+    return TaskOutcomeComparison(
+        task_count=count,
+        success_delta=mean_delta("success"),
+        policy_compliance_delta=mean_delta("policy_compliant"),
+        mean_turn_delta=mean_delta("turns"),
+        mean_token_delta=mean_delta("tokens"),
+        mean_tool_call_delta=mean_delta("tool_calls"),
+    )
+
+
 def set_metrics(
     expected: Iterable[Hashable], predicted: Iterable[Hashable]
 ) -> SetMetrics:

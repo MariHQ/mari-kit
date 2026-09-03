@@ -11,13 +11,13 @@ mari-components · 0.1.0.dev0
 
 | Area | What it covers |
 |---|---|
-| [Ingest](ingest/index.md) | Documents, polling/streaming connectors, synchronization, parsers, sections, tags |
-| [Retrieve](retrieve/index.md) | Lexical, dense, multi-vector, approximate, contradiction, graph, and adaptive retrieval |
-| [Govern](govern/index.md) | Evidence, contradiction validation, freshness, workflow reuse, verification, errors |
-| [Memory](memory/index.md) | Admission, mutation, segmentation, salience, organization, consolidation |
-| [Graphs](graph/index.md) | Resolution, temporal facts, propagation, communities, projections |
+| [Ingest](ingest/index.md) | Documents, multimodal regions, code structure, polling/streaming connectors, synchronization, parsers |
+| [Retrieve](retrieve/index.md) | Lexical, dense, multi-vector, approximate, contradiction, graph, adaptive, and lifecycle retrieval |
+| [Govern](govern/index.md) | Evidence, trust-gated writes, source conflicts, retention, freshness, verification |
+| [Memory](memory/index.md) | Admission, mutation, scopes, promotion, segmentation, salience, organization, consolidation |
+| [Graphs](graph/index.md) | Semantic schemas, constraints, resolution, temporal facts, propagation, communities, projections |
 | [Agents](agents/index.md) | Trajectories, procedure mining, regression gates, reviewed reuse |
-| [Platform](platform/index.md) | Artifact lineage, stores, pipelines, evaluation runs, configuration compilation |
+| [Platform](platform/index.md) | Portable bundles, living views, artifact lineage, stores, pipelines, task evaluation, compilation |
 
 ```{toctree}
 :maxdepth: 2
@@ -34,7 +34,7 @@ platform/index
 ```
 
 
-Mari is a framework-neutral Python library for building knowledge systems from changing source material. It supplies immutable domain types, connector contracts, synchronization planning, multi-vector, graph, and contradiction retrieval, document self-contradiction validation, rank fusion, memory update plans, topic segmentation, evidence validation, freshness tracking, workflow reuse, trajectory analysis, and verification utilities.
+Mari is a framework-neutral Python library for building knowledge systems from changing, structured source material. It supplies immutable domain types, connector contracts, synchronization planning, structured document and code representations, semantic constraints, multi-vector, graph, and contradiction retrieval, lifecycle-aware context, trust and retention decisions, scoped memory promotion, source-conflict resolution, portable bundles, incremental views, trajectory analysis, and task-level evaluation utilities.
 
 ::: legend
 Current --- importable from `mari_components`

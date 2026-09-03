@@ -23,6 +23,17 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | ContraDoc | `ddhruvkr/CONTRADOC` | Apache-2.0; permissive dataset and validation reference, subject to source-document terms | document contradiction evaluation |
 | HyDE | `texttron/hyde` | No repository license detected; inspect only | `hypothetical_document_embedding` |
 | CRAG | `HuskyInSalt/CRAG` | No repository license detected; inspect only | `plan_corrective_retrieval` |
+| Proactive memory | `yifannnwu/proactive-memory-agent` | Apache-2.0; permissive lifecycle reference | `ContextProvider`, `ContextRequest`, `LifecycleEvent` |
+| Structured documents | `docling-project/docling` | MIT; permissive document-model reference | `StructuredDocument`, `DocumentRegion`, `TableCell` |
+| Semantic schemas | `linkml/linkml`, `RDFLib/pySHACL` | Apache-2.0; permissive schema and validation references | `KnowledgeSchema`, `validate_records` |
+| Portable bundles | `MacPaw/portable-memory` | MIT; permissive bundle and tombstone reference | `KnowledgeBundle`, `export_bundle`, `verify_bundle` |
+| Signed portable memory | `apertomemory/apertomemory` | MIT; permissive interoperability reference | Future signing/encryption adapter; no crypto in core |
+| Trust and scope | `quantifylabs/aegis-memory` | Apache-2.0; permissive policy reference | `MemoryWrite`, `evaluate_write`, `ScopePolicy` |
+| Memory poisoning | `Digital-Trust-Lab/mp-bench` | Apache-2.0; permissive evaluation corpus | Write/retrieval attack evaluation; no detector copied |
+| Task-level memory evaluation | `microsoft/STATE-Bench` | MIT; permissive metrics reference | `TaskOutcome`, `compare_task_outcomes` |
+| Memory capability evaluation | `mazaiying/AgentMemBench` | MIT code; MemDialogue data is ODC-By 1.0 | Future corpus adapter; code not vendored |
+| Structured code knowledge | `DeusData/codebase-memory-mcp` | MIT; permissive graph and evaluation reference | `CodeSymbol`, `CodeEdge`, `impacted_symbols` |
+| Lifecycle capture | `Barsoomx/engram` | Apache-2.0; permissive session-hook reference | `ContextProvider` lifecycle boundary |
 
 ## Connector references
 
@@ -38,3 +49,5 @@ normalization code. No upstream connector code or optional SDK dependency is
 vendored.
 
 For entries marked inspect-only, Mari is based on the published mathematics and independently written conformance cases. For permissive references, compatible licensing permits comparison, but Mari still keeps independent APIs and tests rather than vendoring the systems.
+
+The first-pass lifecycle additions are clean-room, standard-library implementations. No files from the checked-out repositories are copied into `mari_components`; the repositories supply observable behavior, data-model comparisons, benchmark adapters, and future conformance fixtures.

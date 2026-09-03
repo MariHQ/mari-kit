@@ -2,6 +2,8 @@
 
 # Long-horizon memory evaluation
 
+This page covers both retrieval-oriented memory corpora and task-level comparisons. Retrieval metrics locate failures inside the knowledge system; task metrics determine whether those changes helped the application.
+
 ## At a glance
 
 | Retrieval depth | Complete evidence recall | Any-evidence nDCG |
@@ -104,7 +106,34 @@ run = EvaluationRun(
 ::: source-block
 **Paper**
 
-[LongMemEval: five long-term memory capabilities](https://arxiv.org/abs/2410.10813){.paper}
+[LongMemEval: five long-term memory capabilities](https://arxiv.org/abs/2410.10813){.paper}[STATE-Bench](https://github.com/microsoft/STATE-Bench){.paper}[AgentMemBench](https://github.com/mazaiying/AgentMemBench){.paper}
 
 [The adapter, deterministic metrics, run identity, and hard regression gates are implemented. System execution remains an injected application callback.]{.small}
 :::
+
+## Compare application outcomes
+
+STATE-Bench evaluates stateful tasks in customer support, travel, and shopping. Its 450 tasks combine deterministic assertions, policy compliance, user interaction, and efficiency. The important comparison is paired: the same task and agent configuration with and without a Mari knowledge strategy.
+
+```{code-block} python
+:caption: Compare variants without collapsing the result into one score
+
+from mari_components.evaluation import TaskOutcome, compare_task_outcomes
+
+comparison = compare_task_outcomes(
+    baseline=(TaskOutcome(task_id="return-17", success=False, turns=9, tokens=8_400),),
+    candidate=(TaskOutcome(task_id="return-17", success=True, turns=6, tokens=6_100),),
+)
+
+print(comparison.success_delta)   # 1.0 for this one-task example
+print(comparison.mean_token_delta)  # -2300.0
+```
+
+| Measure | Keep separate because |
+|---|---|
+| Task success | The application may fail despite perfect retrieval |
+| Policy compliance | A fast answer can still violate procedure |
+| Interaction quality | Correct work can impose unnecessary user effort |
+| Turns and tool calls | Memory may reduce or increase operational work |
+| Context and total tokens | Retrieval savings can be offset by memory maintenance |
+| Memory write/retrieval cost | Agent tokens and memory-system tokens have different causes |

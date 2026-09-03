@@ -11,6 +11,7 @@
 | MUVERA + MaxSim | Token-level multi-vector candidate generation and exact reranking |
 | SparseCL | Same-topic contradiction candidates |
 | Graph propagation | Multi-hop entity-to-passage recall |
+| Context lifecycle | Selectively inject evidence before a model call and plan updates afterward |
 
 :::{collapse} Actual ranking snapshot
 
@@ -32,4 +33,5 @@ contradiction-retrieval
 retrieval-construction
 adaptive-retrieval
 context
+context-lifecycle
 ```

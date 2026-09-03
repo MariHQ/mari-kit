@@ -9,6 +9,7 @@
 | Mutation | Add, update, delete, or no-op against existing memory |
 | Organization | Link notes, rank salience, or produce evidence notes |
 | Consolidation | Select bounded offline work by utility and cost |
+| Scope promotion | Propose a new artifact at a broader scope without mutating its origin |
 
 :::{collapse} Actual memory-retrieval snapshot
 
@@ -27,5 +28,6 @@ Retrieving one useful session is insufficient for a question whose answer spans 
 memory-algorithms
 memory-organization
 admission
+scopes
 consolidation
 ```

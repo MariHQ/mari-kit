@@ -10,6 +10,9 @@
 | `Pipeline` and `Stage` | Deterministic transforms and complete traces |
 | `EvaluationRun` | Pinned corpus, configuration, model, and metrics |
 | `compile_configurations` | Constraint-first selection among evaluated configurations |
+| Portable bundle | Deterministic records, provenance, tombstones, manifest, and checksums |
+| Materialized view | Minimal dependency-aware refresh plan |
+| Task comparison | Paired success, compliance, turns, tokens, and tool calls |
 
 :::{collapse} Worked artifact flow
 
@@ -26,6 +29,8 @@
 :maxdepth: 1
 
 artifacts
+portability
+living-views
 stores
 pipelines
 memory-evaluation

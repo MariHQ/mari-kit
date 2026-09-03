@@ -8,6 +8,8 @@
 | Provider APIs and event notifications | Poll or stream canonical source changes | `SourcePage`, `Document`, `Tombstone`, `ChangeHint` |
 | Completed source pages | Reconcile against prior snapshot | Ordered upsert/delete plan and next cursor |
 | Documents | Parse and resolve evidence | Typed facts, answers, decisions, summaries, links |
+| PDFs, slides, and spreadsheets | Preserve pages, regions, tables, figures, and derived representations | `StructuredDocument` |
+| Source repositories | Preserve symbols and structural relations | `CodeSymbol`, `CodeEdge` |
 | Markdown bodies | Split and fingerprint | Stable `KnowledgeSection` revisions |
 
 :::{collapse} Worked ingestion flow
@@ -24,6 +26,8 @@
 :maxdepth: 1
 
 documents
+structured-documents
+code-knowledge
 connectors
 sync
 parsers

@@ -91,11 +91,15 @@ def commit() -> str:
 
 def environment() -> dict[str, Any]:
     repository = Path(__file__).resolve().parents[1]
+    status = subprocess.check_output(
+        ["git", "status", "--porcelain"], text=True
+    ).splitlines()
+    source_changes = [
+        line for line in status if not line[3:].startswith("benchmarks/results/")
+    ]
     return {
         "mari_commit": commit(),
-        "worktree_dirty": bool(
-            subprocess.check_output(["git", "status", "--porcelain"], text=True).strip()
-        ),
+        "source_worktree_dirty": bool(source_changes),
         "runner_sha256": digest(Path(__file__), "sha256"),
         "index_implementation_sha256": digest(
             repository / "src/mari_components/retrieval/indexes.py", "sha256"

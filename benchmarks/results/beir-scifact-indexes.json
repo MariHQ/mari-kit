@@ -1,6 +1,6 @@
 {
   "benchmark": "beir-scifact-indexes",
-  "created_at": "2026-09-03T06:50:47.572897+00:00",
+  "created_at": "2026-09-03T06:56:40.010549+00:00",
   "dataset": {
     "artifact": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
     "artifact_md5": "5f7d1de60b170fc8027bb7898e2efca1",
@@ -16,37 +16,40 @@
   },
   "environment": {
     "cpu_count": 12,
-    "mari_commit": "973c5c14e2e3b1e1a7970c2c777b607d4d068cf0",
+    "index_implementation_sha256": "e7516acadac21dff5d50c28e2087b8fd1f367fc138837187e580bfcfebdd5bf5",
+    "mari_commit": "952d7e5211023eb3ca0a6b55f0e00df4986f4222",
     "numpy": "2.5.2",
     "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
-    "python": "3.13.3"
+    "python": "3.13.3",
+    "runner_sha256": "9a755d994ee04f52ffdb373c9c7a0928652e0ee1377fdcc5eb774ac277f9e08d",
+    "worktree_dirty": true
   },
   "metrics": {
     "dense-flat": {
       "ann_recall_at_10": 1.0,
-      "build_seconds": 0.0012753750197589397,
+      "build_seconds": 0.0013525830581784248,
       "config": {
         "metric": "cosine"
       },
       "corpus_recall_at_10": 0.390625,
-      "query_latency_ms_p50": 0.240562,
-      "query_latency_ms_p95": 0.25971435
+      "query_latency_ms_p50": 0.243917,
+      "query_latency_ms_p95": 0.2557858
     },
     "hnsw": {
       "ann_recall_at_10": 0.4390625,
-      "build_seconds": 0.24038637499324977,
+      "build_seconds": 0.2581812918651849,
       "config": {
         "ef_search": 64,
         "m": 16,
         "metric": "cosine"
       },
       "corpus_recall_at_10": 0.22135416666666666,
-      "query_latency_ms_p50": 0.210479,
-      "query_latency_ms_p95": 0.2495331
+      "query_latency_ms_p50": 0.2191665,
+      "query_latency_ms_p95": 0.25039110000000003
     },
     "ivf-pq": {
       "ann_recall_at_10": 0.25625,
-      "build_seconds": 0.0455185838509351,
+      "build_seconds": 0.03846499999053776,
       "config": {
         "codebook_size": 16,
         "metric": "l2",
@@ -55,8 +58,8 @@
         "subquantizers": 8
       },
       "corpus_recall_at_10": 0.23177083333333334,
-      "query_latency_ms_p50": 1.10575,
-      "query_latency_ms_p95": 1.3711286
+      "query_latency_ms_p50": 1.1561664999999999,
+      "query_latency_ms_p95": 1.3397894
     }
   },
   "schema_version": 1

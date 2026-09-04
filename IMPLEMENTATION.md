@@ -125,5 +125,13 @@ configuration changes, partial snapshots, superseded policies, deletion
 propagation, and projection rebuild equivalence. The current examples establish
 deterministic behavioral checks rather than production-scale corpus results.
 
-Publishing to PyPI and deploying the generated site are release operations and
-remain outside this local consolidation pass.
+## Release record
+
+The implementation was committed to `main` as `d834c47` and pushed to
+`MariHQ/mari-kit` on 2026-09-03. The strict Sphinx build was uploaded to the
+`kit.mari.guru` S3 bucket in AWS account `386318010728`. CloudFront distribution
+`E8QTOGCJZ27MT` completed invalidation `I9Z60DIJ6TJ08I8GKQSCJSY0JU`.
+
+Public HTTP checks returned 200 for the homepage, company-search path, evidence
+contracts, and composition-contract pages. Publishing the Python distribution
+to PyPI remains a separate package release.

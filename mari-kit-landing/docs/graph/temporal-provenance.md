@@ -1,4 +1,4 @@
-[]{#temporal-provenance}[Current]{.current-label}
+[]{#temporal-provenance}[Reference]{.current-label}
 
 # Temporal and provenance utilities
 

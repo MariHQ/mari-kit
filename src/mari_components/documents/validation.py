@@ -38,7 +38,9 @@ def _parent_violations(parents: dict[str, str]) -> list[StructureViolation]:
         if parent and parent not in known:
             output.append(
                 StructureViolation(
-                    code="missing_parent", subject=child, detail=f"unknown parent {parent!r}"
+                    code="missing_parent",
+                    subject=child,
+                    detail=f"unknown parent {parent!r}",
                 )
             )
             continue

@@ -5,7 +5,8 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from types import MappingProxyType
+
+from mari_components.json import freeze_json_mapping
 
 from .normalize import TrajectoryStep
 
@@ -20,7 +21,7 @@ class ProcedureStep:
     def __post_init__(self) -> None:
         if not self.tool.strip():
             raise ValueError("procedure tool is required")
-        object.__setattr__(self, "arguments", MappingProxyType(dict(self.arguments)))
+        object.__setattr__(self, "arguments", freeze_json_mapping(self.arguments))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

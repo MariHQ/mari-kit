@@ -1,4 +1,4 @@
-[]{#procedural-learning}[Current]{.current-label}
+[]{#procedural-learning}[Research]{.current-label}
 
 # Procedural learning
 

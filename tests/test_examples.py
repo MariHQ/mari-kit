@@ -102,7 +102,8 @@ class RunnableExampleTests(unittest.TestCase):
         self.assertTrue(result["initial_cursor_advanced"])
         self.assertEqual(result["top_hit"], "file:docs/release.md")
         self.assertEqual(
-            result["citations"], ("github:acme/knowledge/file:docs/release.md",)
+            result["citations"],
+            ("github:acme%2Fknowledge@c2b742db362c223f/file:docs%2Frelease.md",),
         )
         self.assertTrue(result["webhook_verified"])
         self.assertEqual(result["coalesced_events"], 1)
@@ -211,7 +212,7 @@ class RunnableExampleTests(unittest.TestCase):
         self.assertEqual(
             result["mitigation_sources"],
             (
-                "github:acme/operations/checkout-runbook.md",
+                "github:acme%2Foperations/checkout-runbook.md",
                 "slack:acme/thread:checkout-1042",
             ),
         )

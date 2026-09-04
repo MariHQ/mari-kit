@@ -1,4 +1,4 @@
-[]{#experience-knowledge}[Current]{.current-label}
+[]{#experience-knowledge}[Reference]{.current-label}
 
 # Knowledge from experience
 

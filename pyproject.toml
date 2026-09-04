@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mari-components"
 version = "0.1.0.dev0"
-description = "Versioned, reviewable, freshness-aware product knowledge for AI agents"
+description = "Backend-agnostic tools for versioned, evidence-linked knowledge systems"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"

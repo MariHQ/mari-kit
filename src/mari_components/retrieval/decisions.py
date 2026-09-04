@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Generic, TypeVar
 
+from mari_components.json import freeze_json_mapping
+
 from .composition import DiverseContextSelection
 
 ItemT = TypeVar("ItemT")
@@ -81,7 +83,7 @@ class CandidateDecision:
         object.__setattr__(self, "reasons", tuple(dict.fromkeys(self.reasons)))
         object.__setattr__(self, "parent_ids", tuple(dict.fromkeys(self.parent_ids)))
         object.__setattr__(self, "scores", MappingProxyType(score_values))
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -137,10 +139,7 @@ def diagnose_candidate_history(
                 key
                 for key, decisions in by_stage.items()
                 if len(
-                    {
-                        (decision.included, decision.reasons)
-                        for decision in decisions
-                    }
+                    {(decision.included, decision.reasons) for decision in decisions}
                 )
                 > 1
             ),

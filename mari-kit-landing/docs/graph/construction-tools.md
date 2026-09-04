@@ -1,4 +1,4 @@
-[]{#construction-tools}[Current]{.current-label}
+[]{#construction-tools}[Reference]{.current-label}
 
 # Entity and relation construction tools
 

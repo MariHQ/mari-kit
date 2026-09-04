@@ -8,6 +8,7 @@ from mari_components import KnowledgeDocument, PollRequest
 from mari_components.connectors import (
     BoxConfig,
     FilesystemConfig,
+    GitHubConfig,
     GitLabConfig,
     JSONAPIConfig,
     MicrosoftDriveConfig,
@@ -16,6 +17,7 @@ from mari_components.connectors import (
     RSSConfig,
     SourceObject,
     connector_definition,
+    github_source_id,
     poll_box,
     poll_filesystem,
     poll_gitlab,
@@ -43,6 +45,22 @@ class QueueHttp:
         if isinstance(value, HttpResponse):
             return value
         return HttpResponse(200, {}, json.dumps(value).encode())
+
+
+def test_configured_source_identity_changes_with_observed_scope() -> None:
+    main = GitHubConfig("token", "acme/docs", branch="main", paths=("docs/**",))
+    release = GitHubConfig("token", "acme/docs", branch="release", paths=("docs/**",))
+    subset = GitHubConfig("token", "acme/docs", branch="main", paths=("README*",))
+    assert (
+        len(
+            {
+                github_source_id(main),
+                github_source_id(release),
+                github_source_id(subset),
+            }
+        )
+        == 3
+    )
 
 
 def test_object_store_batch_is_sdk_neutral_bounded_and_checkpointed() -> None:
@@ -136,7 +154,8 @@ def test_gitlab_batch_uses_head_as_cursor_and_reads_matching_files() -> None:
     )[0]
 
     assert page.next_cursor == "head-1"
-    assert page.upserts[0].revision == "blob-1"
+    assert page.upserts[0].metadata["provider_revision"] == "blob-1"
+    assert page.upserts[0].revision.startswith("sha256:")
     assert page.upserts[0].body == "body"
 
 

@@ -1,4 +1,4 @@
-[]{#memory-scopes}[Current]{.current-label}
+[]{#memory-scopes}[Supported]{.current-label}
 
 # Knowledge scopes and promotion
 

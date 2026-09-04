@@ -1,4 +1,4 @@
-[]{#consolidation}[Current]{.current-label}
+[]{#consolidation}[Reference]{.current-label}
 
 # Tiered memory consolidation
 

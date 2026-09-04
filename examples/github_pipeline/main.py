@@ -19,7 +19,12 @@ from examples.support import (
     token_vectors,
     urllib_transport,
 )
-from mari_components.connectors import GitHubConfig, poll_github, validate_github
+from mari_components.connectors import (
+    GitHubConfig,
+    github_source_id,
+    poll_github,
+    validate_github,
+)
 from mari_components.connectors.events import (
     coalesce_hints,
     github_change_hint,
@@ -97,6 +102,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
         repository,
         paths=tuple(value.strip() for value in paths.split(",") if value.strip()),
     )
+    source_id = github_source_id(config)
     validation = validate_github(config, http=provider)
     if not validation.ok:
         raise RuntimeError(validation.message)
@@ -110,7 +116,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
         embedded,
         SyncState(),
         poll_github(config, PollRequest(), http=provider),
-        source_id=f"github:{repository}",
+        source_id=source_id,
         mode=SyncMode.FULL,
     )
     initial_cursor_advanced = bool(state.cursor)
@@ -130,7 +136,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
                 "answer": "Release Mari by deploying the tested main branch.",
                 "evidence": [
                     {
-                        "document_id": f"github:{repository}/file:docs/release.md",
+                        "document_id": documents["file:docs/release.md"].document_id,
                         "quote": "Release Mari by deploying the tested main branch.",
                     }
                 ],
@@ -180,7 +186,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
             PollRequest(cursor=state.cursor, checkpoint=state.checkpoint),
             http=provider,
         ),
-        source_id=f"github:{repository}",
+        source_id=source_id,
         mode=SyncMode.INCREMENTAL,
     )
 
@@ -198,7 +204,7 @@ def run(environment: Mapping[str, str] | None = None) -> dict[str, object]:
             PollRequest(cursor=state.cursor, checkpoint=state.checkpoint),
             http=provider,
         ),
-        source_id=f"github:{repository}",
+        source_id=source_id,
         mode=SyncMode.INCREMENTAL,
     )
     current_index = build_index(vectors)

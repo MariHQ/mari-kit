@@ -1,4 +1,4 @@
-[]{#memory-algorithms}[Current]{.current-label}
+[]{#memory-algorithms}[Reference]{.current-label}
 
 # Memory segmentation and mutation plans
 

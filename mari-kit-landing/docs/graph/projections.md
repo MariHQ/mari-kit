@@ -1,4 +1,4 @@
-[]{#projections}[Current]{.current-label}
+[]{#projections}[Reference]{.current-label}
 
 # Event sourcing and disposable projections
 

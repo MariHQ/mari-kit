@@ -10,7 +10,12 @@ from typing import Any
 from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 API = "https://api.trello.com/1"
 
@@ -81,13 +86,16 @@ def poll_trello(
             lines.append(
                 f"## {card.get('name') or card.get('id')}\nList: {names.get(str(card.get('idList') or ''), '')}\nDue: {card.get('due') or ''}\n\n{card.get('desc') or ''}"
             )
+        content = "\n\n".join(lines)
+        provider_revision = updated or str(len(cards))
         documents.append(
             KnowledgeDocument(
                 source_id="trello",
                 external_id=f"board:{board_id}",
                 title=str(board.get("name") or board_id),
-                body="\n\n".join(lines),
-                revision=updated or str(len(cards)),
+                body=content,
+                revision=content_revision(content),
+                provider_revision=provider_revision,
                 updated_at=updated,
                 source_url=str(board.get("url") or ""),
                 metadata={"cards": len(cards)},

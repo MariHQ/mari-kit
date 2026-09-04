@@ -1,4 +1,4 @@
-[]{#semantic-atoms}[Current]{.current-label}
+[]{#semantic-atoms}[Supported]{.current-label}
 
 # Semantic atoms and retrieval-time chunks
 

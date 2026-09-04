@@ -49,13 +49,16 @@ class RaptorAndMemWalkerTests(unittest.TestCase):
             ids = [node.node_id for node in nodes]
             if len(ids) <= 2:
                 return (tuple(ids),)
-            return tuple(tuple(ids[index : index + 2]) for index in range(0, len(ids), 2))
+            return tuple(
+                tuple(ids[index : index + 2]) for index in range(0, len(ids), 2)
+            )
 
         self.tree = build_summary_tree(
             {"a": "alpha", "b": "beta", "c": "gamma", "d": "delta"},
             cluster=cluster,
-            summarize=lambda children, level: f"level {level}: "
-            + " ".join(child.text for child in children),
+            summarize=lambda children, level: (
+                f"level {level}: " + " ".join(child.text for child in children)
+            ),
         )
 
     def test_recursive_tree_retains_all_children_and_one_root(self):
@@ -147,9 +150,7 @@ class RecompTests(unittest.TestCase):
 
 class AgenticMemoryTests(unittest.TestCase):
     def test_note_links_and_evolution_have_separate_thresholds(self):
-        plan = plan_note_evolution(
-            "new", {"close": 0.95, "related": 0.8, "noise": 0.1}
-        )
+        plan = plan_note_evolution("new", {"close": 0.95, "related": 0.8, "noise": 0.1})
         self.assertEqual(plan.link_ids, ("close", "related"))
         self.assertEqual(plan.evolution_ids, ("close",))
 
@@ -160,7 +161,10 @@ class AgenticMemoryTests(unittest.TestCase):
                     memory_id="recent", hours_since_access=0, importance=1, relevance=1
                 ),
                 MemorySignal(
-                    memory_id="useful", hours_since_access=10, importance=10, relevance=10
+                    memory_id="useful",
+                    hours_since_access=10,
+                    importance=10,
+                    relevance=10,
                 ),
             ),
             recency_weight=0.1,
@@ -188,7 +192,9 @@ class ReflectionAndEvidenceNoteTests(unittest.TestCase):
     def test_chain_of_note_prefers_supported_evidence_then_abstains(self):
         supported = decide_from_evidence_notes(
             (
-                EvidenceNote(document_id="noise", relevant=False, supports_answer=False),
+                EvidenceNote(
+                    document_id="noise", relevant=False, supports_answer=False
+                ),
                 EvidenceNote(document_id="source", relevant=True, supports_answer=True),
             ),
             parametric_knowledge_available=True,
@@ -201,11 +207,7 @@ class ReflectionAndEvidenceNoteTests(unittest.TestCase):
     def test_chain_of_note_rejects_inconsistent_judgment(self):
         with self.assertRaisesRegex(ValueError, "must also be relevant"):
             decide_from_evidence_notes(
-                (
-                    EvidenceNote(
-                        document_id="bad", relevant=False, supports_answer=True
-                    ),
-                )
+                (EvidenceNote(document_id="bad", relevant=False, supports_answer=True),)
             )
 
 

@@ -5,6 +5,7 @@ import pytest
 from mari_components.knowledge import Activity, KnowledgeArtifact, KnowledgeScope
 from mari_components.platform import (
     InMemoryArtifactStore,
+    InMemoryDocumentStore,
     KnowledgeEvent,
     MetricObjective,
     ObjectiveDirection,
@@ -12,6 +13,11 @@ from mari_components.platform import (
     Stage,
     compile_configurations,
     replay_projection,
+)
+from mari_components.portability import export_bundle
+from mari_components.testing import (
+    assert_artifact_store_conforms,
+    assert_document_store_conforms,
 )
 
 
@@ -108,3 +114,29 @@ def test_reference_store_enforces_scope_revision_and_time_travel() -> None:
     assert store.get("policy", scope=KnowledgeScope(tenant="other")) is None
     with pytest.raises(RuntimeError, match="expected"):
         store.commit(second, expected_revision="v1")
+
+
+def test_reference_store_passes_public_conformance_suite() -> None:
+    assert_artifact_store_conforms(InMemoryArtifactStore)
+
+
+def test_reference_document_store_passes_public_conformance_suite() -> None:
+    assert_document_store_conforms(InMemoryDocumentStore)
+
+
+def test_persistent_configuration_rejects_process_specific_objects() -> None:
+    with pytest.raises(TypeError, match="unsupported JSON value"):
+        Stage(
+            name="bad",
+            version="1",
+            transform=lambda values: values,
+            configuration={"value": object()},
+        )
+
+
+def test_portable_sets_have_canonical_order_and_mapping_keys_stay_typed() -> None:
+    left = export_bundle(records=({"values": {"b", "a"}},))
+    right = export_bundle(records=({"values": {"a", "b"}},))
+    assert left.files == right.files
+    with pytest.raises(TypeError, match="mapping keys"):
+        export_bundle(records=({1: "ambiguous"},))

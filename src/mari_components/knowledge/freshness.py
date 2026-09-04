@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from types import MappingProxyType
 
+from mari_components.references import ObjectRef, RevisionRef
 from mari_components.types import Evidence
 
 
@@ -69,6 +70,49 @@ class FreshnessReport:
     @property
     def reusable(self) -> bool:
         return self.status is FreshnessStatus.CURRENT
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ReferenceRevisionChange:
+    expected: RevisionRef
+    current: RevisionRef
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ReferenceFreshnessReport:
+    status: FreshnessStatus
+    changes: tuple[ReferenceRevisionChange, ...] = ()
+    missing: tuple[RevisionRef, ...] = ()
+
+    @property
+    def reusable(self) -> bool:
+        return self.status is FreshnessStatus.CURRENT
+
+
+def assess_revision_refs(
+    expected: Iterable[RevisionRef],
+    current: Mapping[ObjectRef, RevisionRef],
+) -> ReferenceFreshnessReport:
+    """Assess dependencies for documents, records, media, or derived artifacts."""
+
+    changes: list[ReferenceRevisionChange] = []
+    missing: list[RevisionRef] = []
+    for ref in sorted(set(expected), key=lambda value: value.key):
+        observed = current.get(ref.object)
+        if observed is None:
+            missing.append(ref)
+        elif observed.revision != ref.revision or observed.unit_id != ref.unit_id:
+            changes.append(ReferenceRevisionChange(expected=ref, current=observed))
+    status = (
+        FreshnessStatus.MISSING
+        if missing
+        else FreshnessStatus.STALE
+        if changes
+        else FreshnessStatus.CURRENT
+    )
+    return ReferenceFreshnessReport(
+        status=status, changes=tuple(changes), missing=tuple(missing)
+    )
 
 
 def evidence_dependencies(

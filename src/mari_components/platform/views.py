@@ -52,11 +52,25 @@ def plan_view_refresh(
             continue
         prior = dict(build.input_revisions)
         transform_changed = build.transform != view.transform
-        inputs_changed = any(source in prior and prior[source] != revision for source, revision in changed_revisions.items())
-        source_set_changed = any(source not in prior and fnmatch.fnmatchcase(source, view.source_pattern) for source in changed_revisions)
+        inputs_changed = any(
+            source in prior and prior[source] != revision
+            for source, revision in changed_revisions.items()
+        )
+        source_set_changed = any(
+            source not in prior and fnmatch.fnmatchcase(source, view.source_pattern)
+            for source in changed_revisions
+        )
         if transform_changed or inputs_changed or source_set_changed:
-            reason = "transform_changed" if transform_changed else "source_set_changed" if source_set_changed else "input_changed"
+            reason = (
+                "transform_changed"
+                if transform_changed
+                else "source_set_changed"
+                if source_set_changed
+                else "input_changed"
+            )
             tasks.append(ViewRefreshTask(artifact_id=build.artifact_id, reason=reason))
         else:
             reused.append(build.artifact_id)
-    return ViewRefreshPlan(view_id=view.view_id, tasks=tuple(tasks), reused_artifact_ids=tuple(reused))
+    return ViewRefreshPlan(
+        view_id=view.view_id, tasks=tuple(tasks), reused_artifact_ids=tuple(reused)
+    )

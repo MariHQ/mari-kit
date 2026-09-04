@@ -1,10 +1,13 @@
+from mari_components import KnowledgeIndex, ObjectRef, RevisionRef, ScopeRef
 from mari_components.retrieval import (
     BM25Index,
     DenseFlatIndex,
     HNSWIndex,
     IVFPQIndex,
+    RevisionBM25Index,
     SparseVectorIndex,
 )
+from mari_components.testing import assert_index_authorization_conforms
 
 
 def test_dense_flat_metrics_and_acl_filtering() -> None:
@@ -47,3 +50,28 @@ def test_ivfpq_trains_residual_codes_and_finds_obvious_neighbor() -> None:
         codebook_size=2,
     )
     assert index.search([0, 0, 0, 0], limit=1, probes=2)[0].document_id == "a"
+
+
+def test_revision_index_uses_structural_refs_and_authorizes_before_scoring() -> None:
+    scope = ScopeRef(tenant="acme", space="handbook")
+    policy = RevisionRef(
+        object=ObjectRef(namespace="document", object_id="policy", scope=scope),
+        revision="2",
+    )
+    payroll = RevisionRef(
+        object=ObjectRef(namespace="document", object_id="payroll", scope=scope),
+        revision="4",
+    )
+    index = RevisionBM25Index(
+        {policy: "enterprise refund window", payroll: "payroll schedule"}
+    )
+    assert isinstance(index, KnowledgeIndex)
+    hits = index.search("refund", limit=5, allowed_refs={policy})
+    assert tuple(hit.ref for hit in hits) == (policy,)
+    assert index.explain("refund", ref=policy).contributions[0].term == "refund"
+    assert_index_authorization_conforms(
+        index,
+        query="refund",
+        allowed_ref=policy,
+        hit_ref=lambda hit: hit.ref,
+    )

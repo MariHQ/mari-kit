@@ -23,6 +23,7 @@ from mari_components.types import (
     PollRequest,
     Principal,
     Tombstone,
+    content_revision,
 )
 
 API = "https://www.googleapis.com/drive/v3"
@@ -216,12 +217,15 @@ def _document(
     config: GoogleDriveConfig, file: Mapping[str, Any], *, http: HttpTransport
 ) -> KnowledgeDocument:
     file_id = str(file.get("id") or "")
+    body = _file_body(config, file, http=http)
+    provider_revision = str(file.get("md5Checksum") or file.get("modifiedTime") or "")
     return KnowledgeDocument(
         source_id=f"gdrive:{config.folder_id or 'root'}",
         external_id=file_id,
         title=str(file.get("name") or file_id),
-        body=_file_body(config, file, http=http),
-        revision=str(file.get("md5Checksum") or file.get("modifiedTime") or ""),
+        body=body,
+        revision=content_revision(body),
+        provider_revision=provider_revision,
         updated_at=str(file.get("modifiedTime") or ""),
         source_url=f"https://drive.google.com/open?id={urllib.parse.quote(file_id, safe='')}",
         acl=_acl(file),

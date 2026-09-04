@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 from typing import Any, TypeVar
+
+from mari_components.json import canonical_json_bytes, freeze_json_mapping
 
 StateT = TypeVar("StateT")
 
@@ -22,7 +22,7 @@ class KnowledgeEvent:
     def __post_init__(self) -> None:
         if not self.event_id.strip() or not self.kind.strip() or self.generation < 1:
             raise ValueError("event ID, kind, and positive generation are required")
-        object.__setattr__(self, "payload", MappingProxyType(dict(self.payload)))
+        object.__setattr__(self, "payload", freeze_json_mapping(self.payload))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -53,7 +53,7 @@ def replay_projection(
             raise ValueError(f"expected generation {expected}, got {event.generation}")
         state = projector(state, event)
         expected += 1
-    identity = json.dumps(
+    identity = canonical_json_bytes(
         [
             {
                 "id": event.event_id,
@@ -62,11 +62,8 @@ def replay_projection(
                 "payload": dict(event.payload),
             }
             for event in values
-        ],
-        sort_keys=True,
-        separators=(",", ":"),
-        default=str,
-    ).encode()
+        ]
+    )
     return ProjectionBuild(
         state=state,
         generation=expected - 1,

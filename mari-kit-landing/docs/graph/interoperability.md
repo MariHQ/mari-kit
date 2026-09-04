@@ -1,4 +1,4 @@
-[]{#graph-interoperability}[Current]{.current-label}
+[]{#graph-interoperability}[Reference]{.current-label}
 
 # Graph interchange helpers
 

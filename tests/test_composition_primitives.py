@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 
 import pytest
 
+from mari_components import JsonPointer, ObjectRef, RevisionRef, TextSpan
 from mari_components.connectors import hydrate_hints
 from mari_components.documents import ParsedBlock, ParsedDocument
 from mari_components.evaluation import evaluate_graph_context
@@ -27,11 +28,13 @@ from mari_components.knowledge import (
     Assertion,
     AssertionUpdateKind,
     EvidenceIssueKind,
+    LocatedEvidence,
     all_of,
     group_assertions,
     plan_assertion_update,
     valid_at,
     validate_artifact_evidence,
+    validate_located_evidence,
 )
 from mari_components.retrieval import (
     BM25Index,
@@ -64,6 +67,34 @@ def test_evidence_must_resolve_inside_visible_exact_material() -> None:
     assert report.valid == (evidence[0],)
     assert report.issues[0].kind is EvidenceIssueKind.NOT_VISIBLE
     assert not report.accepted
+
+
+def test_typed_evidence_resolves_text_and_structured_material() -> None:
+    text_ref = RevisionRef(
+        object=ObjectRef(namespace="document", object_id="policy"), revision="2"
+    )
+    record_ref = RevisionRef(
+        object=ObjectRef(namespace="record", object_id="customer"), revision="5"
+    )
+    evidence = (
+        LocatedEvidence(
+            ref=text_ref, locator=TextSpan(start=8, end=15), quote="14 days"
+        ),
+        LocatedEvidence(
+            ref=record_ref,
+            locator=JsonPointer(pointer="/plan/name"),
+            quote="enterprise",
+        ),
+    )
+    materials = {
+        text_ref.key: "Returns:14 days",
+        record_ref.key: {"plan": {"name": "enterprise"}},
+    }
+    report = validate_located_evidence(
+        evidence, resolve_material=lambda ref: materials.get(ref.key)
+    )
+    assert report.accepted
+    assert report.valid == evidence
 
 
 def test_hit_hydration_preserves_rank_misses_and_errors() -> None:

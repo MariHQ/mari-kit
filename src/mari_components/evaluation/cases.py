@@ -10,6 +10,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
+from mari_components.json import freeze_json_mapping
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class RetrievalCase:
@@ -51,7 +53,7 @@ class MemoryCase:
                 "memory cases require ID, question, answer, and capability"
             )
         object.__setattr__(self, "sessions", tuple(self.sessions))
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 def _jsonl(path: str | Path) -> Iterator[dict[str, Any]]:

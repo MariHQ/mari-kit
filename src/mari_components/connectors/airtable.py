@@ -10,7 +10,12 @@ from dataclasses import dataclass, field
 from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 API = "https://api.airtable.com/v0"
 
@@ -92,7 +97,7 @@ def poll_airtable(
             json.dumps(
                 {"id": record.get("id"), **(record.get("fields") or {})},
                 sort_keys=True,
-                default=str,
+                allow_nan=False,
             )
             for record in records
         )
@@ -105,7 +110,8 @@ def poll_airtable(
                 external_id=f"table:{table['id']}",
                 title=str(table.get("name") or table["id"]),
                 body=body,
-                revision=revision or str(len(records)),
+                revision=content_revision(body),
+                provider_revision=revision or str(len(records)),
                 source_url=f"https://airtable.com/{config.base_id}/{table['id']}",
                 metadata={"records": len(records)},
             )

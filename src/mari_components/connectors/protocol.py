@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import re
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass, field
@@ -15,6 +16,7 @@ from mari_components.errors import (
     TransientFailure,
 )
 from mari_components.http import HttpTransport
+from mari_components.json import canonical_json_bytes
 from mari_components.types import ChangeHint, PollPage, PollRequest
 
 
@@ -29,6 +31,25 @@ class ConnectorMode(StrEnum):
 
     POLL = "poll"
     STREAM = "stream"
+
+
+def connector_configuration_fingerprint(configuration: Mapping[str, object]) -> str:
+    """Fingerprint the non-secret settings that determine connector scope."""
+
+    return hashlib.sha256(canonical_json_bytes(configuration)).hexdigest()
+
+
+def configured_source_id(
+    provider: str, identity: str, configuration: Mapping[str, object]
+) -> str:
+    """Bind a readable provider identity to its non-secret configured scope."""
+
+    provider = provider.strip().casefold()
+    identity = identity.strip()
+    if not provider or not identity:
+        raise ValueError("provider and source identity are required")
+    digest = connector_configuration_fingerprint(configuration)[:16]
+    return f"{provider}:{identity}@{digest}"
 
 
 @dataclass(frozen=True, slots=True)

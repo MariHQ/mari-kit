@@ -53,7 +53,9 @@ def plan_note_evolution(
         rows = rows[:limit]
     return NoteEvolutionPlan(
         note_id=note_id,
-        link_ids=tuple(candidate_id for candidate_id, score in rows if score >= link_threshold),
+        link_ids=tuple(
+            candidate_id for candidate_id, score in rows if score >= link_threshold
+        ),
         evolution_ids=tuple(
             candidate_id for candidate_id, score in rows if score >= evolution_threshold
         ),

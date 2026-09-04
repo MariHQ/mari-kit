@@ -5,8 +5,13 @@
 
 | Page | Covers |
 |---|---|
+| [Company search](company-search.md) | A complete authorized retrieval path |
+| [Governed knowledge](governed-knowledge.md) | Typed evidence and revisioned artifacts |
+| [Agent knowledge](agent-knowledge.md) | Completed activity to reviewable proposals |
 | [Install](install.md) | Base package, optional integrations, injected dependencies |
 | [Architecture](architecture.md) | Layer ownership, data flow, framework and storage boundaries |
+| [Maturity](maturity.md) | Stability and support labels |
+| [Identity migration](identity-migration.md) | Canonical document IDs and configured source fingerprints |
 
 :::{collapse} Package boundary
 
@@ -20,6 +25,11 @@
 ```{toctree}
 :maxdepth: 1
 
+company-search
+governed-knowledge
+agent-knowledge
 install
 architecture
+maturity
+identity-migration
 ```

@@ -1,4 +1,4 @@
-[]{#graph}[Current]{.current-label}
+[]{#graph}[Reference]{.current-label}
 
 # Bi-temporal knowledge graph
 

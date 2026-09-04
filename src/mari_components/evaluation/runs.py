@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any
 
+from mari_components.json import freeze_json_mapping
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class EvaluationRun:
@@ -42,6 +44,6 @@ class EvaluationRun:
             ),
         )
         object.__setattr__(
-            self, "configuration", MappingProxyType(dict(self.configuration))
+            self, "configuration", freeze_json_mapping(self.configuration)
         )
         object.__setattr__(self, "model_identifiers", tuple(self.model_identifiers))

@@ -14,6 +14,25 @@ from mari_components.sync import ManifestEntry, SyncState, plan_sync, stream_syn
 
 
 class SyncPlanningTests(unittest.TestCase):
+    def test_configuration_fingerprint_binds_state(self):
+        page = PollPage(snapshot_complete=True)
+        first = plan_sync(
+            SyncState(),
+            page,
+            source_id="fixture",
+            mode=SyncMode.INCREMENTAL,
+            configuration_fingerprint="scope-a",
+        )
+
+        with self.assertRaisesRegex(ValueError, "configuration changed"):
+            plan_sync(
+                first.state,
+                page,
+                source_id="fixture",
+                mode=SyncMode.INCREMENTAL,
+                configuration_fingerprint="scope-b",
+            )
+
     def document(
         self, ident: str, revision: str, body: str = "body"
     ) -> KnowledgeDocument:

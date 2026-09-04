@@ -42,7 +42,10 @@ def score_self_rag_candidate(
     probabilities = (retrieve_probability, relevance_probability, support_probability)
     if any(not math.isfinite(value) or not 0 <= value <= 1 for value in probabilities):
         raise ValueError("reflection probabilities must be finite values in [0, 1]")
-    if not math.isfinite(generation_probability) or not 0 <= generation_probability <= 1:
+    if (
+        not math.isfinite(generation_probability)
+        or not 0 <= generation_probability <= 1
+    ):
         raise ValueError("generation_probability must be a finite value in [0, 1]")
     if not math.isfinite(utility) or not 0 <= utility <= 1:
         raise ValueError("utility must be a finite value in [0, 1]")

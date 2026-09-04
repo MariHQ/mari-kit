@@ -39,13 +39,20 @@ def closeness_centrality(
                     queue.append(adjacent)
         reachable = len(distances) - 1
         distance_sum = sum(distances.values())
-        score = (reachable / distance_sum) * (reachable / max(1, len(values) - 1)) if distance_sum else 0.0
+        score = (
+            (reachable / distance_sum) * (reachable / max(1, len(values) - 1))
+            if distance_sum
+            else 0.0
+        )
         scores.append((source, score))
     return tuple(sorted(scores, key=lambda item: (-item[1], repr(item[0]))))
 
 
 def betweenness_centrality(
-    nodes: Iterable[NodeT], *, neighbors: Callable[[NodeT], Iterable[NodeT]], normalized: bool = True
+    nodes: Iterable[NodeT],
+    *,
+    neighbors: Callable[[NodeT], Iterable[NodeT]],
+    normalized: bool = True,
 ) -> tuple[tuple[NodeT, float], ...]:
     """Unweighted directed Brandes betweenness centrality."""
 
@@ -76,7 +83,9 @@ def betweenness_centrality(
             node = stack.pop()
             if paths[node]:
                 for parent in predecessors[node]:
-                    dependency[parent] += (paths[parent] / paths[node]) * (1.0 + dependency[node])
+                    dependency[parent] += (paths[parent] / paths[node]) * (
+                        1.0 + dependency[node]
+                    )
             if node != source:
                 centrality[node] += dependency[node]
     if normalized and len(values) > 2:
@@ -100,7 +109,10 @@ def hits(
     if not values:
         return ()
     known = set(values)
-    outgoing = {node: tuple(item for item in set(successors(node)) if item in known) for node in values}
+    outgoing = {
+        node: tuple(item for item in set(successors(node)) if item in known)
+        for node in values
+    }
     incoming = {node: [] for node in values}
     for left, targets in outgoing.items():
         for right in targets:
@@ -108,13 +120,26 @@ def hits(
     hubs = dict.fromkeys(values, 1.0 / len(values))
     authorities = dict(hubs)
     for _ in range(iterations):
-        new_authorities = {node: sum(hubs[parent] for parent in incoming[node]) for node in values}
-        norm = math.sqrt(sum(value * value for value in new_authorities.values())) or 1.0
-        new_authorities = {node: value / norm for node, value in new_authorities.items()}
-        new_hubs = {node: sum(new_authorities[target] for target in outgoing[node]) for node in values}
+        new_authorities = {
+            node: sum(hubs[parent] for parent in incoming[node]) for node in values
+        }
+        norm = (
+            math.sqrt(sum(value * value for value in new_authorities.values())) or 1.0
+        )
+        new_authorities = {
+            node: value / norm for node, value in new_authorities.items()
+        }
+        new_hubs = {
+            node: sum(new_authorities[target] for target in outgoing[node])
+            for node in values
+        }
         norm = math.sqrt(sum(value * value for value in new_hubs.values())) or 1.0
         new_hubs = {node: value / norm for node, value in new_hubs.items()}
-        delta = sum(abs(new_hubs[node] - hubs[node]) + abs(new_authorities[node] - authorities[node]) for node in values)
+        delta = sum(
+            abs(new_hubs[node] - hubs[node])
+            + abs(new_authorities[node] - authorities[node])
+            for node in values
+        )
         hubs, authorities = new_hubs, new_authorities
         if delta <= tolerance:
             break

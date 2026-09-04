@@ -1,5 +1,6 @@
-"""Reliable product-knowledge primitives for application-owned agents."""
+"""Backend-agnostic primitives for versioned knowledge systems."""
 
+from .contracts import Authorizer, Clock, KnowledgeIndex, RevisionResolver, Serializer
 from .errors import (
     AuthenticationFailure,
     ComponentError,
@@ -7,6 +8,18 @@ from .errors import (
     MalformedModelOutput,
     PermanentFailure,
     TransientFailure,
+)
+from .references import (
+    JsonPointer,
+    LocatedEvidence,
+    MediaTimeRange,
+    ObjectRef,
+    PageRegion,
+    RecordField,
+    RevisionRef,
+    ScopeRef,
+    TableCell,
+    TextSpan,
 )
 from .types import (
     AnswerCandidate,
@@ -23,12 +36,17 @@ from .types import (
     Principal,
     SyncMode,
     Tombstone,
+    canonical_document_id,
+    content_revision,
+    parse_document_id,
 )
 
 __all__ = [
     "AnswerCandidate",
+    "Authorizer",
     "AuthenticationFailure",
     "ChangeHint",
+    "Clock",
     "ComponentError",
     "DecisionCandidate",
     "DocumentACL",
@@ -37,13 +55,29 @@ __all__ = [
     "GlossaryCandidate",
     "IncompleteSnapshot",
     "KnowledgeDocument",
+    "KnowledgeIndex",
+    "LocatedEvidence",
     "KnowledgeSection",
+    "JsonPointer",
     "MalformedModelOutput",
+    "MediaTimeRange",
+    "ObjectRef",
+    "PageRegion",
     "PermanentFailure",
     "PollPage",
     "PollRequest",
     "Principal",
+    "RecordField",
+    "RevisionRef",
+    "RevisionResolver",
+    "ScopeRef",
     "SyncMode",
+    "Serializer",
+    "TableCell",
+    "TextSpan",
     "Tombstone",
     "TransientFailure",
+    "canonical_document_id",
+    "content_revision",
+    "parse_document_id",
 ]

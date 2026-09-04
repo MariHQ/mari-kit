@@ -39,7 +39,9 @@ def test_markdown_parser_preserves_spans_tables_and_stable_blocks() -> None:
     result = parse_markdown(source, artifact_id="policy", revision="1")
     document = result.values[0]
     assert result.succeeded
-    assert all(source[block.start : block.end] == block.text for block in document.blocks)
+    assert all(
+        source[block.start : block.end] == block.text for block in document.blocks
+    )
     table = next(block for block in document.blocks if block.kind == "table")
     assert tuple((cell.row, cell.column, cell.text) for cell in table.cells) == (
         (0, 0, "Rule"),
@@ -82,12 +84,14 @@ def test_source_coordinate_map_rejects_mid_character_byte_offsets() -> None:
 def test_html_parser_retains_visible_blocks_raw_spans_and_table_topology() -> None:
     source = (
         '<section id="rules"><h2>Rules &amp; limits</h2>'
-        '<table><tr><th>Rule</th><th>Days</th></tr>'
-        '<tr><td>Return</td><td>14</td></tr></table></section>'
+        "<table><tr><th>Rule</th><th>Days</th></tr>"
+        "<tr><td>Return</td><td>14</td></tr></table></section>"
     )
     result = parse_html(source, artifact_id="policy", revision="1")
     assert result.succeeded
-    heading = next(block for block in result.values[0].blocks if block.kind == "heading")
+    heading = next(
+        block for block in result.values[0].blocks if block.kind == "heading"
+    )
     assert heading.text == "Rules & limits"
     assert source[heading.start : heading.end].startswith("<h2>")
     table = next(block for block in result.values[0].blocks if block.kind == "table")
@@ -141,9 +145,7 @@ def test_structural_reports_expose_cycles_cells_and_evidence_mismatches() -> Non
     else:
         raise AssertionError("overlapping table was accepted in error mode")
     try:
-        normalize_table(
-            (TableCell(row=100, column=100, text="x"),), maximum_cells=100
-        )
+        normalize_table((TableCell(row=100, column=100, text="x"),), maximum_cells=100)
     except ValueError as error:
         assert "maximum_cells" in str(error)
     else:
@@ -158,12 +160,16 @@ def test_structural_reports_expose_cycles_cells_and_evidence_mismatches() -> Non
         "cell_not_found",
     )
     valid = validate_region_evidence(
-        RegionEvidence(document_id="d", revision="1", region_id="t", page=1, cell=(0, 0)),
+        RegionEvidence(
+            document_id="d", revision="1", region_id="t", page=1, cell=(0, 0)
+        ),
         document,
     )
     assert valid.text == "A"
     ambiguous = validate_region_evidence(
-        RegionEvidence(document_id="d", revision="1", region_id="t", page=1, cell=(1, 0)),
+        RegionEvidence(
+            document_id="d", revision="1", region_id="t", page=1, cell=(1, 0)
+        ),
         document,
     )
     assert ambiguous.issues == ("ambiguous_cell",)
@@ -205,17 +211,20 @@ def test_record_parsers_keep_good_siblings_and_raw_field_spans() -> None:
     assert len(array.values) == 2
     assert array.issues[0].code == "non_object_record"
     assert array.values[0].fields[1].raw == '"Ana"'
-    assert parse_json_array(
-        '[{"id": 1},]', source_id="people", revision="1"
-    ).issues[0].code == "trailing_array_comma"
+    assert (
+        parse_json_array('[{"id": 1},]', source_id="people", revision="1")
+        .issues[0]
+        .code
+        == "trailing_array_comma"
+    )
 
 
 def test_python_parser_preserves_unicode_offsets_identity_and_call_ambiguity() -> None:
     source = 'label = "é"\n\ndef helper():\n    return 1\n\ndef run():\n    return helper()\n'
-    result = parse_python(
-        source, repository="repo", revision="1", path="src/app.py"
+    result = parse_python(source, repository="repo", revision="1", path="src/app.py")
+    helper = next(
+        symbol for symbol in result.symbols if symbol.qualified_name.endswith("helper")
     )
-    helper = next(symbol for symbol in result.symbols if symbol.qualified_name.endswith("helper"))
     assert source[helper.start : helper.end].startswith("def helper")
     assert any(edge.kind == "calls" for edge in result.edges)
     moved = parse_python(
@@ -224,7 +233,9 @@ def test_python_parser_preserves_unicode_offsets_identity_and_call_ambiguity() -
     assert {symbol.symbol_id for symbol in result.symbols} == {
         symbol.symbol_id for symbol in moved.symbols
     }
-    malformed = parse_python("def broken(:\n", repository="repo", revision="3", path="x.py")
+    malformed = parse_python(
+        "def broken(:\n", repository="repo", revision="3", path="x.py"
+    )
     assert malformed.issues[0].code == "syntax_error"
     duplicate = parse_python(
         "def same(): pass\ndef same(): pass\ndef run(): same()\n",
@@ -235,7 +246,9 @@ def test_python_parser_preserves_unicode_offsets_identity_and_call_ambiguity() -
     ids = [symbol.symbol_id for symbol in duplicate.symbols]
     assert len(ids) == len(set(ids))
     assert ids[-2].endswith("#2")
-    ambiguous = next(reference for reference in duplicate.references if reference.name == "same")
+    ambiguous = next(
+        reference for reference in duplicate.references if reference.name == "same"
+    )
     assert len(ambiguous.resolved_target_ids) == 2
     assert all("::same.py" not in target for target in ambiguous.resolved_target_ids)
 

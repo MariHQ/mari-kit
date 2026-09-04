@@ -10,7 +10,12 @@ from mari_components.connectors._shared import json_response, send
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.errors import PermanentFailure
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 API = "https://api.box.com/2.0"
 
@@ -87,15 +92,18 @@ def poll_box(
             ).body
             if len(raw) > maximum_bytes:
                 raise PermanentFailure(f"Box file {item_id!r} exceeds maximum_bytes")
+            body = raw.decode("utf-8", "replace")
+            provider_revision = str(
+                item.get("sha1") or item.get("modified_at") or item_id
+            )
             documents.append(
                 KnowledgeDocument(
                     source_id=f"box:{config.folder_id}",
                     external_id=item_id,
                     title=str(item.get("name") or item_id),
-                    body=raw.decode("utf-8", "replace"),
-                    revision=str(
-                        item.get("sha1") or item.get("modified_at") or item_id
-                    ),
+                    body=body,
+                    revision=content_revision(body),
+                    provider_revision=provider_revision,
                     updated_at=str(item.get("modified_at") or ""),
                     source_url=str((item.get("shared_link") or {}).get("url") or ""),
                     metadata={"folder_id": config.folder_id, "size": size},

@@ -1,12 +1,11 @@
-# Mari Components
+# Mari Kit
 
 [![CI](https://github.com/MariHQ/mari-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/MariHQ/mari-kit/actions/workflows/ci.yml)
 
-Composable knowledge-system tools for Python applications and agents.
+Backend-agnostic Python tools for knowledge systems.
 
-Mari Components turns changing internal and external documentation into
-versioned, evidence-linked knowledge that an application can safely retrieve,
-cache, and invalidate. It is one Python distribution and one import package.
+Mari Kit turns changing company sources into versioned, permission-aware,
+evidence-linked knowledge. The Python distribution is named `mari-components`.
 
 Use it with OpenAI Agents SDK, LangGraph, PydanticAI, or any other agent
 runtime. Mari Components does not implement an agent loop, model client,
@@ -19,101 +18,27 @@ application or LLM can compose those operations for its particular system.
 
 ## What it provides
 
-- Batch connectors for GitHub, GitLab, Slack, Google Drive, OneDrive,
-  SharePoint, Confluence, Dropbox, Box, local files, Notion, RSS/Atom, Airtable, Asana,
-  Jira, Linear, Trello, and Zendesk; SDK-neutral S3/GCS/Azure object storage;
-  declarative JSON REST; and Singer/Meltano interoperability.
-- Checkpoint-free streaming hints for GitHub, GitLab, Slack, Google Drive,
-  OneDrive, SharePoint, Confluence, Box, S3, GCS, Azure Blob, and CloudEvents.
-- Replay-safe synchronization with canonical document identity, revisions,
-  tombstones, checkpoints, and full-snapshot reconciliation.
-- Provider-observed ACL metadata and retrieval-time candidate filtering.
-- MUVERA candidate generation, PolarQuant compression, and exact MaxSim
-  reranking. There is no separate handmade cosine-similarity path.
-- Weighted reciprocal-rank fusion, maximal-marginal-relevance diversification,
-  and allowed-node Personalized PageRank with passage projection.
-- Paper-derived planning boundaries for HyDE, RAPTOR, Self-RAG, CRAG, FLARE,
-  A-MEM, Generative Agents, MemWalker, Chain-of-Note, and RECOMP.
-- SparseCL contradiction retrieval with Hoyer contrastive-loss conformance,
-  cosine candidate generation, sparse reranking, and pre-score authorization;
-  plus evidence-localized document self-contradiction validation and RRC rewards.
-- Strict parsers for evidence-backed facts, decisions, answers, glossary terms,
-  summaries, impact assessments, and refinement proposals.
-- Mari-managed tag definitions and assignments that survive provider resyncs.
-- Reviewed-intent matching for actual speculative document reads, conservative
-  grounded-answer caching, ACL-aware selection, and dependency-impact lookup.
-- Stable Markdown section identities and hashes for selective invalidation when
-  an unrelated part of a source document changes.
-- Stable paragraph, list-item, table-row, and code atoms with Myers/patience
-  revision alignment, content-defined fallback spans, temporal versions, and
-  exact embedding-reuse and parent-invalidation plans.
-- Validated add/update/delete/no-op memory plans and hybrid topic segmentation
-  for application-owned online and offline consolidation flows.
-- Knowledge-from-experience tools: loaded-revision manifests, expert-feedback
-  diagnosis, evidence-bound facts/strategies/pitfalls/constraints, minimal edit
-  proposals, dependency validation, and targeted/regression comparisons.
-- Knowledge observation ledgers, derivation-loop checks, cross-document edit
-  previews and inverses, conditional-disclosure predicates, and progressive
-  index-to-source manifests.
-- Privacy-bounded OpenAI, Anthropic, and OpenTelemetry evidence adapters;
-  direct-follow process models, exact variants, parallel-aware rework,
-  reference-path matching, successful-run invariant mining, and sampling.
-- Evidence-bound declared, inferred, and hindsight intent candidates with
-  caller-owned aggregation, independent-review summaries, and task-adaptive
-  rubric validation.
-- Framework-neutral context lifecycle hooks around application-owned model and
-  tool calls, including explicit scope, purpose, budget, and update events.
-- Explicit information requirements, context sufficiency and gap queries,
-  context-use and ablation accounting, contextual chunk representations, and
-  late-chunk token-span pooling.
-- Atom-vector ANN aggregation, contextual multi-vector sections, exact MaxSim,
-  existing MUVERA candidate generation, and retrieval-time neighbor expansion.
-- Page-aware structured documents with regions, bounding boxes, tables,
-  derived representations, and a language-neutral code symbol graph.
-- Dependency-free Markdown, HTML, CSV-like, JSON Lines, and Python structure
-  parsers with exact source coordinates, partial-result issues, stable
-  caller-key identities, table topology, and local call-resolution traces.
-- Structural document, region-evidence, schema-drift, scalar-type, and
-  stream-hydration validators that report independent violations without
-  choosing an acceptance policy.
-- Trust-aware write decisions that keep origin, interpretation, taint, scope,
-  and provenance separate; plus explainable source-authority resolution.
-- Versioned semantic schemas with required-property, cardinality, and
-  relation-domain/range validation.
-- Scope grants and reviewable cross-scope promotion proposals; dependency-aware
-  retention, legal-hold, deletion, and invalidation plans.
-- Deterministic, checksum-verified portable knowledge bundles and incremental
-  materialized-view refresh plans.
-- Paired task-outcome comparisons for success, policy compliance, turns,
-  tokens, and tool calls.
-- Callback-driven traversal, shortest paths, components, bounded cycle
-  enumeration, structural centrality, link scoring, and SimRank.
-- Budgeted seed expansion and a transparent prize-guided connected-subgraph
-  heuristic, without requiring a graph container.
-- Exact graph diffs, structural quality diagnostics, blocking, threshold
-  clustering, temporal joins, lineage traversal, and taint propagation.
-- Loss-visible GraphML, JSON-LD, NetworkX, RDFLib, and PyTorch Geometric
-  conversion helpers using a temporary interchange projection.
-- Artifact-neutral evidence with exact visible-context validation, typed hit
-  hydration, and multi-budget context selection traces.
-- Revision-checked lexical index deltas, injectable analyzers, and per-term BM25
-  explanations.
-- Evidence-bearing temporal assertions, attribute-aware record diffs,
-  explainable blocking and clustering, adjacency projections, and multi-path
-  reachability results.
-- Reason-preserving filters and candidate histories, diversity-constrained
-  context selection, many-to-many graph evidence projection, unique grouped
-  interval overlaps, and edge-preserving traversal.
-- Artifact-keyed BM25, version-family proposals, grouped coverage metrics,
-  weighted contribution traces, uncertainty intervals, and JSON-safe encoding
-  for immutable values.
+- Connector and synchronization contracts for polling, streaming hints,
+  checkpoints, tombstones, ACL observations, and complete-snapshot reconciliation.
+- Structural object and revision references, typed evidence locators, provenance,
+  review states, supersession, freshness, retention, and selective invalidation.
+- Permission-aware lexical, dense, multi-vector, graph, fusion, reranking, and
+  context-selection algorithms with inspectable scores and traces.
+- Parsers and validators for documents, facts, decisions, answers, schemas,
+  graph candidates, memories, completed agent activity, and learned procedures.
+- Reference stores, indexes, serializers, benchmarks, and conformance checks
+  that production adapters can replace.
+
+The [documentation](https://kit.mari.guru/) begins with complete paths for
+company search, governed knowledge, and knowledge derived from completed agent
+work. The feature pages contain the full capability catalog and research basis.
 
 ## Installation
 
 The project currently targets Python 3.11 through 3.13.
 
 ```bash
-python -m pip install 'mari-components @ git+ssh://git@github.com/MariHQ/mari-kit.git'
+python -m pip install 'mari-components @ git+https://github.com/MariHQ/mari-kit.git'
 ```
 
 For development:
@@ -153,7 +78,8 @@ document = KnowledgeDocument(
     ),
 )
 
-assert document.document_id == "github:acme/product/file:docs/refunds.md"
+assert document.document_id == "github:acme%2Fproduct/file:docs%2Frefunds.md"
+assert document.content_digest.startswith("sha256:")
 ```
 
 `DocumentACL` records what the provider reported. Your application maps those

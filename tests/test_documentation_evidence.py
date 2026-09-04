@@ -21,7 +21,11 @@ def documented_pages() -> list[Path]:
 
 
 def feature_pages() -> list[Path]:
-    return [path for path in documented_pages() if path.name != "index.md"]
+    return [
+        path
+        for path in documented_pages()
+        if path.name not in {"index.md", "maturity.md"}
+    ]
 
 
 def test_reader_documentation_does_not_expose_ci_workflows() -> None:
@@ -37,7 +41,9 @@ def test_reader_documentation_does_not_expose_ci_workflows() -> None:
 
     assert not (DOCS / "benchmarks").exists()
     assert [phrase for phrase in forbidden if phrase in markdown.casefold()] == []
-    assert not re.search(r"(?m)^\s*(?:verified\s+)?\d+\s+(?:tests?\s+)?passed\b", markdown)
+    assert not re.search(
+        r"(?m)^\s*(?:verified\s+)?\d+\s+(?:tests?\s+)?passed\b", markdown
+    )
 
 
 def prose(markdown: str) -> str:
@@ -65,6 +71,7 @@ def test_feature_pages_show_public_api_usage() -> None:
         for path in feature_pages()
         if "```{code-block} python" not in path.read_text()
         and "```{code-block} console" not in path.read_text()
+        and "```{literalinclude}" not in path.read_text()
     ]
 
     assert missing == []
@@ -76,8 +83,12 @@ def test_numeric_comparisons_include_reader_guidance() -> None:
         text = path.read_text()
         sections = re.split(r"(?m)^## ", text)
         first_section = sections[1] if len(sections) > 1 else ""
-        has_metric = bool(re.search(r"\b(?:nDCG|Recall|precision|F1|overlap)\b", first_section))
-        table_rows = [line for line in first_section.splitlines() if line.startswith("|")]
+        has_metric = bool(
+            re.search(r"\b(?:nDCG|Recall|precision|F1|overlap)\b", first_section)
+        )
+        table_rows = [
+            line for line in first_section.splitlines() if line.startswith("|")
+        ]
         has_guidance = any(row.count("|") >= 4 for row in table_rows)
         if has_metric and not has_guidance:
             invalid.append(str(path.relative_to(DOCS)))

@@ -1,4 +1,4 @@
-[]{#context}[Current]{.current-label}
+[]{#context}[Supported]{.current-label}
 
 # Retrieval plans and context envelopes
 

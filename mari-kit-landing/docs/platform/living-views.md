@@ -1,4 +1,4 @@
-[]{#living-views}[Current]{.current-label}
+[]{#living-views}[Supported]{.current-label}
 
 # Living knowledge views
 

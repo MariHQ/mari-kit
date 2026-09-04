@@ -21,7 +21,21 @@ _BLOCKS = {
     "blockquote": "quote",
     "table": "table",
 }
-_VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+_VOID = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "source",
+    "track",
+    "wbr",
+}
 
 
 @dataclass
@@ -83,11 +97,15 @@ class _BlockParser(HTMLParser):
             attrs={name.casefold(): value or "" for name, value in attrs},
         )
         if tag == "tr":
-            table = next((value for value in reversed(self.stack) if value.tag == "table"), None)
+            table = next(
+                (value for value in reversed(self.stack) if value.tag == "table"), None
+            )
             if table is not None:
                 table.table_row += 1
         if tag in {"th", "td"}:
-            table = next((value for value in reversed(self.stack) if value.tag == "table"), None)
+            table = next(
+                (value for value in reversed(self.stack) if value.tag == "table"), None
+            )
             if table is not None:
                 row = max(0, table.table_row)
                 column = table.table_columns.get(row, 0)
@@ -124,7 +142,11 @@ class _BlockParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         tag = tag.casefold()
         match = next(
-            (index for index in range(len(self.stack) - 1, -1, -1) if self.stack[index].tag == tag),
+            (
+                index
+                for index in range(len(self.stack) - 1, -1, -1)
+                if self.stack[index].tag == tag
+            ),
             None,
         )
         if match is None:
@@ -134,7 +156,7 @@ class _BlockParser(HTMLParser):
                     message=f"no open <{tag}> element",
                     severity=ParseIssueSeverity.WARNING,
                     start=self.source_offset(),
-                    end=self.source_offset() + len(f"</{tag}>")
+                    end=self.source_offset() + len(f"</{tag}>"),
                 )
             )
             return
@@ -157,7 +179,9 @@ class _BlockParser(HTMLParser):
                 )
             )
         if frame.tag in {"th", "td"} and frame.cell_position is not None:
-            table = next((value for value in reversed(self.stack) if value.tag == "table"), None)
+            table = next(
+                (value for value in reversed(self.stack) if value.tag == "table"), None
+            )
             if table is not None:
                 row, column = frame.cell_position
                 table.cells.append(

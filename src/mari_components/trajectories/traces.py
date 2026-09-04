@@ -6,8 +6,9 @@ import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Any, cast
+
+from mari_components.json import freeze_json_mapping
 
 from .normalize import normalize_steps
 from .process import TrajectoryRun
@@ -32,7 +33,7 @@ class TraceLink:
     def __post_init__(self) -> None:
         if not self.span_id.strip():
             raise ValueError("trace link span ID is required")
-        object.__setattr__(self, "attributes", MappingProxyType(dict(self.attributes)))
+        object.__setattr__(self, "attributes", freeze_json_mapping(self.attributes))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -56,7 +57,7 @@ class TraceEvent:
         if not self.event_id.strip() or not self.name.strip():
             raise ValueError("trace event identity and name are required")
         object.__setattr__(self, "links", tuple(self.links))
-        object.__setattr__(self, "attributes", MappingProxyType(dict(self.attributes)))
+        object.__setattr__(self, "attributes", freeze_json_mapping(self.attributes))
 
     @property
     def duration(self) -> float:

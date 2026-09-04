@@ -10,8 +10,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Any
+
+from mari_components.json import freeze_json_mapping
 
 
 class EventKind(StrEnum):
@@ -27,7 +28,7 @@ class AgentEvent:
     kind: EventKind
     name: str = ""
     arguments: Mapping[str, Any] = field(
-        default_factory=lambda: MappingProxyType({}),
+        default_factory=dict,
     )
     result: Any = None
     ok: bool | None = True
@@ -42,4 +43,4 @@ class AgentEvent:
             and not self.name.strip()
         ):
             raise ValueError("tool events require a name")
-        object.__setattr__(self, "arguments", MappingProxyType(dict(self.arguments)))
+        object.__setattr__(self, "arguments", freeze_json_mapping(self.arguments))

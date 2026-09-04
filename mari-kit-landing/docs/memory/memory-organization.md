@@ -1,4 +1,4 @@
-[]{#memory-organization}[Current]{.current-label}
+[]{#memory-organization}[Reference]{.current-label}
 
 # Memory organization and evidence notes
 

@@ -66,11 +66,15 @@ def compare_task_outcomes(
     left = {value.task_id: value for value in baseline}
     right = {value.task_id: value for value in candidate}
     if not left or left.keys() != right.keys():
-        raise ValueError("baseline and candidate must contain the same non-empty task IDs")
+        raise ValueError(
+            "baseline and candidate must contain the same non-empty task IDs"
+        )
     count = len(left)
     pairs = [(left[key], right[key]) for key in sorted(left)]
+
     def mean_delta(attr: str) -> float:
         return sum(getattr(b, attr) - getattr(a, attr) for a, b in pairs) / count
+
     return TaskOutcomeComparison(
         task_count=count,
         success_delta=mean_delta("success"),

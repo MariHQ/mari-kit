@@ -1,4 +1,4 @@
-[]{#contradiction-retrieval}[Current]{.current-label}
+[]{#contradiction-retrieval}[Reference]{.current-label}
 
 # SparseCL contradiction retrieval
 

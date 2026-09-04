@@ -1,4 +1,4 @@
-[]{#sync}[Current]{.current-label}
+[]{#sync}[Core]{.current-label}
 
 # Synchronization
 
@@ -43,12 +43,19 @@
 :caption: sync.py
 
 from mari_components import SyncMode
+from mari_components.connectors import connector_configuration_fingerprint
 from mari_components.sync import SyncState, plan_sync
 
 state = load_state() or SyncState()
+scope_fingerprint = connector_configuration_fingerprint({
+    "repository": "acme/product",
+    "branch": "main",
+    "paths": ["docs/"],
+})
 for page in provider_pages:
     plan = plan_sync(state, page,
-        source_id="github:acme/product", mode=SyncMode.FULL)
+        source_id="github:acme/product", mode=SyncMode.FULL,
+        configuration_fingerprint=scope_fingerprint)
     store.commit(upserts=plan.upserts, deletes=plan.deletes,
         state=plan.state, expected_generation=plan.expected_generation)
     state = plan.state
@@ -76,8 +83,8 @@ bridge when verified stream hints already exist and the caller has parsed each e
 
 | Function | Required inputs | Options and guarantees |
 |---|---|---|
-| `plan_sync` | `SyncState`, one `PollPage`, source ID, `SyncMode` | Full mode reconciles absence on a terminal page. Incremental mode requires tombstones |
-| `stream_sync` | Page iterable and initial state | Rejects an empty stream or any page after a terminal page |
+| `plan_sync` | `SyncState`, one `PollPage`, source ID, `SyncMode` | `configuration_fingerprint` binds durable state to its source selection. Full mode reconciles absence on a terminal page. Incremental mode requires tombstones |
+| `stream_sync` | Page iterable and initial state | Carries an optional configuration fingerprint. Rejects an empty stream or any page after a terminal page |
 | `apply_sync_plan` | Plan and caller transaction | Checks `expected_generation`. Storage atomicity remains caller-owned |
 | `document_fingerprint` | `KnowledgeDocument` | Includes revision, body, ACL, timestamps, URL and metadata |
 | `validate_hint_hydration` | One `ChangeHint` and hydrated pages | Optional `revision_matches` and `external_id_matches` callbacks. Reports revision, ID and deletion-shape mismatches |
@@ -93,6 +100,7 @@ equality and leaves revision ordering to the caller.
 - Explicit tombstones apply in full and incremental modes.
 - Incomplete full sync cannot resume as incremental.
 - Generation compare-and-swap prevents concurrent state loss.
+- A changed configuration fingerprint requires fresh sync state.
 - Foreign source IDs, duplicate IDs, and upsert/delete overlap are rejected.
 
 ::: source-block

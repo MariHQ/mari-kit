@@ -1,4 +1,4 @@
-[]{#structural-ranking}[Current]{.current-label}
+[]{#structural-ranking}[Reference]{.current-label}
 
 # Structural ranking
 

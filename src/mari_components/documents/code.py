@@ -135,7 +135,9 @@ def parse_python(
                     parent_id=parent.symbol_id,
                     start=start,
                     end=end,
-                    content_revision=hashlib.sha256(source[start:end].encode()).hexdigest(),
+                    content_revision=hashlib.sha256(
+                        source[start:end].encode()
+                    ).hexdigest(),
                 )
                 symbols.append(symbol)
                 nodes.append((child, symbol))
@@ -180,7 +182,9 @@ def parse_python(
             )
             if not name:
                 continue
-            start = _character_offset(lines, starts, function.lineno, function.col_offset)
+            start = _character_offset(
+                lines, starts, function.lineno, function.col_offset
+            )
             end = _character_offset(
                 lines,
                 starts,

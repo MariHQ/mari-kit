@@ -5,8 +5,9 @@ from __future__ import annotations
 from collections import deque
 from collections.abc import Callable, Hashable, Iterable, Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 from typing import TypeVar, cast
+
+from mari_components.json import freeze_json_mapping
 
 IdT = TypeVar("IdT", bound=Hashable)
 
@@ -36,7 +37,7 @@ class LineageEdge:
     def __post_init__(self) -> None:
         if not self.role.strip():
             raise ValueError("lineage edge role is required")
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

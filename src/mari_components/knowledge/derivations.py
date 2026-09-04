@@ -62,7 +62,7 @@ def inspect_knowledge_derivations(
     """Check provenance identity, missing inputs, false independence, and cycles."""
 
     values = tuple(records)
-    counts: dict[tuple[str, str, str, str], int] = {}
+    counts: dict[tuple[str, str, str, str, str, str], int] = {}
     for item in values:
         counts[item.output.key] = counts.get(item.output.key, 0) + 1
     by_key = {item.output.key: item for item in values}
@@ -96,10 +96,10 @@ def inspect_knowledge_derivations(
                     )
                 )
 
-    visiting: set[tuple[str, str, str, str]] = set()
-    visited: set[tuple[str, str, str, str]] = set()
+    visiting: set[tuple[str, str, str, str, str, str]] = set()
+    visited: set[tuple[str, str, str, str, str, str]] = set()
 
-    def visit(key: tuple[str, str, str, str]) -> None:
+    def visit(key: tuple[str, str, str, str, str, str]) -> None:
         if key in visiting:
             record = by_key[key]
             issues.append(

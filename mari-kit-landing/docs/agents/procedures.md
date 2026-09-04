@@ -1,4 +1,4 @@
-[]{#procedures}[Current]{.current-label}
+[]{#procedures}[Research]{.current-label}
 
 # Procedural knowledge
 

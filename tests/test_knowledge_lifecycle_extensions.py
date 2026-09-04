@@ -73,8 +73,13 @@ def test_context_request_normalizes_scopes() -> None:
     )
     assert request.scopes == ("user:1", "project:support")
 
-    empty = ContextEnvelope(text="", document_ids=(), revisions=(), token_count=0, trace=())
-    assert select_intervention(empty, predicted_utility=1).disposition is InterventionDisposition.ABSTAIN
+    empty = ContextEnvelope(
+        text="", document_ids=(), revisions=(), token_count=0, trace=()
+    )
+    assert (
+        select_intervention(empty, predicted_utility=1).disposition
+        is InterventionDisposition.ABSTAIN
+    )
 
 
 def test_structured_document_preserves_table_and_validates_representations() -> None:
@@ -87,7 +92,9 @@ def test_structured_document_preserves_table_and_validates_representations() -> 
     )
     document = StructuredDocument(document_id="report", revision="v1", regions=(table,))
     assert document.regions[0].searchable_text == "Revenue"
-    evidence = RegionEvidence(document_id="report", revision="v1", region_id="p1-t1", page=1, cell=(0, 0))
+    evidence = RegionEvidence(
+        document_id="report", revision="v1", region_id="p1-t1", page=1, cell=(0, 0)
+    )
     assert evidence.cell == (0, 0)
     with pytest.raises(ValueError, match="only table"):
         DocumentRegion(
@@ -127,17 +134,25 @@ def test_untrusted_procedure_is_quarantined_and_taints_are_stable() -> None:
 
 def test_authority_resolution_can_select_or_preserve_dispute() -> None:
     assertions = (
-        SourceAssertion(assertion_id="filing", predicate="hq", value="SF", source_kind="filing"),
-        SourceAssertion(assertion_id="blog", predicate="hq", value="Oakland", source_kind="blog"),
+        SourceAssertion(
+            assertion_id="filing", predicate="hq", value="SF", source_kind="filing"
+        ),
+        SourceAssertion(
+            assertion_id="blog", predicate="hq", value="Oakland", source_kind="blog"
+        ),
     )
     selected = resolve_assertions(
         assertions,
-        policy=AuthorityPolicy(source_weights={"filing": 0.95, "blog": 0.5}, minimum_margin=0.1),
+        policy=AuthorityPolicy(
+            source_weights={"filing": 0.95, "blog": 0.5}, minimum_margin=0.1
+        ),
     )
     assert selected.selected and selected.selected.assertion_id == "filing"
     disputed = resolve_assertions(
         assertions,
-        policy=AuthorityPolicy(source_weights={"filing": 0.5, "blog": 0.5}, minimum_margin=0.1),
+        policy=AuthorityPolicy(
+            source_weights={"filing": 0.5, "blog": 0.5}, minimum_margin=0.1
+        ),
     )
     assert disputed.disputed and disputed.selected is None
     future = SourceAssertion(
@@ -157,7 +172,9 @@ def test_authority_resolution_can_select_or_preserve_dispute() -> None:
 
 def test_scope_promotion_needs_read_and_write_grants() -> None:
     policy = ScopePolicy(
-        grants=(ScopeGrant(principal="agent:a", read=("agent:a",), write=("project:x",)),)
+        grants=(
+            ScopeGrant(principal="agent:a", read=("agent:a",), write=("project:x",)),
+        )
     )
     proposal = propose_promotion(
         artifact_id="fact:1",
@@ -174,7 +191,9 @@ def test_retention_cascades_invalidation_but_preserves_holds() -> None:
     records = (
         RetentionRecord(record_id="source", created_at=now - timedelta(days=31)),
         RetentionRecord(record_id="summary", created_at=now),
-        RetentionRecord(record_id="held", created_at=now - timedelta(days=31), legal_hold=True),
+        RetentionRecord(
+            record_id="held", created_at=now - timedelta(days=31), legal_hold=True
+        ),
     )
     plan = plan_retention(
         records=records,
@@ -187,7 +206,9 @@ def test_retention_cascades_invalidation_but_preserves_holds() -> None:
         ("summary", RetentionActionKind.INVALIDATE),
         ("held", RetentionActionKind.HOLD),
     ]
-    limited = RetentionRecord(record_id="limited", created_at=now, purposes=("support",))
+    limited = RetentionRecord(
+        record_id="limited", created_at=now, purposes=("support",)
+    )
     assert not evaluate_purpose(limited, requested_purpose="marketing").allowed
 
 
@@ -195,7 +216,11 @@ def test_semantic_schema_reports_property_and_relation_violations() -> None:
     schema = KnowledgeSchema(
         schema_id="commerce",
         version="1",
-        concepts=(ConceptType("Customer"), ConceptType("Contract"), ConceptType("Product")),
+        concepts=(
+            ConceptType("Customer"),
+            ConceptType("Contract"),
+            ConceptType("Product"),
+        ),
         properties=(PropertyConstraint("Contract", "effective_date", required=True),),
         relations=(RelationConstraint("purchased", "Customer", "Product"),),
     )
@@ -206,7 +231,11 @@ def test_semantic_schema_reports_property_and_relation_violations() -> None:
     report = validate_records(
         schema,
         records,
-        (SemanticRelation(relation_id="r", name="purchased", source_id="c", target_id="p"),),
+        (
+            SemanticRelation(
+                relation_id="r", name="purchased", source_id="c", target_id="p"
+            ),
+        ),
     )
     assert not report.conforms
     assert {v.constraint_id for v in report.violations} == {
@@ -228,7 +257,9 @@ def test_bundle_is_deterministic_tamper_evident_and_idempotent() -> None:
 
 
 def test_view_refresh_and_task_comparison_keep_component_results() -> None:
-    view = MaterializedView(view_id="summary", transform="summarize@2", source_pattern="project/**")
+    view = MaterializedView(
+        view_id="summary", transform="summarize@2", source_pattern="project/**"
+    )
     plan = plan_view_refresh(
         view=view,
         materializations=(

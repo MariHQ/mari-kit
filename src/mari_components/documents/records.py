@@ -21,7 +21,9 @@ def _identity(
     )
 
 
-def _csv_spans(raw: str, *, delimiter: str, quotechar: str) -> tuple[tuple[int, int], ...]:
+def _csv_spans(
+    raw: str, *, delimiter: str, quotechar: str
+) -> tuple[tuple[int, int], ...]:
     spans: list[tuple[int, int]] = []
     start = 0
     quoted = False
@@ -103,7 +105,10 @@ def parse_delimited(
         data = rows[1:]
         if len(headers) != len(set(headers)) or any(not value for value in headers):
             issues.append(
-                ParseIssue(code="invalid_header", message="headers must be non-empty and unique")
+                ParseIssue(
+                    code="invalid_header",
+                    message="headers must be non-empty and unique",
+                )
             )
     else:
         width = len(rows[0][0])

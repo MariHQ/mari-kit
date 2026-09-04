@@ -55,8 +55,10 @@ def score_grounded(
     completeness = idea_completeness(text, required_ideas)
     corroboration = min(len({item.document_id for item in evidence}), 2) / 2
     quality = harmonic_score(groundedness, completeness)
-    score = 0.0 if not evidence_valid else quality * (
-        0.85 + 0.1 * corroboration + 0.05 * certainty
+    score = (
+        0.0
+        if not evidence_valid
+        else quality * (0.85 + 0.1 * corroboration + 0.05 * certainty)
     )
     return VerificationScore(
         score=round(score, 4),

@@ -1,4 +1,4 @@
-[]{#pipelines}[Current]{.current-label}
+[]{#pipelines}[Supported]{.current-label}
 
 # Typed knowledge pipelines
 

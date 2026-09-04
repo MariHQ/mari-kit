@@ -9,12 +9,18 @@ from examples.github_pipeline.main import run as run_github
 from examples.google_drive_change_stream.main import run as run_drive
 from examples.incident_response_drift.main import run as run_incident_drift
 from examples.knowledge_lifecycle.main import run as run_lifecycle
+from examples.quickstarts.agent_knowledge import run as run_agent_knowledge
+from examples.quickstarts.company_search import run as run_company_search
+from examples.quickstarts.governed_knowledge import run as run_governed_knowledge
 from examples.slack_event_pipeline.main import run as run_slack
 from examples.slackbot_reliable_answers.main import run as run_slackbot
 from examples.workflow_view_step_cache.main import run as run_workflow_view
 
 
 def run() -> dict[str, object]:
+    company_search = run_company_search()
+    governed_knowledge = run_governed_knowledge()
+    agent_knowledge = run_agent_knowledge()
     acl_isolation = run_acl_isolation({"MARI_EXAMPLE_MODE": "fake"})
     github = run_github(
         {
@@ -76,6 +82,17 @@ def run() -> dict[str, object]:
         }
     )
     checks = {
+        "company_search_is_authorized_and_revision_bound": (
+            company_search["revision"] == "policy-v1"
+            and "30 days" in str(company_search["text"])
+        ),
+        "structured_evidence_commits_a_governed_artifact": (
+            governed_knowledge["artifact"] is not None
+            and len(governed_knowledge["evidence"]) == 1
+        ),
+        "completed_activity_produces_a_reviewable_proposal": (
+            agent_knowledge["target_id"] == "procedure:refund-answer"
+        ),
         "acl_retrieval_isolated_before_scoring": (
             acl_isolation["restricted_document_hidden_from_customer"] is True
             and acl_isolation["customer_retrieval_hits"] == ("status/checkout",)
@@ -101,7 +118,7 @@ def run() -> dict[str, object]:
         ),
         "vectors_searched": github["top_hit"] == "file:docs/release.md",
         "answer_grounded": github["citations"]
-        == ("github:acme/knowledge/file:docs/release.md",),
+        == ("github:acme%2Fknowledge@c2b742db362c223f/file:docs%2Frelease.md",),
         "slack_signature_verified": slack["signature_verified"] is True,
         "slack_event_refetched_thread": slack["stream_messages"] == 3,
         "slack_poll_repairs_lost_event": slack["final_messages"] == 4,
@@ -165,7 +182,7 @@ def run() -> dict[str, object]:
             )
             and incident_drift["mitigation_sources"]
             == (
-                "github:acme/operations/checkout-runbook.md",
+                "github:acme%2Foperations/checkout-runbook.md",
                 "slack:acme/thread:checkout-1042",
             )
         ),

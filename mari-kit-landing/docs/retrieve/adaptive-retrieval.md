@@ -1,4 +1,4 @@
-[]{#adaptive-retrieval}[Current]{.current-label}
+[]{#adaptive-retrieval}[Reference]{.current-label}
 
 # Adaptive retrieval and compression
 

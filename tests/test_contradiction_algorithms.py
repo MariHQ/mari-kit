@@ -74,7 +74,9 @@ class SparseCLTests(unittest.TestCase):
             alpha=1.0,
             limit=2,
         )
-        self.assertEqual([hit.passage_id for hit in hits], ["contradiction", "paraphrase"])
+        self.assertEqual(
+            [hit.passage_id for hit in hits], ["contradiction", "paraphrase"]
+        )
         self.assertEqual([hit.rank for hit in hits], [1, 2])
 
         allowed = rank_sparse_contradictions(

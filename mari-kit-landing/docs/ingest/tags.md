@@ -1,4 +1,4 @@
-[]{#tags}[Current]{.current-label}
+[]{#tags}[Supported]{.current-label}
 
 # Tags and links
 

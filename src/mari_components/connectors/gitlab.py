@@ -10,10 +10,15 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from mari_components.connectors._shared import json_response, send
-from mari_components.connectors.protocol import ValidationResult
+from mari_components.connectors.protocol import ValidationResult, configured_source_id
 from mari_components.errors import PermanentFailure
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 DEFAULT_PATHS = ("*.md", "*.mdx", "*.rst", "*.adoc", "*.txt", "README*")
 
@@ -31,6 +36,16 @@ class GitLabConfig:
             raise ValueError("GitLab token and project are required")
         if not self.base_url.startswith(("https://", "http://")):
             raise ValueError("GitLab base URL must use HTTP or HTTPS")
+
+
+def gitlab_source_id(config: GitLabConfig) -> str:
+    """Return the sync identity for one configured project view."""
+
+    return configured_source_id(
+        "gitlab",
+        f"{config.base_url.rstrip('/')}:{config.project}",
+        {"branch": config.branch or "<default>", "paths": config.paths},
+    )
 
 
 def _headers(config: GitLabConfig) -> dict[str, str]:
@@ -94,6 +109,7 @@ def poll_gitlab(
     http: HttpTransport,
     maximum_bytes: int = 5_242_880,
 ) -> Iterator[PollPage]:
+    source_id = gitlab_source_id(config)
     checkpoint_head, page = _checkpoint(request.checkpoint)
     if checkpoint_head:
         head = checkpoint_head
@@ -159,13 +175,18 @@ def poll_gitlab(
                 raise PermanentFailure(f"GitLab file {path!r} exceeds maximum_bytes")
             documents.append(
                 KnowledgeDocument(
-                    source_id=f"gitlab:{config.project}",
+                    source_id=source_id,
                     external_id=f"file:{path}",
                     title=path.rsplit("/", 1)[-1],
                     body=raw.decode("utf-8", "replace"),
-                    revision=str(row.get("id") or head),
+                    revision=content_revision(raw),
+                    provider_revision=str(row.get("id") or head),
                     source_url=f"{config.base_url.rstrip('/')}/{config.project}/-/blob/{head}/{path}",
-                    metadata={"path": path, "head": head},
+                    metadata={
+                        "path": path,
+                        "head": head,
+                        "provider_revision": str(row.get("id") or head),
+                    },
                 )
             )
         next_page = next(

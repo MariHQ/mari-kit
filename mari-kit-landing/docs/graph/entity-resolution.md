@@ -1,4 +1,4 @@
-[]{#entity-resolution}[Current]{.current-label}
+[]{#entity-resolution}[Reference]{.current-label}
 
 # Entity resolution with explicit uncertainty
 

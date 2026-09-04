@@ -1,4 +1,4 @@
-[]{#sections}[Current]{.current-label}
+[]{#sections}[Supported]{.current-label}
 
 # Sections and incremental fact scans
 

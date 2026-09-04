@@ -19,6 +19,7 @@ from mari_components.types import (
     PollPage,
     PollRequest,
     Principal,
+    content_revision,
 )
 
 API = "https://slack.com/api"
@@ -185,12 +186,15 @@ def _thread_document(
     title = (
         _clean(str(root.get("text") or ""), users)[:120] or f"Slack thread {root_ts}"
     )
+    content = "\n".join(lines)
+    provider_revision = f"{latest:.6f}"
     return KnowledgeDocument(
         source_id="slack",
         external_id=f"thread:{channel_id}:{root_ts}",
         title=title,
-        body="\n".join(lines),
-        revision=f"{latest:.6f}",
+        body=content,
+        revision=content_revision(content),
+        provider_revision=provider_revision,
         updated_at=dt.datetime.fromtimestamp(latest, tz=dt.UTC).isoformat(),
         source_url=f"https://slack.com/archives/{channel_id}/p{root_ts.replace('.', '')}",
         acl=DocumentACL(

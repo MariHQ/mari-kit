@@ -10,7 +10,13 @@ from mari_components.connectors._shared import json_response, send
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.errors import PermanentFailure
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, Tombstone
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    Tombstone,
+    content_revision,
+)
 
 GRAPH = "https://graph.microsoft.com/v1.0"
 
@@ -109,13 +115,16 @@ def poll_microsoft_drive(
                     f"Microsoft file {item_id!r} exceeds maximum_bytes"
                 )
             parent = item.get("parentReference") or {}
+            body = raw.decode("utf-8", "replace")
+            provider_revision = str(item.get("eTag") or item.get("cTag") or item_id)
             documents.append(
                 KnowledgeDocument(
                     source_id=source_id,
                     external_id=item_id,
                     title=str(item.get("name") or item_id),
-                    body=raw.decode("utf-8", "replace"),
-                    revision=str(item.get("eTag") or item.get("cTag") or item_id),
+                    body=body,
+                    revision=content_revision(body),
+                    provider_revision=provider_revision,
                     updated_at=str(item.get("lastModifiedDateTime") or ""),
                     source_url=str(item.get("webUrl") or ""),
                     metadata={

@@ -6,8 +6,9 @@ from collections import deque
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Any
+
+from mari_components.json import freeze_json_mapping, freeze_json_value
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -36,7 +37,7 @@ class ParsedBlock:
         if self.cells and self.kind != "table":
             raise ValueError("only table blocks may contain cells")
         object.__setattr__(self, "cells", tuple(self.cells))
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -79,6 +80,7 @@ class ParsedField:
             self.start < 0 or self.end is None or self.end < self.start
         ):
             raise ValueError("parsed field offsets are invalid")
+        object.__setattr__(self, "value", freeze_json_value(self.value))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

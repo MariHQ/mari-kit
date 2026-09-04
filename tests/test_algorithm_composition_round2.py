@@ -96,9 +96,7 @@ def test_candidate_history_diagnostics_use_caller_identity_normalization() -> No
     ref = ArtifactRef(artifact_id="clause", revision="2")
     history = CandidateHistory(
         decisions=(
-            CandidateDecision(
-                candidate_id="clause@2", stage="rank", included=True
-            ),
+            CandidateDecision(candidate_id="clause@2", stage="rank", included=True),
             CandidateDecision(
                 candidate_id=ref,
                 stage="rank",

@@ -1,4 +1,4 @@
-[]{#semantic-schemas}[Current]{.current-label}
+[]{#semantic-schemas}[Reference]{.current-label}
 
 # Semantic schemas and constraints
 

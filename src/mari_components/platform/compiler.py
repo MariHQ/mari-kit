@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import math
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from types import MappingProxyType
 from typing import Any
+
+from mari_components.json import canonical_json_bytes
 
 
 class ObjectiveDirection(StrEnum):
@@ -77,9 +78,7 @@ def compile_configurations(
     fingerprints: set[str] = set()
     for raw_config in configurations:
         config = dict(raw_config)
-        encoded = json.dumps(
-            config, sort_keys=True, separators=(",", ":"), default=str
-        ).encode()
+        encoded = canonical_json_bytes(config)
         fingerprint = hashlib.sha256(encoded).hexdigest()
         if fingerprint in fingerprints:
             continue

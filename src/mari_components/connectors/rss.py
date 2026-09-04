@@ -11,7 +11,12 @@ from dataclasses import dataclass
 from mari_components.connectors._shared import header, send
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -137,7 +142,8 @@ def poll_rss(
                 external_id=identity,
                 title=title or identity,
                 body=body,
-                revision=revision,
+                revision=content_revision(body),
+                provider_revision=revision,
                 source_url=link,
                 metadata={"published": _text(entry, "published", "pubDate")},
             )

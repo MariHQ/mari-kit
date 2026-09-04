@@ -1,4 +1,4 @@
-[]{#retrieval-construction}[Current]{.current-label}
+[]{#retrieval-construction}[Reference]{.current-label}
 
 # Hypothetical and hierarchical retrieval
 

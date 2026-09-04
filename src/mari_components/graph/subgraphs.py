@@ -65,7 +65,9 @@ def bounded_seed_expansion(
         frontier = next_frontier
     return SubgraphSelection(
         nodes=tuple(sorted(selected, key=_stable)),
-        edges=tuple(sorted(edges, key=lambda edge: (_stable(edge[0]), _stable(edge[1])))),
+        edges=tuple(
+            sorted(edges, key=lambda edge: (_stable(edge[0]), _stable(edge[1])))
+        ),
         total_prize=sum(float(score(node)) for node in selected),
         total_cost=float(len(edges)),
         rejected=tuple(sorted(rejected, key=_stable)),
@@ -88,7 +90,14 @@ def prize_guided_subgraph(
         raise ValueError("max_nodes must be positive")
     selected = {node for node in seeds if allowed(node)}
     if not selected:
-        return SubgraphSelection(nodes=(), edges=(), total_prize=0.0, total_cost=0.0, rejected=(), truncated=False)
+        return SubgraphSelection(
+            nodes=(),
+            edges=(),
+            total_prize=0.0,
+            total_cost=0.0,
+            rejected=(),
+            truncated=False,
+        )
     selected = set(sorted(selected, key=_stable)[:max_nodes])
     edges: set[tuple[NodeT, NodeT]] = set()
     total_cost = 0.0
@@ -102,8 +111,12 @@ def prize_guided_subgraph(
                 node_prize = float(prize(node))
                 cost = float(edge_cost(parent, node))
                 if not math.isfinite(node_prize) or not math.isfinite(cost) or cost < 0:
-                    raise ValueError("prizes and non-negative edge costs must be finite")
-                frontier.append((-(node_prize - cost), _stable(node), parent, node, cost))
+                    raise ValueError(
+                        "prizes and non-negative edge costs must be finite"
+                    )
+                frontier.append(
+                    (-(node_prize - cost), _stable(node), parent, node, cost)
+                )
         if not frontier:
             break
         frontier.sort(key=lambda item: (item[0], item[1], _stable(item[2])))
@@ -116,7 +129,9 @@ def prize_guided_subgraph(
         total_cost += cost
     return SubgraphSelection(
         nodes=tuple(sorted(selected, key=_stable)),
-        edges=tuple(sorted(edges, key=lambda edge: (_stable(edge[0]), _stable(edge[1])))),
+        edges=tuple(
+            sorted(edges, key=lambda edge: (_stable(edge[0]), _stable(edge[1])))
+        ),
         total_prize=sum(float(prize(node)) for node in selected),
         total_cost=total_cost,
         rejected=tuple(sorted(rejected, key=_stable)),

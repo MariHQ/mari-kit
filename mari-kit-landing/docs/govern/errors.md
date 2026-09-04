@@ -1,4 +1,4 @@
-[]{#errors}[Current]{.current-label}
+[]{#errors}[Core]{.current-label}
 
 # Errors and deliberate boundaries
 

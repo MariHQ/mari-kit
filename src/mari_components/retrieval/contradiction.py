@@ -212,8 +212,10 @@ def sparse_contrastive_losses(
 
     Source: Xu et al., "SparseCL" (arXiv:2406.10746), Equation 2.
     """
-    if not anchors or len(anchors) != len(contradictions) or len(anchors) != len(
-        similar_negatives
+    if (
+        not anchors
+        or len(anchors) != len(contradictions)
+        or len(anchors) != len(similar_negatives)
     ):
         raise ValueError("anchor, contradiction, and negative batches must match")
     tau = float(temperature)
@@ -221,9 +223,13 @@ def sparse_contrastive_losses(
         raise ValueError("temperature must be a positive finite number")
     anchor_rows = [_vector(value, name="anchor") for value in anchors]
     positive_rows = [_vector(value, name="contradiction") for value in contradictions]
-    negative_rows = [_vector(value, name="similar negative") for value in similar_negatives]
+    negative_rows = [
+        _vector(value, name="similar negative") for value in similar_negatives
+    ]
     shape = anchor_rows[0].shape
-    if any(row.shape != shape for row in (*anchor_rows, *positive_rows, *negative_rows)):
+    if any(
+        row.shape != shape for row in (*anchor_rows, *positive_rows, *negative_rows)
+    ):
         raise ValueError("all training embeddings must have equal dimensions")
 
     losses: list[float] = []

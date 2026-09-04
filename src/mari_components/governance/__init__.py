@@ -53,7 +53,11 @@ class MemoryWrite:
     taints: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if not self.write_id.strip() or not self.content.strip() or not self.requested_scope.strip():
+        if (
+            not self.write_id.strip()
+            or not self.content.strip()
+            or not self.requested_scope.strip()
+        ):
             raise ValueError("write ID, content, and requested scope are required")
         object.__setattr__(self, "source_ids", tuple(dict.fromkeys(self.source_ids)))
         object.__setattr__(self, "taints", tuple(sorted(set(self.taints))))
@@ -70,16 +74,34 @@ def evaluate_write(write: MemoryWrite) -> WriteDecision:
     """Apply conservative deterministic write-boundary rules."""
 
     if not write.source_ids:
-        return WriteDecision(disposition=WriteDisposition.REJECT, reasons=("missing_provenance",), inherited_taints=write.taints)
-    dangerous = {"secret", "external_instruction", "privilege_amplification"} & set(write.taints)
-    untrusted_behavior = write.trust is TrustLevel.UNTRUSTED and write.interpretation in {
-        ContentInterpretation.PROCEDURE,
-        ContentInterpretation.INSTRUCTION,
-    }
-    reasons = tuple(sorted(dangerous | ({"untrusted_behavior"} if untrusted_behavior else set())))
+        return WriteDecision(
+            disposition=WriteDisposition.REJECT,
+            reasons=("missing_provenance",),
+            inherited_taints=write.taints,
+        )
+    dangerous = {"secret", "external_instruction", "privilege_amplification"} & set(
+        write.taints
+    )
+    untrusted_behavior = (
+        write.trust is TrustLevel.UNTRUSTED
+        and write.interpretation
+        in {
+            ContentInterpretation.PROCEDURE,
+            ContentInterpretation.INSTRUCTION,
+        }
+    )
+    reasons = tuple(
+        sorted(dangerous | ({"untrusted_behavior"} if untrusted_behavior else set()))
+    )
     if reasons:
-        return WriteDecision(disposition=WriteDisposition.QUARANTINE, reasons=reasons, inherited_taints=write.taints)
-    return WriteDecision(disposition=WriteDisposition.ACCEPT, reasons=(), inherited_taints=write.taints)
+        return WriteDecision(
+            disposition=WriteDisposition.QUARANTINE,
+            reasons=reasons,
+            inherited_taints=write.taints,
+        )
+    return WriteDecision(
+        disposition=WriteDisposition.ACCEPT, reasons=(), inherited_taints=write.taints
+    )
 
 
 def inherit_taints(writes: Iterable[MemoryWrite]) -> tuple[str, ...]:
@@ -99,11 +121,20 @@ class SourceAssertion:
 
     def __post_init__(self) -> None:
         if not self.assertion_id or not self.predicate or not self.source_kind:
-            raise ValueError("assertion identity, predicate, and source kind are required")
-        for name, value in (("confidence", self.confidence), ("independence", self.independence)):
+            raise ValueError(
+                "assertion identity, predicate, and source kind are required"
+            )
+        for name, value in (
+            ("confidence", self.confidence),
+            ("independence", self.independence),
+        ):
             if not math.isfinite(value) or not 0 <= value <= 1:
                 raise ValueError(f"{name} must be in [0, 1]")
-        if self.valid_from is not None and self.valid_to is not None and self.valid_to <= self.valid_from:
+        if (
+            self.valid_from is not None
+            and self.valid_to is not None
+            and self.valid_to <= self.valid_from
+        ):
             raise ValueError("assertion valid-time interval is invalid")
 
 
@@ -115,7 +146,9 @@ class AuthorityPolicy:
 
     def __post_init__(self) -> None:
         values = dict(self.source_weights)
-        if any(not math.isfinite(value) or not 0 <= value <= 1 for value in values.values()):
+        if any(
+            not math.isfinite(value) or not 0 <= value <= 1 for value in values.values()
+        ):
             raise ValueError("source weights must be in [0, 1]")
         if self.corroboration_weight < 0 or self.minimum_margin < 0:
             raise ValueError("authority weights and margins must not be negative")
@@ -131,7 +164,10 @@ class AssertionResolution:
 
 
 def resolve_assertions(
-    assertions: Iterable[SourceAssertion], *, policy: AuthorityPolicy, at_time: dt.datetime | None = None
+    assertions: Iterable[SourceAssertion],
+    *,
+    policy: AuthorityPolicy,
+    at_time: dt.datetime | None = None,
 ) -> AssertionResolution:
     values = tuple(
         value
@@ -141,7 +177,9 @@ def resolve_assertions(
         and (value.valid_to is None or at_time < value.valid_to)
     )
     if not values:
-        return AssertionResolution(selected=None, alternatives=(), scores=(), disputed=True)
+        return AssertionResolution(
+            selected=None, alternatives=(), scores=(), disputed=True
+        )
     predicates = {value.predicate for value in values}
     if len(predicates) != 1:
         raise ValueError("assertions must concern one predicate")
@@ -151,10 +189,14 @@ def resolve_assertions(
     scored: list[tuple[float, str, SourceAssertion]] = []
     for key, group in grouped.items():
         base = sum(
-            policy.source_weights.get(item.source_kind, 0.5) * item.confidence * item.independence
+            policy.source_weights.get(item.source_kind, 0.5)
+            * item.confidence
+            * item.independence
             for item in group
         )
-        score = base + policy.corroboration_weight * max(0, len({item.source_kind for item in group}) - 1)
+        score = base + policy.corroboration_weight * max(
+            0, len({item.source_kind for item in group}) - 1
+        )
         representative = sorted(group, key=lambda item: item.assertion_id)[0]
         scored.append((score, key, representative))
     scored.sort(key=lambda item: (-item[0], item[1]))
@@ -163,7 +205,11 @@ def resolve_assertions(
     selected = None if disputed else scored[0][2]
     return AssertionResolution(
         selected=selected,
-        alternatives=tuple(item for item in values if selected is None or item.assertion_id != selected.assertion_id),
+        alternatives=tuple(
+            item
+            for item in values
+            if selected is None or item.assertion_id != selected.assertion_id
+        ),
         scores=tuple((item[2].assertion_id, item[0]) for item in scored),
         disputed=disputed,
     )
@@ -185,7 +231,10 @@ class ScopePolicy:
             raise ValueError("action must be read or write")
         return any(
             grant.principal == principal
-            and any(fnmatch.fnmatchcase(scope, pattern) for pattern in getattr(grant, action))
+            and any(
+                fnmatch.fnmatchcase(scope, pattern)
+                for pattern in getattr(grant, action)
+            )
             for grant in self.grants
         )
 
@@ -201,13 +250,31 @@ class PromotionProposal:
 
 
 def propose_promotion(
-    *, artifact_id: str, source_scope: str, target_scope: str, principal: str, policy: ScopePolicy
+    *,
+    artifact_id: str,
+    source_scope: str,
+    target_scope: str,
+    principal: str,
+    policy: ScopePolicy,
 ) -> PromotionProposal:
     readable = policy.allows(principal, "read", source_scope)
     writable = policy.allows(principal, "write", target_scope)
     allowed = readable and writable
-    reason = "allowed" if allowed else "source_not_readable" if not readable else "target_not_writable"
-    return PromotionProposal(artifact_id=artifact_id, source_scope=source_scope, target_scope=target_scope, principal=principal, allowed=allowed, reason=reason)
+    reason = (
+        "allowed"
+        if allowed
+        else "source_not_readable"
+        if not readable
+        else "target_not_writable"
+    )
+    return PromotionProposal(
+        artifact_id=artifact_id,
+        source_scope=source_scope,
+        target_scope=target_scope,
+        principal=principal,
+        allowed=allowed,
+        reason=reason,
+    )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -227,7 +294,9 @@ class RetentionPolicy:
     def __post_init__(self) -> None:
         if self.default_ttl_days is not None and self.default_ttl_days < 0:
             raise ValueError("default TTL must not be negative")
-        object.__setattr__(self, "allowed_purposes", MappingProxyType(dict(self.allowed_purposes)))
+        object.__setattr__(
+            self, "allowed_purposes", MappingProxyType(dict(self.allowed_purposes))
+        )
 
 
 class RetentionActionKind(StrEnum):
@@ -254,7 +323,9 @@ class PurposeDecision:
     reason: str
 
 
-def evaluate_purpose(record: RetentionRecord, *, requested_purpose: str) -> PurposeDecision:
+def evaluate_purpose(
+    record: RetentionRecord, *, requested_purpose: str
+) -> PurposeDecision:
     if not requested_purpose.strip():
         raise ValueError("requested purpose is required")
     if record.purposes and requested_purpose not in record.purposes:
@@ -263,7 +334,11 @@ def evaluate_purpose(record: RetentionRecord, *, requested_purpose: str) -> Purp
 
 
 def plan_retention(
-    *, records: Iterable[RetentionRecord], dependencies: Mapping[str, Iterable[str]], now: dt.datetime, policy: RetentionPolicy
+    *,
+    records: Iterable[RetentionRecord],
+    dependencies: Mapping[str, Iterable[str]],
+    now: dt.datetime,
+    policy: RetentionPolicy,
 ) -> RetentionPlan:
     if now.tzinfo is None:
         raise ValueError("now must be timezone-aware")
@@ -284,7 +359,24 @@ def plan_retention(
             if child not in expired and child not in invalidated:
                 invalidated.add(child)
                 queue.append(child)
-    actions = [RetentionAction(record_id=item, kind=RetentionActionKind.DELETE, reason="expired") for item in sorted(expired)]
-    actions += [RetentionAction(record_id=item, kind=RetentionActionKind.INVALIDATE, reason="dependency_deleted") for item in sorted(invalidated)]
-    actions += [RetentionAction(record_id=item, kind=RetentionActionKind.HOLD, reason="legal_hold") for item in sorted(held)]
+    actions = [
+        RetentionAction(
+            record_id=item, kind=RetentionActionKind.DELETE, reason="expired"
+        )
+        for item in sorted(expired)
+    ]
+    actions += [
+        RetentionAction(
+            record_id=item,
+            kind=RetentionActionKind.INVALIDATE,
+            reason="dependency_deleted",
+        )
+        for item in sorted(invalidated)
+    ]
+    actions += [
+        RetentionAction(
+            record_id=item, kind=RetentionActionKind.HOLD, reason="legal_hold"
+        )
+        for item in sorted(held)
+    ]
     return RetentionPlan(actions=tuple(actions))

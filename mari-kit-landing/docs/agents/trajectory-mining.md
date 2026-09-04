@@ -1,4 +1,4 @@
-[]{#trajectory-mining}[Current]{.current-label}
+[]{#trajectory-mining}[Research]{.current-label}
 
 # Trajectory mining
 

@@ -21,7 +21,7 @@ exclude_patterns = ["_build", "_includes/**"]
 
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
-    "canonical_url": "https://kit.mari.guru",
+    "canonical_url": "https://kit.mari.guru/",
     "collapse_navigation": True,
     "navigation_depth": 3,
 }
@@ -33,7 +33,7 @@ html_context = {
     "display_github": True,
     "github_user": "MariHQ",
     "github_repo": "mari-kit",
-    "github_version": "main/",
+    "github_version": "main",
     "conf_py_path": "/mari-kit-landing/docs/",
 }
 

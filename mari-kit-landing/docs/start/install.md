@@ -18,11 +18,11 @@ Python 3.11--3.13 is supported. The runtime dependency list contains NumPy.
 ```{code-block} console
 :caption: terminal
 
-pip install mari-components
+pip install 'mari-components @ git+https://github.com/MariHQ/mari-kit.git'
 
 # Install a runtime adapter when the application uses one
-pip install 'mari-components[openai-agents]'
-pip install 'mari-components[langchain]'
+pip install 'mari-components[openai-agents] @ git+https://github.com/MariHQ/mari-kit.git'
+pip install 'mari-components[langchain] @ git+https://github.com/MariHQ/mari-kit.git'
 ```
 
 ## How it works

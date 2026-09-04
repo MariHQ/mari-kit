@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 from typing import Any
+
+from mari_components.json import canonical_json_bytes, freeze_json_mapping
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -21,21 +21,18 @@ class Stage:
         if not self.name.strip() or not self.version.strip():
             raise ValueError("stage name and version are required")
         object.__setattr__(
-            self, "configuration", MappingProxyType(dict(self.configuration))
+            self, "configuration", freeze_json_mapping(self.configuration)
         )
 
     @property
     def fingerprint(self) -> str:
-        encoded = json.dumps(
+        encoded = canonical_json_bytes(
             {
                 "name": self.name,
                 "version": self.version,
-                "configuration": dict(self.configuration),
-            },
-            sort_keys=True,
-            separators=(",", ":"),
-            default=str,
-        ).encode()
+                "configuration": self.configuration,
+            }
+        )
         return hashlib.sha256(encoded).hexdigest()
 
 

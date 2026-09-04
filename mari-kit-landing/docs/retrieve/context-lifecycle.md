@@ -1,4 +1,4 @@
-[]{#context-lifecycle}[Current]{.current-label}
+[]{#context-lifecycle}[Supported]{.current-label}
 
 # Context lifecycle and selective intervention
 

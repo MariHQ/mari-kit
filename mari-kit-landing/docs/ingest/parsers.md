@@ -1,4 +1,4 @@
-[]{#parsers}[Current]{.current-label}
+[]{#parsers}[Supported]{.current-label}
 
 # Knowledge parsers
 

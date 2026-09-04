@@ -12,7 +12,9 @@ _REFERENCE = re.compile(r"\[(\d+)(?:-(\d+))?\](?:-\[(\d+)\])?")
 
 def _sentence_ids(values: Iterable[int], *, name: str) -> tuple[int, ...]:
     rows = tuple(values)
-    if any(isinstance(value, bool) or not isinstance(value, Integral) for value in rows):
+    if any(
+        isinstance(value, bool) or not isinstance(value, Integral) for value in rows
+    ):
         raise ValueError(f"{name} must contain integer sentence IDs")
     return tuple(sorted(set(int(value) for value in rows)))
 
@@ -77,9 +79,7 @@ def validate_document_contradiction(
         raise ValueError("a positive contradiction judgment requires evidence")
     if not judgment and evidence:
         raise ValueError("a negative contradiction judgment cannot include evidence")
-    references = reasoning_sentence_references(
-        reasoning, sentence_count=sentence_count
-    )
+    references = reasoning_sentence_references(reasoning, sentence_count=sentence_count)
     return DocumentContradictionAssessment(
         judgment=bool(judgment),
         evidence_sentence_ids=evidence,

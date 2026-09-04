@@ -11,7 +11,12 @@ from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.errors import PermanentFailure
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 API = "https://api.linear.app/graphql"
 
@@ -101,7 +106,8 @@ def poll_linear(
                         ": "
                     ),
                     body=body.strip(),
-                    revision=updated,
+                    revision=content_revision(body.strip()),
+                    provider_revision=updated,
                     updated_at=updated,
                     source_url=str(issue.get("url") or ""),
                     metadata={

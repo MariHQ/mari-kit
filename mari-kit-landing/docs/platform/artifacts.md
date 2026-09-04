@@ -1,4 +1,4 @@
-[]{#artifacts}[Current]{.current-label}
+[]{#artifacts}[Core]{.current-label}
 
 # Unified artifact model
 

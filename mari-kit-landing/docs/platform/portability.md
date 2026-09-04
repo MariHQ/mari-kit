@@ -1,4 +1,4 @@
-[]{#knowledge-portability}[Current]{.current-label}
+[]{#knowledge-portability}[Supported]{.current-label}
 
 # Portable knowledge bundles
 

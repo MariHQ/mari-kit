@@ -1,4 +1,4 @@
-[]{#workflows}[Current]{.current-label}
+[]{#workflows}[Supported]{.current-label}
 
 # Reviewed workflows and cached answers
 

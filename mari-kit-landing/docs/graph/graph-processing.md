@@ -1,4 +1,4 @@
-[]{#graph-processing}[Current]{.current-label}
+[]{#graph-processing}[Reference]{.current-label}
 
 # Graph recall and corpus aggregation
 

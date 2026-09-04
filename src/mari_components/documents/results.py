@@ -7,8 +7,9 @@ import math
 from collections.abc import Hashable, Iterable, Mapping, Set
 from dataclasses import dataclass, field
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Generic, TypeVar
+
+from mari_components.json import freeze_json_mapping
 
 ValueT = TypeVar("ValueT")
 
@@ -43,20 +44,16 @@ def _stable_component(value: object) -> bytes:
             ),
             key=lambda pair: pair[0],
         )
-        return b"mapping:" + _framed(
-            _framed((key, item)) for key, item in items
-        )
+        return b"mapping:" + _framed(_framed((key, item)) for key, item in items)
     if isinstance(value, tuple):
         return b"tuple:" + _framed(_stable_component(item) for item in value)
     if isinstance(value, list):
         return b"list:" + _framed(_stable_component(item) for item in value)
     if isinstance(value, Set):
-        return b"set:" + _framed(
-            sorted(_stable_component(item) for item in value)
-        )
-    return (
-        f"{type(value).__module__}.{type(value).__qualname__}:{value!r}"
-    ).encode()
+        return b"set:" + _framed(sorted(_stable_component(item) for item in value))
+    raise TypeError(
+        f"unsupported stable identity component: {type(value).__qualname__}"
+    )
 
 
 class ParseIssueSeverity(StrEnum):
@@ -97,7 +94,7 @@ class ParseResult(Generic[ValueT]):
             raise ValueError("parser identity is required")
         object.__setattr__(self, "values", tuple(self.values))
         object.__setattr__(self, "issues", tuple(self.issues))
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
     @property
     def succeeded(self) -> bool:

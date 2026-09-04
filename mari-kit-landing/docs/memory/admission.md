@@ -1,4 +1,4 @@
-[]{#admission}[Current]{.current-label}
+[]{#admission}[Reference]{.current-label}
 
 # Knowledge admission and mutation planning
 

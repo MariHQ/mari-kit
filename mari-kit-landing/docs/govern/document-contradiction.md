@@ -1,4 +1,4 @@
-[]{#document-contradiction}[Current]{.current-label}
+[]{#document-contradiction}[Supported]{.current-label}
 
 # Document-level self-contradiction detection
 

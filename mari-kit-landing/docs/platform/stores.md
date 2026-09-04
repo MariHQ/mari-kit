@@ -1,4 +1,4 @@
-[]{#stores}[Current reference semantics]{.current-label}
+[]{#stores}[Reference]{.current-label}
 
 # Storage protocols
 
@@ -7,7 +7,7 @@
 | Required semantic | Why it matters |
 |---|---|
 | Compare-and-swap revision | Prevent stale writers from silently winning |
-| Tenant-scoped reads | Keep authorization inside the query boundary |
+| Tenant-and-space-scoped reads | Keep stored revisions inside their isolation boundary |
 | Immutable history | Reconstruct what was known at a prior time |
 | Disposable indexes | Rebuild derived state from canonical artifacts |
 
@@ -27,16 +27,17 @@ adapters for throughput and verify the same behavior.
 
 
 
-`InMemoryArtifactStore` defines the reference behavior for optimistic revision
-checks and tenant isolation. It also covers explicit supersession, history, and
-point-in-time reads. Production adapters preserve these semantics through
-their own physical schemas.
+`DocumentStore` and `ArtifactStore` specify observable behavior.
+`InMemoryDocumentStore` and `InMemoryArtifactStore` implement the reference
+semantics. Store keys include tenant, space, and structural object identity.
+Artifact history supports point-in-time reads by `recorded_at`, independent of
+commit order.
 
 ## How it works
 
 Protocols specify behavior that callers can observe. Each implementation
-declares its support for atomic revision and history. Capability fields also
-cover physical deletion and point-in-time reads. Cross-store operations use an
+declares compare-and-swap, history, point-in-time reads, and scope isolation
+through `StoreCapabilities`. Cross-store operations use an
 application transaction or outbox boundary. Each database keeps its own commit
 semantics. Indexes remain disposable projections built from documents and
 artifacts.
@@ -51,6 +52,7 @@ library design.
 :caption: Compare-and-swap revisions with explicit lineage
 
 from mari_components.platform import InMemoryArtifactStore, RevisionConflict
+from mari_components.testing import assert_artifact_store_conforms
 
 store = InMemoryArtifactStore()
 store.commit(first_revision, expected_revision=None)
@@ -66,9 +68,12 @@ historical = store.at_time(
     scope=scope,
     known_at=query_time,
 )
+
+# Run this same suite against a production adapter factory.
+assert_artifact_store_conforms(InMemoryArtifactStore)
 ```
 
 `InMemoryArtifactStore` supports replay-safe writes and deterministic ordering.
-It provides point-in-time reads, tenant isolation, and atomic revision checks.
-Adapters declare their physical-deletion and cross-database transaction
-capabilities. Check those fields before using these operations.
+It provides point-in-time reads, tenant-and-space isolation, and atomic revision
+checks. `assert_document_store_conforms` and `assert_artifact_store_conforms`
+exercise the public adapter contract.

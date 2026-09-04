@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -67,6 +68,22 @@ class RetrievalTests(unittest.TestCase):
             search_index(index, query, allowed_document_ids=set()),
             (),
         )
+
+    def test_authorization_limits_the_approximate_scoring_matrix(self):
+        index = build_index(self.documents, self.config)
+        observed_rows: list[int] = []
+
+        def score_allowed(packed, query, codec):
+            observed_rows.append(len(packed))
+            return np.zeros(len(packed), dtype=np.float32)
+
+        with patch("mari_components.retrieval.index.polar_scores", score_allowed):
+            search_index(
+                index,
+                np.asarray([[1, 0, 0]], np.float32),
+                allowed_document_ids={"20"},
+            )
+        self.assertEqual(observed_rows, [1])
 
     def test_serialization_round_trip_is_search_equivalent(self):
         index = build_index(self.documents, self.config, hashes={"10": "a"})

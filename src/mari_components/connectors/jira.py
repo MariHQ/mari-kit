@@ -11,7 +11,12 @@ from typing import Any
 from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,7 +128,8 @@ def poll_jira(
                     external_id=key,
                     title=f"{key}: {fields.get('summary') or ''}",
                     body=body.strip(),
-                    revision=updated,
+                    revision=content_revision(body.strip()),
+                    provider_revision=updated,
                     updated_at=updated,
                     source_url=f"{_site(config)}/browse/{urllib.parse.quote(key, safe='')}",
                     metadata={

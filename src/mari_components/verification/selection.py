@@ -12,7 +12,9 @@ CandidateT = TypeVar("CandidateT")
 ScoreFunction = Callable[[CandidateT], float | VerificationScore]
 
 
-def numeric_score(value: float | VerificationScore) -> tuple[float, VerificationScore | None]:
+def numeric_score(
+    value: float | VerificationScore,
+) -> tuple[float, VerificationScore | None]:
     if isinstance(value, VerificationScore):
         return value.score, value
     score = float(value)

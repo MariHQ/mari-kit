@@ -60,8 +60,7 @@ def best_of_n(
 
     if best is None:
         details = "; ".join(
-            f"attempt {row.index}: {row.error_type}: {row.message}"
-            for row in failures
+            f"attempt {row.index}: {row.error_type}: {row.message}" for row in failures
         )
         raise RuntimeError(f"best-of-N produced no valid candidate ({details})")
 

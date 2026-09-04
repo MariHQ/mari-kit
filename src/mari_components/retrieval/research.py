@@ -104,7 +104,10 @@ def build_summary_tree(
     for level in range(1, max_levels + 1):
         if len(current) == 1:
             break
-        groups = [tuple(str(node_id) for node_id in group) for group in cluster(current, level)]
+        groups = [
+            tuple(str(node_id) for node_id in group)
+            for group in cluster(current, level)
+        ]
         if not groups or any(not group for group in groups):
             raise ValueError("clusters must be non-empty")
         flattened = [node_id for group in groups for node_id in group]
@@ -132,7 +135,9 @@ def build_summary_tree(
             parents.append(parent)
         current = tuple(sorted(parents, key=lambda node: node.node_id))
     return SummaryTree(
-        nodes=tuple(sorted(known.values(), key=lambda node: (node.level, node.node_id))),
+        nodes=tuple(
+            sorted(known.values(), key=lambda node: (node.level, node.node_id))
+        ),
         root_ids=tuple(node.node_id for node in current),
     )
 
@@ -288,7 +293,12 @@ def walk_summary_tree(
             if not math.isfinite(value):
                 raise ValueError("tree relevance scores must be finite")
             scored.append((value, child_id))
-        chosen = [node_id for _, node_id in sorted(scored, key=lambda row: (-row[0], row[1]))[:branch_factor]]
+        chosen = [
+            node_id
+            for _, node_id in sorted(scored, key=lambda row: (-row[0], row[1]))[
+                :branch_factor
+            ]
+        ]
         frontier[0:0] = chosen
     return TreeWalk(
         visited=tuple(visited),
@@ -346,7 +356,8 @@ def selective_compression(
     eligible = [
         (index, sentence)
         for index, sentence in enumerate(sentences)
-        if sentence.relevance >= relevance_threshold and sentence.token_count <= token_budget
+        if sentence.relevance >= relevance_threshold
+        and sentence.token_count <= token_budget
     ]
     ranked = sorted(
         eligible,

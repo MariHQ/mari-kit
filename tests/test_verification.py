@@ -21,9 +21,7 @@ class VerificationTests(unittest.TestCase):
             quote="Retention is 30 days.",
         )
 
-    def assessment(
-        self, verdict: str, document_id: str = "docs/one"
-    ) -> FactAssessment:
+    def assessment(self, verdict: str, document_id: str = "docs/one") -> FactAssessment:
         evidence = () if verdict == "uncertain" else (self.evidence(document_id),)
         return FactAssessment(
             "Retention is 30 days.",

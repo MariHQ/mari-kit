@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components import Evidence, KnowledgeDocument
+from mari_components import (
+    Evidence,
+    KnowledgeDocument,
+    ObjectRef,
+    RevisionRef,
+    ScopeRef,
+)
 from mari_components.errors import MalformedModelOutput
 from mari_components.knowledge import (
     AnswerDisposition,
@@ -12,6 +18,7 @@ from mari_components.knowledge import (
     TagDefinition,
     assess_dependencies,
     assess_freshness,
+    assess_revision_refs,
     assign_tags,
     deduplicate_fact_candidates,
     extract_explicit_links,
@@ -163,9 +170,7 @@ class KnowledgeRecipeTests(unittest.TestCase):
         )
         self.assertEqual(facts[0].qualifiers["relation"], "has duration")
         self.assertEqual(facts[0].qualifiers["object"], "30 days")
-        self.assertEqual(
-            facts[0].qualifiers["subject"]["canonical"], "retention"
-        )
+        self.assertEqual(facts[0].qualifiers["subject"]["canonical"], "retention")
 
     def test_fact_check_recovers_reordered_paraphrased_and_missing_rows(self):
         claims = (
@@ -543,6 +548,16 @@ class KnowledgeRecipeTests(unittest.TestCase):
             },
         )
         self.assertEqual(digest.topics[0].evidence[0].document_id, "docs/1")
+
+
+def test_structural_freshness_supports_any_revisioned_object() -> None:
+    scope = ScopeRef(tenant="acme", space="sales")
+    object_ref = ObjectRef(namespace="crm", object_id="account:42", scope=scope)
+    expected = RevisionRef(object=object_ref, revision="7")
+    current = RevisionRef(object=object_ref, revision="8")
+    report = assess_revision_refs((expected,), {object_ref: current})
+    assert report.status is FreshnessStatus.STALE
+    assert report.changes[0].expected == expected
 
 
 if __name__ == "__main__":

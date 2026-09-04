@@ -3,12 +3,43 @@
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import math
+import urllib.parse
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import StrEnum
-from types import MappingProxyType
 from typing import Any
+
+from .json import freeze_json_mapping
+from .references import ObjectRef, RevisionRef, ScopeRef
+
+
+def canonical_document_id(source_id: str, external_id: str) -> str:
+    """Encode the two structural identity fields without delimiter collisions."""
+
+    return "/".join(
+        urllib.parse.quote(value, safe=":@") for value in (source_id, external_id)
+    )
+
+
+def parse_document_id(document_id: str) -> tuple[str, str]:
+    """Decode an ID produced by :func:`canonical_document_id`."""
+
+    parts = document_id.split("/")
+    if len(parts) != 2:
+        raise ValueError("canonical document ID must contain one separator")
+    values = (urllib.parse.unquote(parts[0]), urllib.parse.unquote(parts[1]))
+    if canonical_document_id(*values) != document_id:
+        raise ValueError("document ID is not canonically encoded")
+    return values
+
+
+def content_revision(content: str | bytes) -> str:
+    """Identify exact evidence-bearing bytes independently of provider clocks."""
+
+    raw = content.encode() if isinstance(content, str) else bytes(content)
+    return f"sha256:{hashlib.sha256(raw).hexdigest()}"
 
 
 class SyncMode(StrEnum):
@@ -56,6 +87,8 @@ class KnowledgeDocument:
     title: str
     body: str
     revision: str
+    provider_revision: str = ""
+    content_digest: str = ""
     updated_at: str = ""
     source_url: str = ""
     acl: DocumentACL = field(default_factory=DocumentACL)
@@ -66,6 +99,13 @@ class KnowledgeDocument:
             raise ValueError("document source_id and external_id are required")
         if not self.revision.strip():
             raise ValueError("document revision is required")
+        digest = content_revision(self.body)
+        if self.content_digest and self.content_digest != digest:
+            raise ValueError("document content_digest does not match body")
+        object.__setattr__(self, "content_digest", digest)
+        object.__setattr__(
+            self, "provider_revision", self.provider_revision.strip() or self.revision
+        )
         if self.updated_at:
             try:
                 parsed = dt.datetime.fromisoformat(
@@ -82,11 +122,30 @@ class KnowledgeDocument:
                 "updated_at",
                 parsed.astimezone(dt.UTC).isoformat().replace("+00:00", "Z"),
             )
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
     @property
     def document_id(self) -> str:
-        return f"{self.source_id}/{self.external_id}"
+        return canonical_document_id(self.source_id, self.external_id)
+
+    @property
+    def ref(self) -> RevisionRef:
+        return RevisionRef(
+            object=ObjectRef(namespace=self.source_id, object_id=self.external_id),
+            revision=self.revision,
+        )
+
+    def ref_in(self, scope: ScopeRef) -> RevisionRef:
+        """Address this revision inside an application isolation scope."""
+
+        return RevisionRef(
+            object=ObjectRef(
+                namespace=self.source_id,
+                object_id=self.external_id,
+                scope=scope,
+            ),
+            revision=self.revision,
+        )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -122,7 +181,7 @@ class Tombstone:
 
     @property
     def document_id(self) -> str:
-        return f"{self.source_id}/{self.external_id}"
+        return canonical_document_id(self.source_id, self.external_id)
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -150,7 +209,7 @@ class PollPage:
         object.__setattr__(self, "upserts", tuple(self.upserts))
         object.__setattr__(self, "tombstones", tuple(self.tombstones))
         object.__setattr__(
-            self, "provider_metadata", MappingProxyType(dict(self.provider_metadata))
+            self, "provider_metadata", freeze_json_mapping(self.provider_metadata)
         )
 
 
@@ -171,7 +230,7 @@ class ChangeHint:
             or not self.event_type.strip()
         ):
             raise ValueError("provider, aggregate_key, and event_type are required")
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -214,7 +273,7 @@ class FactCandidate:
             or not 0 <= self.grounding_coverage <= 1
         ):
             raise ValueError("grounding_coverage must be between zero and one")
-        object.__setattr__(self, "qualifiers", MappingProxyType(dict(self.qualifiers)))
+        object.__setattr__(self, "qualifiers", freeze_json_mapping(self.qualifiers))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

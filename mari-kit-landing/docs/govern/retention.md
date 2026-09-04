@@ -1,4 +1,4 @@
-[]{#retention}[Current]{.current-label}
+[]{#retention}[Supported]{.current-label}
 
 # Retention, deletion, and purpose
 

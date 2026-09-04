@@ -1,4 +1,4 @@
-[]{#evidence}[Current]{.current-label}
+[]{#evidence}[Core]{.current-label}
 
 # Evidence contracts
 
@@ -12,9 +12,19 @@
 
 Mari validates references against exact document and section revisions. The injected model or evaluator supplies entailment and citation-quality scores.
 
-`ArtifactRef` and `ArtifactEvidence` provide the same contract for passages,
-symbols, rows, messages, assertions, and generated artifacts. The older
-document-specific `Evidence` remains available as a compatibility adapter.
+`ObjectRef` and `RevisionRef` carry scope, namespace, object identity, revision,
+and an optional stable unit. `LocatedEvidence` combines that reference with a
+typed locator. `ArtifactRef`, `ArtifactEvidence`, and document-specific
+`Evidence` remain available during the compatibility migration.
+
+| Locator | Material addressed |
+|---|---|
+| `TextSpan` | Character range in normalized text |
+| `JsonPointer` | Value inside JSON-compatible material |
+| `RecordField` | Named field on a stable record |
+| `TableCell` | Row and column in a tabular value |
+| `PageRegion` | Bounding box on a numbered page |
+| `MediaTimeRange` | Time interval in audio or video |
 
 
 :::{collapse} Example evidence resolution examples
@@ -97,9 +107,34 @@ report = validate_artifact_evidence(
 assert report.accepted
 ```
 
-The report separates `not_visible`, `unresolved`, `invalid_span`, and
-`quote_mismatch`. It reports mechanical validity. Applications decide
-whether the evidence is sufficient, independent, authorized, or persuasive.
+```{code-block} python
+:caption: Resolve evidence from structured material
+
+from mari_components import JsonPointer, ObjectRef, RevisionRef
+from mari_components.knowledge import LocatedEvidence, validate_located_evidence
+
+source = RevisionRef(
+    object=ObjectRef(namespace="crm", object_id="account:42", scope=scope),
+    revision="crm-v7",
+)
+evidence = LocatedEvidence(
+    ref=source,
+    locator=JsonPointer(pointer="/plan/monthly_price"),
+    quote="599",
+)
+report = validate_located_evidence(
+    [evidence],
+    visible_refs=[source],
+    resolve_material=lambda ref: material_by_revision.get(ref.key),
+)
+assert report.accepted
+```
+
+The report separates `not_visible`, `unresolved`, `invalid_span`,
+`unsupported_locator`, and `quote_mismatch`. Page and media locators accept an
+application locator callback. Mari stays independent of the selected PDF or
+media runtime. Applications decide whether the evidence is sufficient,
+independent, authorized, or persuasive.
 
 ## Dependency conversion
 

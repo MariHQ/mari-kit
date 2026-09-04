@@ -15,6 +15,7 @@ import numpy as np
 from numpy import typing as npt
 
 from mari_components.knowledge.artifacts import ArtifactRef
+from mari_components.references import RevisionRef
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -71,6 +72,19 @@ class ArtifactIndexHit:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ArtifactBM25Explanation:
     ref: ArtifactRef
+    score: float
+    contributions: tuple[BM25TermContribution, ...]
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class RevisionIndexHit:
+    ref: RevisionRef
+    score: float
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class RevisionBM25Explanation:
+    ref: RevisionRef
     score: float
     contributions: tuple[BM25TermContribution, ...]
 
@@ -416,9 +430,7 @@ class ArtifactBM25Index:
             ref=ref, score=value.score, contributions=value.contributions
         )
 
-    def with_deltas(
-        self, deltas: Iterable[ArtifactIndexDelta]
-    ) -> ArtifactBM25Index:
+    def with_deltas(self, deltas: Iterable[ArtifactIndexDelta]) -> ArtifactBM25Index:
         """Return a new snapshot after exact revision-checked changes."""
 
         units = dict(self._units)
@@ -435,8 +447,57 @@ class ArtifactBM25Index:
                     )
                 del units[delta.previous_ref]
             units[delta.ref] = delta.text
-        return ArtifactBM25Index(
-            units, k1=self.k1, b=self.b, analyzer=self.analyzer
+        return ArtifactBM25Index(units, k1=self.k1, b=self.b, analyzer=self.analyzer)
+
+
+class RevisionBM25Index:
+    """Structural-revision-keyed BM25 reference index."""
+
+    def __init__(
+        self,
+        units: Mapping[RevisionRef, str],
+        *,
+        k1: float = 1.2,
+        b: float = 0.75,
+        analyzer: Callable[[str], Iterable[str]] | None = None,
+    ) -> None:
+        self._units = dict(units)
+        ordered = tuple(sorted(units, key=lambda ref: ref.key))
+        self._refs = {str(index): ref for index, ref in enumerate(ordered)}
+        self._ids = {ref: item_id for item_id, ref in self._refs.items()}
+        self._index = BM25Index(
+            {self._ids[ref]: units[ref] for ref in ordered},
+            k1=k1,
+            b=b,
+            analyzer=analyzer,
+            revisions={self._ids[ref]: ref.revision for ref in ordered},
+        )
+
+    def search(
+        self,
+        query: str,
+        *,
+        limit: int,
+        allowed_refs: Collection[RevisionRef] | None = None,
+    ) -> tuple[RevisionIndexHit, ...]:
+        allowed_ids = (
+            None
+            if allowed_refs is None
+            else {self._ids[ref] for ref in allowed_refs if ref in self._ids}
+        )
+        return tuple(
+            RevisionIndexHit(ref=self._refs[hit.document_id], score=hit.score)
+            for hit in self._index.search(
+                query, limit=limit, allowed_document_ids=allowed_ids
+            )
+        )
+
+    def explain(self, query: str, *, ref: RevisionRef) -> RevisionBM25Explanation:
+        if ref not in self._ids:
+            raise KeyError(ref)
+        value = self._index.explain(query, item_id=self._ids[ref])
+        return RevisionBM25Explanation(
+            ref=ref, score=value.score, contributions=value.contributions
         )
 
 

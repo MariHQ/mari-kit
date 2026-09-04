@@ -8,12 +8,12 @@ the application's responsibility because this package does not own storage.
 from __future__ import annotations
 
 import hashlib
-import json
 from collections.abc import Iterable
 from dataclasses import dataclass
 
 from mari_components.connectors.protocol import StreamEvent, VerifyStreamEvent
 from mari_components.connectors.streaming import HydrateChange, stream_pages
+from mari_components.json import canonical_json_bytes
 from mari_components.sync import document_fingerprint
 from mari_components.types import PollPage, SyncMode
 
@@ -42,9 +42,7 @@ def _poll_fingerprint(pages: tuple[PollPage, ...]) -> str:
         }
         for page in pages
     ]
-    return hashlib.sha256(
-        json.dumps(value, sort_keys=True, separators=(",", ":"), default=str).encode()
-    ).hexdigest()
+    return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
 
 
 def check_connector_contract(

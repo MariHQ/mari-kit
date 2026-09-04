@@ -21,10 +21,11 @@ from .events import HintCoalescingReport, coalesce_hints_ordered
 from .filesystem import FilesystemConfig, poll_filesystem, validate_filesystem
 from .github import (
     GitHubConfig,
+    github_source_id,
     poll_github,
     validate_github,
 )
-from .gitlab import GitLabConfig, poll_gitlab, validate_gitlab
+from .gitlab import GitLabConfig, gitlab_source_id, poll_gitlab, validate_gitlab
 from .google_drive import (
     GoogleDriveConfig,
     GoogleDriveWatch,
@@ -54,6 +55,8 @@ from .protocol import (
     StreamEvent,
     StreamingConnector,
     ValidationResult,
+    configured_source_id,
+    connector_configuration_fingerprint,
 )
 from .rss import RSSConfig, poll_rss, validate_rss
 from .singer import singer_pages
@@ -82,7 +85,9 @@ __all__ = [
     "DropboxConfig",
     "FilesystemConfig",
     "GitHubConfig",
+    "github_source_id",
     "GitLabConfig",
+    "gitlab_source_id",
     "HintCoalescingReport",
     "HintHydrationIssue",
     "HintHydrationReport",
@@ -106,6 +111,8 @@ __all__ = [
     "ZendeskConfig",
     "connector_definition",
     "connector_definitions",
+    "connector_configuration_fingerprint",
+    "configured_source_id",
     "coalesce_hints_ordered",
     "fetch_confluence_page",
     "fetch_slack_thread_by_id",

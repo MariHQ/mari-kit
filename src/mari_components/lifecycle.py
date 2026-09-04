@@ -30,11 +30,17 @@ class ContextRequest:
     token_budget: int
 
     def __post_init__(self) -> None:
-        if not self.request_id.strip() or not self.query.strip() or not self.purpose.strip():
+        if (
+            not self.request_id.strip()
+            or not self.query.strip()
+            or not self.purpose.strip()
+        ):
             raise ValueError("request ID, query, and purpose are required")
         if self.token_budget < 0:
             raise ValueError("token budget must not be negative")
-        scopes = tuple(dict.fromkeys(scope.strip() for scope in self.scopes if scope.strip()))
+        scopes = tuple(
+            dict.fromkeys(scope.strip() for scope in self.scopes if scope.strip())
+        )
         if not scopes:
             raise ValueError("at least one scope is required")
         object.__setattr__(self, "scopes", scopes)
@@ -63,7 +69,10 @@ class ContextIntervention:
     def __post_init__(self) -> None:
         if self.disposition is InterventionDisposition.INJECT and self.envelope is None:
             raise ValueError("inject decisions require a context envelope")
-        if self.disposition is InterventionDisposition.ABSTAIN and self.envelope is not None:
+        if (
+            self.disposition is InterventionDisposition.ABSTAIN
+            and self.envelope is not None
+        ):
             raise ValueError("abstain decisions must not carry context")
 
     @property

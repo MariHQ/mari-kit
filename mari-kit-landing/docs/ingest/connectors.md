@@ -1,4 +1,4 @@
-[]{#connectors}[Current]{.current-label}
+[]{#connectors}[Supported]{.current-label}
 
 # Polling and streaming connectors
 
@@ -17,6 +17,8 @@ All 18 connector definitions are exercised against recorded or synthetic provide
 | Function / value | Required inputs | Important options |
 |---|---|---|
 | `PollRequest` | None | `cursor`, `checkpoint`, positive `page_size`, positive `page_limit` |
+| `connector_configuration_fingerprint` | Non-secret observed configuration | Binds durable sync state to the selected provider scope |
+| `configured_source_id` | Provider, account identity, non-secret observed configuration | Produces a stable fingerprinted source identity |
 | `poll_*` | Frozen provider config, request, injected transport | Provider selection fields and explicit content-type scope |
 | `stream_change_hint` | One raw `StreamEvent`, verifier | `maximum_bytes`. Verification always precedes parsing |
 | `stream_hints` | Event iterable, verifier | `maximum_events`, `maximum_bytes`. No checkpoint state |
@@ -438,10 +440,11 @@ All polling functions accept the same `PollRequest` and injected `HttpTransport`
 Files, issues, pull requests, and commits.
 
 ```python
-from mari_components.connectors import GitHubConfig, poll_github
+from mari_components.connectors import GitHubConfig, github_source_id, poll_github
 cfg = GitHubConfig(token=token, repository="acme/product",
     branch="main", paths=("docs/**",),
     content_types=("files", "issues", "pull_requests"))
+source_id = github_source_id(cfg)
 pages = poll_github(cfg, request, http=http)
 ```
 :::

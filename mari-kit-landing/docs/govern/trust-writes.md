@@ -1,4 +1,4 @@
-[]{#trust-writes}[Current]{.current-label}
+[]{#trust-writes}[Supported]{.current-label}
 
 # Trust-aware knowledge writes
 

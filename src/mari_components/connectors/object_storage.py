@@ -4,9 +4,15 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass, field
-from types import MappingProxyType
 
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, Tombstone
+from mari_components.json import freeze_json_mapping
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    Tombstone,
+    content_revision,
+)
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -32,7 +38,7 @@ class SourceObject:
     def __post_init__(self) -> None:
         if not self.key.strip() or not self.revision.strip():
             raise ValueError("source-object key and revision are required")
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -84,13 +90,15 @@ def poll_object_store(
             raw = read_object(config, item)
             if len(raw) > maximum_bytes:
                 raise ValueError(f"object {item.key!r} exceeds maximum_bytes")
+            body = raw.decode("utf-8", "replace")
             documents.append(
                 KnowledgeDocument(
                     source_id=source_id,
                     external_id=item.key,
                     title=item.key.rsplit("/", 1)[-1],
-                    body=raw.decode("utf-8", "replace"),
-                    revision=item.revision,
+                    body=body,
+                    revision=content_revision(body),
+                    provider_revision=item.revision,
                     updated_at=item.updated_at,
                     source_url=item.source_url,
                     metadata={"container": config.container, **item.metadata},

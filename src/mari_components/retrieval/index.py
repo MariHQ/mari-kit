@@ -149,8 +149,9 @@ def search_index(
         return ()
     parameters = projection_parameters(index.config, index.input_dimension)
     query_fde = encode_fde(query, index.config, parameters, query=True)
-    approximate = polar_scores(index.packed, query_fde, index.codec)
-    allowed_scores = approximate[allowed_positions]
+    allowed_scores = polar_scores(
+        index.packed[allowed_positions], query_fde, index.codec
+    )
     take = min(max(limit, candidate_limit), len(allowed_positions))
     local_positions = (
         np.argpartition(-allowed_scores, take - 1)[:take]
@@ -181,7 +182,7 @@ def search_index(
         RetrievalHit(
             index.document_ids[int(positions[position])],
             float(exact[position]),
-            float(approximate[int(positions[position])]),
+            float(allowed_scores[int(local_positions[position])]),
         )
         for position in order
     )

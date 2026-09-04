@@ -11,7 +11,12 @@ from pathlib import Path
 
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 DEFAULT_PATTERNS = ("*.md", "*.mdx", "*.rst", "*.adoc", "*.txt")
 
@@ -105,7 +110,7 @@ def poll_filesystem(
             raw = path.read_bytes()
             if len(raw) > maximum_bytes:
                 raise ValueError(f"file {relative!r} exceeds maximum_bytes")
-            revision = hashlib.sha256(raw).hexdigest()
+            revision = content_revision(raw)
             documents.append(
                 KnowledgeDocument(
                     source_id=f"filesystem:{config.source_name}",

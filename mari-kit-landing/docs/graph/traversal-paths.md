@@ -1,4 +1,4 @@
-[]{#traversal-paths}[Current]{.current-label}
+[]{#traversal-paths}[Reference]{.current-label}
 
 # Traversal, reachability, and paths
 

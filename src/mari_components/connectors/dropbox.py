@@ -10,7 +10,13 @@ from typing import Any
 from mari_components.connectors._shared import json_response, send
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, Tombstone
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    Tombstone,
+    content_revision,
+)
 
 API = "https://api.dropboxapi.com/2"
 CONTENT = "https://content.dropboxapi.com/2"
@@ -101,15 +107,18 @@ def poll_dropbox(
                 )
             elif tag == "file" and int(entry.get("size") or 0) <= 1_048_576:
                 path = str(entry.get("path_lower") or "")
+                body = _download(config, path, http=http)
+                provider_revision = str(
+                    entry.get("content_hash") or entry.get("rev") or ""
+                )
                 documents.append(
                     KnowledgeDocument(
                         source_id="dropbox",
                         external_id=external_id,
                         title=str(entry.get("name") or path),
-                        body=_download(config, path, http=http),
-                        revision=str(
-                            entry.get("content_hash") or entry.get("rev") or ""
-                        ),
+                        body=body,
+                        revision=content_revision(body),
+                        provider_revision=provider_revision,
                         updated_at=str(entry.get("server_modified") or ""),
                         source_url=str(entry.get("preview_url") or ""),
                         metadata={"path": path},

@@ -11,7 +11,12 @@ from typing import Any
 from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 API = "https://api.notion.com/v1"
 
@@ -161,7 +166,8 @@ def poll_notion(
                     external_id=str(page.get("id") or ""),
                     title=_title(page),
                     body=body,
-                    revision=updated,
+                    revision=content_revision(body),
+                    provider_revision=updated,
                     updated_at=updated,
                     source_url=str(page.get("url") or ""),
                 )

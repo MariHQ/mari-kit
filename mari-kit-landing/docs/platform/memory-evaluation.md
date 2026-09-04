@@ -1,4 +1,4 @@
-[]{#memory-evaluation}[Current]{.current-label}
+[]{#memory-evaluation}[Reference]{.current-label}
 
 # Long-horizon memory evaluation
 

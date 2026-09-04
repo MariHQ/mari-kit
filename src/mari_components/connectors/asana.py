@@ -10,7 +10,12 @@ from typing import Any
 from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 API = "https://app.asana.com/api/1.0"
 
@@ -114,13 +119,15 @@ def poll_asana(
             if request.cursor and updated <= request.cursor:
                 continue
             task_id = str(task.get("gid") or "")
+            body = str(task.get("notes") or task.get("html_notes") or "")
             documents.append(
                 KnowledgeDocument(
                     source_id=f"asana:{config.workspace_gid or config.project_gid or 'account'}",
                     external_id=f"task:{task_id}",
                     title=str(task.get("name") or task_id),
-                    body=str(task.get("notes") or task.get("html_notes") or ""),
-                    revision=updated,
+                    body=body,
+                    revision=content_revision(body),
+                    provider_revision=updated,
                     updated_at=updated,
                     source_url=str(task.get("permalink_url") or ""),
                     metadata={

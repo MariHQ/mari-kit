@@ -99,6 +99,9 @@ from .indexes import (
     IndexHit,
     IndexOperation,
     IVFPQIndex,
+    RevisionBM25Explanation,
+    RevisionBM25Index,
+    RevisionIndexHit,
     SparseVectorIndex,
 )
 from .maxsim import exact_maxsim
@@ -204,6 +207,9 @@ __all__ = [
     "RetrievalHit",
     "RetrievalGapQuery",
     "RetrievalUnit",
+    "RevisionBM25Explanation",
+    "RevisionBM25Index",
+    "RevisionIndexHit",
     "SparseContradictionCandidate",
     "SparseVectorIndex",
     "SparseContradictionHit",

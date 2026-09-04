@@ -155,7 +155,11 @@ def parse_markdown(
                 indentation = len(candidate) - len(candidate.lstrip(" "))
                 stripped = candidate.lstrip(" ")
                 run = len(stripped) - len(stripped.lstrip(marker[0]))
-                if indentation <= 3 and run >= len(marker) and not stripped[run:].strip():
+                if (
+                    indentation <= 3
+                    and run >= len(marker)
+                    and not stripped[run:].strip()
+                ):
                     end += 1
                     closed = True
                     break

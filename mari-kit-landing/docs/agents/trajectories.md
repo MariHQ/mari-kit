@@ -1,4 +1,4 @@
-[]{#trajectories}[Current]{.current-label}
+[]{#trajectories}[Research]{.current-label}
 
 # Trajectories and agent evaluation
 

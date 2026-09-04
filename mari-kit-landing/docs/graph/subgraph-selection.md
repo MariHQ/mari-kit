@@ -1,4 +1,4 @@
-[]{#subgraph-selection}[Current]{.current-label}
+[]{#subgraph-selection}[Reference]{.current-label}
 
 # Bounded evidence subgraphs
 

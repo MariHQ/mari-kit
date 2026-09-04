@@ -1,4 +1,4 @@
-[]{#graph-diff-quality}[Current]{.current-label}
+[]{#graph-diff-quality}[Reference]{.current-label}
 
 # Graph comparison and quality diagnostics
 

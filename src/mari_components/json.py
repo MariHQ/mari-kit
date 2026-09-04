@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
+import math
 from collections.abc import Callable, Mapping
 from dataclasses import fields, is_dataclass
 from enum import Enum
@@ -13,11 +15,47 @@ from .errors import MalformedModelOutput
 JsonGenerator = Callable[[str, str], Any]
 
 
+def freeze_json_value(value: Any) -> Any:
+    """Validate and recursively freeze a JSON-compatible value."""
+
+    encoded = to_json_value(value)
+    if isinstance(encoded, dict):
+        from types import MappingProxyType
+
+        return MappingProxyType(
+            {key: freeze_json_value(item) for key, item in encoded.items()}
+        )
+    if isinstance(encoded, list):
+        return tuple(freeze_json_value(item) for item in encoded)
+    return encoded
+
+
+def freeze_json_mapping(value: Mapping[str, Any]) -> Mapping[str, Any]:
+    frozen = freeze_json_value(value)
+    if not isinstance(frozen, Mapping):
+        raise TypeError("JSON mapping is required")
+    return frozen
+
+
+def canonical_json_bytes(value: Any) -> bytes:
+    """Encode supported values without process-dependent fallbacks."""
+
+    return json.dumps(
+        to_json_value(value),
+        ensure_ascii=False,
+        allow_nan=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+
+
 def to_json_value(value: Any) -> Any:
     """Recursively encode Mari values without copying MappingProxyType objects."""
 
     if isinstance(value, Enum):
         return to_json_value(value.value)
+    if isinstance(value, float) and not math.isfinite(value):
+        raise ValueError("JSON numbers must be finite")
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
     if isinstance(value, dt.datetime):
@@ -39,7 +77,8 @@ def to_json_value(value: Any) -> Any:
     if isinstance(value, (tuple, list)):
         return [to_json_value(item) for item in value]
     if isinstance(value, (set, frozenset)):
-        return [to_json_value(item) for item in sorted(value, key=repr)]
+        encoded = [to_json_value(item) for item in value]
+        return sorted(encoded, key=canonical_json_bytes)
     raise TypeError(f"unsupported JSON value: {type(value).__qualname__}")
 
 

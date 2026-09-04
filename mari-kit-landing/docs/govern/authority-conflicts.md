@@ -1,4 +1,4 @@
-[]{#authority-conflicts}[Current]{.current-label}
+[]{#authority-conflicts}[Supported]{.current-label}
 
 # Source authority, conflicts, and uncertainty
 

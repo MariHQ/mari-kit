@@ -11,10 +11,16 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from mari_components.connectors._shared import json_response
-from mari_components.connectors.protocol import ValidationResult
+from mari_components.connectors.protocol import ValidationResult, configured_source_id
 from mari_components.errors import PermanentFailure
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, Tombstone
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    Tombstone,
+    content_revision,
+)
 
 API = "https://api.github.com"
 DEFAULT_KNOWLEDGE_PATHS = (
@@ -82,6 +88,20 @@ class GitHubCursor:
             )
         except (TypeError, json.JSONDecodeError) as error:
             raise ValueError("invalid GitHub cursor") from error
+
+
+def github_source_id(config: GitHubConfig) -> str:
+    """Return the sync identity for one configured repository view."""
+
+    return configured_source_id(
+        "github",
+        config.repository,
+        {
+            "branch": config.branch or "<default>",
+            "paths": config.paths,
+            "content_types": config.content_types,
+        },
+    )
 
 
 def _headers(config: GitHubConfig) -> dict[str, str]:
@@ -344,6 +364,7 @@ def _issue_document(
     config: GitHubConfig,
     issue: Mapping[str, Any],
     *,
+    source_id: str,
     http: HttpTransport,
     page_limit: int,
 ) -> tuple[KnowledgeDocument, bool]:
@@ -363,18 +384,22 @@ def _issue_document(
     for comment in comments:
         author = str((comment.get("user") or {}).get("login") or "unknown")
         body.append(f"\n\nComment by @{author}:\n{comment.get('body') or ''}")
+    content = "".join(body).strip()
+    provider_revision = str(issue.get("updated_at") or "")
     return KnowledgeDocument(
-        source_id=f"github:{config.repository}",
+        source_id=source_id,
         external_id=f"{kind.replace(' ', '_')}:{number}",
         title=f"{kind.title()} #{number}: {issue.get('title') or ''}",
-        body="".join(body).strip(),
-        revision=str(issue.get("updated_at") or ""),
-        updated_at=str(issue.get("updated_at") or ""),
+        body=content,
+        revision=content_revision(content),
+        provider_revision=provider_revision,
+        updated_at=provider_revision,
         source_url=str(issue.get("html_url") or ""),
         metadata={
             "kind": kind,
             "number": number,
             "state": str(issue.get("state") or ""),
+            "provider_revision": provider_revision,
         },
     ), complete
 
@@ -385,6 +410,7 @@ def poll_github(
     previous = GitHubCursor.decode(request.cursor)
     repository = _get(config, f"/repos/{config.repository}", None, http=http)
     branch = config.branch.strip() or str(repository.get("default_branch") or "main")
+    source_id = github_source_id(config)
     commit = _get(
         config,
         f"/repos/{config.repository}/commits/{urllib.parse.quote(branch, safe='')}",
@@ -430,18 +456,19 @@ def poll_github(
             continue
         documents.append(
             KnowledgeDocument(
-                source_id=f"github:{config.repository}",
+                source_id=source_id,
                 external_id=f"file:{path}",
                 title=path,
                 body=body,
                 revision=sha,
+                provider_revision=sha,
                 updated_at=head_updated_at,
                 source_url=f"https://github.com/{config.repository}/blob/{branch}/{urllib.parse.quote(path)}",
                 metadata={"kind": "file", "path": path, "branch": branch},
             )
         )
     tombstones = tuple(
-        Tombstone(source_id=f"github:{config.repository}", external_id=f"file:{path}")
+        Tombstone(source_id=source_id, external_id=f"file:{path}")
         for path in sorted(set(previous.files or {}) - set(files))
     )
 
@@ -472,7 +499,11 @@ def poll_github(
         ):
             continue
         document, comments_complete = _issue_document(
-            config, issue, http=http, page_limit=request.page_limit
+            config,
+            issue,
+            source_id=source_id,
+            http=http,
+            page_limit=request.page_limit,
         )
         documents.append(document)
         item_complete = item_complete and comments_complete
@@ -497,11 +528,12 @@ def poll_github(
         sha = str(item.get("sha") or "")
         documents.append(
             KnowledgeDocument(
-                source_id=f"github:{config.repository}",
+                source_id=source_id,
                 external_id=f"commit:{sha}",
                 title=f"Commit {sha[:8]}: {str(detail.get('message') or '').splitlines()[0]}",
                 body=str(detail.get("message") or ""),
                 revision=sha,
+                provider_revision=sha,
                 updated_at=updated,
                 source_url=str(item.get("html_url") or ""),
                 metadata={"kind": "commit", "sha": sha},

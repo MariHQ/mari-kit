@@ -15,7 +15,12 @@ from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.errors import AuthenticationFailure, PermanentFailure
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -163,12 +168,14 @@ def _document(page: Mapping[str, Any], site: str) -> KnowledgeDocument:
     )
     links = page.get("_links") or {}
     webui = str(links.get("webui") or "")
+    content = storage_to_text(str(body))
     return KnowledgeDocument(
         source_id=f"confluence:{site}",
         external_id=page_id,
         title=str(page.get("title") or f"Page {page_id}"),
-        body=storage_to_text(str(body)),
-        revision=version,
+        body=content,
+        revision=content_revision(content),
+        provider_revision=version,
         updated_at=str(updated),
         source_url=site + webui if webui.startswith("/") else webui,
         metadata={"space_key": str((page.get("space") or {}).get("key") or "")},

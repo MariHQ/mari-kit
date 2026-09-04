@@ -1,4 +1,4 @@
-[]{#code-knowledge}[Current]{.current-label}
+[]{#code-knowledge}[Supported]{.current-label}
 
 # Structured code knowledge
 

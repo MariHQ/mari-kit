@@ -1,4 +1,4 @@
-[]{#documents}[Current]{.current-label}
+[]{#documents}[Core]{.current-label}
 
 # Documents, identity, and ACLs
 
@@ -7,7 +7,8 @@
 | Concern | Representation |
 |---|---|
 | Source identity | Stable `(source, external_id)` independent of content |
-| Content identity | Revision digest for the exact evidence-bearing body |
+| Content identity | `content_digest` for the exact evidence-bearing body |
+| Provider version | `provider_revision` for cursors, ETags, timestamps, or provider versions |
 | Visibility | Tenant, principal, and group ACL carried with the document |
 | Deletion | Explicit tombstone for a removed source object |
 
@@ -53,11 +54,19 @@ Exact quote plus document, revision, span, and optional section coordinates.
 :::
 
 
-`KnowledgeDocument` is the canonical provider-owned record. Its stable ID is `{source_id}/{external_id}`. Domain values are frozen dataclasses.
+`KnowledgeDocument` is the canonical provider-owned record. `source_id` and
+`external_id` remain structural fields. `document_id` percent-encodes each field
+before joining them, so slashes inside either field cannot create collisions.
+`ref` returns a structural `RevisionRef`.
 
 ## How it works
 
-`source_id` names one configured source. `external_id` is the provider's stable object key. Their pair keeps provider identities distinct. `revision` identifies content version. `updated_at` is descriptive metadata. ACL visibility and principals travel with the document so an allowed-ID set can be computed before retrieval scoring. Frozen values keep an indexed object aligned with its recorded revision.
+`source_id` names one configured source and includes a non-secret fingerprint
+when connector configuration changes the observed source. `external_id` is the
+provider's stable object key. `revision` identifies the revision used by
+evidence. `content_digest` is computed from the body. `provider_revision`
+retains the source ETag, timestamp, or version. `updated_at` remains descriptive.
+Metadata is recursively frozen inside a strict JSON-compatible domain.
 
 ```{code-block} python
 :caption: document.py
@@ -76,14 +85,16 @@ doc = KnowledgeDocument(
     )),
     metadata={"path": "docs/refunds.md"},
 )
-assert doc.document_id == "github:acme/product/file:docs/refunds.md"
+assert doc.document_id == "github:acme%2Fproduct/file:docs%2Frefunds.md"
+assert doc.content_digest.startswith("sha256:")
+assert doc.ref.object.namespace == "github:acme/product"
 ```
 
 ## Definitions and options
 
 | Value or function | Definition | Options that change behavior |
 |---|---|---|
-| `KnowledgeDocument` | Stable `source_id` + `external_id`, immutable `revision`, body and observed ACL | `updated_at`, URL, metadata and principals are descriptive |
+| `KnowledgeDocument` | Structural `source_id` + `external_id`, revision, body digest, provider revision, and observed ACL | `updated_at`, URL, metadata and principals are descriptive |
 | `ParsedBlock` | Parser-neutral kind, text, parent, raw character span and optional table cells | `metadata` retains format-specific facts beside the core type |
 | `ParseResult[T]` | Accepted values plus positioned warning/error issues and parser provenance | `source_revision` and parser-specific metadata |
 | `stable_source_id(parts, prefix, digest_bytes)` | Type-tags and length-prefixes caller-selected components before SHA-256 hashing | Digest size is 8–32 bytes. Mapping/set order is canonicalized. Identity fields come from the caller |

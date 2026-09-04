@@ -1,4 +1,4 @@
-[]{#retrieval}[Current]{.current-label}
+[]{#retrieval}[Reference]{.current-label}
 
 # Multi-vector retrieval
 
@@ -79,6 +79,20 @@ hits = search_index(index, query_token_vectors, limit=8,
 `serialize_index` and `deserialize_index` use versioned, checksummed payloads. `exact_maxsim` is public for direct scoring.
 
 **Authorization must precede scoring.** Supply `allowed_document_ids`. Post-filtering can leak information through ranks and fallback behavior.
+
+`RevisionBM25Index` provides the structural-reference form of the lexical
+contract. It accepts `RevisionRef` keys and an `allowed_refs` set, then returns
+`RevisionIndexHit` values. `BM25Index` and document-ID indexes remain available
+for compatibility and lower-level use.
+
+```{code-block} python
+:caption: Search exact revisions through the generic index boundary
+
+from mari_components.retrieval import RevisionBM25Index
+
+index = RevisionBM25Index({document_ref: document_text})
+hits = index.search(query, limit=10, allowed_refs=authorized_refs)
+```
 
 ## How it works and backing algorithms
 

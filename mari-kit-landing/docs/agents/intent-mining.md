@@ -1,4 +1,4 @@
-[]{#intent-mining}[Current]{.current-label}
+[]{#intent-mining}[Research]{.current-label}
 
 # Intent mining
 

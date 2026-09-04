@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import asdict, dataclass, field
 from types import MappingProxyType
 
+from mari_components.json import canonical_json_bytes
 from mari_components.types import KnowledgeDocument, PollPage, SyncMode, Tombstone
 
 
@@ -22,6 +22,7 @@ class ManifestEntry:
 @dataclass(frozen=True, slots=True, kw_only=True)
 class SyncState:
     source_id: str = ""
+    configuration_fingerprint: str = ""
     cursor: str | None = None
     checkpoint: str | None = None
     manifest: Mapping[str, ManifestEntry] = field(default_factory=dict)
@@ -53,6 +54,8 @@ class SyncPlan:
 def document_fingerprint(document: KnowledgeDocument) -> str:
     payload = {
         "revision": document.revision,
+        "provider_revision": document.provider_revision,
+        "content_digest": document.content_digest,
         "title": document.title,
         "body": document.body,
         "updated_at": document.updated_at,
@@ -63,9 +66,7 @@ def document_fingerprint(document: KnowledgeDocument) -> str:
         },
         "metadata": dict(document.metadata),
     }
-    return hashlib.sha256(
-        json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode()
-    ).hexdigest()
+    return hashlib.sha256(canonical_json_bytes(payload)).hexdigest()
 
 
 def plan_sync(
@@ -74,6 +75,7 @@ def plan_sync(
     *,
     source_id: str,
     mode: SyncMode,
+    configuration_fingerprint: str = "",
 ) -> SyncPlan:
     """Plan one provider page without performing persistence or side effects.
 
@@ -88,6 +90,12 @@ def plan_sync(
         raise ValueError(
             f"sync state belongs to {state.source_id!r}, not {source_id!r}"
         )
+    configuration_fingerprint = configuration_fingerprint.strip()
+    if (
+        state.configuration_fingerprint
+        and state.configuration_fingerprint != configuration_fingerprint
+    ):
+        raise ValueError("connector configuration changed; start with a new sync state")
     if state.active_mode is not None and state.active_mode is not mode:
         raise ValueError(
             f"incomplete {state.active_mode.value} sync cannot resume as {mode.value}"
@@ -161,6 +169,7 @@ def plan_sync(
     )
     next_state = SyncState(
         source_id=source_id,
+        configuration_fingerprint=configuration_fingerprint,
         cursor=next_cursor,
         checkpoint=next_checkpoint,
         manifest=manifest,
@@ -185,6 +194,7 @@ def stream_sync(
     *,
     source_id: str,
     mode: SyncMode,
+    configuration_fingerprint: str = "",
 ) -> Iterator[SyncPlan]:
     """Lazily plan connector pages while carrying reconciliation state forward."""
     state = initial_state
@@ -194,7 +204,13 @@ def stream_sync(
         emitted = True
         if terminal:
             raise ValueError("connector emitted a page after its terminal page")
-        plan = plan_sync(state, page, source_id=source_id, mode=mode)
+        plan = plan_sync(
+            state,
+            page,
+            source_id=source_id,
+            mode=mode,
+            configuration_fingerprint=configuration_fingerprint,
+        )
         yield plan
         state = plan.state
         terminal = plan.snapshot_complete

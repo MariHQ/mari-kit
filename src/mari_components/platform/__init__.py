@@ -8,7 +8,14 @@ from .compiler import (
 )
 from .pipeline import Pipeline, PipelineResult, Stage, StageTrace
 from .projections import KnowledgeEvent, ProjectionBuild, replay_projection
-from .stores import InMemoryArtifactStore, RevisionConflict
+from .stores import (
+    ArtifactStore,
+    DocumentStore,
+    InMemoryArtifactStore,
+    InMemoryDocumentStore,
+    RevisionConflict,
+    StoreCapabilities,
+)
 from .views import (
     MaterializedView,
     ViewMaterialization,
@@ -19,8 +26,11 @@ from .views import (
 
 __all__ = [
     "CompileResult",
+    "ArtifactStore",
+    "DocumentStore",
     "KnowledgeEvent",
     "InMemoryArtifactStore",
+    "InMemoryDocumentStore",
     "MetricObjective",
     "MaterializedView",
     "ObjectiveDirection",
@@ -30,6 +40,7 @@ __all__ = [
     "RevisionConflict",
     "Stage",
     "StageTrace",
+    "StoreCapabilities",
     "ViewMaterialization",
     "ViewRefreshPlan",
     "ViewRefreshTask",

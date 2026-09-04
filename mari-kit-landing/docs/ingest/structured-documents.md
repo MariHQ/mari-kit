@@ -1,4 +1,4 @@
-[]{#structured-documents}[Current]{.current-label}
+[]{#structured-documents}[Supported]{.current-label}
 
 # Structured and multimodal documents
 

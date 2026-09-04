@@ -10,7 +10,12 @@ from dataclasses import dataclass, field
 from mari_components.connectors._shared import json_response
 from mari_components.connectors.protocol import ValidationResult
 from mari_components.http import HttpRequest, HttpTransport
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest
+from mari_components.types import (
+    KnowledgeDocument,
+    PollPage,
+    PollRequest,
+    content_revision,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,13 +90,15 @@ def poll_zendesk(
             if request.cursor and updated <= request.cursor:
                 continue
             article_id = str(article.get("id") or "")
+            body = str(article.get("body") or "")
             documents.append(
                 KnowledgeDocument(
                     source_id=f"zendesk:{config.subdomain}",
                     external_id=f"article:{article_id}",
                     title=str(article.get("title") or article_id),
-                    body=str(article.get("body") or ""),
-                    revision=updated,
+                    body=body,
+                    revision=content_revision(body),
+                    provider_revision=updated,
                     updated_at=updated,
                     source_url=str(article.get("html_url") or ""),
                     metadata={"locale": str(article.get("locale") or "")},

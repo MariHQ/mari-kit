@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Generic, TypeVar
 
+from mari_components.json import freeze_json_mapping
 from mari_components.knowledge.artifacts import ArtifactRef
 
 HitT = TypeVar("HitT")
@@ -22,7 +23,7 @@ class RetrievalUnit:
     def __post_init__(self) -> None:
         if not self.text.strip():
             raise ValueError("retrieval unit text is required")
-        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
+        object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -242,8 +243,8 @@ def select_context_diverse(
     totals = {name: 0.0 for name in maximum}
     counts: dict[Hashable, int] = {}
     selected: list[ContextItem] = []
-    gains: dict[tuple[str, str, str, str], float] = {}
-    order: dict[tuple[str, str, str, str], int] = {}
+    gains: dict[tuple[str, str, str, str, str, str], float] = {}
+    order: dict[tuple[str, str, str, str, str, str], int] = {}
     remaining = set(keys)
     items_by_key = {item.unit.ref.key: item for item in values}
     rounds: list[DiverseSelectionRound] = []
@@ -266,8 +267,12 @@ def select_context_diverse(
             for group, minimum in group_minimum.items()
             if counts.get(group, 0) < minimum
         }
-        candidates: list[tuple[float, tuple[str, str, str, str], ContextItem]] = []
-        fallback: list[tuple[float, tuple[str, str, str, str], ContextItem]] = []
+        candidates: list[
+            tuple[float, tuple[str, str, str, str, str, str], ContextItem]
+        ] = []
+        fallback: list[
+            tuple[float, tuple[str, str, str, str, str, str], ContextItem]
+        ] = []
         evaluations: list[DiverseCandidateEvaluation] = []
         for key in remaining:
             item = items_by_key[key]
@@ -334,9 +339,7 @@ def select_context_diverse(
             DiverseSelectionRound(
                 iteration=len(rounds) + 1,
                 unmet_groups=tuple(sorted(unmet, key=repr)),
-                candidates=tuple(
-                    sorted(evaluations, key=lambda value: value.ref.key)
-                ),
+                candidates=tuple(sorted(evaluations, key=lambda value: value.ref.key)),
                 selected_ref=item.unit.ref,
             )
         )

@@ -1,4 +1,4 @@
-[]{#verification}[Current]{.current-label}
+[]{#verification}[Supported]{.current-label}
 
 # Verification portfolios
 

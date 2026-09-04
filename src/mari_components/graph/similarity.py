@@ -36,7 +36,11 @@ def score_link_candidates(
             union = left_neighbors | right_neighbors
             score = len(common) / len(union) if union else 0.0
         elif method == "adamic_adar":
-            score = sum(1.0 / math.log(len(set(neighbors(node)))) for node in common if len(set(neighbors(node))) > 1)
+            score = sum(
+                1.0 / math.log(len(set(neighbors(node))))
+                for node in common
+                if len(set(neighbors(node))) > 1
+            )
         else:
             raise ValueError(f"unsupported link score: {method}")
         results.append(
@@ -48,7 +52,11 @@ def score_link_candidates(
                 common_neighbors=tuple(sorted(common, key=repr)),
             )
         )
-    return tuple(sorted(results, key=lambda item: (-item.score, repr(item.left), repr(item.right))))
+    return tuple(
+        sorted(
+            results, key=lambda item: (-item.score, repr(item.left), repr(item.right))
+        )
+    )
 
 
 def simrank_scores(
@@ -64,8 +72,13 @@ def simrank_scores(
     if not 0 <= decay <= 1 or iterations < 1:
         raise ValueError("decay must be in [0, 1] and iterations positive")
     known = set(values)
-    parents = {node: tuple(item for item in set(incoming(node)) if item in known) for node in values}
-    scores = {(left, right): float(left == right) for left in values for right in values}
+    parents = {
+        node: tuple(item for item in set(incoming(node)) if item in known)
+        for node in values
+    }
+    scores = {
+        (left, right): float(left == right) for left in values for right in values
+    }
     for _ in range(iterations):
         updated = dict(scores)
         for index, left in enumerate(values):
@@ -73,7 +86,17 @@ def simrank_scores(
                 left_parents, right_parents = parents[left], parents[right]
                 value = 0.0
                 if left_parents and right_parents:
-                    value = decay * sum(scores[(a, b)] for a in left_parents for b in right_parents) / (len(left_parents) * len(right_parents))
+                    value = (
+                        decay
+                        * sum(
+                            scores[(a, b)] for a in left_parents for b in right_parents
+                        )
+                        / (len(left_parents) * len(right_parents))
+                    )
                 updated[(left, right)] = updated[(right, left)] = value
         scores = updated
-    return tuple((left, right, scores[(left, right)]) for index, left in enumerate(values) for right in values[index + 1 :])
+    return tuple(
+        (left, right, scores[(left, right)])
+        for index, left in enumerate(values)
+        for right in values[index + 1 :]
+    )

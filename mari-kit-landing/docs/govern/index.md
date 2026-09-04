@@ -32,9 +32,9 @@ Validation turns generated proposals into revision-bound knowledge. The modules 
 from mari_components.knowledge import parse_answer
 
 answer = parse_answer(
+    "How long is the refund window?",
+    (document,),
     proposal,
-    documents={document.document_id: document},
-    sections={(section.document_id, section.section_id): section},
 )
 ```
 :::

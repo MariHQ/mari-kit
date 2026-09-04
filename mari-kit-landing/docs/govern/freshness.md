@@ -1,4 +1,4 @@
-[]{#freshness}[Current]{.current-label}
+[]{#freshness}[Core]{.current-label}
 
 # Freshness and impact
 
@@ -12,6 +12,10 @@
 | Current revision unavailable | Unknown | Require an explicit refresh decision |
 
 Freshness compares recorded dependencies with the current revision map. Impact performs the reverse lookup from a changed dependency to derived artifacts.
+
+`assess_revision_refs` applies the same exact comparison to any structurally
+addressed object. Documents, CRM records, media, graph assertions, procedures,
+and derived artifacts share `ObjectRef` and `RevisionRef`.
 
 
 :::{collapse} Example revision outcomes
@@ -72,6 +76,17 @@ if not report.reusable:
 
 stale = impacted_artifacts(dependencies_by_artifact, current_revisions,
     current_section_revisions=current_sections)
+```
+
+```{code-block} python
+:caption: Assess a structured record dependency
+
+from mari_components.knowledge import assess_revision_refs
+
+report = assess_revision_refs(
+    expected=[account_revision_used_by_fact],
+    current={account_object_ref: current_account_revision},
+)
 ```
 
 ## Document edit versus affected section

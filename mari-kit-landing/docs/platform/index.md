@@ -6,7 +6,7 @@
 | Platform object | Responsibility |
 |---|---|
 | `KnowledgeArtifact[T]` | Shared identity, scope, lineage, review, and time |
-| Store protocol | Observable revision, isolation, history, and read semantics |
+| Composition protocols | Store, index, authorizer, serializer, resolver, and clock boundaries |
 | `Pipeline` and `Stage` | Deterministic transforms and complete traces |
 | `EvaluationRun` | Pinned corpus, configuration, model, and metrics |
 | `compile_configurations` | Constraint-first selection among evaluated configurations |
@@ -29,6 +29,7 @@
 :maxdepth: 1
 
 artifacts
+contracts
 portability
 living-views
 stores

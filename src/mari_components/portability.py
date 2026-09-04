@@ -2,33 +2,18 @@
 
 from __future__ import annotations
 
-import dataclasses
-import datetime as dt
 import hashlib
 import json
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from enum import Enum
 from types import MappingProxyType
 from typing import Any
 
-
-def _plain(value: Any) -> Any:
-    if dataclasses.is_dataclass(value) and not isinstance(value, type):
-        return {field.name: _plain(getattr(value, field.name)) for field in dataclasses.fields(value)}
-    if isinstance(value, Enum):
-        return value.value
-    if isinstance(value, dt.datetime):
-        return value.astimezone(dt.UTC).isoformat().replace("+00:00", "Z")
-    if isinstance(value, Mapping):
-        return {str(key): _plain(item) for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))}
-    if isinstance(value, (tuple, list, set, frozenset)):
-        return [_plain(item) for item in value]
-    return value
+from mari_components.json import canonical_json_bytes
 
 
 def _canonical(value: Any) -> bytes:
-    return json.dumps(_plain(value), ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+    return canonical_json_bytes(value)
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -57,17 +42,30 @@ def _jsonl(values: Iterable[Any]) -> bytes:
 
 
 def export_bundle(
-    *, records: Iterable[Any], provenance: Iterable[Any] = (), tombstones: Iterable[Any] = (), scopes: Iterable[str] = ()
+    *,
+    records: Iterable[Any],
+    provenance: Iterable[Any] = (),
+    tombstones: Iterable[Any] = (),
+    scopes: Iterable[str] = (),
 ) -> KnowledgeBundle:
     data = {
         "records.jsonl": _jsonl(records),
         "provenance.jsonl": _jsonl(provenance),
         "tombstones.jsonl": _jsonl(tombstones),
     }
-    checksums = {name: hashlib.sha256(content).hexdigest() for name, content in data.items()}
-    manifest = {"format": "mari-knowledge-bundle", "version": 1, "scopes": sorted(set(scopes)), "checksums": checksums}
+    checksums = {
+        name: hashlib.sha256(content).hexdigest() for name, content in data.items()
+    }
+    manifest = {
+        "format": "mari-knowledge-bundle",
+        "version": 1,
+        "scopes": sorted(set(scopes)),
+        "checksums": checksums,
+    }
     data["manifest.json"] = _canonical(manifest) + b"\n"
-    data["checksums.sha256"] = "".join(f"{digest}  {name}\n" for name, digest in sorted(checksums.items())).encode()
+    data["checksums.sha256"] = "".join(
+        f"{digest}  {name}\n" for name, digest in sorted(checksums.items())
+    ).encode()
     return KnowledgeBundle(files=data)
 
 
@@ -77,7 +75,10 @@ def verify_bundle(bundle: KnowledgeBundle) -> BundleVerification:
         manifest = json.loads(bundle.files["manifest.json"])
     except (KeyError, json.JSONDecodeError, UnicodeDecodeError):
         return BundleVerification(valid=False, errors=("invalid_manifest",))
-    if manifest.get("format") != "mari-knowledge-bundle" or manifest.get("version") != 1:
+    if (
+        manifest.get("format") != "mari-knowledge-bundle"
+        or manifest.get("version") != 1
+    ):
         errors.append("unsupported_format")
     for name, expected in manifest.get("checksums", {}).items():
         content = bundle.files.get(name)
@@ -86,7 +87,9 @@ def verify_bundle(bundle: KnowledgeBundle) -> BundleVerification:
     return BundleVerification(valid=not errors, errors=tuple(errors))
 
 
-def plan_bundle_import(bundle: KnowledgeBundle, *, existing_ids: Iterable[str] = ()) -> BundleImportPlan:
+def plan_bundle_import(
+    bundle: KnowledgeBundle, *, existing_ids: Iterable[str] = ()
+) -> BundleImportPlan:
     report = verify_bundle(bundle)
     if not report.valid:
         raise ValueError(f"bundle verification failed: {report.errors}")

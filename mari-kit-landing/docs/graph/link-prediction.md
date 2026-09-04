@@ -1,4 +1,4 @@
-[]{#link-prediction}[Current]{.current-label}
+[]{#link-prediction}[Reference]{.current-label}
 
 # Structural link candidates
 

@@ -113,5 +113,6 @@ sections = document_sections(document)
 # against the exact document revision supplied here.
 model_output = call_model(document, sections)
 facts = parse_facts([document], model_output)
-artifact_store.commit(facts)
+for fact in facts:
+    proposal_queue.append(fact)
 ```

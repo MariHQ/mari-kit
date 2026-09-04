@@ -1,4 +1,4 @@
-[]{#compiler}[Current]{.current-label}
+[]{#compiler}[Reference]{.current-label}
 
 # Evaluation and compilation
 

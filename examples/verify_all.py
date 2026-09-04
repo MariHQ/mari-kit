@@ -13,6 +13,7 @@ from examples.quickstarts.agent_knowledge import run as run_agent_knowledge
 from examples.quickstarts.company_search import run as run_company_search
 from examples.quickstarts.dependency_updates import run as run_dependency_updates
 from examples.quickstarts.governed_knowledge import run as run_governed_knowledge
+from examples.quickstarts.knowledge_maintenance import run as run_knowledge_maintenance
 from examples.slack_event_pipeline.main import run as run_slack
 from examples.slackbot_reliable_answers.main import run as run_slackbot
 from examples.workflow_view_step_cache.main import run as run_workflow_view
@@ -23,6 +24,7 @@ def run() -> dict[str, object]:
     governed_knowledge = run_governed_knowledge()
     agent_knowledge = run_agent_knowledge()
     dependency_updates = run_dependency_updates()
+    knowledge_maintenance = run_knowledge_maintenance()
     acl_isolation = run_acl_isolation({"MARI_EXAMPLE_MODE": "fake"})
     github = run_github(
         {
@@ -84,6 +86,10 @@ def run() -> dict[str, object]:
         }
     )
     checks = {
+        "conversation_maintenance_matches_clean_rebuild": (
+            knowledge_maintenance["incremental_equals_rebuild"] is True
+            and knowledge_maintenance["vectors_rebuilt"] == 1
+        ),
         "dependency_updates_equal_rebuild_and_preserve_evidence": (
             dependency_updates["incremental_equals_rebuild"] is True
             and dependency_updates["vectors_rebuilt"] == 1

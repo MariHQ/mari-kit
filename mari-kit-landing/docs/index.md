@@ -20,6 +20,7 @@ graph semantics, and product behavior.
 | [Agent knowledge](start/agent-knowledge.md) | Convert completed activity into validated knowledge proposals |
 | [Conversation knowledge](agents/conversation-knowledge.md) | Turn conversations into searchable episodes with original-message evidence |
 | [Dependency-aware updates](start/dependency-updates.md) | Reuse atom representations and rebuild affected derived outputs |
+| [Incremental maintenance](start/incremental-maintenance.md) | Keep conversation topics and search current through edits and regrouping |
 
 Each path includes an executable composition. The feature pages explain the
 individual tools and the choices available when an application needs a

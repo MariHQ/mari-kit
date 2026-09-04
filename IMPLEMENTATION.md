@@ -22,6 +22,24 @@ scheduling, and product behavior.
 
 ## Shared dependency investment
 
+### Incremental maintenance algorithms
+
+The shared contracts now have four extensions: selection receipts include
+candidate-universe and rule dependencies, `DependencyIndex` maintains a reverse
+dependency frontier, `reconcile_groups` records deterministic overlap-based
+split/merge lineage, and `DeltaAggregate` supports reversible keyed reducers.
+Existing snapshot planning remains the correctness reference. Topology edits
+still rebuild the index. Scope, authorization, generation tokens, and atomic
+receipt persistence stay explicit host responsibilities.
+
+`examples/quickstarts/knowledge_maintenance.py` composes messages, episode
+extraction, topic briefs, vectors, retrieval, and aggregate maintenance. Tests
+compare the indexed planner with complete snapshot plans and compare event
+sequences with clean materialization of the same graph and identities. Model
+callbacks are deterministic fixtures. See `docs/incremental-maintenance.md`.
+
+### Original foundation
+
 The common update algorithm now lives in `mari_components.dependencies`.
 Atoms expose exact content/context stamps and occurrence-specific bindings,
 while retrieval units and evidence use the same scoped source revision.

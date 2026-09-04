@@ -1,5 +1,13 @@
 """Backend-agnostic primitives for versioned knowledge systems."""
 
+from .aggregates import (
+    CountReducer,
+    DeltaAggregate,
+    DeltaReducer,
+    LexicalStatisticsReducer,
+    MembershipReducer,
+    WeightedVectorReducer,
+)
 from .contracts import Authorizer, Clock, KnowledgeIndex, RevisionResolver, Serializer
 from .dependencies import (
     DependencyKey,
@@ -21,6 +29,13 @@ from .errors import (
     PermanentFailure,
     TransientFailure,
 )
+from .grouping import (
+    GroupAssignment,
+    GroupIdentity,
+    GroupReconciliation,
+    reconcile_groups,
+)
+from .incremental import DependencyIndex
 from .references import (
     JsonPointer,
     LocatedEvidence,
@@ -32,6 +47,13 @@ from .references import (
     ScopeRef,
     TableCell,
     TextSpan,
+)
+from .selections import (
+    SelectionPlan,
+    SelectionReceipt,
+    SelectionSpec,
+    complete_selection,
+    plan_selection,
 )
 from .types import (
     AnswerCandidate,
@@ -54,6 +76,22 @@ from .types import (
 )
 
 __all__ = [
+    "CountReducer",
+    "DeltaAggregate",
+    "DeltaReducer",
+    "LexicalStatisticsReducer",
+    "MembershipReducer",
+    "WeightedVectorReducer",
+    "GroupAssignment",
+    "GroupIdentity",
+    "GroupReconciliation",
+    "reconcile_groups",
+    "DependencyIndex",
+    "SelectionPlan",
+    "SelectionReceipt",
+    "SelectionSpec",
+    "complete_selection",
+    "plan_selection",
     "DependencyKey",
     "DependencyStamp",
     "DependencyUpdate",

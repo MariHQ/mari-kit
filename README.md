@@ -191,6 +191,12 @@ Use the current feature docs for importable signatures and implementation scope.
 
 ## Evidence validation and freshness
 
+The [incremental maintenance algorithms](docs/incremental-maintenance.md) add
+selection-aware dependencies, an indexed update frontier, stable split/merge
+lineage, and reversible count/vector/lexical/membership aggregates. Run
+`python -m examples.quickstarts.knowledge_maintenance` for the complete
+message-to-topic-to-search fixture, including clean-rebuild equivalence checks.
+
 Atoms, retrieval units, evidence, and derived artifacts share scoped revision
 references and a common dependency-update planner. It tracks exact text,
 context, source bindings, collection membership, and caller-supplied policy

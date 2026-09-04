@@ -136,6 +136,7 @@ def python_examples(path: Path) -> list[str]:
 def test_documented_python_imports_exist() -> None:
     paths = documented_pages() + [
         Path("docs/dependency-updates.md"),
+        Path("docs/incremental-maintenance.md"),
         Path("docs/conversation-knowledge.md"),
     ]
     errors = []

@@ -6,6 +6,10 @@ connect parsing, retrieval, evidence, derived knowledge, and projections.
 Specialized algorithms consume these values through their existing interfaces.
 Applications continue to own model calls, authorization, storage, and scheduling.
 
+For selection dependencies, indexed delta planning, stable group lineage, and
+reversible aggregates, see [incremental maintenance](incremental-maintenance.md).
+It extends these same references and receipt contracts.
+
 ## Shared material and identity
 
 An atom is an occurrence of source material. Its `RevisionRef` identifies the

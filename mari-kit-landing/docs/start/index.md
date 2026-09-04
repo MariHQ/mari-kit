@@ -14,6 +14,7 @@
 | [Maturity](maturity.md) | Stability and support labels |
 | [Identity migration](identity-migration.md) | Canonical document IDs and configured source fingerprints |
 | [Shared dependency updates](dependency-updates.md) | Atom reuse, completed receipts, and change propagation |
+| [Incremental maintenance](incremental-maintenance.md) | Selection, indexed planning, stable groups, and reversible aggregates |
 
 :::{collapse} Package boundary
 
@@ -35,4 +36,5 @@ architecture
 maturity
 identity-migration
 dependency-updates
+incremental-maintenance
 ```

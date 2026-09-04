@@ -10,6 +10,7 @@ site build and deployment before they appear there.
 | Guide | Use it for |
 |---|---|
 | [Dependency updates](dependency-updates.md) | Shared atom identity, input aspects, completed receipts, and selective rebuilds |
+| [Incremental maintenance](incremental-maintenance.md) | Selection dependencies, indexed planning, stable group lineage, and delta aggregates |
 | [Conversation knowledge](conversation-knowledge.md) | Episode extraction, retrieval facets, and current authorized source evidence |
 | [Connectors](connectors.md) | Polling, verified event hints, canonical refetch, and sync handoffs |
 | [Knowledge parsers](knowledge-parsers.md) | Evidence-validation contracts and task-specific parser behavior |

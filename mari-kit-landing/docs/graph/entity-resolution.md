@@ -31,7 +31,17 @@ The cascade spends expensive work after cheap deterministic checks. Ambiguous ca
 
 ## How it works
 
-Block candidates by tenant, scope, and entity type. Compare normalized exact aliases. Calculate field-agreement and fuzzy scores. Retrieve a small embedding neighborhood for unresolved candidates. Then apply separate link and review thresholds. Scores above link become a proposed canonical ID, scores in the review band retain all candidates and their feature trace, and lower scores remain distinct entities.
+The caller assembles the cascade: block by tenant, scope, and entity type,
+compare normalized aliases, and optionally add fuzzy or embedding candidates.
+`resolve_entity` scores one supplied field-agreement comparison. It returns
+`LINK`, `REVIEW`, or `DISTINCT` and each field's contribution. Canonical-ID
+selection and merging remain separate caller decisions.
+
+Scores sum natural-log likelihood ratios. They are comparison scores, distinct
+from calibrated match probabilities. Estimate field probabilities on labeled
+matches and distinct pairs, then select thresholds for your tolerated merge
+error. Correlated fields can repeat the same evidence. Inspect their individual
+contributions and the resulting review volume.
 
 ::: source-block
 **Papers**

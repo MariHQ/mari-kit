@@ -6,11 +6,13 @@
 
 | Disposition | Meaning |
 |---|---|
-| Admit | Evidence, trust, novelty, and utility clear the configured thresholds |
-| Review | Potentially useful, with one or more uncertain signals |
-| Reject | Unsafe, ungrounded, duplicate, or below the utility floor |
+| `ACCEPT` | Evidence and authorization checks pass, and confidence reaches the accept threshold |
+| `DEFER` | Evidence checks pass, and confidence lies in the review band |
+| `REJECT` | Missing provenance, invalid evidence, unauthorized source, recalled input, or low confidence |
+| `QUARANTINE` | Caller reports a secret or external instruction |
 
-Mari applies caller-supplied signals and preserves the decision trace. It evaluates caller-supplied safety and utility signals.
+Mari applies caller-supplied signals and preserves reason codes. Signal
+generation, novelty checks, and utility scoring belong to the application.
 
 
 :::{collapse} Example admission decisions
@@ -30,19 +32,22 @@ appear in the decision trace. Reconciliation runs for accepted candidates.
 
 ## How it works
 
-Run the configured admission rules over each candidate. They can inspect
-provenance, evidence spans, and recalled inputs. Other rules cover secrets,
-external instructions, authority, and confidence. Aggregate their results into
-`ACCEPT`, `DEFER`, `REJECT`, or `QUARANTINE` with reason codes. Accepted
-candidates reach mutation reconciliation. That function checks the proposed
-operation against the current canonical slot and returns a storage-free plan.
+`admit_candidate` applies a fixed precedence to supplied signals: quarantine
+first, evidence and authorization rejection second, confidence thresholds last.
+The booleans are caller assertions. Validate exact evidence and evaluate source
+access before supplying them. A high confidence score alone leaves the other
+checks intact.
+
+Send accepted candidates to [mutation planning](memory-algorithms.md) using
+caller-classified operations. The planner validates operations against existing
+memory and returns a storage-free plan. The host controls the final commit.
 
 ::: source-block
 **Papers and standards**
 
 [Indirect prompt injection](https://arxiv.org/abs/2302.12173){.paper}[W3C PROV](https://www.w3.org/TR/prov-overview/){.paper}[Mem0: memory mutation operations](https://arxiv.org/abs/2504.19413){.paper}
 
-[Disposition precedence and commit boundaries are proposed Mari contracts.]{.small}
+[Mari implements disposition precedence. The host owns signal generation and commit boundaries.]{.small}
 :::
 
 ```{code-block} python

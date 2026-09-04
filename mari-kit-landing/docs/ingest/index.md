@@ -2,6 +2,11 @@
 
 ## Ingestion operations
 
+Start with a stable [document identity](documents.md), commit source changes
+through [sync](sync.md), then parse [sections](sections.md) or
+[semantic atoms](semantic-atoms.md). Feed the committed current state into
+[dependency-aware updates](../start/dependency-updates.md) so retrieval and
+derived knowledge share the same source revisions.
 
 | Input | Operation | Output |
 |---|---|---|
@@ -30,7 +35,7 @@
 | Source event | Connector output | Sync plan | Parser work |
 |---|---|---|---|
 | New file | Upsert document | Insert stable ID and revision | Parse every section |
-| Edited section | Upsert new revision | Replace prior revision | Parse the changed section |
+| Edited section | Upsert new revision | Replace prior revision | Reparse source structure, then select changed derivations |
 | Deleted file | Tombstone | Delete source document | Invalidate derived artifacts |
 :::
 

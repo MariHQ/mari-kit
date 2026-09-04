@@ -153,3 +153,15 @@ print(comparison.mean_token_delta)  # -2300.0
 | Turns and tool calls | Measure the change in operational work |
 | Context and total tokens | Retrieval savings can be offset by memory maintenance |
 | Memory write/retrieval cost | Agent tokens and memory-system tokens have different causes |
+
+## Evaluate update correctness
+
+Replay edits, deletions, access changes, and model-version changes against the
+same starting snapshot. Compare current outputs and retrieved evidence with a
+clean rebuild after each event. Count recomputed embeddings, index updates, and
+model calls separately from answer quality.
+
+The [dependency update guide](../start/dependency-updates.md) supplies the shared
+planning contract. [Conversation knowledge](../agents/conversation-knowledge.md)
+adds an episode-level application path for revision-bound extraction. Freeze
+both recipe configuration and source membership when comparing runs.

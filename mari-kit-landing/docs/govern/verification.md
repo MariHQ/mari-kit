@@ -24,6 +24,13 @@ The selected verdict is supported. Equal supported and contradicted weight produ
 :::
 
 
+:::::::: cards
+::: card
+`select_best`
+
+Scores existing candidates with stable tie-breaking.
+:::
+
 ::: card
 `verdict_consensus`
 
@@ -109,9 +116,6 @@ result = best_of_n(
 audit(result.selected, result.attempts, result.failures, result.stopped_early)
 ```
 
-:::::::: cards
-::: card
-`select_best`
-
-Scores existing candidates with stable tie-breaking.
-:::
+Retain selected candidates together with [exact evidence](evidence.md) and
+the scorer recipe. A scorer or required-idea change is a separate dependency
+from the source text and can invalidate a cached selection.

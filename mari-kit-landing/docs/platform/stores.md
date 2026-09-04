@@ -73,7 +73,17 @@ historical = store.at_time(
 assert_artifact_store_conforms(InMemoryArtifactStore)
 ```
 
-`InMemoryArtifactStore` supports replay-safe writes and deterministic ordering.
+`InMemoryArtifactStore` rejects duplicate artifact revisions and uses deterministic ordering.
 It provides point-in-time reads, tenant-and-space isolation, and atomic revision
 checks. `assert_document_store_conforms` and `assert_artifact_store_conforms`
 exercise the public adapter contract.
+
+For a retry after an uncertain commit, read the current revision and reconcile
+it with the attempted write before issuing another commit. Subsequent artifact
+revisions must explicitly supersede the current revision. Authorization and
+[evidence validation](../govern/evidence.md) remain application checks.
+
+When persisting [dependency receipts](../start/dependency-updates.md), commit
+the output and receipt atomically against the input snapshot. Remove a receipt
+when its reusable output is evicted. A receipt is a record of available completed
+work, so output availability is part of the storage contract.

@@ -31,7 +31,11 @@ the winning verdict.
 deterministic, inspectable metric components. Evidence validity remains a hard
 boundary enforced by Mari's parsers; these scores are not truth probabilities.
 
-## Bring next
+## Future directions
+
+The following are design ideas, not exports from `mari_components.verification`.
+The current [verification page](../mari-kit-landing/docs/govern/verification.md)
+documents runnable selection and scoring APIs.
 
 ### Native citation normalization
 

@@ -160,6 +160,26 @@ deterministic behavioral checks rather than production-scale corpus results.
 
 ## Release record
 
+### Documentation review on 2026-09-04
+
+Reviewed all 74 site pages and the repository integration/design notes. Updated
+navigation, shared-reference architecture, executable examples, dependency
+handoffs, and implementation limits. Added checks for section navigation,
+snippet imports, direct public call signatures, and the architecture example.
+Historical proposals now point to current guides.
+
+Read-only live checks found the conversation-knowledge URL serving homepage
+HTML. A repository push does not publish this site. The updated strict build
+requires a separate authorized upload and CDN invalidation. The publication
+record below describes the earlier deployment, not these changes.
+
+The review also confirmed a source limitation: weighted
+`shortest_path(max_depth=...)` keeps one cost per node and can miss a valid
+shallower route. The path guide documents the limitation. A constrained-path
+algorithm fix remains separate from this documentation pass.
+
+### Earlier publication
+
 The implementation was committed to `main` as `d834c47` and pushed to
 `MariHQ/mari-kit` on 2026-09-03. The strict Sphinx build was uploaded to the
 `kit.mari.guru` S3 bucket in AWS account `386318010728`. CloudFront distribution

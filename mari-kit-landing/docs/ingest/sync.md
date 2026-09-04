@@ -22,6 +22,27 @@
 :::
 
 
+::::::::{container} diagram state
+<div>
+
+**Start**[generation 41]{.small}
+
+</div>
+
+*→*
+
+<div>
+
+**Pages**[upsert · tombstone · unchanged]{.small}
+
+</div>
+
+*→*
+
+::: gate
+**Complete?**[incomplete: preserve missing docs]{.small}
+:::
+
 *→*
 
 <div>
@@ -118,23 +139,8 @@ equality and leaves revision ordering to the caller.
 
 For each upsert, Mari validates source ownership and compares a deterministic content fingerprint with the manifest. Equal fingerprints mean unchanged. Unequal fingerprints mean upsert. Explicit tombstones become deletes. Absence becomes deletion after the terminal page of an authoritative full snapshot. The returned plan carries the prior generation as a compare-and-swap precondition and the next manifest/cursor as proposed state. Persistence commits both data and state atomically.
 
-::::::::{container} diagram state
-<div>
-
-**Start**[generation 41]{.small}
-
-</div>
-
-*→*
-
-<div>
-
-**Pages**[upsert · tombstone · unchanged]{.small}
-
-</div>
-
-*→*
-
-::: gate
-**Complete?**[incomplete: preserve missing docs]{.small}
-:::
+After committing source state, construct the complete current input snapshot
+for [dependency-aware updates](../start/dependency-updates.md). A sync delta
+describes source mutations. A dependency plan describes the derived work
+those mutations require. Keep their commits explicit so a failed derivation
+remains retryable against the committed source revision.

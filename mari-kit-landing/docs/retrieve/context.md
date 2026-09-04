@@ -82,7 +82,7 @@ audit(context.trace)
 ## Artifact-neutral composition
 
 `hydrate_hits` preserves rank, score, misses, and resolver failures. It
-joining index IDs to revisioned `RetrievalUnit` values. `select_context` then
+joins index IDs to revisioned `RetrievalUnit` values. `select_context` then
 packs those units under any set of caller-named budgets. The selection trace
 retains every eligibility or budget rejection.
 
@@ -117,6 +117,13 @@ validate_answer(visible_refs=selection.visible_refs)
 
 The greedy packer is an inspectable reference algorithm. Token, byte, latency,
 and monetary costs have caller-defined names, limits, and priority.
+
+Build atom-backed units with `RetrievalUnit.from_atom(atom, source=source)`.
+Its reference matches `atom.to_revision_ref(source=source)` after conversion
+through `unit.ref.to_revision_ref()`. This preserves one identity from
+[semantic atoms](../ingest/semantic-atoms.md) to visible context and
+[citation validation](../govern/evidence.md). Compute authorization and
+freshness before setting each item's `eligible` value.
 
 ## Constraint and diversity selection
 

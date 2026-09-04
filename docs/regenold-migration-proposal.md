@@ -1,5 +1,11 @@
 # Regenold capabilities worth adapting into Mari Kit
 
+> Historical proposal, retained for rationale. Statements about Mari's limited
+> retrieval catalog describe the project at the time of this comparison.
+> Weighted rank fusion and additional retrieval paths are now implemented. Use
+> [current retrieval docs](../mari-kit-landing/docs/retrieve/index.md) and
+> [dependency updates](dependency-updates.md) to plan integrations.
+
 This proposal compares Mari Kit's framework-neutral knowledge package with
 `regenold-eu-ai-act-rag`. Regenold is a complete, domain-specific service, so
 the useful boundary is its small deterministic policies and evaluation

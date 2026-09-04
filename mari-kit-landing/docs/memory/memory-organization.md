@@ -58,3 +58,14 @@ decision = decide_from_evidence_notes([
         supports_answer=n.supports_answer) for n in model_notes
 ])
 ```
+
+Authorize the candidate set before ranking or note linking. Min-max
+normalization is relative to that set, so adding candidates can change existing
+scores. Treat salience as a ranking signal within one query. Similarity-based
+links propose related notes. Source agreement and independent corroboration
+require separate evidence checks.
+
+For cached note metadata or summaries, declare source membership, source
+revisions, and model configuration through the
+[shared dependency planner](../start/dependency-updates.md). Preserve exact
+evidence bindings even when an unchanged text representation is reusable.

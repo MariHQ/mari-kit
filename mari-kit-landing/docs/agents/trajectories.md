@@ -100,6 +100,11 @@ analysis = parse_trajectory_analysis(normalized_events, model_labels,
 An absent status maps to `None`. Mining functions require an explicit success
 value, so unknown telemetry stays outside successful-run evidence.
 
+Normalization uses a bounded redaction policy. Inspect domain-specific fields
+before exporting traces, and apply the application's access policy when storing
+or reading them. Preserve source revisions alongside tool-result content to
+connect a trace to [evidence-bound conversation knowledge](conversation-knowledge.md).
+
 ::: source-block
 **Research and standards**
 

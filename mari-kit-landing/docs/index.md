@@ -18,10 +18,24 @@ graph semantics, and product behavior.
 | [Company search](start/company-search.md) | Store revisions, filter authorized candidates, retrieve current evidence |
 | [Governed knowledge](start/governed-knowledge.md) | Resolve typed evidence and commit reviewable derived knowledge |
 | [Agent knowledge](start/agent-knowledge.md) | Convert completed activity into validated knowledge proposals |
+| [Conversation knowledge](agents/conversation-knowledge.md) | Turn conversations into searchable episodes with original-message evidence |
+| [Dependency-aware updates](start/dependency-updates.md) | Reuse atom representations and rebuild affected derived outputs |
 
-Each path is a complete executable composition. The feature pages explain the
+Each path includes an executable composition. The feature pages explain the
 individual tools and the choices available when an application needs a
 different implementation.
+
+## Compose one knowledge library
+
+Use [scoped references](start/architecture.md#shared-contracts) to carry identity
+from ingestion through retrieval and evidence. Reuse
+[semantic atoms](ingest/semantic-atoms.md) as source units, then declare the
+inputs consumed by each derived output in the
+[dependency planner](start/dependency-updates.md). Record completed outputs
+before releasing downstream work.
+
+Start with [installation](start/install.md), run an outcome example, then
+replace its model and storage callbacks at the application boundary.
 
 ## Browse tools by area
 

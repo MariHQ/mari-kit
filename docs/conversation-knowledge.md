@@ -6,7 +6,7 @@ the original messages: for example, “Why does Mari delay summarizing Slack?”
 can retrieve a discussion saying “wait until it settles” and “each reply costs
 another call.” The source messages remain the evidence.
 
-Run `python examples/conversation_knowledge_demo.py` for a credential-free example.
+Run `python -m examples.conversation_knowledge_demo` from the repository root for a credential-free example.
 Its callback is a fixture, not a quality benchmark or a working model service.
 
 ## Integration
@@ -67,6 +67,61 @@ The parser checks exact quote spans and source revisions. It does **not** prove
 entailment, detect every malicious instruction, or decide who has authority to
 approve a decision. Use review or a separately measured verifier for promotion.
 
+## Compile and resolve a current snapshot
+
+The application supplies normalized `events`, a model or fixture callback named
+`generate`, and a cache mapping artifact cache keys to `EpisodeKnowledge` values.
+
+```python
+from mari_components.conversation_knowledge import (
+    compile_episodes,
+    evidence_context,
+    segment_conversations,
+)
+
+episodes = segment_conversations(events)
+result = compile_episodes(
+    episodes,
+    generate=generate,
+    cache=cache,
+    now=now_seconds,
+    settle_seconds=300,
+    maximum_calls=10,
+    recipe="episode-extractor:model-v1:prompt-v3",
+)
+
+for artifact in result.artifacts:
+    cache[artifact.cache_key] = artifact  # persist through the host's store
+    context = evidence_context(
+        artifact,
+        current_events=events,
+        allowed=can_read_event,
+    )
+```
+
+`pending` contains episode IDs deferred by settling or the call budget. Schedule
+another attempt in the host. A generator or parser exception propagates to the
+caller, so the invocation returns no partial result. Use small batches or one
+episode per invocation when independent failure recovery matters.
+
+`evidence_context` verifies every event in the original episode, including events
+outside the returned claim quotes. An edit, deletion, metadata change, or access
+loss anywhere in that episode invalidates its context. Resolve against the
+complete current event snapshot for that episode.
+
+## Compose with shared update planning
+
+Episode facets reuse Mari's `RetrievalUnit` contract. Their compiler currently
+uses its own episode-revision and recipe cache, not the general dependency
+planner automatically. Treat episode compilation as an application-owned
+derivation when integrating it into a larger dependency graph.
+
+Declare event membership, exact source revisions, and the extraction recipe as
+inputs. Track embedding model configuration separately for facet vectors. Keep
+retrieval projection and evidence freshness dependencies explicit so a reusable
+vector never makes an obsolete source binding current. Scope filtering and
+authorization checks still apply at query time.
+
 ## Knowledge in LLM trajectories
 
 `trajectory_events` accepts existing Mari `TrajectoryRun` values and explicitly
@@ -79,19 +134,16 @@ unknown/failure, alongside the supplied content. The same episode compiler can
 extract discoveries, procedures, failure lessons, alternatives and unresolved
 questions from these events. Applicability should be recorded in lesson text.
 
-## Research and local implementation review
+## Research basis
 
 - [LightMem](https://arxiv.org/abs/2510.18866) separates topic grouping, short-term
-  extraction and offline updating. Inspected local
-  `~/memory/LightMem/src/lightmem/factory/memory_buffer/short_term_memory.py`
-  and `memory/lightmem.py`: buffer-triggered extraction informed settled-episode
+  extraction and offline updating. Its buffer-triggered extraction informed settled-episode
   compilation and explicit budgets. Mari supplies immutable plans/artifacts;
   it does not import LightMem's storage or model stack.
 - [ReasoningBank paper](https://arxiv.org/abs/2509.25140) and
   [Google Research blog](https://research.google/blog/reasoningbank-enabling-agents-to-learn-from-experience/)
   motivate extracting reusable experience from successful and failed runs.
-  Inspected `~/memory/experience-reasoning-bank/WebArena/induce_memory.py`,
-  including outcome-conditioned memory induction. Mari reuses its own
+  Outcome-conditioned memory induction informs the design. Mari reuses its own
   `TrajectoryRun` contract and requires observable content explicitly.
 
 This is an original implementation informed by those projects; no upstream code

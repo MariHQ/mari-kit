@@ -12,8 +12,9 @@
 | Held-out change | `-0.011` |
 
 The selected configuration overfit this nine-candidate search.
-`compile_configurations` records the development result and the held-out
-result. Reserve held-out cases for each search. Keep the current configuration
+The study records development and held-out results separately.
+`compile_configurations` records metrics returned by its evaluator. Reserve
+held-out cases for a separate evaluation after selection. Keep the current configuration
 when its held-out score remains higher.
 
 :::{collapse} Configuration selection example
@@ -34,12 +35,17 @@ Weighted utility is computed for candidates that satisfy every constraint.
 ## How it works
 
 Declare the tunable parameters and hard constraints. Add metrics used for
-selection. Each candidate runs on the same frozen development cases. Mari can
-cache stage results through configuration and input fingerprints. Constraint
+selection. The callback evaluates each distinct configuration once. Use the
+same frozen development cases for every callback invocation. Constraint
 failures remove a candidate from selection. Feasible candidates receive a
 weighted utility score. Run the selected candidate once on held-out cases.
-Compilation returns a report and proposal. Deployment stays in application
-code.
+Compilation returns the winner and all candidate metrics. Held-out evaluation,
+caching, and deployment stay in application code.
+
+Metric weights operate on raw values. Normalize scales or choose weights
+explicitly so latency units have the intended influence. Missing objective
+metrics, nonfinite values, and a search with zero feasible candidates raise
+`ValueError`. Preserve the active configuration when selection fails.
 
 **Research basis**[DSPy](https://arxiv.org/abs/2310.03714){.paper} compiles parameterized LM pipelines against a declared metric. Mari generalizes the search space to retrieval, indexing, parsing, graph, consolidation, and packing configuration. Hard provenance, update-fidelity, and ACL constraints are Mari requirements and must be evaluated independently.
 

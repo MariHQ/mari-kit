@@ -10,11 +10,17 @@
 | Headquarters is San Francisco | Regulatory filing: 0.95 | 2025 onward | Selected for the current answer |
 | Headquarters was Oakland | Regulatory filing: 0.95 | Until 2025 | Retained as historically valid |
 
-The resolver keeps every assertion. Its result contains a working selection, alternatives, component scores, and the policy version behind the decision.
+The result contains a working selection, alternatives, grouped scores, and a
+dispute flag. Retain the source assertions and a versioned policy alongside
+the result for audit.
 
 ## How it works
 
-For one entity and predicate, partition assertions by overlapping valid time. The policy combines source authority, directness, independence, corroboration, and recency. A margin below the policy threshold yields `DISPUTED`, preserving the unresolved state.
+Select one entity's assertions before calling the resolver. It requires one
+predicate and optionally filters half-open validity intervals at `at_time`.
+It groups equal value representations, sums source weight × confidence ×
+independence, and adds a bonus for distinct source kinds. A margin below
+`minimum_margin` sets `disputed=True` and leaves `selected=None`.
 
 ```{code-block} python
 :caption: Resolve a claim and preserve disagreement
@@ -36,7 +42,10 @@ else:
     answer = result.selected.value
 ```
 
-Source weights belong to the application. Mari validates and explains the calculation, then records whether each assertion was observed, quoted, extracted, inferred, or generated.
+Source weights and independence estimates belong to the application. Pass
+`at_time` explicitly for current or historical answers. Omitting it admits
+assertions from every validity interval. Observation and extraction provenance
+belong in the surrounding [knowledge artifact](../platform/artifacts.md).
 
 ## Measures
 

@@ -11,7 +11,8 @@
 | `EvaluationRun` | Pinned corpus, configuration, model, and metrics |
 | `compile_configurations` | Constraint-first selection among evaluated configurations |
 | Portable bundle | Deterministic records, provenance, tombstones, manifest, and checksums |
-| Materialized view | Minimal dependency-aware refresh plan |
+| [Dependency planner](../start/dependency-updates.md) | Shared scoped inputs, completed receipts, and selective recomputation |
+| [Materialized view](living-views.md) | Compatibility adapter for revision-delta refresh |
 | Task comparison | Paired success, compliance, turns, tokens, and tool calls |
 
 :::{collapse} Artifact flow example

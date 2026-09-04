@@ -57,10 +57,15 @@ Boolean values fail integer and number constraints, and non-finite floats fail
 number constraints. These are explicit scalar checks. Mari leaves values such as
 `"14"` unchanged during validation.
 
-Adapters translate this utility to formats such as LinkML and JSON Schema.
-SHACL and RDF/OWL adapters can use the same values. SQL DDL or property-graph
+Caller-written adapters can translate this utility to formats such as LinkML
+and JSON Schema. SHACL and RDF/OWL integrations can use the same values. SQL DDL or property-graph
 constraints need their own mapping. The application controls schema choice,
 URI meaning, and its node and edge representation.
+
+Version the schema alongside any extraction or validation recipe that consumes
+it. A source revision can stay unchanged as a schema update changes its
+validation result. Model that schema version as an explicit dependency in
+[dependency-aware updates](../start/dependency-updates.md).
 
 ## Measures
 

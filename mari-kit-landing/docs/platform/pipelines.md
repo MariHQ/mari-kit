@@ -8,7 +8,7 @@
 |---|---|
 | Versioned stage | Configuration contributes to the stage fingerprint |
 | Empty output | Valid successful result with an empty batch |
-| Stage failure | Dependent stages remain pending |
+| Stage failure | Execution stops and returns the failed stage trace |
 | Mutation output | Proposal followed by an application policy check and commit |
 
 
@@ -18,24 +18,31 @@
 |---|---|---|---|
 | `normalize@1` | `" policy "` | `"policy"` | Succeeded, fingerprint recorded |
 | `discard-empty@2` | `""` | No output | Succeeded |
-| Dependent stage after upstream error | n/a | n/a | Pending |
+| Later stage after upstream error | n/a | n/a | Skipped, absent from trace |
 :::
 
 
 
 Composable `Stage` values transform immutable batches. Each run returns outputs
-and a complete `StageTrace`. Domain stages emit reviewable artifact
+and a `StageTrace` for each attempted stage. Domain stages can emit reviewable artifact
 mutations. Storage writes belong to the application.
 
 ## How it works
 
-Each stage declares its input and output types. A versioned fingerprint captures
-configuration. The stage also states whether it calls an injected service. The
-runner orders stages from their dependencies and passes immutable batches. It
-records input revisions and stage results. A failure leaves dependent stages
-pending. Outputs are mutation proposals. A final policy checks evidence and
-scope, then compares the expected artifact revision before the application
-commits them.
+`Pipeline.run` executes stages in their declared tuple order. Each transform
+receives a tuple and returns an iterable that becomes the next tuple. Elements
+retain their own mutability. Stage fingerprints cover name, version, and
+configuration. Bump the version whenever transform behavior changes.
+
+The runner records counts, fingerprints, success, and errors. On an exception,
+it returns empty outputs and the trace through the failing stage. Input types,
+source revisions, model calls, retries, and commits remain application concerns.
+Transforms can return ordinary values or mutation proposals.
+
+For branching dependencies and reusable completed outputs, use the
+[shared dependency planner](../start/dependency-updates.md). A pipeline can run
+the work for one ready derivation. Persist its successful output and receipt
+together through the application's [store boundary](stores.md).
 
 **Research basis**[Pipeline provenance research](https://arxiv.org/abs/2006.12117){.paper}
 ties reproducibility to captured inputs and transformations. Configuration is

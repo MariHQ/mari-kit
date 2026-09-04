@@ -13,7 +13,7 @@
 | Deletion | Explicit tombstone for a removed source object |
 
 
-:::{collapse} Example document revision example
+:::{collapse} Document revision example
 
 | Field | Revision A | Revision B |
 |---|---|---|
@@ -25,6 +25,13 @@
 The stable ID identifies the source object. The revision identifies the exact evidence-bearing content.
 :::
 
+
+::::::: cards
+::: card
+`PollPage`
+
+Upserts, tombstones, cursor, checkpoint, snapshot completeness, provider metadata.
+:::
 
 ::: card
 `Tombstone`
@@ -117,9 +124,7 @@ coordinates = SourceCoordinateMap.build(source_text, encoding="utf-8")
 character_span = coordinates.byte_span_to_characters(node.start_byte, node.end_byte)
 ```
 
-::::::: cards
-::: card
-`PollPage`
-
-Upserts, tombstones, cursor, checkpoint, snapshot completeness, provider metadata.
-:::
+Use the document's structural identity throughout [parsing](parsers.md),
+[retrieval](../retrieve/retrieval.md), and [evidence validation](../govern/evidence.md).
+Keep content, access policy, and source-coordinate changes as separate inputs
+to [dependency-aware updates](../start/dependency-updates.md).

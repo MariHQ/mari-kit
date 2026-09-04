@@ -21,7 +21,7 @@ quality requires evaluation with the target agent and workload.
 
 | Run | Observed activities | Process result |
 |---|---|---|
-| A | `search → read → answer` | Variant A, three direct-follow edges |
+| A | `search → read → answer` | Variant A, four edges including start and end |
 | B | `search → read → answer` | Variant A support becomes two |
 | C | `search → search → answer` | One sequential rework event |
 | D | two `search` calls sharing one parent | Parallel batch, excluded from sequential rework |
@@ -164,6 +164,12 @@ density=None, distance_exponent=1.0)` applies greedy farthest-point sampling in
 the original normalized embedding space. The optional relevance and density
 weights are supplied by the caller. The result retains each selection score,
 minimum distance, rank, and every excluded ID.
+
+Sampling weights multiply relevance, density, and distance. Equal scores break
+ties by trajectory ID. Keep the embedding model and weight recipe fixed across
+comparisons, and include rare failure cases explicitly in the review set.
+Feed selected observations into [conversation knowledge](conversation-knowledge.md)
+for searchable lessons, or successful traces into [procedure mining](procedures.md).
 
 ::: source-block
 **Research and implementations**

@@ -13,17 +13,25 @@ knowledge.mari/
 └── checksums.sha256
 ```
 
-| Validation failure | Import behavior |
+| Condition | Library behavior |
 |---|---|
 | Checksum mismatch | Reject the bundle |
-| Unknown required format version | Reject before reading records |
-| Duplicate content ID with identical bytes | Idempotent no-op |
-| Same logical identity with different content | Preserve both and emit a conflict |
-| Scope outside caller import policy | Reject that record and report it |
+| Unknown format version | Verification reports unsupported format |
+| Content ID already present in `existing_ids` | List it in `existing_content_ids` |
+| Changed record bytes | Compute a separate content ID |
+| Scope outside caller import policy | Application rejects it before applying writes |
 
 ## How it works
 
-Canonical JSON encoding produces a stable SHA-256 content ID for each record. A manifest binds format version, created time, root records, algorithms, schemas, and file checksums. Export order is deterministic, so identical inputs produce identical logical contents. Import validates the complete bundle before proposing any writes.
+Canonical JSON encoding produces stable record bytes, and import planning
+hashes each record line with SHA-256. The manifest contains format, version,
+declared scopes, and checksums for the three data files. Export sorts rows, so
+the same inputs produce identical files.
+
+`verify_bundle` checks the format and files named by manifest checksums.
+`plan_bundle_import` then partitions record content IDs against `existing_ids`.
+Schema validation, logical-identity conflicts, scope enforcement, duplicate-row
+handling, and applying records or tombstones belong to the application.
 
 ```{code-block} python
 :caption: Export, verify, and plan a portable import
@@ -41,12 +49,18 @@ report = verify_bundle(bundle)
 assert report.valid
 
 plan = plan_bundle_import(bundle, existing_ids=store.content_ids())
-store.apply(plan)  # application-owned transaction
+# Resolve these IDs against records.jsonl, validate scope/schema, then commit.
+print(plan.add_content_ids, plan.existing_content_ids)
 ```
 
 Signing and encryption are optional adapters. Checksums detect changed bytes.
 Signatures can establish publisher identity. Encryption protects bundle
 contents in transit or storage.
+
+Treat verification as integrity checking against the supplied manifest. An
+untrusted sender can replace both data and checksums. Authenticate the sender
+and validate the expected file set, manifest schema, record schemas, and import
+policy at the application boundary.
 
 For logs, fixtures, and API boundaries, `to_json_value` recursively converts
 Mari dataclasses, enums, immutable mapping proxies, timezone-aware datetimes,
@@ -67,9 +81,9 @@ payload = json.dumps(to_json_value(change_hint), sort_keys=True)
 | Invariant | Check |
 |---|---|
 | Determinism | Same values produce byte-identical files |
-| Tamper detection | Every changed byte invalidates its checksum |
-| Round trip | Export-import preserves records and provenance |
-| Idempotency | Re-import creates zero duplicate records |
+| Integrity | A changed data file disagrees with its recorded checksum |
+| Round trip | Application import preserves records and provenance |
+| Idempotency | Existing record IDs are separated from proposed additions |
 | Compatibility | Golden bundles load across supported Mari versions |
 
 ::: source-block
@@ -77,7 +91,7 @@ payload = json.dumps(to_json_value(change_hint), sort_keys=True)
 
 [Portable Agent Memory](https://arxiv.org/abs/2605.11032){.paper}[Portable Memory reference](https://github.com/MacPaw/portable-memory){.paper}[ApertoMemory](https://github.com/apertomemory/apertomemory){.paper}[RFC 8785 JSON Canonicalization](https://www.rfc-editor.org/rfc/rfc8785){.paper}[Merkle trees](https://doi.org/10.1007/3-540-48184-2_32){.paper}
 
-[Each checked-out reference uses the MIT license. Mari currently provides an
-in-memory bundle value and deterministic codec. Cross-vendor compatibility
+[Mari currently provides an in-memory bundle value and deterministic codec.
+Cross-vendor compatibility
 requires a shared profile and independent implementations.]{.small}
 :::

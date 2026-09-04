@@ -39,6 +39,11 @@ quality = inspect_graph_quality(
 The diff uses exact identity and set semantics. Callers can run entity
 resolution before comparison when that is appropriate.
 
+Preserve relation type and edge identity in edge keys when parallel relations
+carry different meaning. An endpoints-only key collapses those distinctions.
+Use stable scoped object identity to compare the same object across revisions,
+then compare its fingerprint to detect content changes.
+
 `diff_records` detects changes that preserve node identity, such as a modified
 function body or an updated entity attribute. Identity and fingerprints remain
 caller projections.
@@ -80,6 +85,11 @@ changes = diff_record_fields(
 ```
 
 ## Measures
+
+For derived outputs, pass changed current stamps and collection membership to
+the [dependency planner](../start/dependency-updates.md). Structural differences
+identify changed topology. Receipts determine whether completed computations
+remain reusable after that change.
 
 | Measure | Calculation |
 |---|---|

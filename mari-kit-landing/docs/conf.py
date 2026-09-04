@@ -22,8 +22,9 @@ exclude_patterns = ["_build", "_includes/**"]
 html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "canonical_url": "https://kit.mari.guru/",
-    "collapse_navigation": True,
-    "navigation_depth": 3,
+    "collapse_navigation": False,
+    "navigation_depth": 2,
+    "titles_only": True,
 }
 html_title = "Mari Kit documentation"
 html_static_path = ["_static"]

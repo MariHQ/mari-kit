@@ -1,5 +1,10 @@
 # Reference implementation and license audit
 
+This is a record of previous inspections, not a live inventory of upstream
+licenses or releases. Recheck the exact upstream revision and applicable terms
+before redistributing code, weights, or data. See the
+[documentation map](README.md) for current API guides.
+
 Mari reimplements small, model-neutral algorithm boundaries. Reference repositories are used for equation, ordering, threshold, and fixture conformance; they are not runtime dependencies.
 
 | Algorithm family | Reference | License decision | Mari boundary |
@@ -35,7 +40,7 @@ Mari reimplements small, model-neutral algorithm boundaries. Reference repositor
 | Structured code knowledge | `DeusData/codebase-memory-mcp` | MIT; permissive graph and evaluation reference | `CodeSymbol`, `CodeEdge`, `impacted_symbols` |
 | Lifecycle capture | `Barsoomx/engram` | Apache-2.0; permissive session-hook reference | `ContextProvider` lifecycle boundary |
 | General graph algorithms | `networkx/networkx` | BSD-3-Clause; permissive differential oracle | Traversal, paths, components, centrality, link prediction, SimRank, interchange |
-| Prize-collecting subgraphs | `fraenkel-lab/pcst_fast` | MIT; permissive algorithm and adapter reference | `prize_guided_subgraph` is a distinct dependency-free heuristic; exact adapter remains optional |
+| Prize-collecting subgraphs | `fraenkel-lab/pcst_fast` | MIT; permissive algorithm and adapter reference | `prize_guided_subgraph` is a distinct dependency-free heuristic; a solver adapter is not bundled |
 | Construction quality | `kracr/kg-quality-metric` | Apache-2.0; permissive evaluation reference | `inspect_graph_quality`, graph construction evaluation boundaries |
 | RDF interchange | `RDFLib/rdflib` | BSD-3-Clause; permissive interoperability oracle | `to_rdflib` |
 | Entity blocking | `dedupeio/dedupe` | MIT; permissive blocking reference | `candidate_pairs`, `cluster_matches` |

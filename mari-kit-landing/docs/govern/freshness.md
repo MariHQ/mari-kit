@@ -13,6 +13,26 @@
 
 Freshness compares recorded dependencies with the current revision map. Impact performs the reverse lookup from a changed dependency to derived artifacts.
 
+## Coordinate updates across modules
+
+Use `assess_freshness` or `assess_revision_refs` to inspect an existing
+artifact's revision dependencies. Use
+[`plan_dependency_updates`](../start/dependency-updates.md) to coordinate
+recomputation across atoms, embeddings, artifacts, and projections.
+
+| Planner action | Meaning | Host action |
+|---|---|---|
+| `REUSE` | Completed receipt matches the recipe and current inputs | Read the stored output |
+| `REBUILD` | Inputs are available and work is due | Compute and atomically publish output plus receipt |
+| `WAIT` | An upstream output is being rebuilt | Replan after successful upstream publication |
+| `BLOCKED` | A required input is unavailable | Restore the input or revise the graph explicitly |
+
+The planner compares actual completed output fingerprints. An upstream
+rebuild that produces identical material can preserve downstream results.
+Include ordered membership for aggregate outputs and recipe configuration for
+model or prompt changes. Access-policy stamps invalidate affected projections.
+Read-time authorization remains a separate application check.
+
 `assess_revision_refs` applies the same exact comparison to any structurally
 addressed object. Documents, CRM records, media, graph assertions, procedures,
 and derived artifacts share `ObjectRef` and `RevisionRef`.

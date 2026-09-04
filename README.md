@@ -32,6 +32,11 @@ application or LLM can compose those operations for its particular system.
 The [documentation](https://kit.mari.guru/) begins with complete paths for
 company search, governed knowledge, and knowledge derived from completed agent
 work. The feature pages contain the full capability catalog and research basis.
+For the shared integration path, start with
+[dependency-aware updates](docs/dependency-updates.md) and
+[conversation knowledge](docs/conversation-knowledge.md). The
+[repository docs index](docs/README.md) separates current guides from historical
+design notes and reference audits.
 
 ## Installation
 
@@ -179,9 +184,10 @@ documented separately in
 Their permissively licensed cross-implementation checks and the RRC-DSCD
 paper/code discrepancy are recorded in
 [`docs/contradiction-reference-validation.md`](docs/contradiction-reference-validation.md).
-The evidence and validation requirements behind the proposed artifact, store,
+The original evidence and validation requirements behind the artifact, store,
 pipeline, context, temporal-graph, procedure, and compiler APIs are in
-[`docs/proposed-api-foundations.md`](docs/proposed-api-foundations.md).
+the historical [API design rationale](docs/proposed-api-foundations.md).
+Use the current feature docs for importable signatures and implementation scope.
 
 ## Evidence validation and freshness
 
@@ -489,8 +495,10 @@ and tool results out of untrusted logs.
 
 ## Executable examples
 
-Every example supports deterministic fixture mode. Together they form a
-machine-readable acceptance suite:
+The integration examples below support deterministic fixture mode and form a
+machine-readable acceptance suite. The two additional starting points are
+[dependency updates](examples/quickstarts/dependency_updates.py) and
+[conversation knowledge](examples/conversation_knowledge_demo.py):
 
 - [`github_pipeline`](examples/github_pipeline/) polls repository knowledge,
   processes a webhook hint, repairs a missed event, reconciles deletion, and
@@ -524,6 +532,7 @@ Run everything without credentials:
 
 ```bash
 python -m examples.verify_all
+python -m examples.conversation_knowledge_demo
 pytest -q
 ```
 

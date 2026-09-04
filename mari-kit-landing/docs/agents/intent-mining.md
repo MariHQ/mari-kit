@@ -140,6 +140,11 @@ assert reviews[0].agreement == 0.5
 The result reports valid and invalid counts along with duplicates. The caller
 sets any acceptance threshold.
 
+For repeated reviews by the same reviewer, the first supplied review wins.
+Order review records deliberately and inspect `duplicate_reviewer_ids` before
+promotion. Keep stable taxonomy IDs in application storage so a label edit
+preserves the intended group identity.
+
 ## Task-adaptive evaluation dimensions
 
 An intent label describes the aim inferred from behavior. A rubric carries the
@@ -175,6 +180,11 @@ print(score.overall, score.required_failures, score.missing_dimensions)
 The `required_failures` field lists required dimensions below the configured
 minimum. A caller can inspect it beside the weighted score before changing
 application behavior.
+
+Connect reviewed intent groups to [procedure mining](procedures.md), and use
+[conversation knowledge](conversation-knowledge.md) to search the observations
+behind a proposed intent. Evidence-bound labels and searchable source content
+serve different steps of the same review workflow.
 
 :::{collapse} One scored rubric, as data
 

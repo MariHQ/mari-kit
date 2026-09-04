@@ -4,115 +4,94 @@
 
 ## Ownership
 
-| Component | Supplied by |
+Mari provides composable values and algorithms. The host application decides
+which computations to run, which users can access material, and when to commit.
+
+| Mari supplies | Application supplies |
 |---|---|
-| Immutable types, deterministic policy functions, traces, and metrics | Mari |
-| Connector protocols and store protocols | Mari |
-| Reference in-memory algorithms | Mari |
-| Models, agent loop, scheduler, credentials, and authorization decisions | Application |
-| HTTP transport and production database transactions | Application |
-| Capacity planning and distributed operations | Application |
+| Immutable source, reference, evidence, and artifact values | Source credentials and identity mapping |
+| Parsing, ranking, graph algorithms, and update plans | Models, embeddings, and domain semantics |
+| Connector and storage protocols | HTTP transport, databases, and transactions |
+| Reference adapters and conformance checks | Scheduling, retries, capacity, and deployment |
+| Validation reports and reviewable proposals | Authorization, approval, and truth policy |
 
-The application defines its knowledge graph. Mari's graph tools accept its IDs,
-iterables, and callbacks. Functions return data for inspection. The application
-chooses storage writes and the next operation.
+## Shared contracts
 
+The same source material can support lexical search, embeddings, exact evidence,
+and derived knowledge. Keep its identity intact across these boundaries.
 
-:::{collapse} Ownership example
+| Value | Role | Consumers |
+|---|---|---|
+| `ScopeRef` | Tenant and space partition | Source references and artifact stores |
+| `ObjectRef` | Stable object within a namespace and scope | Documents, records, and derived objects |
+| `RevisionRef` | Exact revision and optional unit | Evidence, structural retrieval, and freshness |
+| `SemanticAtom` | Text occurrence with source coordinates | Passage retrieval, embeddings, and evidence |
+| `DependencyStamp` | Current fingerprint of one input aspect | Shared update planner |
+| `DerivationSpec` | Ordered inputs plus versioned computation recipe | Rebuild and reuse decisions |
+| `MaterializationReceipt` | Completed output and the inputs consumed | Downstream availability and reuse |
 
-| Work | Supplied by |
-|---|---|
-| Immutable types and pure planning | Mari |
-| Connector protocol and normalized pages | Mari |
-| Store protocol and reference semantics | Mari |
-| Evaluation metrics and run identity | Mari |
-| Agent loop and scheduling | Application |
-| Credentials and HTTP transport | Application |
-| Production database transactions | Application |
-| Model invocation and deployment | Application |
-:::
-
-:::::::{container} diagram flow
-::: card
-**Sources**[provider APIs]{.small}
-:::
-
-*poll*
-
-::: card
-**Documents**[identity · revision · ACL]{.small}
-:::
-
-*derive*
-
-::: card
-**Knowledge**[facts · answers · decisions]{.small}
-:::
-
-*retrieve*
-
-::: card
-**Context**[allowed · fresh · cited]{.small}
-:::
-:::::::
-
-| Component | Provider |
-|---|---|
-| Typed values and pure planning functions | Mari |
-| Connector polling and cursor contracts | Mari |
-| Strict parsers for generated values | Mari |
-| Retrieval and index serialization | Mari |
-| Policy functions and evaluation functions | Mari |
-| Database and transactions | Application |
-| Credentials, HTTP transport, retries, and scheduler | Application |
-| Model, prompts, and inference | Application |
-| Embeddings and index lifecycle | Application |
-| Authorization and agent runtime | Application |
-
-| Application-defined concept | Why it stays with the application |
-|---|---|
-| Node, edge, statement, and ontology semantics | Every knowledge system has its own identity rules |
-| Graph construction order | The current task determines how tools compose |
-| Query language and planner | Storage capabilities shape query costs |
-| Merge, promotion, and truth policy | The caller assigns consequences to Mari's proposals |
-| Graph runtime and transaction manager | The data layer controls persistence and isolation |
-
-## How it works
-
-Provider data enters Mari as immutable values. Pure functions produce plans,
-candidates, reports, or index payloads. The caller inspects a result, then sends
-approved writes through its transaction boundary. Injected network and storage
-functions also let the caller run the same inputs in a dry run.
-
-::: source-block
-**Research and standards**
-
-[W3C PROV data model](https://www.w3.org/TR/prov-dm/){.paper}[Data pipeline reproducibility](https://arxiv.org/abs/2006.12117){.paper}
-
-[Provenance work motivates explicit entities and immutable revisions. Mari also
-records the activity and configuration that produced a value. Its API contract
-places planning in library functions and commits in application code.]{.small}
-:::
+`KnowledgeDocument.document_id` encodes source and external IDs. Add an explicit
+scope when constructing a structural reference. Document IDs and graph node IDs
+alone carry application-defined isolation rules.
 
 ```{code-block} python
-:caption: Keep model and persistence calls outside the domain layer
+:caption: Reuse one atom for retrieval and exact evidence
 
-from mari_components import KnowledgeDocument
-from mari_components.knowledge import document_sections, parse_facts
+from mari_components import ObjectRef, ScopeRef
+from mari_components.documents import atom_dependencies, parse_markdown, semantic_atoms
+from mari_components.retrieval import RetrievalUnit
 
-document = KnowledgeDocument(
-    source_id="handbook",
-    external_id="refunds",
-    title="Refund policy",
-    body="Enterprise refunds close after 30 days.",
-    revision="sha256:8f31c2a",
+source = ObjectRef(
+    namespace="document",
+    object_id="refund-policy",
+    scope=ScopeRef(tenant="acme", space="support"),
 )
-sections = document_sections(document)
-
-# The application invokes its model. Mari requires evidence that resolves
-# against the exact document revision supplied here.
-model_output = call_model(document, sections)
-facts = parse_facts([document], model_output)
-for fact in facts:
-    proposal_queue.append(fact)
+parsed = parse_markdown(
+    "# Refunds\n\nRefunds close after 30 days.",
+    artifact_id=source.object_id,
+    revision="r1",
+)
+atoms = semantic_atoms(parsed.values[0])
+atom = atoms[0]
+unit = RetrievalUnit.from_atom(atom, source=source)
+evidence = atom.located_evidence(source=source)
+inputs = atom_dependencies(atom, source=source)
+assert unit.ref.to_revision_ref() == evidence.ref
 ```
+
+The evidence resolver returns the full source document at `r1`, since atom
+character spans use document-global coordinates. The atom's text representation
+can remain reusable when a source edit changes its evidence binding.
+
+## Change propagation
+
+```text
+source revision → atoms and collection membership → representations
+                         │                               │
+                         └──── evidence bindings ────────┤
+                                                        ↓
+                                            artifacts and projections
+```
+
+Declare each computation's consumed aspects. The planner returns reusable,
+ready, waiting, or blocked outputs. The host executes ready work and atomically
+stores the output with its receipt, conditional on the input snapshot remaining
+current. Replanning releases dependent work. Equal output fingerprints can stop
+propagation after recomputation.
+
+The [dependency-update guide](dependency-updates.md) covers collection changes,
+recipe versions, failure handling, and compatibility with specialized refresh
+APIs. Source availability and authorization remain explicit host inputs.
+
+## Integration boundaries
+
+Start with [company search](company-search.md), then add
+[governed knowledge](governed-knowledge.md) or
+[conversation knowledge](../agents/conversation-knowledge.md). Replace reference
+stores through the [storage contracts](../platform/stores.md) and retain their
+conformance checks.
+
+Graph tools accept caller-owned IDs and callbacks. Applications define edge
+semantics, traversal visibility, merge policy, and persistence. Provenance edges
+record support or derivation. Computational dependencies also include selection
+rules, model versions, configuration, and other inputs a citation may omit.

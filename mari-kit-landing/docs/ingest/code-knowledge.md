@@ -109,5 +109,5 @@ Incremental rebuild compares content fingerprints, reparses changed files, remov
 
 [Codebase-Memory](https://arxiv.org/abs/2603.27277){.paper}[MIT reference implementation](https://github.com/DeusData/codebase-memory-mcp){.paper}[Tree-sitter paper](https://tree-sitter.github.io/tree-sitter/){.paper}[SWE-bench](https://arxiv.org/abs/2310.06770){.paper}
 
-[The first Mari pass defines language-neutral symbols, edges, and impact traversal. Concrete parsers remain integrations.]{.small}
+[Mari includes the standard-library Python parser and language-neutral symbols, edges, and impact traversal. Additional language parsers remain integrations.]{.small}
 :::

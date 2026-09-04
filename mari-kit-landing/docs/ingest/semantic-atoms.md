@@ -189,8 +189,8 @@ atom_store.tombstone_many(plan.tombstone_atom_ids)
 
 | Alignment result | Raw atom vector | Contextual atom vector | Section/page vector |
 |---|---|---|---|
-| Unchanged | Reuse | Reuse when heading path is unchanged | Keep unless another child changed |
-| Unchanged text moved to another heading | Reuse | Rebuild with the new heading path | Invalidate old and new parents |
+| Unchanged exact input text | Reuse | Reuse when exact contextual text matches | Keep unless another child changed |
+| Unchanged text moved to another heading | Reuse | Rebuild if contextual text changes | Invalidate old and new parents |
 | Inserted | Create | Create | Invalidate parent |
 | Modified | Create new, tombstone old | Create new, tombstone old | Invalidate parent |
 | Deleted | Tombstone | Tombstone | Invalidate parent |
@@ -198,6 +198,47 @@ atom_store.tombstone_many(plan.tombstone_atom_ids)
 The refresh plan contains IDs and invalidations. It leaves embeddings and writes
 to the host. Atom retrieval remains authoritative. The host can rebuild parent
 embeddings lazily.
+
+Alignment uses normalized hashes. Embedding reuse checks exact raw and
+contextual text, so a cosmetic edit can preserve alignment and still require
+an embedding refresh. `plan_atom_refresh` assumes a fixed embedding recipe.
+Version model, prompt, and preprocessing configuration through the shared
+planner when those settings can change.
+
+## Share atoms across dependency-aware consumers
+
+An atom's reusable text and its current evidence location have different
+lifetimes. `atom_dependencies` separates exact content, contextual text,
+occurrence binding, and source revision. Content reuse stays within one
+scoped source object. `atom_collection_stamp` tracks the complete ordered
+collection, including insertion, deletion, and the empty collection.
+
+```{code-block} python
+:caption: Carry one scoped atom identity into retrieval and evidence
+
+from mari_components import ObjectRef, ScopeRef
+from mari_components.documents import atom_collection_stamp, atom_dependencies
+from mari_components.retrieval import RetrievalUnit
+
+source = ObjectRef(
+    namespace="document", object_id="pricing",
+    scope=ScopeRef(tenant="acme", space="support"),
+)
+atom = atoms[0]
+inputs = atom_dependencies(atom, source=source)
+membership = atom_collection_stamp(atoms, source=source)
+unit = RetrievalUnit.from_atom(atom, source=source)
+evidence = atom.located_evidence(source=source)
+assert unit.ref.to_revision_ref() == evidence.ref
+```
+
+Use `inputs.content` for raw embedding derivations and `inputs.context` for
+contextual embeddings. Include `inputs.binding` in evidence-bearing outputs.
+Summaries and search projections also need `membership` to observe new atoms.
+The [dependency update guide](../start/dependency-updates.md) shows recipes,
+completed-work receipts, blocked inputs, and propagation that stops when a
+recomputed output stays identical. The evidence resolver supplies the full
+source revision because atom spans use document-global character offsets.
 
 ::: source-block
 **Evidence**
@@ -305,8 +346,8 @@ for chunk in context.chunks:
     model_context.append(chunk.text)
 ```
 
-Hits receive budget before their neighbors. The selected retrieval evidence
-stays in context. Neighbor selection follows increasing ordinal
+Hits receive budget before their neighbors. Hits that fit the budget
+stay in context. Neighbor selection follows increasing ordinal
 distance. Mari deduplicates the result and restores source order inside each
 section. Returned chunks include hit IDs and exact token accounting.
 Presentation chunks live in the returned value for that query.
@@ -368,6 +409,8 @@ view, keeping stale atoms out of present-day results.
 | `patience_diff(old, new)` | Unique anchors. Myers fallback | Coalesced stable-anchor spans |
 | `align_atoms(old, new, *, algorithm=PATIENCE, modification_threshold=.55)` | Exact hash anchors plus local lexical pairing | Unchanged, inserted, deleted, modified |
 | `plan_atom_refresh(alignment, *, rebuild_parent_embeddings_eagerly=False)` | Separates raw/contextual reuse. Lazy or eager parent policy is recorded for the host | Reuse, embed, tombstone, invalidate IDs |
+| `atom_dependencies(atom, *, source)` | Scoped exact text, context, binding, and revision | Four shared dependency stamps |
+| `atom_collection_stamp(atoms, *, source, unit_id="")` | Complete ordered collection | Membership stamp for summaries and projections |
 | `aggregate_atom_hits(hits, *, parent="section", weights=(1,.4,.2))` | Top-score aggregation | Ranked parents and contributing atoms |
 | `maxsim_section_score(query_vectors, section, *, contextual=True)` | Raw or contextual atoms | Exact late-interaction score |
 | `assemble_atom_context(..., token_budget, neighbors=2)` | Hits precede neighbors | Ephemeral source-ordered chunks |

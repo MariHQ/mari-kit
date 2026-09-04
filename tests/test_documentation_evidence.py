@@ -1,3 +1,6 @@
+import ast
+import importlib
+import inspect
 import re
 from pathlib import Path
 
@@ -116,3 +119,98 @@ def test_documentation_uses_direct_prose() -> None:
     ]
 
     assert violations == []
+
+
+def python_examples(path: Path) -> list[str]:
+    """Read literal Python snippets, excluding MyST directive options."""
+    return [
+        "\n".join(line for line in body.splitlines() if not line.startswith(":"))
+        for body in re.findall(
+            r"(?m)^```(?:\{code-block\} python|python)\s*\n(.*?)^```",
+            path.read_text(),
+            flags=re.DOTALL,
+        )
+    ]
+
+
+def test_documented_python_imports_exist() -> None:
+    paths = documented_pages() + [
+        Path("docs/dependency-updates.md"),
+        Path("docs/conversation-knowledge.md"),
+    ]
+    errors = []
+    for path in paths:
+        for ordinal, snippet in enumerate(python_examples(path), 1):
+            try:
+                tree = ast.parse(snippet)
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.ImportFrom) and (
+                        node.module or ""
+                    ).startswith("mari_components"):
+                        module = importlib.import_module(node.module)
+                        for name in node.names:
+                            if name.name != "*" and not hasattr(module, name.name):
+                                errors.append(
+                                    f"{path}:{ordinal}: {node.module}.{name.name}"
+                                )
+            except (SyntaxError, ImportError) as error:
+                errors.append(f"{path}:{ordinal}: {error}")
+    assert errors == []
+
+
+def test_architecture_shared_atom_example_runs() -> None:
+    for snippet in python_examples(DOCS / "start/architecture.md"):
+        exec(compile(snippet, "architecture.md", "exec"), {})
+
+
+def test_direct_public_api_call_signatures() -> None:
+    """Check call shape without executing host callbacks or model services."""
+    errors = []
+    for path in documented_pages():
+        for ordinal, snippet in enumerate(python_examples(path), 1):
+            tree = ast.parse(snippet)
+            imports = {}
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ImportFrom) and (node.module or "").startswith(
+                    "mari_components"
+                ):
+                    module = importlib.import_module(node.module)
+                    imports.update(
+                        (name.asname or name.name, getattr(module, name.name))
+                        for name in node.names
+                        if name.name != "*"
+                    )
+            for node in ast.walk(tree):
+                if not (
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Name)
+                    and node.func.id in imports
+                ):
+                    continue
+                if any(isinstance(arg, ast.Starred) for arg in node.args) or any(
+                    keyword.arg is None for keyword in node.keywords
+                ):
+                    continue
+                try:
+                    inspect.signature(imports[node.func.id]).bind(
+                        *[None for _ in node.args],
+                        **{keyword.arg: None for keyword in node.keywords},
+                    )
+                except (TypeError, ValueError) as error:
+                    errors.append(f"{path}:{ordinal}: {node.func.id}: {error}")
+    assert errors == []
+
+
+def test_feature_pages_are_in_their_section_navigation() -> None:
+    for area in FEATURE_AREAS:
+        index = (DOCS / area / "index.md").read_text()
+        entries = {
+            line.strip()
+            for block in re.findall(r"```\{toctree\}(.*?)```", index, re.DOTALL)
+            for line in block.splitlines()
+            if line.strip() and not line.startswith(":")
+        }
+        pages = {
+            path.stem for path in (DOCS / area).glob("*.md") if path.stem != "index"
+        }
+        assert pages <= entries, f"{area}: missing navigation entries {pages - entries}"

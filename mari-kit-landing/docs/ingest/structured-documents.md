@@ -46,7 +46,7 @@ region = DocumentRegion(
 ```
 
 Evidence can address a page region or exact table cell. Retrieval supports
-several representations and fuse their rankings. Answer validation resolves the
+several representations and can fuse their rankings. Answer validation resolves the
 citation against the original region.
 
 ## Parser contract
@@ -54,6 +54,10 @@ citation against the original region.
 ```{code-block} python
 :caption: Adapt any parser through a caller-owned dependency
 
+from typing import Protocol
+from mari_components.documents import StructuredDocument
+
+# BinaryDocument and docling_adapter are application-defined integration types.
 class StructuredDocumentParser(Protocol):
     async def parse(self, source: BinaryDocument) -> StructuredDocument: ...
 

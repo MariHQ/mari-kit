@@ -14,8 +14,11 @@
 
 ## How it works
 
-Blocking reduces an all-pairs comparison from quadratic work to pairs that
-share a configured key. Scoring stays injectable because each corpus gives its
+Blocking limits expensive pair scoring to records that share a configured key.
+The reference candidate generator still examines every pair for shared keys,
+so candidate enumeration has quadratic pair-check cost. Prepartition large
+inputs by tenant and entity type or inject an indexed candidate generator.
+Scoring stays injectable because each corpus gives its
 fields different meaning. Threshold clustering returns assignments plus every
 accepted link. The link set exposes transitive merges.
 
@@ -52,7 +55,7 @@ for cluster in clusters.clusters:
 `BlockedPair.shared_keys` explains why comparison occurred. Cluster diagnostics
 surface the weakest accepted link and any rejected pair located inside a
 transitively merged cluster. `resolve_relation_evidence` omits an `accepted`
-flag. Evidence presence carries evidence. The caller defines truth and
+flag. Resolved evidence establishes source availability. The caller defines truth and
 sufficiency policy. The older `bind_relation_evidence` compatibility function retains its
 original presence-based behavior.
 
@@ -80,6 +83,12 @@ projection = project_graph_evidence(
 The mapping supports several nodes from one artifact. A node can resolve to several
 artifacts. `artifact_refs` is a convenience deduplication. The complete
 association table remains available.
+
+Use the same scoped `ArtifactRef` values as retrieval units. Convert them through
+`to_revision_ref()` when joining structural evidence or dependency stamps.
+Apply authorization in the node and artifact callbacks before exposing the
+projection. See [dependency-aware updates](../start/dependency-updates.md) for
+rebuilding affected evidence projections after source changes.
 
 ## Version families
 

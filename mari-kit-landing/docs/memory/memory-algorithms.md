@@ -85,6 +85,13 @@ store.commit(plan, expected_generation=generation)
 
 **Classification remains application-owned.** Mari checks candidate coverage, target existence, add collisions, and conflicting target operations. `apply_memory_mutations` provides a side-effect-free preview. Storage remains the host's responsibility.
 
+The `store.commit` call illustrates a host adapter. Check the expected storage
+generation atomically to avoid applying a valid plan to changed memory.
+After committing a source revision, submit current stamps to the
+[dependency planner](../start/dependency-updates.md) to update embeddings,
+evidence bindings, summaries, and retrieval projections consistently. A delete
+also changes collection membership, including the transition to an empty set.
+
 ::: source-block
 **Research basis**
 

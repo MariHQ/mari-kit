@@ -4,6 +4,12 @@
 
 ## Flow
 
+From an installed repository checkout:
+
+```{code-block} console
+python -m examples.quickstarts.company_search
+```
+
 This composition stores canonical source revisions, builds a replaceable index,
 applies an authorization result during candidate scoring, and returns the exact
 revision used as context.
@@ -28,3 +34,10 @@ The index receives that set before it scores candidates.
 | Candidate generation | BM25 | Dense flat, sparse vector, HNSW, IVF-PQ, MUVERA |
 | Authorization | Explicit allowed-ID set | Application `Authorizer` implementation |
 | Returned context | Whole document body | Semantic atoms and neighbor expansion |
+
+## Extend the composition
+
+Use [semantic atoms](../ingest/semantic-atoms.md) for passage-level retrieval.
+[Dependency-aware updates](dependency-updates.md) separates reusable text
+representations from revision-sensitive evidence bindings. Authorize candidates
+before scoring, then resolve the selected revision before rendering context.

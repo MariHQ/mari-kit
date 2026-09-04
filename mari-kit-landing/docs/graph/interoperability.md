@@ -22,8 +22,13 @@ Mari uses a transient `GraphProjection` at the conversion boundary. Application 
 from mari_components.graph import GraphProjection, ProjectionEdge, to_graphml
 
 projection = GraphProjection(
-    nodes=(("customer:42", {"kind": "Customer"}),),
-    edges=(ProjectionEdge("customer:42", "product:7", "purchased"),),
+    nodes=(
+        ("customer:42", {"kind": "Customer"}),
+        ("product:7", {"kind": "Product"}),
+    ),
+    edges=(ProjectionEdge(
+        source="customer:42", target="product:7", relation="purchased",
+    ),),
     directed=True,
 )
 
@@ -32,6 +37,8 @@ if encoded.report.losses:
     logger.warning("GraphML conversion losses: %s", encoded.report.losses)
 write_bytes(encoded.data)
 ```
+
+Include both endpoints in the node collection before export. Encode scoped references into stable string IDs and preserve the reverse mapping in your adapter. Inspect the loss report before accepting an export. NetworkX, RDFLib, and PyTorch Geometric integrations require their respective optional packages in the host environment.
 
 ## Measures
 

@@ -13,11 +13,11 @@
 
 ## How it works
 
-Retention and freshness produce independent decisions. Expiration removes
-knowledge from ordinary reads. A tombstone records identity and reason. It also
-keeps the event time and reachable derived artifacts. Deleted content leaves
-the record. Legal holds take priority over routine expiration and remain
-visible in the decision trace.
+Retention and freshness produce independent decisions. `plan_retention`
+emits delete actions for expired records, hold actions for expired held
+records, and invalidations for reachable derivatives. Each action contains
+the record ID, kind, and reason. The host persists its own tombstones and event
+times, removes content from reads, and applies storage retention policy.
 
 ```{code-block} python
 :caption: Plan deletion through derivation edges
@@ -32,7 +32,6 @@ plan = plan_retention(
     now=datetime.now(timezone.utc),
     policy=RetentionPolicy(
         default_ttl_days=30,
-        allowed_purposes={"support": ("order_fulfillment",)},
     ),
 )
 
@@ -44,15 +43,26 @@ Mari produces a plan. The storage adapter performs physical deletion.
 Database-specific erasure and legal policy stay outside the core. Mari's
 dependency records keep that part testable.
 
+`dependencies` maps each parent record ID to its derived child IDs. A held
+child can still receive an invalidation when its parent expires. Invalidation
+marks derived work unusable and physical preservation remains the host's job.
+Repeated calls return deterministic actions. Persist applied-action identity
+in the host to make effects idempotent.
+
+Purpose checks use `evaluate_purpose(record, requested_purpose=...)` and the
+record's `purposes` tuple. Apply that decision before retrieval.
+`RetentionPolicy.allowed_purposes` is currently stored configuration and is
+independent of the expiration planner's decisions.
+
 ## Measures
 
 | Invariant | Expected result |
 |---|---|
 | Expired artifact retrieval | Zero returned content |
 | Dependency cascade | Every reachable derivative invalidated |
-| Legal hold | No destructive action emitted |
+| Legal hold | Held expired record receives `HOLD` in place of `DELETE` |
 | Purpose mismatch | Access denied before ranking |
-| Repeated planning | Same idempotency keys and zero duplicate deletions |
+| Repeated planning | Same actions for the same inputs. Host deduplicates effects |
 
 ::: source-block
 **Papers and implementations**

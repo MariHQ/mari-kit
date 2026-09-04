@@ -30,7 +30,15 @@ Passage retrieval and corpus summarization are different operations. Personalize
 
 ## How it works
 
-Link query mentions to authorized seed nodes, induce an allowed subgraph, and propagate Personalized PageRank mass until tolerance or iteration limits. Project node mass back to evidence-bearing sections. Separately, Leiden partitions the graph into well-connected communities, recursive grouping forms levels, and evidence-linked community reports support global map-reduce queries. Local queries fan out from entities. Drift queries start globally and open bounded local branches.
+Link query mentions to authorized seed nodes, induce an allowed subgraph, and
+propagate Personalized PageRank mass until tolerance or iteration limits.
+Project node mass back to evidence-bearing sections.
+
+`leiden_communities` provides a deterministic reference implementation of local
+moving and connected refinement over an undirected weighted projection. It
+averages opposing edge weights and drops self-links. Its partition is flat.
+Hierarchies, drift-query routing, and evidence binding for generated reports
+require caller composition. Use an optimized community backend for large graphs.
 
 ::: source-block
 **Papers**
@@ -68,3 +76,19 @@ answer = map_reduce_reports(
     limit=24,
 )
 ```
+
+`build_community_reports` invokes the summarizer once per community and retains
+node IDs with each report. `map_reduce_reports` processes the first `limit`
+reports in supplied order. Rank reports before this call when relevance should
+determine the subset. Token budgets and model-call execution belong to those
+callbacks.
+
+## Incremental report maintenance
+
+Treat a community report as a derived artifact with explicit membership,
+source revisions, summarizer version, and configuration inputs. Community IDs
+such as `community:0` are local partition positions. Assign durable scoped
+identity before caching reports across partitions. The
+[shared dependency planner](../start/dependency-updates.md) can reuse completed
+reports whose inputs match and hold dependent answers until changed reports
+finish rebuilding.

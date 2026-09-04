@@ -14,8 +14,9 @@
 ## How it works
 
 Mari accepts IDs and callbacks. Algorithms operate on hashable IDs and return
-immutable results with visited-node counts and path cost. Stable ordering uses
-a caller-supplied key when IDs lack a natural textual identity.
+immutable results with visited-node counts and path cost. Traversal ordering
+uses ID type and representation. Prefer stable string or structural IDs whose
+representations remain consistent across runs.
 
 ```{code-block} python
 :caption: Traverse application-owned storage
@@ -28,7 +29,7 @@ path = shortest_path(
     neighbors=lambda node: store.outgoing_ids(node),
     edge_cost=lambda left, right: 1.0 - store.confidence(left, right),
     allowed=lambda node: can_read(node),
-    max_depth=5,
+    max_visited=500,
 )
 
 if path.found:
@@ -80,6 +81,22 @@ Outgoing edges hidden by `max_depth` are returned as rejected edges with
 from an unexplored traversal boundary.
 
 Breadth-first traversal gives minimum hop count in an unweighted graph. Weighted paths use Dijkstra's algorithm and reject negative or non-finite costs. Authorization is checked before a node enters the frontier.
+
+:::{warning} Weighted depth-bound limitation
+
+`shortest_path(max_depth=...)` tracks one best cost per node. A cheaper route
+that consumes more hops can displace a shallower route needed to reach the
+target within the bound. This can omit a valid depth-constrained route.
+Use an unbounded-depth search with a visited-node budget for weighted paths,
+or use breadth-first traversal for minimum-hop questions. A reached search
+budget requires treating the result as incomplete.
+:::
+
+Keep neighbor callbacks within the intended tenant, revision, and time slice.
+Use incoming adjacency for downstream impact when stored edges point from a
+derived output to its inputs. Reachability identifies possible impact. The
+[dependency planner](../start/dependency-updates.md) compares completed input
+fingerprints to decide which reachable outputs need rebuilding.
 
 ## Measures
 

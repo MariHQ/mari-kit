@@ -224,8 +224,8 @@ Visibility, permission inspection, and retrieval execution belong to the applica
 ## Add context to chunks with source spans
 
 `parse_chunk_context(document, section, model_output)` prepends a bounded
-document-level explanation for indexing. The exact original
-text, document and section revisions, and character offsets.
+document-level explanation for indexing. The returned representation retains
+the exact original text, document and section revisions, and character offsets.
 `pool_token_spans(token_embeddings, spans)` implements late-chunk mean pooling
 over caller-tokenized half-open spans.
 

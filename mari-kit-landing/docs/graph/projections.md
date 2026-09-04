@@ -6,9 +6,9 @@
 
 | Event sequence | Projection behavior |
 |---|---|
-| Unique contiguous generations | Deterministic replay and content-derived build identity |
+| Unique contiguous generations | Ordered replay and event-input build identity |
 | Gap or duplicate generation | Reject the build |
-| Failed dependency | Hold the downstream projection |
+| Failed dependency | Use the dependency planner to hold downstream work |
 
 Throughput and atomic pointer swaps belong to the selected backend. Mari defines replay semantics.
 
@@ -24,11 +24,20 @@ Throughput and atomic pointer swaps belong to the selected backend. Mari defines
 
 
 
-Canonical artifacts and append-only events remain authoritative. `replay_projection` builds deterministic derived state and gives each build a content identity. A backend can validate and swap that build using its own transaction boundary.
+Canonical artifacts and append-only events remain authoritative. With a pure
+projector and stable initial state, `replay_projection` produces deterministic
+derived state. Its build ID fingerprints the ordered events. A backend can
+validate and swap that build using its own transaction boundary.
 
 ## How it works
 
 Events must have unique IDs and contiguous generations. The replay function folds them in order and hashes the complete event input. Generation gaps and duplicate events fail before a usable build is returned. Storage adapters own staging validation, pointer swaps, and rollback because those guarantees depend on the selected database.
+
+The build ID covers event IDs, generations, kinds, and payloads. Initial state,
+projector implementation, and produced output are separate inputs to cache
+validity. Record those through a versioned derivation and completed receipt in
+the [dependency planner](../start/dependency-updates.md). Keep the projector
+side-effect-free because a later invalid event can fail after earlier folds.
 
 ::: source-block
 **Papers and standards**

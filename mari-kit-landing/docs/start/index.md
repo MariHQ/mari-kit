@@ -8,6 +8,7 @@
 | [Company search](company-search.md) | A complete authorized retrieval path |
 | [Governed knowledge](governed-knowledge.md) | Typed evidence and revisioned artifacts |
 | [Agent knowledge](agent-knowledge.md) | Completed activity to reviewable proposals |
+| [Conversation knowledge](../agents/conversation-knowledge.md) | Settled conversations to searchable, evidence-bound episodes |
 | [Install](install.md) | Base package, optional integrations, injected dependencies |
 | [Architecture](architecture.md) | Layer ownership, data flow, framework and storage boundaries |
 | [Maturity](maturity.md) | Stability and support labels |

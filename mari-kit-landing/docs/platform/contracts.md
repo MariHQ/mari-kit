@@ -60,6 +60,15 @@ values, principals, references, queries, and a hit-reference accessor.
 scope isolation. Applications can reject an adapter that lacks a required
 capability during their own assembly step.
 
+## Carry identity across adapters
+
+Use the same scoped `ObjectRef` and `RevisionRef` through source resolution,
+retrieval, evidence, and artifact lineage. Convert legacy references at an
+adapter boundary. The [dependency planner](../start/dependency-updates.md)
+adds an aspect and optional unit ID to the same object identity for selective
+updates. A policy fingerprint can invalidate cached projections. The
+`Authorizer` still decides access for the current principal.
+
 ::: source-block
 **Research and standards**
 

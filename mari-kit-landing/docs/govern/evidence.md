@@ -19,7 +19,7 @@ typed locator. `ArtifactRef`, `ArtifactEvidence`, and document-specific
 
 | Locator | Material addressed |
 |---|---|
-| `TextSpan` | Character range in normalized text |
+| `TextSpan` | Half-open character range in the exact resolved text |
 | `JsonPointer` | Value inside JSON-compatible material |
 | `RecordField` | Named field on a stable record |
 | `TableCell` | Row and column in a tabular value |
@@ -151,7 +151,14 @@ independent, authorized, or persuasive.
 :::
 
 
-An evidence record is a byte-for-byte quotation bound to the exact document and section revision supplied to a parser. It carries provenance. A model confidence score comes from a separate field.
+An evidence record is an exact-text quotation bound to the document and section revision supplied to a parser. Offsets count Python string characters. It carries provenance. A model confidence score comes from a separate field.
+
+For [semantic atoms](../ingest/semantic-atoms.md),
+`atom.located_evidence(source=source)` retains document-global spans. Resolve
+that reference to the full source document revision. A contextual retrieval
+prefix belongs to the indexing representation, and citations address the
+original source text. Normalization after binding a span requires new
+coordinates and an explicit source representation.
 
 ## How it works
 

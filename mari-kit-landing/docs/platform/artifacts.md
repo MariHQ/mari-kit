@@ -36,8 +36,9 @@ The payload type `T` holds domain content. Its envelope records the controls
 around that content. Artifact identity stays stable across immutable revisions.
 Evidence links record inputs. `generated_by` identifies the producing activity
 and configuration. Validity bounds mark when a claim applies. A `supersedes`
-link closes the lineage edge and keeps the earlier revision. Stores reject a
-revision when evidence, scope, or predecessor checks fail.
+link records a predecessor and keeps the earlier revision available in history.
+The reference store checks revision and predecessor consistency. Applications
+validate evidence, authorize access, and enforce review policy before committing.
 
 **Research basis**[W3C PROV](https://www.w3.org/TR/prov-overview/){.paper}
 models entities and their revisions. It also records activities, agents,
@@ -87,3 +88,16 @@ artifact = KnowledgeArtifact[dict[str, int]](
     supersedes=("fact:refund-window:enterprise@v2",),
 )
 ```
+
+## Shared identity and computational inputs
+
+`artifact.ref` is a scoped `RevisionRef`, shared with source resolution,
+[evidence validation](../govern/evidence.md), and retrieval.
+Prefer structural references in `derived_from` and `supersedes` for new code.
+Legacy string references remain accepted for compatibility.
+
+`artifact.derivation_spec(inputs=...)` connects its producing activity to the
+[dependency planner](../start/dependency-updates.md). Declare every consumed
+input, including collection membership, model settings, or policy state where
+relevant. Evidence citations establish lineage. Computational dependencies
+also capture inputs that influence output selection and formatting.

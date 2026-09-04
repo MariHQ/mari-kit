@@ -31,6 +31,19 @@ Tiers are policies over cost and lifecycle. Mari provides topic segmentation and
 
 Filter observations cheaply, group them at attention-peak/similarity-valley topic boundaries, compress within bounded groups, and score promotion from recurrence, recency, usefulness, and evidence diversity. Expensive resolving, superseding, and summarization run in an offline call/token budget. Promotion creates a new artifact revision linked to every contributing observation.
 
+`plan_consolidation` implements the selection step. It normalizes the four
+weights, computes a weighted score, then processes candidates by descending
+score with artifact ID as the tie-break. A candidate is selected when it meets
+the minimum score and fits both remaining estimated budgets. This is a greedy
+score-ordered policy. A cost-optimal knapsack solution can select a different
+set. Deferred candidates include both low-score and over-budget items.
+
+The plan reserves estimated work. Your executor must enforce actual usage and
+handle retries. Represent summaries as derived artifacts with ordered source
+membership, revisions, and summarizer configuration so
+[dependency-aware updates](../start/dependency-updates.md) can reuse completed
+consolidation work after unrelated changes.
+
 ::: source-block
 **Papers**
 

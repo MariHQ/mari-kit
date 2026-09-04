@@ -2,6 +2,16 @@
 
 ## Memory operations
 
+Memory is governed derived knowledge with an explicit lifecycle. Begin with
+source evidence, admit candidates, validate mutation decisions, and let the
+host persist accepted changes. Organization and consolidation consume those
+same revisions.
+
+Use [dependency-aware updates](../start/dependency-updates.md) as the shared
+maintenance mechanism for memory, retrieval, and graph projections. Keep raw
+text reuse separate from revision-bound evidence and access policy. The
+library supplies decisions and immutable values. Your application supplies
+models, durable storage, authorization, and execution.
 
 | Stage | Decision |
 |---|---|

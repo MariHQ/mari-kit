@@ -22,8 +22,17 @@ On LongMemEval, the measured A-MEM threshold produced link precision `0.436` and
 :::
 
 
+::::: split
 ::: card
-## Derived links
+### Managed tags
+
+`TagDefinition`, `TagAssignments`, `assign_tags`, `normalize_tag`, and
+`search_weight` store curation in an overlay. A provider resync preserves that
+overlay.
+:::
+
+::: card
+### Derived links
 
 `extract_explicit_links` finds explicit references. `derive_links` adds bounded similarity links and produces typed `LinkCandidate` values.
 :::
@@ -68,11 +77,6 @@ links = derive_links(doc.document_id, candidate_ids,
 :::
 
 
-::::: split
-::: card
-## Managed tags
-
-`TagDefinition`, `TagAssignments`, `assign_tags`, `normalize_tag`, and
-`search_weight` store curation in an overlay. A provider resync preserves that
-overlay.
-:::
+Record managed tags as an explicit input when they affect a derived ranking
+or artifact. The [shared dependency planner](../start/dependency-updates.md)
+can invalidate those outputs independently of source-text embeddings.

@@ -11,7 +11,8 @@
 | Lineage traversal | Artifact ID and `parents(id)` | Ancestors with depth |
 | Taint composition | Input artifact IDs and `taints(id)` | Stable union with source trace |
 
-Use these operations when the application supplies temporal and provenance semantics. The caller supplies those policies.
+Use these operations with caller-defined time boundaries, parent relationships,
+and source policies. Supply timezone-aware timestamps consistently.
 
 ## How it works
 
@@ -54,6 +55,12 @@ implements mechanics after the caller selects `supersede`, `retract`,
 Metadata-preserving lineage edges retain input role, operation, and arbitrary
 parameters during traversal. Plain ID lineage remains available through
 `trace_lineage`.
+
+Lineage accepts hashable IDs, including shared `RevisionRef` and `DependencyKey`
+values. Reuse those identities across evidence, retrieval, and update planning.
+A provenance edge explains an origin. A computational dependency additionally
+declares which input facet affects an output. Record the complete input set in
+a [derivation specification](../start/dependency-updates.md) to drive refreshes.
 
 `grouped_interval_overlaps` uses a within-group sweep. Each overlapping pair
 appears once. Self-pairs are excluded. An overlap is a candidate relationship.

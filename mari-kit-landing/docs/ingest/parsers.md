@@ -63,7 +63,8 @@ raw = model(question, documents)
 answer = parse_answer(question, documents, raw)
 print(answer.disposition)         # grounded | insufficient_evidence
 print(answer.grounding_coverage)  # deterministic text coverage
-print(answer.evidence[0].quote)  # exact source text
+for evidence in answer.evidence:
+    print(evidence.quote)  # insufficient-evidence answers can have no citations
 ```
 
 Additional deterministic helpers include `normalize_claim`, `deduplicate_fact_candidates`, `grounding_coverage`, and `excerpt`. Recoverable batch drift is handled conservatively: assessment rows are restored to caller order, missing rows become uncertain, and good rows survive alongside invalid ones. Structured fact qualifiers preserve subject, relation, object, scope, validity, and conditions.

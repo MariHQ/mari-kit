@@ -28,11 +28,18 @@ own measure.
 ## How it works
 
 An assertion is append-only and carries two intervals. A correction learned
-today closes an older assertion's transaction interval. Its historical valid
+today requires the host to close an older assertion's transaction interval.
+`close_transaction` returns a replacement value for that operation. Its historical valid
 interval remains in the record. Query `at` filters valid time. Query `known_at`
 filters transaction time. Each interval must contain its requested timestamp.
 Contradictions create explicit edges or superseding revisions. Prior revisions
 stay available.
+
+The temporal functions operate on supplied records. The host persists history
+and performs correction writes atomically. Use timezone-aware timestamps and
+half-open intervals `[start, end)`. An open end means the interval continues
+indefinitely. See [temporal and provenance utilities](temporal-provenance.md)
+for joins and shared revision lineage.
 
 **Research basis**[Zep](https://arxiv.org/abs/2501.13956){.paper} uses a
 temporally aware graph to maintain historical relationships for agent memory.
@@ -72,7 +79,7 @@ facts = [
         object=30,
         valid_from=datetime(2026, 1, 1, tzinfo=utc),
         valid_to=datetime(2026, 9, 1, tzinfo=utc),
-        recorded_from=datetime(2026, 1, 3, tzinfo=utc),
+        recorded_at=datetime(2026, 1, 3, tzinfo=utc),
     )
 ]
 

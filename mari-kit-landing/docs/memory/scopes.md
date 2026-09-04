@@ -15,8 +15,9 @@
 ## How it works
 
 Callers define scope paths. Each principal receives explicit readable and
-writable patterns. Promotion creates a new artifact linked to its origin. The
-new identity preserves the review boundary.
+writable patterns. `propose_promotion` checks source readability and target
+writability, then returns a decision record. On approval, the host creates a
+new artifact linked to its origin. That new identity preserves the review boundary.
 
 ```{code-block} python
 :caption: Propose a reviewable cross-scope promotion
@@ -25,7 +26,11 @@ from mari_components.governance import ScopeGrant, ScopePolicy, propose_promotio
 
 policy = ScopePolicy(
     grants=(
-        ScopeGrant(principal="agent:researcher", read=("project:mari",), write=("agent:researcher",)),
+        ScopeGrant(
+            principal="agent:researcher",
+            read=("agent:researcher", "project:mari"),
+            write=("agent:researcher",),
+        ),
     )
 )
 
@@ -37,9 +42,20 @@ proposal = propose_promotion(
     policy=policy,
 )
 # The proposal still requires a privileged commit or application review.
+assert proposal.allowed is False
+assert proposal.reason == "target_not_writable"
 ```
 
-Every read path applies scope filtering before retrieval scores are computed. Direct ID reads and graph traversal use the same policy, preventing a common isolation gap.
+Apply scope filtering in every host read path before retrieval scores are
+computed. Direct ID reads and graph traversal must consult the same policy.
+`ScopePolicy` supplies decisions through `allows`, and storage adapters enforce
+them. Patterns use case-sensitive shell-style matching.
+
+These policy scope strings express application access rules. `ScopeRef` carries
+tenant and space identity in shared object references. Define an explicit
+mapping between the two. Include policy changes in derived retrieval
+dependencies as described in [dependency-aware updates](../start/dependency-updates.md).
+Continue checking current access at read time, even for reusable outputs.
 
 ## Measures
 
@@ -48,7 +64,7 @@ Every read path applies scope filtering before retrieval scores are computed. Di
 | Unauthorized semantic match | Excluded from the ranked candidate set |
 | Direct lookup of hidden ID | Denied identically to search |
 | Agent-private promotion request | Proposal returned. No visibility change |
-| Revoked origin | Promoted derivative marked for review or deletion |
+| Revoked origin | Host uses lineage to schedule derivative review or deletion |
 
 ::: source-block
 **Papers and implementations**

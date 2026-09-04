@@ -38,6 +38,13 @@ for candidate in scores:
 
 `simrank_scores` is available separately because it scores all pairs in a bounded node set and iterates over incoming-neighbor similarity. It is substantially more expensive than local scores.
 
+Keep candidate endpoints and all returned neighbors inside the authorized
+time-sliced graph. Remove held-out links before calculating neighborhoods for
+an evaluation. Jaccard and common-neighbor scores depend directly on that
+topology, so including the target relation can leak the answer into the score.
+Cache scores against graph membership and revision inputs through the
+[dependency planner](../start/dependency-updates.md).
+
 ## Measures
 
 | Split | Measure |

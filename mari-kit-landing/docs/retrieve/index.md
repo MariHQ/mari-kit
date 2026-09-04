@@ -2,6 +2,14 @@
 
 ## Retrieval paths
 
+Start with [BM25 or dense flat search](retrieval.md) and an explicit allowed
+reference set. Add [context packing](context.md) to control budget and expose
+selection decisions. Evaluate approximate search or adaptive routing against
+that baseline using the same source revisions and query set.
+
+Treat indexes as derived projections of shared source units. The
+[dependency planner](../start/dependency-updates.md) coordinates updates to
+those projections and preserves reusable atom representations.
 
 | Retrieval shape | Use |
 |---|---|

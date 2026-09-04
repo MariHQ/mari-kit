@@ -84,7 +84,7 @@ proposes the semantic judgment. Mari validates its observable claims.
 ## Record observed knowledge stages
 
 Retrieval, presentation, citation, and use are separate observations. A
-retriever hits record retrieval. A separate use event records entry into model
+retriever records retrieval hits. A separate shown event records entry into model
 context. Citations record provenance. A separate observation records influence
 on the result.
 
@@ -388,9 +388,9 @@ report = inspect_knowledge_derivations([
 ])
 ```
 
-The check permits derived material and prevents a caller from
-counting that material as independent corroboration and makes cyclic ancestry
-visible before admission or aggregation.
+The check reports derived inputs claimed as independent corroboration and
+makes cyclic ancestry visible before admission or aggregation. The host decides
+whether those issues block promotion.
 
 ::: source-block
 **Evidence**
@@ -421,7 +421,22 @@ if integrity.valid:
 ```
 
 Unknown status remains `None`. Success requires an explicit positive value.
-Mari stores the trace. Outcome inference from text belongs in a caller adapter.
+Mari returns an immutable trace value. Persistence and outcome inference from
+text belong in a caller adapter.
+
+## Maintain derived knowledge after corrections
+
+Structural inspection, exact-edit validation, and dependency updates serve
+different stages. Inspect a proposed structure, validate its edits against
+current revisions, then let the host commit the accepted change. Feed the new
+source snapshot into [dependency-aware updates](../start/dependency-updates.md)
+to refresh affected summaries and retrieval representations.
+
+Reuse scoped revision references from the loaded-knowledge manifest and source
+evidence. Record model version, extraction configuration, and complete source
+membership as derivation inputs. A completed receipt permits reuse only for
+matching inputs. See [conversation knowledge](../agents/conversation-knowledge.md)
+for the source-to-knowledge pipeline.
 
 ::: source-block
 **Evidence**

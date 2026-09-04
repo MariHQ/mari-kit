@@ -4,6 +4,12 @@
 
 ## Flow
 
+From an installed repository checkout:
+
+```{code-block} console
+python -m examples.quickstarts.governed_knowledge
+```
+
 This composition addresses a CRM revision structurally, resolves a JSON Pointer,
 checks the observed value, records the derivation, and commits a reviewable
 artifact. The same evidence API accepts text spans, record fields, table cells,
@@ -25,3 +31,11 @@ material. The application assigns the acceptance policy and transaction.
 | Derived identity | `RevisionRef` containing scope, namespace, object, revision, and optional unit |
 | Write | `KnowledgeArtifact` committed with compare-and-swap semantics |
 | Adapter verification | `assert_artifact_store_conforms` |
+
+## Maintain derived knowledge
+
+Declare computational inputs with `KnowledgeArtifact.derivation_spec` and the
+[dependency planner](dependency-updates.md). Include the selection rule,
+implementation version, and configuration as well as source material.
+Citation validation checks source resolution. Semantic support and approval
+remain separate [governance decisions](../govern/index.md).

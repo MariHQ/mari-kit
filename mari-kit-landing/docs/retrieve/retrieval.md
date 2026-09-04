@@ -97,14 +97,14 @@ hits = index.search(query, limit=10, allowed_refs=authorized_refs)
 ## How it works and backing algorithms
 
 Mari\'s current path uses token-level late interaction: each query token takes
-its maximum similarity to any document token, and the maxima are summed. MUVERA
+its maximum similarity to any document token, and the maxima are averaged. MUVERA
 maps those multi-vector sets to fixed-dimensional encodings for fast candidate
 generation. Mari then reranks candidates with exact MaxSim. The packed Polar
 codec compresses candidate encodings at the implementation level.
 
 ### Multi-vector late interaction
 
-MUVERA compresses a set of token vectors into fixed-dimensional encodings for candidate search. Mari then applies exact ColBERT-style MaxSim to those candidates: each query token selects its strongest document-token match and the matches are summed. Choose this when token-level distinctions justify a larger index and a reranking stage. [MUVERA](https://arxiv.org/abs/2405.19504){.paper} · [ColBERT](https://arxiv.org/abs/2004.12832){.paper}
+MUVERA compresses a set of token vectors into fixed-dimensional encodings for candidate search. Mari then applies exact ColBERT-style MaxSim to those candidates: each query token selects its strongest document-token cosine match and the matches are averaged. `exact_maxsim(..., query_weights=...)` accepts non-negative finite query weights with a positive sum and computes a weighted average. Choose this when token-level distinctions justify a larger index and a reranking stage. [MUVERA](https://arxiv.org/abs/2405.19504){.paper} · [ColBERT](https://arxiv.org/abs/2004.12832){.paper}
 
 ### Dense flat search
 
@@ -198,8 +198,8 @@ lexical = lexical.with_deltas([IndexDelta(
 | `score` | This query term's contribution after length normalization |
 
 `ArtifactBM25Index` accepts `ArtifactRef` keys and returns `ArtifactIndexHit`
-values. Multiple immutable revisions remain distinct and keep
-`artifact@revision#unit` into a field named `document_id`.
+values. Multiple immutable revisions remain distinct through the typed `ref`
+field. Use `RevisionBM25Index` for the shared structural-reference contract.
 
 ```{code-block} python
 :caption: Search immutable artifact revisions directly

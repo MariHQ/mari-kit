@@ -78,3 +78,15 @@ if report.passed:
 The functions return evidence and unmatched cases. The caller decides which
 behavior is desirable. Activation happens through the application's commit
 path.
+
+## Preserve the evaluation boundary
+
+Keep candidate generation, held-out evaluation, review, and activation as
+separate application steps. `regression_gate` evaluates supplied metric values.
+The host executes cases and supplies those measurements.
+
+Store approved candidates in the shared
+[artifact envelope](../platform/artifacts.md). Track source revisions, mining
+configuration, and evaluation case membership through the
+[dependency planner](../start/dependency-updates.md). A changed dependency can
+invalidate the evaluation evidence and trigger a fresh review.

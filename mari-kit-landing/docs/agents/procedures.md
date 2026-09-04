@@ -6,7 +6,7 @@
 
 | Input evidence | Learned result |
 |---|---|
-| Repeated successful tool sequences | Stable longest common subsequence |
+| Repeated successful tool sequences | Stable subsequence from pairwise longest-common-subsequence reduction |
 | Arguments identical at every occurrence | Retained arguments |
 | Arguments vary between runs | Tool retained with arguments omitted |
 | Failed trajectories | Kept as evaluation evidence and excluded from successful-path mining |
@@ -82,10 +82,19 @@ assert [step.tool for step in candidate.steps] == [
 `learn_procedure(trajectories, *, intent)` accepts a mapping from caller-owned
 trajectory IDs to ordered `TrajectoryStep` sequences. Every input run must be
 non-empty and every step must have `ok is True`. Keep failed and unknown
-outcomes in separate input records. The function computes a deterministic longest
-common tool subsequence. Arguments are retained when every aligned occurrence
+outcomes in separate input records. The function sorts runs by trajectory ID and
+reduces their tool sequences through pairwise longest-common-subsequence
+comparisons. For three or more runs, this is a deterministic heuristic for a
+shared sequence. Arguments are retained when every aligned occurrence
 contains the same safe normalized values.
 
-The result contains a content-derived procedure ID and revision, the source
+The result contains a procedure ID and revision derived from intent and tool
+sequence, the source
 trajectory IDs, and immutable `ProcedureStep` values. The returned value is a
 candidate. Execution and promotion happen in application code.
+
+The candidate revision excludes retained arguments and source trajectory IDs.
+Use a [knowledge artifact](../platform/artifacts.md) with an application-chosen
+full-content revision when persisting an approved procedure. Declare source
+revisions and the mining recipe in its dependency specification. Review
+[promotion gates](procedural-learning.md) before activating the candidate.

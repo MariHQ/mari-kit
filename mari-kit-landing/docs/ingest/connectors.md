@@ -26,8 +26,8 @@ All 18 connector definitions are exercised against recorded or synthetic provide
 | `hydrate_hints` | Verified hints and canonical fetch callback | Converts hints to ordinary `PollPage` values |
 | `validate_hint_hydration` | Hint and hydrated pages | Optional revision-equivalence callback. No built-in ordering assumption |
 
-Every provider config has a matching `validate_*` function that returns
-configuration issues before network I/O. Network functions accept
+Catalog providers expose matching validation functions. HTTP validation can
+contact the provider to check credentials and selected resources. Network functions accept
 an `HttpTransport`. Retry scheduling, credentials, queues, and SDK clients stay
 outside the connector contract.
 
@@ -41,6 +41,29 @@ outside the connector contract.
 | Streaming | invalid signature → payload | nothing parsed or emitted | None |
 :::
 
+
+## Provider examples
+
+Polling returns bounded `PollPage` values. HTTP providers accept an injected
+`HttpTransport`. Filesystem, object-store, and Singer adapters use their own
+local, SDK, or record-stream boundaries. Examples below assume a `PollRequest`
+named `request` and caller-owned credentials or adapter callbacks.
+
+::::::::::::::: connector-examples
+::: card
+### GitHub
+
+Files, issues, pull requests, and commits.
+
+```python
+from mari_components.connectors import GitHubConfig, github_source_id, poll_github
+cfg = GitHubConfig(token=token, repository="acme/product",
+    branch="main", paths=("docs/**",),
+    content_types=("files", "issues", "pull_requests"))
+source_id = github_source_id(cfg)
+pages = poll_github(cfg, request, http=http)
+```
+:::
 
 ::: card
 ### Slack
@@ -306,8 +329,8 @@ hydration.
 
 Arrival order can differ from revision order. `coalesce_hints_ordered`
 accepts a caller ordering key and separately reports stale hints, exact
-duplicates, and equal-order conflicts. The default retains the first tied hint
-and exposes the conflict. An explicit resolver can choose another value.
+duplicates, and equal-order conflicts. The default withholds unresolved tied
+keys from `selected`. An explicit resolver can select a tied hint.
 
 ```{code-block} python
 :caption: Coalesce out-of-order changes using explicit revision keys
@@ -429,22 +452,6 @@ appears in `unresolved_keys`. An explicit resolver can select a tied hint.
 </div>
 ::::::
 
-## Provider examples
-
-All polling functions accept the same `PollRequest` and injected `HttpTransport`, and return an iterator of `PollPage` values.
-
-::::::::::::::: connector-examples
-::: card
-### GitHub
-
-Files, issues, pull requests, and commits.
-
-```python
-from mari_components.connectors import GitHubConfig, github_source_id, poll_github
-cfg = GitHubConfig(token=token, repository="acme/product",
-    branch="main", paths=("docs/**",),
-    content_types=("files", "issues", "pull_requests"))
-source_id = github_source_id(cfg)
-pages = poll_github(cfg, request, http=http)
-```
-:::
+Pass accepted pages through [synchronization](sync.md) before publishing
+derived work. A committed source change supplies a new input snapshot for
+[dependency-aware updates](../start/dependency-updates.md).

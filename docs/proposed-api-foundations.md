@@ -1,5 +1,11 @@
 # Research foundations for the proposed API
 
+> Historical design rationale. Several surfaces now have implementations, but
+> the illustrative signatures below are not the current API reference. Consult
+> the [feature docs](../mari-kit-landing/docs/index.md),
+> [maturity labels](../mari-kit-landing/docs/start/maturity.md), and
+> [shared dependency guide](dependency-updates.md) for current contracts.
+
 This document records why each proposed Mari abstraction exists. The papers
 and standards motivate observable behavior and evaluation requirements; they do
 not prescribe the Python class names or signatures. Those are Mari design
@@ -224,4 +230,5 @@ Each proposed surface needs:
 5. Versioned traces sufficient to reproduce a result or explain why it cannot
    be reproduced.
 
-Until those exist, the landing page labels these APIs **Proposed**.
+These were the original acceptance targets. Current maturity is recorded per
+surface in the feature documentation, rather than inferred from this proposal.

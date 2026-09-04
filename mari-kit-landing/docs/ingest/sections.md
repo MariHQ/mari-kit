@@ -50,6 +50,12 @@ facts = [parse_facts([document], model(section.body)) for section in pending]
 next_revisions = fact_scan_revisions(pending)  # persist only after facts commit
 ```
 
+Merge successful scan revisions into durable scan state. The returned map
+contains the supplied sections only. Removed sections need a separate
+invalidation decision. Parser, prompt, and model changes also need explicit
+versioned inputs to the [dependency planner](../start/dependency-updates.md),
+since a section scan compares source revisions alone.
+
 ## Function definitions and options
 
 | Function | Definition | Options |

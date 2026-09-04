@@ -14,7 +14,16 @@
 
 ## How it works
 
-All functions receive node IDs and neighbor callbacks. They return scores, with labels left to callers. Betweenness uses the unweighted Brandes algorithm. HITS and PageRank expose iteration and convergence settings so approximate results are reproducible.
+Centrality functions receive node IDs and neighbor callbacks. Personalized
+PageRank accepts a weighted adjacency mapping through the retrieval API.
+They return scores, with labels left to callers. Betweenness uses the unweighted
+Brandes algorithm. HITS and PageRank expose iteration and convergence settings.
+
+Restrict both the node collection and neighbor callbacks to the same authorized
+graph. Degree and closeness can follow neighbors outside the supplied node
+collection. Closeness follows the callback direction, so incoming and outgoing
+adjacency answer different questions. For large graphs, repeated all-source
+traversals make closeness and betweenness more expensive than degree ranking.
 
 ```{code-block} python
 :caption: Compare caller-selected structural signals
@@ -29,10 +38,12 @@ degree = degree_centrality(node_ids, neighbors=undirected_neighbors)
 bridges = betweenness_centrality(node_ids, neighbors=outgoing_neighbors)
 hub_authority = hits(node_ids, successors=outgoing_neighbors)
 
+degree_by_node = dict(degree)
+bridges_by_node = dict(bridges)
 features = {
     node: {
-        "degree": dict(degree).get(node, 0.0),
-        "betweenness": dict(bridges).get(node, 0.0),
+        "degree": degree_by_node.get(node, 0.0),
+        "betweenness": bridges_by_node.get(node, 0.0),
     }
     for node in node_ids
 }

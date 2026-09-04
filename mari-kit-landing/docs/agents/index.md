@@ -5,6 +5,7 @@
 
 | Input | Derived object | Activation boundary |
 |---|---|---|
+| [Conversations and trajectory observations](conversation-knowledge.md) | Searchable episodes with exact source evidence | Current sources and authorization checked on read |
 | Runtime events | Redacted normalized trajectory | Immediate record |
 | Trace exports | OpenAI, Anthropic, or OTLP normalized steps | Unknown outcomes remain unknown |
 | Trajectory corpus | Direct-follow graph, variants, rework, invariants | Caller reviews findings |
@@ -27,9 +28,9 @@
 ```{toctree}
 :maxdepth: 1
 
+conversation-knowledge
 trajectories
 trajectory-mining
-conversation-knowledge
 intent-mining
 procedural-learning
 procedures

@@ -41,7 +41,16 @@ decision = evaluate_write(write)
 # QUARANTINE: untrusted instructions cannot become procedural memory
 ```
 
-Admission applies ordered rules. It rejects missing provenance and unauthorized sources, quarantines secrets and instruction-shaped external content, records attempted privilege amplification, then evaluates confidence and evidence. Derived artifacts inherit the union of their inputs' taints. A later approval appends a promotion record and preserves the original provenance.
+`evaluate_write` rejects empty `source_ids`. It quarantines writes carrying
+`secret`, `external_instruction`, or `privilege_amplification` taints, plus
+untrusted writes interpreted as procedures or instructions. Other writes are
+accepted by this local rule set.
+
+The caller classifies content, supplies taints, and separately checks source
+authorization, target-scope permission, evidence, and confidence. The function
+reads declared fields and performs no semantic attack detection. Use
+`inherit_taints(inputs)` to carry the union into a derived write. Persist review
+and promotion decisions with the original provenance.
 
 ## Measures
 

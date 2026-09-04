@@ -8,8 +8,10 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Generic, TypeVar
 
+from mari_components.documents.atoms import SemanticAtom
 from mari_components.json import freeze_json_mapping
 from mari_components.knowledge.artifacts import ArtifactRef
+from mari_components.references import ObjectRef
 
 HitT = TypeVar("HitT")
 
@@ -24,6 +26,28 @@ class RetrievalUnit:
         if not self.text.strip():
             raise ValueError("retrieval unit text is required")
         object.__setattr__(self, "metadata", freeze_json_mapping(self.metadata))
+
+    @classmethod
+    def from_atom(
+        cls, atom: SemanticAtom, *, source: ObjectRef, contextual: bool = False
+    ) -> RetrievalUnit:
+        """Reuse parsed atoms with the same scoped revision used by evidence."""
+        ref = atom.to_revision_ref(source=source)
+        return cls(
+            ref=ArtifactRef(
+                artifact_id=ref.object.object_id,
+                revision=ref.revision,
+                unit_id=ref.unit_id,
+                namespace=ref.object.namespace,
+                scope=ref.object.scope,
+            ),
+            text=atom.contextual_text if contextual else atom.text,
+            metadata={
+                "section_id": atom.section_id,
+                "start": atom.start,
+                "end": atom.end,
+            },
+        )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

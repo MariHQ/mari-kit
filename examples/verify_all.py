@@ -11,6 +11,7 @@ from examples.incident_response_drift.main import run as run_incident_drift
 from examples.knowledge_lifecycle.main import run as run_lifecycle
 from examples.quickstarts.agent_knowledge import run as run_agent_knowledge
 from examples.quickstarts.company_search import run as run_company_search
+from examples.quickstarts.dependency_updates import run as run_dependency_updates
 from examples.quickstarts.governed_knowledge import run as run_governed_knowledge
 from examples.slack_event_pipeline.main import run as run_slack
 from examples.slackbot_reliable_answers.main import run as run_slackbot
@@ -21,6 +22,7 @@ def run() -> dict[str, object]:
     company_search = run_company_search()
     governed_knowledge = run_governed_knowledge()
     agent_knowledge = run_agent_knowledge()
+    dependency_updates = run_dependency_updates()
     acl_isolation = run_acl_isolation({"MARI_EXAMPLE_MODE": "fake"})
     github = run_github(
         {
@@ -82,6 +84,12 @@ def run() -> dict[str, object]:
         }
     )
     checks = {
+        "dependency_updates_equal_rebuild_and_preserve_evidence": (
+            dependency_updates["incremental_equals_rebuild"] is True
+            and dependency_updates["vectors_rebuilt"] == 1
+            and dependency_updates["retrieved_current_evidence"] is True
+            and dependency_updates["lineage_reaches_atom_inputs"] is True
+        ),
         "company_search_is_authorized_and_revision_bound": (
             company_search["revision"] == "policy-v1"
             and "30 days" in str(company_search["text"])

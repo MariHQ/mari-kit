@@ -6,6 +6,17 @@ import fnmatch
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 
+from mari_components.dependencies import (
+    DependencyKey,
+    DependencyStamp,
+    DerivationSpec,
+    UpdateAction,
+    dependency_fingerprint,
+    materialization_receipt,
+    plan_dependency_updates,
+)
+from mari_components.references import ObjectRef
+
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class MaterializedView:
@@ -51,21 +62,56 @@ def plan_view_refresh(
         if build.view_id != view.view_id:
             continue
         prior = dict(build.input_revisions)
-        transform_changed = build.transform != view.transform
-        inputs_changed = any(
-            source in prior and prior[source] != revision
+        # The legacy API supplies deltas. Expand them into a complete snapshot
+        # before handing off to the same planner used by atoms and artifacts.
+        current = prior | {
+            source: revision
             for source, revision in changed_revisions.items()
+            if source in prior or fnmatch.fnmatchcase(source, view.source_pattern)
+        }
+
+        def stamps(revisions: Mapping[str, str]) -> tuple[DependencyStamp, ...]:
+            return tuple(
+                DependencyStamp(
+                    dependency=DependencyKey(
+                        object=ObjectRef(namespace="source", object_id=source),
+                        aspect="revision",
+                    ),
+                    fingerprint=dependency_fingerprint(revision),
+                )
+                for source, revision in sorted(revisions.items())
+            )
+
+        before, after = stamps(prior), stamps(current)
+        output = DependencyKey(
+            object=ObjectRef(namespace="view", object_id=build.artifact_id)
         )
-        source_set_changed = any(
-            source not in prior and fnmatch.fnmatchcase(source, view.source_pattern)
-            for source in changed_revisions
+        old_spec = DerivationSpec(
+            output=output,
+            inputs=tuple(item.dependency for item in before),
+            implementation=build.transform,
         )
-        if transform_changed or inputs_changed or source_set_changed:
+        new_spec = DerivationSpec(
+            output=output,
+            inputs=tuple(item.dependency for item in after),
+            implementation=view.transform,
+        )
+        plan = plan_dependency_updates(
+            sources=after,
+            derivations=(new_spec,),
+            materializations=(
+                materialization_receipt(
+                    old_spec, before, output_fingerprint=dependency_fingerprint(build)
+                ),
+            ),
+        )
+        update = plan.updates[0]
+        if update.action is not UpdateAction.REUSE:
             reason = (
                 "transform_changed"
-                if transform_changed
+                if "implementation_changed" in update.reasons
                 else "source_set_changed"
-                if source_set_changed
+                if "input_set_changed" in update.reasons
                 else "input_changed"
             )
             tasks.append(ViewRefreshTask(artifact_id=build.artifact_id, reason=reason))

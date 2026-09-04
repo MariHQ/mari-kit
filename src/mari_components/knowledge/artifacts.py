@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import datetime as dt
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
 from typing import Any, Generic, TypeVar
 
+from mari_components.dependencies import DependencyKey, DerivationSpec
 from mari_components.json import freeze_json_mapping, freeze_json_value
 from mari_components.references import LocatedEvidence, ObjectRef, RevisionRef, ScopeRef
 from mari_components.types import Evidence
@@ -135,6 +136,20 @@ class KnowledgeArtifact(Generic[PayloadT]):
                 namespace="artifact", object_id=self.artifact_id, scope=self.scope
             ),
             revision=self.revision,
+        )
+
+    def derivation_spec(self, *, inputs: Iterable[DependencyKey]) -> DerivationSpec:
+        """Use the common planner for this artifact's declared computational inputs.
+
+        Inputs are explicit because provenance citations alone do not describe every
+        input to a computation. Include text, collection membership, policy or other
+        aspects actually consumed, and keep evidence bindings in the artifact envelope.
+        """
+        return DerivationSpec(
+            output=DependencyKey.from_revision(self.ref),
+            inputs=tuple(inputs),
+            implementation=self.generated_by.implementation,
+            configuration=self.generated_by.configuration,
         )
 
 

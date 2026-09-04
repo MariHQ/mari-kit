@@ -12,6 +12,7 @@
 | [Architecture](architecture.md) | Layer ownership, data flow, framework and storage boundaries |
 | [Maturity](maturity.md) | Stability and support labels |
 | [Identity migration](identity-migration.md) | Canonical document IDs and configured source fingerprints |
+| [Shared dependency updates](dependency-updates.md) | Atom reuse, completed receipts, and change propagation |
 
 :::{collapse} Package boundary
 
@@ -32,4 +33,5 @@ install
 architecture
 maturity
 identity-migration
+dependency-updates
 ```

@@ -200,6 +200,17 @@ def test_multi_query_maxsim_and_retrieval_time_neighbor_expansion() -> None:
         contextual_atom_vectors={"price": (1.0, 0.0), "sso": (0.0, 1.0)},
     )
     assert maxsim_section_score([(1.0, 0.0), (0.0, 1.0)], section) == pytest.approx(1.0)
+    weighted = MultiVectorSection(
+        section_id="weighted",
+        source_id="pricing",
+        title_vector=None,
+        section_vector=None,
+        atom_vectors={"only-first": (1.0, 0.0)},
+        contextual_atom_vectors={"only-first": (1.0, 0.0)},
+    )
+    assert maxsim_section_score(
+        [(1.0, 0.0), (0.0, 1.0)], weighted, query_weights=(3.0, 1.0)
+    ) == pytest.approx(0.75)
 
     atoms = _atoms(OLD, "r1")
     hit = next(atom for atom in atoms if atom.text.startswith("Plans include SSO"))

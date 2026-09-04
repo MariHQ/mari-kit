@@ -185,6 +185,13 @@ pipeline, context, temporal-graph, procedure, and compiler APIs are in
 
 ## Evidence validation and freshness
 
+Atoms, retrieval units, evidence, and derived artifacts share scoped revision
+references and a common dependency-update planner. It tracks exact text,
+context, source bindings, collection membership, and caller-supplied policy
+versions. Successful materialization receipts allow unchanged outputs to stop
+downstream recomputation. See [shared dependency updates](docs/dependency-updates.md)
+and the [executable integration](examples/quickstarts/dependency_updates.py).
+
 Mari Components does not own prompts or model calls. Give your agent the source
 documents, then pass its structured output to a parser. The parser verifies
 document IDs, exact quotes, character spans, and source revisions.
@@ -445,6 +452,20 @@ analysis = parse_trajectory_analysis(
 
 The library validates labels and redacts common sensitive arguments. It does
 not hide a trajectory prompt or execute an agent.
+
+## Conversations as searchable knowledge
+
+`mari_components.conversation_knowledge` groups conversations and observable
+trajectory content into revision-bound episodes, validates cited knowledge,
+and emits summary, question, and topic retrieval facets. Settling windows,
+revision caching, and explicit call budgets bound extraction work. Returning
+evidence requires current, authorized source events.
+
+See the [integration guide and research references](docs/conversation-knowledge.md)
+and [credential-free runnable example](examples/conversation_knowledge_demo.py).
+This is a library pipeline: model callbacks, persistence, embeddings, and live
+connector integration remain application responsibilities. Semantic extraction
+quality has not yet been benchmarked.
 
 ## Connectors
 

@@ -29,6 +29,7 @@
 
 trajectories
 trajectory-mining
+conversation-knowledge
 intent-mining
 procedural-learning
 procedures

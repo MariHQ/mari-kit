@@ -20,6 +20,39 @@ scheduling, and product behavior.
 | Packaging | Separate supported contracts from reference and research surfaces in docs | Complete |
 | Quality | Format the tree and run lint, type checking, tests, examples, and docs | Complete |
 
+## Shared dependency investment
+
+The common update algorithm now lives in `mari_components.dependencies`.
+Atoms expose exact content/context stamps and occurrence-specific bindings,
+while retrieval units and evidence use the same scoped source revision.
+Governed artifacts expose versioned computation specifications. Legacy view
+refresh delegates change decisions to the shared planner.
+
+Plans distinguish reusable, ready, waiting, and blocked outputs. Only receipts
+for completed work release downstream consumers. This allows unchanged output
+fingerprints to stop propagation after recomputation. Ordered membership stamps
+cover additions, removals, and empty collections. Model/configuration versions
+are part of every computation specification.
+
+The dependency integration example and event-sequence tests compare incremental
+materializations with clean rebuilds. See `docs/dependency-updates.md` for the
+shared contracts, snapshot and persistence requirements, and compatibility
+boundaries. Existing specialized freshness and provenance APIs remain supported;
+their reference values can enter the planner without a new identity system.
+
+## Conversation knowledge
+
+The independent `mari_components.conversation_knowledge` module adds episode
+segmentation, evidence-bound extraction, multivector retrieval facets, scoped
+topic histories, and observable trajectory adaptation. Compilation supports
+settling windows, revision caches, and explicit call budgets; evidence rendering
+fails closed on missing, changed, or unauthorized sources.
+
+See the [integration guide](docs/conversation-knowledge.md) for the extraction
+contract, research references, validation coverage, and host responsibilities.
+The [example](examples/conversation_knowledge_demo.py) uses a fixture callback,
+not a live model. Production integration and semantic benchmarks remain open.
+
 ## Compatibility policy
 
 Existing document-specific values remain available while the structural

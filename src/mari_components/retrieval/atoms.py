@@ -122,11 +122,17 @@ def maxsim_section_score(
     section: MultiVectorSection,
     *,
     contextual: bool = True,
+    query_weights: Sequence[float] | None = None,
 ) -> float:
     """Apply exact late interaction to caller-generated query and section vectors."""
 
     query = np.asarray(query_vectors, dtype=np.float32)
-    return exact_maxsim(query, section.matrix(contextual=contextual))
+    weights = None if query_weights is None else np.asarray(query_weights, dtype=np.float32)
+    return exact_maxsim(
+        query,
+        section.matrix(contextual=contextual),
+        query_weights=weights,
+    )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

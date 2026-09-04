@@ -344,6 +344,11 @@ from .atoms import (  # noqa: E402
 )
 from .code import CodeParseResult, parse_python  # noqa: E402
 from .coordinates import SourceCoordinateMap, line_column  # noqa: E402
+from .dependencies import (  # noqa: E402
+    AtomDependencies,
+    atom_collection_stamp,
+    atom_dependencies,
+)
 from .html import parse_html  # noqa: E402
 from .markdown import parse_markdown  # noqa: E402
 from .records import parse_delimited, parse_json_array, parse_json_lines  # noqa: E402
@@ -367,6 +372,7 @@ from .validation import (  # noqa: E402
 __all__ = [
     "BoundingBox",
     "AtomAlignment",
+    "AtomDependencies",
     "AtomDiffAlgorithm",
     "AtomKind",
     "AtomModification",
@@ -401,6 +407,8 @@ __all__ = [
     "TemporalAtom",
     "active_atoms",
     "align_atoms",
+    "atom_dependencies",
+    "atom_collection_stamp",
     "content_defined_spans",
     "impacted_symbols",
     "line_column",

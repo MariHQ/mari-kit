@@ -11,6 +11,9 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 
+from mari_components.dependencies import dependency_fingerprint
+from mari_components.references import LocatedEvidence, ObjectRef, RevisionRef, TextSpan
+
 from . import ParsedBlock, ParsedDocument
 from .sequence_diff import DiffKind, DiffSpan, myers_diff, patience_diff
 
@@ -64,6 +67,22 @@ class SemanticAtom:
     def contextual_text(self) -> str:
         heading = " > ".join(self.heading_path)
         return f"{heading}\n\n{self.text}" if heading else self.text
+
+    def to_revision_ref(self, *, source: ObjectRef) -> RevisionRef:
+        """Address this occurrence using the shared source and isolation scope."""
+        if source.object_id != self.source_id:
+            raise ValueError("atom and source object IDs must match")
+        return RevisionRef(
+            object=source, revision=self.source_revision, unit_id=self.atom_id
+        )
+
+    def located_evidence(self, *, source: ObjectRef) -> LocatedEvidence:
+        """Bind an exact quote to its source revision and document coordinates."""
+        return LocatedEvidence(
+            ref=self.to_revision_ref(source=source),
+            locator=TextSpan(start=self.start, end=self.end),
+            quote=self.text,
+        )
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -416,10 +435,21 @@ def plan_atom_refresh(
         if before.contextual_text != after.contextual_text
         or before.section_id != after.section_id
     )
+    raw_changed = tuple(
+        (before, after)
+        for before, after in alignment.unchanged
+        if dependency_fingerprint(before.text) != dependency_fingerprint(after.text)
+    )
+    contextual_changed = tuple(
+        (before, after)
+        for before, after in alignment.unchanged
+        if dependency_fingerprint(before.contextual_text)
+        != dependency_fingerprint(after.contextual_text)
+    )
     contextual_reuse = tuple(
         (before.atom_id, after.atom_id)
         for before, after in alignment.unchanged
-        if (before, after) not in moved
+        if (before, after) not in contextual_changed
     )
     sections = {
         atom.section_id
@@ -432,15 +462,24 @@ def plan_atom_refresh(
     }
     return AtomRefreshPlan(
         reuse_raw_embeddings=tuple(
-            (before.atom_id, after.atom_id) for before, after in alignment.unchanged
+            (before.atom_id, after.atom_id)
+            for before, after in alignment.unchanged
+            if (before, after) not in raw_changed
         ),
         reuse_contextual_embeddings=contextual_reuse,
-        embed_raw_atom_ids=tuple(atom.atom_id for atom in changed_new),
+        embed_raw_atom_ids=tuple(
+            dict.fromkeys(
+                (
+                    *(atom.atom_id for atom in changed_new),
+                    *(after.atom_id for _, after in raw_changed),
+                )
+            )
+        ),
         embed_contextual_atom_ids=tuple(
             dict.fromkeys(
                 (
                     *(atom.atom_id for atom in changed_new),
-                    *(after.atom_id for _, after in moved),
+                    *(after.atom_id for _, after in contextual_changed),
                 )
             )
         ),

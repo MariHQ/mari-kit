@@ -1,6 +1,18 @@
 """Backend-agnostic primitives for versioned knowledge systems."""
 
 from .contracts import Authorizer, Clock, KnowledgeIndex, RevisionResolver, Serializer
+from .dependencies import (
+    DependencyKey,
+    DependencyStamp,
+    DependencyUpdate,
+    DependencyUpdatePlan,
+    DerivationSpec,
+    MaterializationReceipt,
+    UpdateAction,
+    dependency_fingerprint,
+    materialization_receipt,
+    plan_dependency_updates,
+)
 from .errors import (
     AuthenticationFailure,
     ComponentError,
@@ -42,6 +54,16 @@ from .types import (
 )
 
 __all__ = [
+    "DependencyKey",
+    "DependencyStamp",
+    "DependencyUpdate",
+    "DependencyUpdatePlan",
+    "DerivationSpec",
+    "MaterializationReceipt",
+    "UpdateAction",
+    "dependency_fingerprint",
+    "materialization_receipt",
+    "plan_dependency_updates",
     "AnswerCandidate",
     "Authorizer",
     "AuthenticationFailure",

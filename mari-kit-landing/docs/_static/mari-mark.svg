@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="22" height="22" aria-hidden="true" class="mari-mark">
+<rect x="1" y="1" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"/>
+<path d="M7 25V9l9 9 9-9v16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="miter"/>
+<rect x="5" y="7" width="4" height="4" fill="currentColor"/><rect x="23" y="7" width="4" height="4" fill="currentColor"/>
+<rect x="5" y="23" width="4" height="4" fill="currentColor"/><rect x="23" y="23" width="4" height="4" fill="currentColor"/>
+<rect x="14" y="16" width="4" height="4" fill="#1e6fa8"/></svg>

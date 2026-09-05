@@ -54,11 +54,21 @@ work across artifact types.
 
 </div>
 
-<div>
+::: fields
+identity + revision
 
-identity + revisionKnowledgeScopeevidencevalid timereview stategeneratorsupersedes
+KnowledgeScope
 
-</div>
+evidence
+
+valid time
+
+review state
+
+generator
+
+supersedes
+:::
 :::::
 
 ```{code-block} python

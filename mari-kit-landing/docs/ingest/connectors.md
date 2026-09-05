@@ -411,7 +411,7 @@ appears in `unresolved_keys`. An explicit resolver can select a tied hint.
 
 </div>
 
-*→*
+**→**
 
 <div>
 
@@ -419,7 +419,7 @@ appears in `unresolved_keys`. An explicit resolver can select a tied hint.
 
 </div>
 
-*→*
+**→**
 
 <div>
 

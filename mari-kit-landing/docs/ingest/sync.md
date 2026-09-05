@@ -29,7 +29,7 @@
 
 </div>
 
-*→*
+**→**
 
 <div>
 
@@ -37,13 +37,13 @@
 
 </div>
 
-*→*
+**→**
 
 ::: gate
 **Complete?**[incomplete: preserve missing docs]{.small}
 :::
 
-*→*
+**→**
 
 <div>
 
@@ -51,7 +51,7 @@
 
 </div>
 
-*→*
+**→**
 
 <div>
 

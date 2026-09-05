@@ -1,0 +1,9 @@
+{#-
+  Sidebar brand: the Mari mark plus "MARI KIT" in the docs logo style.
+  On wide screens the top header carries the same logo, so custom.css hides
+  this block there and shows it only inside the mobile sidebar drawer.
+-#}
+<a class="sidebar-brand mk-brand" href="{{ pathto(master_doc) }}">
+  {{ mari_mark_svg }}
+  <span class="mk-brand-text">MARI KIT</span>
+</a>

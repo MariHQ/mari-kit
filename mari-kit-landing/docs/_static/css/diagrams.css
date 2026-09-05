@@ -1,0 +1,807 @@
+/* Diagram and illustration styles for Mari Kit docs.
+   Blueprint illustration language from the mari.guru landing: white nodes with a
+   1px ink stroke and no radius, mono uppercase kind labels, 1px orthogonal
+   connectors that end in a 6px filled square instead of an arrowhead.
+   Scoped to .diagram, .diagram-hero and their own classes only. */
+
+/* ---------- tokens ---------- */
+
+.diagram,
+.diagram-hero {
+  --dg-bg: #ffffff;
+  --dg-node: #ffffff;
+  --dg-ink: #10263b;
+  --dg-edge: #10263b;
+  --dg-line: #d4d5d8;
+  --dg-muted: #5d6b79;
+  --dg-accent: #1e6fa8;
+  --dg-accent-text: #1e6fa8;
+  --dg-down: #e8f1f9;
+  --dg-hot: #1c3f60;
+  --dg-hot-text: #ffffff;
+  --dg-hot-muted: rgba(255, 255, 255, 0.72);
+  --dg-stale: #b23a1e;
+  --dg-dots: rgba(0, 0, 0, 0.08);
+  --dg-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --dg-sans: Inter, "Helvetica Neue", Arial, sans-serif;
+  --dg-gap: 28px;   /* connector length, square included */
+  --dg-tab: 18px;   /* x position of the vertical connector when stacked */
+}
+
+html[data-theme="dark"] .diagram,
+html[data-theme="dark"] .diagram-hero,
+body[data-theme="dark"] .diagram,
+body[data-theme="dark"] .diagram-hero {
+  --dg-bg: #0a1926;
+  --dg-node: #0e2032;
+  --dg-ink: #eaf0f5;
+  --dg-edge: #7a93a9;
+  --dg-line: #2d4356;
+  --dg-muted: #8497a6;
+  --dg-accent: #1e6fa8;
+  --dg-accent-text: #6fb1e6;
+  --dg-down: #14324c;
+  --dg-hot: #1c3f60;
+  --dg-hot-text: #ffffff;
+  --dg-hot-muted: rgba(255, 255, 255, 0.72);
+  --dg-stale: #e8805e;
+  --dg-dots: rgba(255, 255, 255, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) body:not([data-theme="light"]) .diagram,
+  html:not([data-theme="light"]) body:not([data-theme="light"]) .diagram-hero {
+    --dg-bg: #0a1926;
+    --dg-node: #0e2032;
+    --dg-ink: #eaf0f5;
+    --dg-edge: #7a93a9;
+    --dg-line: #2d4356;
+    --dg-muted: #8497a6;
+    --dg-accent: #1e6fa8;
+    --dg-accent-text: #6fb1e6;
+    --dg-down: #14324c;
+    --dg-hot: #1c3f60;
+    --dg-hot-text: #ffffff;
+    --dg-hot-muted: rgba(255, 255, 255, 0.72);
+    --dg-stale: #e8805e;
+    --dg-dots: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* ---------- frame ---------- */
+
+.diagram {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  margin: 28px 0;
+  padding: 22px 20px;
+  border: 1px solid var(--dg-line);
+  border-radius: 0;
+  background-color: var(--dg-bg);
+  background-image: radial-gradient(var(--dg-dots) 1px, transparent 1.4px);
+  background-size: 14px 14px;
+  color: var(--dg-ink);
+  font-family: var(--dg-sans);
+  line-height: 1.35;
+  counter-reset: dg;
+}
+
+.diagram *,
+.diagram *::before,
+.diagram *::after {
+  box-sizing: border-box;
+}
+
+.diagram p {
+  margin: 0;
+}
+
+.diagram strong {
+  font-weight: 600;
+}
+
+/* ---------- nodes ---------- */
+
+.diagram > div:where(:not(.bridge)) {
+  counter-increment: dg;
+}
+
+.diagram > div:where(:not(.bridge, .arms, .fields)) {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 9px 12px 10px;
+  border: 1px solid var(--dg-edge);
+  border-radius: 0;
+  background: var(--dg-node);
+  font: 400 10px/1.45 var(--dg-mono);
+  color: var(--dg-muted);
+}
+
+/* kind label: mono uppercase, a running number unless a variant names it */
+.diagram > div:where(:not(.bridge, .arms, .fields)) > p:first-child::before,
+.diagram > .arms::before {
+  content: counter(dg, decimal-leading-zero);
+  display: block;
+  margin-bottom: 4px;
+  font: 500 10px/1.2 var(--dg-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dg-muted);
+}
+
+.diagram > div > p > strong {
+  display: block;
+  font: 600 12.5px/1.3 var(--dg-sans);
+  letter-spacing: -0.005em;
+  color: var(--dg-ink);
+}
+
+.diagram .small {
+  display: block;
+  margin-top: 3px;
+  font: 400 10px/1.45 var(--dg-mono);
+  color: var(--dg-muted);
+}
+
+.diagram code,
+.diagram code.literal,
+.diagram code .pre {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font: 400 10.5px/1.6 var(--dg-mono);
+  color: var(--dg-ink);
+}
+
+/* node states */
+.diagram .gate,
+.diagram .retr {
+  border-color: var(--dg-accent);
+  background: var(--dg-down);
+}
+
+.diagram .changed {
+  border-color: var(--dg-stale);
+  color: var(--dg-stale);
+}
+.diagram .changed > p > strong,
+.diagram .changed > p:first-child::before,
+.diagram .changed .small {
+  color: var(--dg-stale);
+}
+
+/* ---------- connectors ---------- */
+
+/* a paragraph between nodes is a connector: 1px line, 6px square terminal,
+   optional mono label above the line. The literal arrow glyph is hidden. */
+.diagram > p,
+.diagram > .bridge {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: var(--dg-gap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  text-align: center;
+  font: 400 10px/1.3 var(--dg-mono);
+  letter-spacing: 0.02em;
+  color: var(--dg-muted);
+}
+
+.diagram > p::before,
+.diagram > .bridge::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 6px;
+  top: calc(50% - 0.5px);
+  height: 0;
+  border-top: 1px solid var(--dg-edge);
+}
+
+.diagram > p::after,
+.diagram > .bridge::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--dg-edge);
+}
+
+.diagram > p > strong {
+  display: none;
+}
+
+.diagram > p > em,
+.diagram > .bridge > p {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 6px);
+  transform: translateX(-50%);
+  z-index: 1;
+  display: block;
+  width: max-content;
+  max-width: calc(100% + 8px);
+  margin: 0;
+  font-style: normal;
+  white-space: normal;
+}
+
+.diagram > p:where(:has(> em)),
+.diagram > .bridge {
+  min-width: 96px;
+}
+
+/* ---------- chips: stages, lifecycle, resolution-cascade ---------- */
+
+.diagram.stages > p,
+.diagram.lifecycle > p,
+.diagram.resolution-cascade > p {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  row-gap: 14px;
+  padding: 0;
+  text-align: left;
+}
+
+.diagram.stages > p::before,
+.diagram.stages > p::after,
+.diagram.lifecycle > p::before,
+.diagram.lifecycle > p::after,
+.diagram.resolution-cascade > p::before,
+.diagram.resolution-cascade > p::after {
+  content: none;
+}
+
+.diagram .step {
+  position: relative;
+  display: block;
+  flex: 0 1 auto;
+  padding: 7px 11px;
+  border: 1px solid var(--dg-edge);
+  background: var(--dg-node);
+  font: 600 10.5px/1.3 var(--dg-mono);
+  color: var(--dg-ink);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.diagram .step:not(:last-child) {
+  margin-right: var(--dg-gap);
+}
+
+.diagram .step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--dg-gap) + 5px);
+  width: calc(var(--dg-gap) - 6px);
+  top: calc(50% - 0.5px);
+  height: 0;
+  border-top: 1px solid var(--dg-edge);
+}
+
+.diagram .step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: calc(-1 * var(--dg-gap) - 1px);
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--dg-edge);
+}
+
+/* ---------- timeline: adjacent nodes, connector drawn on the node ---------- */
+
+.diagram.timeline > div + div {
+  margin-left: var(--dg-gap);
+}
+
+.diagram.timeline > div + div::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--dg-gap));
+  width: calc(var(--dg-gap) - 6px);
+  top: calc(50% - 0.5px);
+  height: 0;
+  border-top: 1px solid var(--dg-edge);
+}
+
+.diagram.timeline > div + div::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--dg-edge);
+}
+
+/* ---------- state ---------- */
+
+.diagram.state > .gate > p:first-child::before {
+  content: "gate";
+  color: var(--dg-accent-text);
+}
+
+/* ---------- context: arms, fused stage, envelope ---------- */
+
+.diagram.context > .arms {
+  position: relative;
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.diagram.context > .arms::before {
+  margin-bottom: 2px;
+}
+
+.diagram.context > .arms > p {
+  padding: 5px 9px;
+  border: 1px solid var(--dg-edge);
+  background: var(--dg-node);
+  font: 500 10.5px/1.3 var(--dg-mono);
+  color: var(--dg-ink);
+  white-space: nowrap;
+}
+
+.diagram.context > .stage > p + p {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--dg-line);
+}
+
+/* ---------- thresholds: a ruler from 0.00 to 1.00 ---------- */
+
+.diagram.thresholds {
+  padding-top: 28px;
+}
+
+.diagram.thresholds > div {
+  flex: 1 1 0;
+  min-width: max-content;
+  padding: 10px 12px 8px 10px;
+  border-width: 1px 0 0 1px;
+  background: transparent;
+}
+
+.diagram.thresholds > div::before {
+  content: "";
+  position: absolute;
+  left: -3.5px;
+  top: -3.5px;
+  width: 6px;
+  height: 6px;
+  background: var(--dg-edge);
+}
+
+.diagram.thresholds > div:nth-child(1) { flex-grow: 72; }
+.diagram.thresholds > div:nth-child(2) { flex-grow: 23; }
+.diagram.thresholds > div:nth-child(3) { flex-grow: 5; }
+.diagram.thresholds > div:nth-child(4) { flex-grow: 0; border-right-width: 1px; }
+
+.diagram.thresholds > div > p > strong {
+  font: 600 12.5px/1.3 var(--dg-mono);
+}
+
+.diagram.thresholds > div:nth-child(1) > p:first-child::before { content: "floor"; }
+.diagram.thresholds > .retr > p:first-child::before { content: "speculation threshold"; color: var(--dg-accent-text); }
+.diagram.thresholds > .reuse > p:first-child::before { content: "cache threshold"; }
+.diagram.thresholds > div:nth-child(4) > p:first-child::before { content: "ceiling"; }
+
+.diagram.thresholds > .retr {
+  border-color: var(--dg-edge);
+  border-left-color: var(--dg-accent);
+}
+
+.diagram.thresholds > .reuse {
+  background: var(--dg-hot);
+  color: var(--dg-hot-muted);
+}
+.diagram.thresholds > .reuse > p > strong { color: var(--dg-hot-text); }
+.diagram.thresholds > .reuse > p:first-child::before,
+.diagram.thresholds > .reuse .small { color: var(--dg-hot-muted); }
+
+/* ---------- dependency ---------- */
+
+.diagram.dependency > div:first-child > p:first-child::before { content: "artifact"; }
+.diagram.dependency > .changed > p:first-child::before { content: "source · changed"; }
+.diagram.dependency > div:last-child > p:first-child::before { content: "queue"; }
+
+/* ---------- evidence: source excerpt, bridge, evidence record ---------- */
+
+.diagram.evidence > .source {
+  flex: 1.15 1 0;
+}
+
+.diagram.evidence > .bridge {
+  min-width: 150px;
+}
+
+.diagram.evidence > .source > p:first-child::before { content: "source"; }
+.diagram.evidence > .record > p:first-child::before { content: "record"; }
+
+.diagram.evidence > .source > p + p {
+  margin-top: 8px;
+  font: 400 13px/1.5 var(--dg-sans);
+  color: var(--dg-ink);
+}
+
+.diagram.evidence .mark {
+  padding: 0 2px;
+  border-bottom: 1px solid var(--dg-accent);
+  background: var(--dg-down);
+  color: var(--dg-ink);
+}
+
+.diagram.evidence > .record > p + p {
+  margin-top: 2px;
+}
+
+.diagram.evidence > .record > p > strong {
+  margin-bottom: 4px;
+}
+
+/* ---------- bitemporal: two axes with a drawn bar ---------- */
+
+.diagram.bitemporal {
+  gap: 16px;
+}
+
+.diagram.bitemporal > div > p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.diagram.bitemporal > div > p:first-child::before {
+  content: "axis";
+  flex: 0 0 100%;
+}
+
+.diagram.bitemporal > div > p > strong {
+  flex: 0 0 100%;
+}
+
+.diagram.bitemporal .from,
+.diagram.bitemporal .to {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font: 400 10px/1.3 var(--dg-mono);
+  color: var(--dg-muted);
+  white-space: nowrap;
+}
+
+.diagram.bitemporal .from {
+  flex: 1 1 auto;
+  gap: 8px;
+}
+
+.diagram.bitemporal .from::after {
+  content: "";
+  flex: 1 1 24px;
+  height: 0;
+  border-top: 1px solid var(--dg-edge);
+}
+
+.diagram.bitemporal .to::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  background: var(--dg-edge);
+}
+
+/* ---------- artifact: type node, connector, field list ---------- */
+
+.diagram.artifact > div:first-child {
+  flex: 0 0 auto;
+  align-self: center;
+  min-width: 190px;
+  border-color: var(--dg-hot);
+  background: var(--dg-hot);
+  color: var(--dg-hot-muted);
+}
+
+.diagram.artifact > div:first-child > p:first-child::before {
+  content: "type";
+  color: var(--dg-hot-muted);
+}
+
+.diagram.artifact > div:first-child > p > strong {
+  color: var(--dg-hot-text);
+}
+
+.diagram.artifact > .fields {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--dg-gap);
+  border: 1px solid var(--dg-edge);
+  background: var(--dg-node);
+}
+
+.diagram.artifact > .fields > p {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--dg-line);
+  font: 400 10.5px/1.5 var(--dg-mono);
+  color: var(--dg-ink);
+}
+
+.diagram.artifact > .fields > p:last-child {
+  border-bottom: 0;
+}
+
+.diagram.artifact > .fields::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--dg-gap) - 1px);
+  width: calc(var(--dg-gap) - 5px);
+  top: calc(50% - 0.5px);
+  height: 0;
+  border-top: 1px solid var(--dg-edge);
+}
+
+.diagram.artifact > .fields::after {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--dg-edge);
+}
+
+/* ---------- stacked layout for narrow columns ---------- */
+
+@media (max-width: 760px) {
+  .diagram {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .diagram > div:where(:not(.bridge, .arms, .fields)) {
+    flex: 0 0 auto;
+  }
+
+  /* connector turns 90 degrees: vertical line at --dg-tab, label to its right */
+  .diagram > p,
+  .diagram > .bridge {
+    min-width: 0;
+    min-height: 34px;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px 0 8px calc(var(--dg-tab) + 14px);
+    text-align: left;
+  }
+
+  .diagram > p::before,
+  .diagram > .bridge::before {
+    left: calc(var(--dg-tab) - 0.5px);
+    right: auto;
+    top: 0;
+    bottom: 6px;
+    width: 0;
+    height: auto;
+    border-top: 0;
+    border-left: 1px solid var(--dg-edge);
+  }
+
+  .diagram > p::after,
+  .diagram > .bridge::after {
+    left: calc(var(--dg-tab) - 3px);
+    right: auto;
+    top: auto;
+    bottom: 0;
+    margin: 0;
+  }
+
+  .diagram > p > em,
+  .diagram > .bridge > p {
+    position: static;
+    transform: none;
+    width: auto;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* chips */
+  .diagram.stages > p,
+  .diagram.lifecycle > p,
+  .diagram.resolution-cascade > p {
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 0;
+  }
+
+  .diagram .step {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .diagram .step:not(:last-child) {
+    margin: 0 0 var(--dg-gap);
+  }
+
+  .diagram .step:not(:last-child)::before {
+    right: auto;
+    left: calc(var(--dg-tab) - 0.5px);
+    top: 100%;
+    width: 0;
+    height: calc(var(--dg-gap) - 5px);
+    border-top: 0;
+    border-left: 1px solid var(--dg-edge);
+  }
+
+  .diagram .step:not(:last-child)::after {
+    right: auto;
+    left: calc(var(--dg-tab) - 3px);
+    top: auto;
+    bottom: calc(-1 * var(--dg-gap) - 1px);
+    margin: 0;
+  }
+
+  /* timeline */
+  .diagram.timeline > div + div {
+    margin: var(--dg-gap) 0 0;
+  }
+
+  .diagram.timeline > div + div::before {
+    left: calc(var(--dg-tab) - 0.5px);
+    top: calc(-1 * var(--dg-gap));
+    width: 0;
+    height: calc(var(--dg-gap) - 6px);
+    border-top: 0;
+    border-left: 1px solid var(--dg-edge);
+  }
+
+  .diagram.timeline > div + div::after {
+    left: calc(var(--dg-tab) - 3px);
+    top: -6px;
+    margin: 0;
+  }
+
+  /* context arms become a wrapping row */
+  .diagram.context > .arms {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .diagram.context > .arms::before {
+    flex: 0 0 100%;
+  }
+
+  /* thresholds stay a ruler, it fits */
+  .diagram.thresholds {
+    flex-direction: row;
+  }
+
+  /* artifact */
+  .diagram.artifact > div:first-child {
+    align-self: stretch;
+  }
+
+  .diagram.artifact > .fields {
+    margin: var(--dg-gap) 0 0;
+  }
+
+  .diagram.artifact > .fields::before {
+    left: calc(var(--dg-tab) - 0.5px);
+    top: calc(-1 * var(--dg-gap) - 1px);
+    width: 0;
+    height: calc(var(--dg-gap) - 5px);
+    border-top: 0;
+    border-left: 1px solid var(--dg-edge);
+  }
+
+  .diagram.artifact > .fields::after {
+    left: calc(var(--dg-tab) - 3px);
+    top: -7px;
+    margin: 0;
+  }
+}
+
+/* ---------- hero illustration (index page) ---------- */
+
+.diagram-hero {
+  margin: 26px 0 34px;
+  padding: 0;
+  color: var(--dg-ink);
+}
+
+.diagram-hero svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 220px;
+  overflow: visible;
+  color: var(--dg-ink);
+}
+
+.diagram-hero .hn {
+  fill: var(--dg-node);
+  stroke: var(--dg-edge);
+  stroke-width: 1;
+}
+
+.diagram-hero .hn-down {
+  fill: var(--dg-down);
+  stroke: var(--dg-accent);
+}
+
+.diagram-hero .he {
+  fill: none;
+  stroke: var(--dg-edge);
+  stroke-width: 1;
+}
+
+.diagram-hero .ht {
+  fill: var(--dg-edge);
+}
+
+.diagram-hero .ht-down {
+  fill: var(--dg-accent);
+}
+
+.diagram-hero .hk {
+  font: 500 10px var(--dg-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--dg-muted);
+}
+
+.diagram-hero .hk-down {
+  fill: var(--dg-accent-text);
+}
+
+.diagram-hero .hm {
+  font: 600 12.5px var(--dg-sans);
+  letter-spacing: -0.005em;
+  fill: var(--dg-ink);
+}
+
+.diagram-hero figcaption {
+  margin-top: 8px;
+  font: 400 10.5px/1.5 var(--dg-mono);
+  color: var(--dg-muted);
+}
+
+/* ---------- furo override ----------
+   furo-extensions.css ships `[role=main] .container { padding-left: 0; padding-right: 0 }`.
+   Docutils marks the diagram frame and colon-fence `card` nodes as .container, and that
+   two-part selector outranks the single-class rules above, so restate their side padding. */
+
+[role="main"] .diagram.container {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+[role="main"] .diagram > .card.container:where(:not(.bridge, .arms, .fields)) {
+  padding-left: 12px;
+  padding-right: 12px;
+}

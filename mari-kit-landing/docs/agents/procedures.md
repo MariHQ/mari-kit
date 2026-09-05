@@ -50,7 +50,7 @@ on these mechanisms. Mari adds held-out regression gates and human promotion
 as library policies.
 
 :::{container} diagram lifecycle
-trajectories*→*candidate*→*regression suite*→*review*→*active version
+[trajectories]{.step} [candidate]{.step} [regression suite]{.step} [review]{.step} [active version]{.step}
 :::
 
 ```{code-block} python

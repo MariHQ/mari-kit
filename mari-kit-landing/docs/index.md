@@ -4,12 +4,50 @@
 mari-components · 0.1.0.dev0
 :::
 
-# Mari documentation
+# Mari Kit
 
 Mari Kit supplies backend-agnostic values, contracts, algorithms, plans, and
 conformance checks for knowledge built from changing company sources. The host
 application owns its databases, model calls, authorization policy, scheduler,
 graph semantics, and product behavior.
+
+```{raw} html
+<figure class="diagram-hero">
+<svg viewBox="0 0 760 220" width="760" height="220" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false" role="presentation">
+  <path class="he" d="M180 110 H264"/>
+  <path class="he" d="M430 110 H500 V34 H564"/>
+  <path class="he" d="M430 110 H564"/>
+  <path class="he" d="M430 110 H500 V186 H564"/>
+  <rect class="ht" x="264" y="107" width="6" height="6"/>
+  <rect class="ht" x="564" y="31" width="6" height="6"/>
+  <rect class="ht ht-down" x="564" y="107" width="6" height="6"/>
+  <rect class="ht" x="564" y="183" width="6" height="6"/>
+  <rect class="ht" x="216" y="107" width="6" height="6"/>
+  <rect class="ht" x="462" y="107" width="6" height="6"/>
+  <rect class="ht" x="497" y="66" width="6" height="6"/>
+  <rect class="ht" x="497" y="148" width="6" height="6"/>
+  <rect class="ht" x="530" y="31" width="6" height="6"/>
+  <rect class="ht ht-down" x="530" y="107" width="6" height="6"/>
+  <rect class="ht" x="530" y="183" width="6" height="6"/>
+  <rect class="hn" x="20.5" y="86.5" width="160" height="48"/>
+  <text class="hk" x="32" y="105">source</text>
+  <text class="hm" x="32" y="122">source revision</text>
+  <rect class="hn" x="270.5" y="86.5" width="160" height="48"/>
+  <text class="hk" x="282" y="105">units</text>
+  <text class="hm" x="282" y="122">semantic atoms</text>
+  <rect class="hn" x="570.5" y="12.5" width="170" height="44"/>
+  <text class="hk" x="582" y="30">derived</text>
+  <text class="hm" x="582" y="46">search index</text>
+  <rect class="hn hn-down" x="570.5" y="88.5" width="170" height="44"/>
+  <text class="hk hk-down" x="582" y="106">derived · rebuilt</text>
+  <text class="hm" x="582" y="122">derived fact</text>
+  <rect class="hn" x="570.5" y="164.5" width="170" height="44"/>
+  <text class="hk" x="582" y="182">derived</text>
+  <text class="hm" x="582" y="198">agent proposal</text>
+</svg>
+<figcaption>One source revision, its semantic atoms, and the derived outputs that rebuild when it changes.</figcaption>
+</figure>
+```
 
 ## Start with an outcome
 

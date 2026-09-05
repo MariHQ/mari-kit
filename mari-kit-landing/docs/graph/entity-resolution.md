@@ -50,7 +50,7 @@ contributions and the resulting review volume.
 :::
 
 :::{container} diagram resolution-cascade
-scope + type block*→*normalized exact*→*field/fuzzy score*→*embedding candidates*→*link · reject · review
+[scope + type block]{.step} [normalized exact]{.step} [field/fuzzy score]{.step} [embedding candidates]{.step} [link · reject · review]{.step}
 :::
 
 ```{code-block} python

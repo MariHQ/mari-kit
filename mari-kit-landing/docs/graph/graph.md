@@ -52,13 +52,13 @@ domain.
 :::::{container} diagram bitemporal
 <div>
 
-**valid time**Jan ───────── Aug
+**valid time**[Jan]{.from}[Aug]{.to}
 
 </div>
 
 <div>
 
-**transaction time**learned Sep 01 ───▶
+**transaction time**[learned Sep 01]{.from}[onward]{.to}
 
 </div>
 :::::

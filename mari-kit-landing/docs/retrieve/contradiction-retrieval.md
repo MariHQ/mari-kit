@@ -39,7 +39,7 @@ drop after the Hoyer term was added.
 **Sparse rerank**[cos + α · sparsity]{.small}
 :::
 
-*→*
+**→**
 
 ::: card
 **ContradictionHit\[\]**[components + stable rank]{.small}

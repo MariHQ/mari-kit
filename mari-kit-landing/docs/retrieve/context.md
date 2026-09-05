@@ -42,16 +42,24 @@ Run semantic, lexical, graph, and recency arms over authorized IDs. Convert arm 
 
 ::::::{container} diagram context
 ::: arms
-semanticlexicalgraphrecent
+semantic
+
+lexical
+
+graph
+
+recent
 :::
 
 *RRF*
 
-<div>
+::: stage
+**authorize**
 
-**authorizefreshnessrerank**
+**freshness**
 
-</div>
+**rerank**
+:::
 
 *budget*
 

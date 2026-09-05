@@ -52,7 +52,7 @@ identities and dependency traces. Visible failures complete the record. Mari
 expresses this boundary through generic stage and mutation types.
 
 :::{container} diagram stages
-extract*→*resolve*→*link*→*review*→*index
+[extract]{.step} [resolve]{.step} [link]{.step} [review]{.step} [index]{.step}
 :::
 
 ```{code-block} python

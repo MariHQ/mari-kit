@@ -39,7 +39,7 @@ caller. Batch claim assessment keys rows to caller order. Absent rows become
 `uncertain`, and malformed rows leave valid siblings available.
 
 :::{container} diagram stages
-model proposal*→*schema*→*exact evidence*→*revision binding*→*typed candidate
+[model proposal]{.step} [schema]{.step} [exact evidence]{.step} [revision binding]{.step} [typed candidate]{.step}
 :::
 
 | Parser | Produces | Research-backed task | Academic sources |

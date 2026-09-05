@@ -227,16 +227,22 @@ and leaves canonical-manifest selection to the caller.
 
 ::::::{container} diagram context
 ::: arms
-MUVERAlexicalrecent
+MUVERA
+
+lexical
+
+recent
 :::
 
 *RRF*
 
-<div>
+::: stage
+**authorized nodes**
 
-**authorized nodesPageRankpassage projection**
+**PageRank**
 
-</div>
+**passage projection**
+:::
 
 *MMR*
 

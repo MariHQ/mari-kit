@@ -1,0 +1,80 @@
+{%- extends "!page.html" -%}
+
+{#-
+  Mari Kit docs shell on top of furo.
+
+  * extrahead: Google Fonts (Inter + JetBrains Mono), same link mari.guru/docs uses.
+  * announcement: furo only renders this block when the "announcement" theme
+    option is non-empty (conf.py sets a sentinel). We use it to draw the slim
+    top header from the docs shell. custom.css turns the furo wrappers into
+    display: contents so the <header> sits directly under <body>.
+  * footer: prev/next links plus the open-source credit line. No copyright.
+-#}
+
+{%- block extrahead %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{{ mari_fonts_href }}">
+{{ super() }}
+{%- endblock extrahead %}
+
+{%- block announcement %}
+<header class="mk-header">
+  <label class="mk-menu nav-overlay-icon" for="__navigation" aria-label="Toggle site navigation sidebar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </label>
+  <a class="mk-logo" href="{{ pathto(master_doc) }}">
+    {{ mari_mark_svg }}
+    <span class="mk-logo-text">MARI KIT</span>
+  </a>
+  <nav class="mk-nav" aria-label="Site">
+    <a href="{{ mari_github_url }}" rel="noopener noreferrer">GitHub</a>
+    <a href="{{ pathto('start/install') }}">Install</a>
+    <a href="{{ mari_license_url }}" rel="noopener noreferrer" title="Apache 2.0">License</a>
+    <label class="mk-toc toc-overlay-icon{% if furo_hide_toc %} no-toc{% endif %}" for="__toc" aria-label="Toggle table of contents sidebar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    </label>
+    <button class="theme-toggle mk-nightmode" type="button" aria-label="Toggle light, dark, or automatic color theme">
+      <svg class="theme-icon-when-auto-light" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="theme-icon-when-light" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="theme-icon-when-auto-dark" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+      <svg class="theme-icon-when-dark" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+    </button>
+  </nav>
+</header>
+{%- endblock announcement %}
+
+{%- block footer %}
+<div class="related-pages">
+  {% if next -%}
+    <a class="next-page" href="{{ next.link }}">
+      <div class="page-info">
+        <div class="context"><span>{{ _("Next") }}</span></div>
+        <div class="title">{{ next.title }}</div>
+      </div>
+      <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+    </a>
+  {%- endif %}
+  {% if prev -%}
+    <a class="prev-page" href="{{ prev.link }}">
+      <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+      <div class="page-info">
+        <div class="context"><span>{{ _("Previous") }}</span></div>
+        {% if prev.link == pathto(master_doc) %}
+        <div class="title">{{ _("Home") }}</div>
+        {% else %}
+        <div class="title">{{ prev.title }}</div>
+        {% endif %}
+      </div>
+    </a>
+  {%- endif %}
+</div>
+<div class="bottom-of-page mk-footer">
+  <p>
+    Mari Kit is open source under the
+    <a href="{{ mari_license_url }}" rel="noopener noreferrer">Apache 2.0 license</a>.
+    <a href="{{ mari_github_url }}" rel="noopener noreferrer">Source on GitHub</a>.
+    Part of the <a href="{{ mari_site_url }}" rel="noopener noreferrer">Mari</a> ecosystem.
+  </p>
+</div>
+{%- endblock footer %}

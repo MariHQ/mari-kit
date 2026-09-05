@@ -9,6 +9,7 @@
 | [Governed knowledge](governed-knowledge.md) | Typed evidence and revisioned artifacts |
 | [Agent knowledge](agent-knowledge.md) | Completed activity to reviewable proposals |
 | [Conversation knowledge](../agents/conversation-knowledge.md) | Settled conversations to searchable, evidence-bound episodes |
+| [Algorithm choices](algorithm-choices.md) | Independent algorithms, workloads, fidelity, and pinned project citations |
 | [Install](install.md) | Base package, optional integrations, injected dependencies |
 | [Architecture](architecture.md) | Layer ownership, data flow, framework and storage boundaries |
 | [Maturity](maturity.md) | Stability and support labels |
@@ -32,6 +33,7 @@ company-search
 governed-knowledge
 agent-knowledge
 install
+algorithm-choices
 architecture
 maturity
 identity-migration

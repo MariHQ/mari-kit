@@ -93,9 +93,10 @@ def leiden_communities(
 ) -> CommunityPartition:
     """Optimize modularity, then refine every community to connected parts.
 
-    This dependency-light reference boundary implements Leiden's local-moving
-    and connected-refinement invariants. Large production graphs should use a
-    conforming optimized backend.
+    Historical compatibility name: this is a local-modularity heuristic with
+    connected-component splitting, not the full Leiden algorithm (it has no
+    aggregation phase). For native hierarchical Leiden use
+    algorithms.graphs.hierarchical_leiden_partition.
     """
 
     if not math.isfinite(resolution) or resolution <= 0 or max_passes < 1:

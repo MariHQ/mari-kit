@@ -310,3 +310,47 @@ __all__ = [
     "weighted_mean",
     "wilson_proportion",
 ]
+
+from .citations import (
+    CitationDeclarationReport,
+    CitationDeclarationStatus,
+    CitationEvent,
+    CitationEventKind,
+    OwnedEvidenceRef,
+    inspect_citation_declarations,
+)
+from .compaction import (
+    CompactionEvidence,
+    CompactionExclusion,
+    CompactionTrace,
+    EvidenceCompactionPlan,
+    EvidenceGroup,
+    plan_evidence_compaction,
+)
+from .multimodal import (
+    AssetBinding,
+    AssetSelection,
+    EvidenceAsset,
+    RetainedAsset,
+    select_evidence_assets,
+)
+
+__all__ += [
+    "CitationEvent",
+    "CitationEventKind",
+    "CitationDeclarationReport",
+    "CitationDeclarationStatus",
+    "OwnedEvidenceRef",
+    "inspect_citation_declarations",
+    "CompactionEvidence",
+    "CompactionExclusion",
+    "CompactionTrace",
+    "EvidenceGroup",
+    "EvidenceCompactionPlan",
+    "plan_evidence_compaction",
+    "EvidenceAsset",
+    "AssetBinding",
+    "RetainedAsset",
+    "AssetSelection",
+    "select_evidence_assets",
+]

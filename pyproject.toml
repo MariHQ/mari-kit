@@ -9,7 +9,7 @@ description = "Backend-agnostic tools for versioned, evidence-linked knowledge s
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
-license-files = ["LICENSE.md"]
+license-files = ["LICENSE.md", "THIRD_PARTY_NOTICES.md"]
 authors = [{name = "Daniel Henneberger", email = "git@danielhenneberger.com"}]
 keywords = ["ai-agents", "knowledge-management", "rag", "muvera", "connectors"]
 dependencies = ["numpy>=1.26"]
@@ -27,6 +27,7 @@ Repository = "https://github.com/MariHQ/mari-kit"
 Issues = "https://github.com/MariHQ/mari-kit/issues"
 
 [project.optional-dependencies]
+algorithm-solvers = ["networkx>=3.2", "pcst-fast>=1.0.10", "graspologic-native>=1.2", "scipy>=1.11"]
 examples = ["openai>=1.79", "slack-sdk>=3.33"]
 openai-agents = ["openai-agents>=0.2"]
 langchain = ["langchain>=1.0"]

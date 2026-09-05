@@ -14,6 +14,7 @@ site build and deployment before they appear there.
 | [Conversation knowledge](conversation-knowledge.md) | Episode extraction, retrieval facets, and current authorized source evidence |
 | [Connectors](connectors.md) | Polling, verified event hints, canonical refetch, and sync handoffs |
 | [Knowledge parsers](knowledge-parsers.md) | Evidence-validation contracts and task-specific parser behavior |
+| [Algorithm choices](algorithm-choices.md) | 21 independently selectable families with pinned project citations, fidelity notes, and workload tradeoffs |
 | [Research algorithms](research-algorithms.md) | Fusion, graph recall, memory reconciliation, and segmentation |
 | [Ten paper-derived extensions](ten-paper-extensions.md) | Smaller reusable boundaries from retrieval and memory methods |
 | [Contradiction algorithms](contradiction-algorithms.md) | Cross-source retrieval versus within-document validation |
@@ -38,3 +39,8 @@ Paper results and small conformance fixtures do not establish production quality
 or scaling. Evaluate the host's models, data, authorization, and persistence
 together. For docs build and publishing checks, see the
 [documentation maintainer guide](../mari-kit-landing/README.md).
+
+## Evidence-preserving retrieval and conversations
+
+See [evidence context](evidence-context.md) for structural expansion, citation
+declarations, compaction plans, Docling JSON adaptation, and multimodal assets.

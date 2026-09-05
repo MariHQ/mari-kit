@@ -479,6 +479,14 @@ This is a library pipeline: model callbacks, persistence, embeddings, and live
 connector integration remain application responsibilities. Semantic extraction
 quality has not yet been benchmarked.
 
+## Evidence context
+
+Expand retrieved document sections while preserving source spans, inspect citation
+declarations across tools, and plan conversation evidence retention. Optional
+Docling JSON mapping and revision-bound asset selection require no additional
+runtime dependencies. See [the guide](docs/evidence-context.md) and
+[the runnable example](examples/evidence_context_demo.py).
+
 ## Connectors
 
 Connector functions accept an injected `HttpTransport`. This keeps network
@@ -570,3 +578,12 @@ principal-to-document authorization tests, tag-assignment persistence, and
 scrubbed fixtures from live connector canaries.
 
 Licensed under the [Apache License 2.0](LICENSE.md).
+
+## Independently selectable algorithms
+
+The [algorithm choices catalog](docs/algorithm-choices.md) covers 21 additional
+families, with pinned source-project citations and explicit adaptation notes.
+Choose lexical variants, subset objectives/optimizers, graph solvers, retrieval
+policies, compression, linkage, or memory evolution independently. Models and
+storage remain caller choices. Run `python -m examples.algorithm_choices_demo`
+from a checkout; optional native solvers use `mari-components[algorithm-solvers]`.

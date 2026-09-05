@@ -38,6 +38,9 @@ before releasing downstream work.
 Start with [installation](start/install.md), run an outcome example, then
 replace its model and storage callbacks at the application boundary.
 
+Browse the [algorithm choices](start/algorithm-choices.md) for independently
+selectable implementations with cited sources and workload tradeoffs.
+
 ## Browse tools by area
 
 

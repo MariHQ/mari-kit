@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+from examples.algorithm_choices_demo import run as run_algorithm_choices
 from examples.cross_user_acl_isolation.main import run as run_acl_isolation
 from examples.github_pipeline.main import run as run_github
 from examples.google_drive_change_stream.main import run as run_drive
@@ -20,6 +21,7 @@ from examples.workflow_view_step_cache.main import run as run_workflow_view
 
 
 def run() -> dict[str, object]:
+    algorithm_choices = run_algorithm_choices()
     company_search = run_company_search()
     governed_knowledge = run_governed_knowledge()
     agent_knowledge = run_agent_knowledge()
@@ -86,6 +88,11 @@ def run() -> dict[str, object]:
         }
     )
     checks = {
+        "independent_algorithm_composition": (
+            algorithm_choices["graph_propagation_converged"] is True
+            and algorithm_choices["selected_text"] == "rare"
+            and algorithm_choices["proposed_revision"] == 1
+        ),
         "conversation_maintenance_matches_clean_rebuild": (
             knowledge_maintenance["incremental_equals_rebuild"] is True
             and knowledge_maintenance["vectors_rebuilt"] == 1

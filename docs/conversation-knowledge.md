@@ -162,7 +162,107 @@ Compare raw-message retrieval against summary/question/episode retrieval, count
 unsupported claims and mistaken decisions, and measure evidence recall and model
 calls. No live extraction quality or retrieval benchmark is claimed here.
 
-Cross-thread topic discovery, automatic topic alias resolution, semantic
+Semantic grouping and offline topic relationships are available through the
+companion module below. Automatic topic naming/alias governance, semantic
 entailment checks, persistent queues, embedding stores and production connector
-integration are host responsibilities. The example shows the complete library
-path without prescribing a provider or launching paid model calls.
+integration remain host responsibilities.
+
+## Group interleaved conversations and reconnect episodes
+
+`mari_components.conversation_topics` adds an embedding-based path. Run
+`python -m examples.conversation_topics_demo` for the complete credential-free
+example, including extraction, topic grouping, relationship proposals, original
+evidence, and an unchanged second pass with no consolidation calls.
+
+```python
+from mari_components.conversation_topics import (
+    event_vector_key,
+    knowledge_vector_key,
+    semantic_conversation_episodes,
+    semantic_topic_groups,
+)
+
+# embed is your application's batch embedding function; use one embedding space.
+loose = [event for event in events if not event.thread_id]
+event_vectors = dict(zip(
+    [event_vector_key(event) for event in loose],
+    embed([event.text for event in loose]),
+    strict=True,
+))
+episodes = semantic_conversation_episodes(events, vectors=event_vectors)
+# Compile these episodes using compile_episodes, then:
+artifacts = extracted.artifacts
+topic_vectors = dict(zip(
+    [knowledge_vector_key(a) for a in artifacts],
+    embed([a.retrieval_units()[0].text for a in artifacts]),
+    strict=True,
+))
+groups = semantic_topic_groups(artifacts, vectors=topic_vectors)
+```
+
+Unthreaded events group within scope, stream, supplied topic label, and a bounded
+time window. Explicit threads retain their original events and size bounds.
+The algorithm uses deterministic greedy complete-link grouping: every member
+must meet the similarity threshold with every other member. This prevents a
+chain of weakly related messages from merging unrelated topics. It is a bounded
+quadratic algorithm, not a scalable all-corpus clustering service. Partition
+inputs before the default 1,000-candidate limit. Default thresholds are starting
+points, not calibrated values for every embedding model.
+
+Episode grouping can reconnect conversations across streams and days without
+matching topic labels. Always pass an authorized partition; company scope alone
+does not imply identical channel permissions. Version embedding model/configuration
+in the host cache namespace. Keys bind exact inputs but cannot detect vectors
+produced by different same-dimensional models. This is an embedding-only
+adaptation, not LightMem's LLMLingua compression/attention model implementation.
+
+## Consolidate topic briefs incrementally
+
+`compile_topic_briefs` accepts groups, a JSON-producing `generate` callback,
+`cache`, `current_events`, `allowed`, and `count_tokens`. It returns `briefs`,
+`pending`, `retired`, dependency `receipts`, callback `calls`, `reserved_tokens`,
+and `reused`. Current source evidence for the entire batch is checked before
+any model call, including when cache entries are available.
+
+The model sees the cited claims plus source events and proposes `supports`,
+`contradicts`, `extends`, or `supersedes` links between claim IDs from different
+episodes. Empty links are valid. Endpoint IDs are validated against the exact
+input group. Titles are search hints; rationales and links are explicitly
+unverified proposals. Briefs retain every original claim, including conflicting
+positions. A supersession proposal never deletes evidence or establishes an
+approved decision. The result is an extractive brief with proposed relationships,
+not a verified, authoritative narrative synthesis.
+
+`brief.retrieval_units()` emits brief and question facets. Their revisions
+fingerprint the actual output, so changed text cannot reuse a previous vector
+revision. `topic_evidence_context` resolves all original events again before
+display, rejecting source edits, deletions, or access loss. Filter/authorize
+derived facets before search too; a query-time renderer does not secure an
+unfiltered shared index.
+
+The call cap counts callback invocations. The token budget reserves the supplied
+whole-request token count plus `output_token_reserve` per call. Use an accurate
+provider tokenizer and enforce that output cap in the callback; retries and
+provider-hidden overhead cannot be bounded by the library. Malformed outputs
+raise without returning partial results. Use small batches for failure recovery.
+
+Cache keys include full extracted member content and the recipe. Change the
+recipe with the model, prompt, parser, or generation configuration. Persist
+briefs and receipts atomically in the host. `topic_dependencies` exposes a
+`DerivationSpec` and exact member/membership stamps for `plan_dependency_updates`.
+The compiler uses its exact-input cache and emits compatible receipts; it does
+not run a background dependency executor.
+
+Supply the complete active partition and its previous topic IDs to calculate
+retirements. Membership changes can create a new topic ID: remove retired index
+entries after splits, merges, and deletions. Withheld/pending new revisions must
+not leave old evidence searchable. Stable, human-curated topic IDs are not yet
+provided. Durable queues, token-triggered extraction buffers, and multi-episode
+model-request batching remain unimplemented; no service is started by this API.
+
+Fixture tests cover interleaving, cross-day links, transitive-drift prevention,
+scope boundaries, invalid vectors/links, edit invalidation, retirement, budgets,
+dependency receipt reuse, and incremental-versus-clean equality. The example
+uses planted embeddings and model outputs. Evaluate real held-out channel and
+trajectory questions before claiming semantic retrieval improvements. Lossy
+compression remains deliberately disabled until such evaluation exists.

@@ -262,3 +262,27 @@ __all__ = [
     "sparse_contrastive_losses",
     "walk_summary_tree",
 ]
+
+from .structure import (
+    ContextExpansionPolicy,
+    ContextExpansionResult,
+    ContextFragment,
+    ContextHit,
+    ExpandedContext,
+    StructuredContextItem,
+    context_items_from_atoms,
+    context_items_from_document,
+    expand_structured_context,
+)
+
+__all__ += [
+    "StructuredContextItem",
+    "ContextHit",
+    "ContextExpansionPolicy",
+    "ContextFragment",
+    "ExpandedContext",
+    "ContextExpansionResult",
+    "context_items_from_atoms",
+    "context_items_from_document",
+    "expand_structured_context",
+]

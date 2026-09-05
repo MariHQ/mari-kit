@@ -7,7 +7,7 @@
 | Mechanism | Corpus observation | Decision guidance |
 |---|---|---|
 | Personalized PageRank | QASC passage Recall@5 `0.850`. Both gold facts found `0.709` | Graph expansion exposed many two-hop facts. Complete chains appeared in `0.709` of cases |
-| Leiden communities | DocRED relation-community coverage `0.430`. Mean modularity `0.518` | Co-mention graphs form coherent groups and split many gold relations |
+| Local-modularity community heuristic | DocRED relation-community coverage `0.430`. Mean modularity `0.518` | Co-mention graphs form coherent groups and split many gold relations |
 | Community reports | Deterministic partition and bounded map/reduce | Report quality depends on the injected summarizer |
 
 :::{collapse} Example graph propagation example
@@ -34,11 +34,13 @@ Link query mentions to authorized seed nodes, induce an allowed subgraph, and
 propagate Personalized PageRank mass until tolerance or iteration limits.
 Project node mass back to evidence-bearing sections.
 
-`leiden_communities` provides a deterministic reference implementation of local
-moving and connected refinement over an undirected weighted projection. It
-averages opposing edge weights and drops self-links. Its partition is flat.
-Hierarchies, drift-query routing, and evidence binding for generated reports
-require caller composition. Use an optimized community backend for large graphs.
+`leiden_communities` is a historical compatibility name for deterministic local
+modularity improvement followed by connected-component splitting. It averages
+opposing edge weights and drops self-links. Its output is a flat heuristic
+partition. Full Leiden additionally requires an aggregation phase. For native hierarchical Leiden, Louvain,
+and bounded DRIFT search, see the independently selectable
+[algorithm choices](../start/algorithm-choices.md). Evidence binding and model
+callbacks remain caller-supplied.
 
 ::: source-block
 **Papers**

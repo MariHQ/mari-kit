@@ -2,7 +2,7 @@
 
 Usage: python mari-kit-landing/tools/check_sidebar.py --site-dir path/to/html
 Install playwright and its Chromium browser first. --browser-path can select an
-existing Chrome executable. The test serves only the supplied build on localhost.
+existing Chrome executable. Use --base-url to verify the deployed site instead.
 """
 
 from __future__ import annotations
@@ -86,8 +86,8 @@ def check(base_url: str, browser_path: str | None) -> None:
             style = heading.evaluate(
                 "el => { const s = getComputedStyle(el); return { opacity: s.opacity, size: parseFloat(s.fontSize), border: s.borderLeftWidth, color: s.color, background: s.backgroundColor }; }"
             )
-            assert style["opacity"] == "1" and style["size"] >= 12
-            assert style["border"] == "3px"
+            assert style["opacity"] == "1" and style["size"] >= 18
+            assert style["border"] == "5px"
 
             def luminance(rgb):
                 values = [float(x.strip()) / 255 for x in rgb[4:-1].split(",")]
@@ -136,9 +136,15 @@ def check(base_url: str, browser_path: str | None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--site-dir", required=True, type=Path)
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument("--site-dir", type=Path)
+    target.add_argument("--base-url", help="Deployed documentation root URL")
     parser.add_argument("--browser-path")
     args = parser.parse_args()
+    if args.base_url:
+        check(args.base_url.rstrip("/") + "/", args.browser_path)
+        print("Live sidebar checks passed.")
+        return
     if not (args.site_dir / "index.html").is_file():
         parser.error("site-dir must contain a built index.html")
     server = http.server.ThreadingHTTPServer(

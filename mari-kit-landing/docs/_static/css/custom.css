@@ -405,15 +405,15 @@ body {
 
 /* top-level toctree entries are the section labels */
 .sidebar-tree .toctree-l1 > .reference {
-  margin: 20px 0 6px;
-  padding: 8px 10px;
-  border-top: 1px solid var(--mk-line);
-  border-left: 3px solid var(--mk-link);
-  background: var(--mk-flysch);
+  margin: 28px 0 10px;
+  padding: 12px 10px;
+  border-top: 2px solid var(--mk-line);
+  border-left: 5px solid var(--mk-link);
+  background: var(--mk-down);
   color: var(--mk-ink);
-  font: 700 12px/1.5 var(--mk-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font: 700 18px/1.35 var(--mk-sans);
+  text-transform: none;
+  letter-spacing: 0;
   opacity: 1;
 }
 
@@ -434,12 +434,12 @@ body {
 
 .sidebar-tree .caption,
 .sidebar-tree :not(.caption) > .caption-text {
-  margin: 20px 0 6px;
-  padding: 8px 10px;
+  margin: 28px 0 10px;
+  padding: 12px 10px;
   color: var(--mk-ink);
-  font: 700 12px/1.5 var(--mk-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font: 700 18px/1.35 var(--mk-sans);
+  text-transform: none;
+  letter-spacing: 0;
   opacity: 1;
 }
 

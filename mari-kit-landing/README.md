@@ -32,7 +32,8 @@ The sidebar saves its scroll position per browser tab using session storage.
 It restores a visible link and its offset across clicks, reloads, and history
 navigation. A fresh deep link reveals the active item without scrolling the
 article. Storage denial falls back to normal navigation. Section labels use
-full-contrast text, a tinted background, and an accent border in both themes.
+18px bold, full-contrast text, a tinted background, and a 5px accent border in
+both themes, with extra spacing between sections.
 
 Run the browser regression checks against a strict build:
 
@@ -45,6 +46,15 @@ python mari-kit-landing/tools/check_sidebar.py --site-dir mari-kit-landing/_buil
 The checks cover desktop/light, mobile/dark, click/reload/history restoration,
 fresh deep links, section contrast, and unavailable or malformed storage.
 Use `--browser-path` to test with an existing Chrome executable.
+
+After deploying, run the same checks against the actual public site:
+
+```sh
+python mari-kit-landing/tools/check_sidebar.py --base-url https://kit.mari.guru/
+```
+
+A passing local build does not verify deployment: the live pages must load the
+scroll-preservation script and the updated stylesheet too.
 
 The complete API inventory is generated from source definitions rather than
 maintained as a handwritten count:

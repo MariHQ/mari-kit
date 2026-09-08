@@ -182,6 +182,7 @@ html_baseurl = "https://kit.mari.guru/"
 html_favicon = "_static/favicon.svg"
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css", "css/diagrams.css"]
+html_js_files = [("js/sidebar-navigation.js", {"defer": "defer"})]
 html_show_sourcelink = False
 html_show_copyright = False
 html_show_sphinx = False

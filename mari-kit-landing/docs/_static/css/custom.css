@@ -350,6 +350,8 @@ body {
 
 .sidebar-scroll {
   overflow-x: hidden;
+  scroll-behavior: auto;
+  overscroll-behavior-y: contain;
 }
 
 .sidebar-tree {
@@ -403,14 +405,16 @@ body {
 
 /* top-level toctree entries are the section labels */
 .sidebar-tree .toctree-l1 > .reference {
-  margin: 16px 0 4px;
-  padding: 0 10px;
-  background: none;
+  margin: 20px 0 6px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--mk-line);
+  border-left: 3px solid var(--mk-link);
+  background: var(--mk-flysch);
   color: var(--mk-ink);
-  font: 600 11px/1.5 var(--mk-mono);
+  font: 700 12px/1.5 var(--mk-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.55;
+  opacity: 1;
 }
 
 .sidebar-tree > ul > li:first-child > .reference {
@@ -418,7 +422,7 @@ body {
 }
 
 .sidebar-tree .toctree-l1 > .reference:hover {
-  background: none;
+  background: var(--mk-down);
   color: var(--mk-link);
   opacity: 1;
 }
@@ -430,13 +434,19 @@ body {
 
 .sidebar-tree .caption,
 .sidebar-tree :not(.caption) > .caption-text {
-  margin: 16px 0 4px;
-  padding: 0 10px;
+  margin: 20px 0 6px;
+  padding: 8px 10px;
   color: var(--mk-ink);
-  font: 600 11px/1.5 var(--mk-mono);
+  font: 700 12px/1.5 var(--mk-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.55;
+  opacity: 1;
+}
+
+.sidebar-tree .reference:focus-visible {
+  outline: 2px solid var(--mk-link);
+  outline-offset: -2px;
+  opacity: 1;
 }
 
 .sidebar-tree .toctree-l3 > .reference {

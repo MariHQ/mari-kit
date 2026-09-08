@@ -21,6 +21,7 @@ those projections and preserves reusable atom representations.
 | SparseCL | Same-topic contradiction candidates |
 | Graph propagation | Multi-hop entity-to-passage recall |
 | Context lifecycle | Selectively inject evidence before a model call and plan updates afterward |
+| [Evidence context](evidence-context.md) | Source expansion, citation declarations, compaction, and multimodal evidence |
 
 :::{collapse} Actual ranking snapshot
 
@@ -44,6 +45,7 @@ retrieval-construction
 adaptive-retrieval
 context
 context-lifecycle
+evidence-context
 ```
 
 See [Semantic atoms and retrieval-time chunks](../ingest/semantic-atoms.md)

@@ -9,6 +9,22 @@ permissions:
   contents: read
 
 jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install -e '.[docs]' playwright
+      - run: python -m playwright install --with-deps chromium
+      - run: python mari-kit-landing/tools/generate_algorithm_inventory.py --check
+      - run: sphinx-build -W --keep-going -b html mari-kit-landing/docs mari-kit-landing/_build/html
+      - run: python mari-kit-landing/tools/check_sidebar.py --site-dir mari-kit-landing/_build/html
+
   test:
     runs-on: ubuntu-latest
     strategy:

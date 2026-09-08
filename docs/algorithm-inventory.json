@@ -1,13 +1,13 @@
 {
-  "source_revision": "b89792aea1d14366d71e9ac26c15afddb9cb76f3",
+  "source_revision": "8f6c1bc907b76b4cce054010485f3ffa6a1a15bd",
   "scope": "Public top-level class/function definitions and public methods in all public source modules. Imported aliases, constants, private helpers, and dunder methods are outside the definition count. Pure facades are listed separately.",
   "implementation_modules": 167,
   "definitions": 988,
   "public_methods": 188,
   "modules": [
     {
-      "module": "mark_kit.agents.evaluation",
-      "path": "src/mark_kit/agents/evaluation.py",
+      "module": "mari_kit.agents.evaluation",
+      "path": "src/mari_kit/agents/evaluation.py",
       "group": "Agent events and evaluation",
       "summary": "Small, framework-neutral checks over normalized agent events.",
       "definitions": [
@@ -32,8 +32,8 @@
       ]
     },
     {
-      "module": "mark_kit.agents.events",
-      "path": "src/mark_kit/agents/events.py",
+      "module": "mari_kit.agents.events",
+      "path": "src/mari_kit/agents/events.py",
       "group": "Agent events and evaluation",
       "summary": "Small event values for evaluating runs produced by an agent framework.",
       "definitions": [
@@ -52,8 +52,8 @@
       ]
     },
     {
-      "module": "mark_kit.aggregates",
-      "path": "src/mark_kit/aggregates.py",
+      "module": "mari_kit.aggregates",
+      "path": "src/mari_kit/aggregates.py",
       "group": "Incremental maintenance",
       "summary": "Reversible, keyed delta aggregates with exact arithmetic for numeric sums.",
       "definitions": [
@@ -190,8 +190,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.compression",
-      "path": "src/mark_kit/algorithms/compression.py",
+      "module": "mari_kit.algorithms.compression",
+      "path": "src/mari_kit/algorithms/compression.py",
       "group": "Selectable algorithm additions",
       "summary": "Source-preserving surprisal selection and byte-stream FastCDC.",
       "definitions": [
@@ -228,8 +228,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.graph_retrieval",
-      "path": "src/mark_kit/algorithms/graph_retrieval.py",
+      "module": "mari_kit.algorithms.graph_retrieval",
+      "path": "src/mari_kit/algorithms/graph_retrieval.py",
       "group": "Selectable algorithm additions",
       "summary": "Selectable graph retrieval computations from HippoRAG 2, LightRAG, Hindsight, Graphiti, and haiku.rag. See docs/algorithm-choices.md for adaptations.",
       "definitions": [
@@ -329,8 +329,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.graphs",
-      "path": "src/mark_kit/algorithms/graphs.py",
+      "module": "mari_kit.algorithms.graphs",
+      "path": "src/mari_kit/algorithms/graphs.py",
       "group": "Selectable algorithm additions",
       "summary": "Optional solver-backed graph choices over caller-owned IDs and edges.",
       "definitions": [
@@ -391,8 +391,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.lexical",
-      "path": "src/mark_kit/algorithms/lexical.py",
+      "module": "mari_kit.algorithms.lexical",
+      "path": "src/mari_kit/algorithms/lexical.py",
       "group": "Selectable algorithm additions",
       "summary": "BM25 family with reference-compatible term formulas and explicit matching.",
       "definitions": [
@@ -432,8 +432,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.linkage",
-      "path": "src/mark_kit/algorithms/linkage.py",
+      "module": "mari_kit.algorithms.linkage",
+      "path": "src/mari_kit/algorithms/linkage.py",
       "group": "Selectable algorithm additions",
       "summary": "Dedupe-inspired blocking, active acquisition, clustering and matching choices.",
       "definitions": [
@@ -494,8 +494,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.memory",
-      "path": "src/mark_kit/algorithms/memory.py",
+      "module": "mari_kit.algorithms.memory",
+      "path": "src/mari_kit/algorithms/memory.py",
       "group": "Selectable algorithm additions",
       "summary": "Selectable MemoryOS, A-MEM and ACE-inspired pure memory policies.",
       "definitions": [
@@ -574,8 +574,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.search",
-      "path": "src/mark_kit/algorithms/search.py",
+      "module": "mari_kit.algorithms.search",
+      "path": "src/mari_kit/algorithms/search.py",
       "group": "Selectable algorithm additions",
       "summary": "Bounded DRIFT action search and LightRAG-inspired extraction refinement.",
       "definitions": [
@@ -624,8 +624,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.subsets",
-      "path": "src/mark_kit/algorithms/subsets.py",
+      "module": "mari_kit.algorithms.subsets",
+      "path": "src/mari_kit/algorithms/subsets.py",
       "group": "Selectable algorithm additions",
       "summary": "Set objectives and independently selectable greedy optimizers.",
       "definitions": [
@@ -707,8 +707,8 @@
       ]
     },
     {
-      "module": "mark_kit.algorithms.temporal",
-      "path": "src/mark_kit/algorithms/temporal.py",
+      "module": "mari_kit.algorithms.temporal",
+      "path": "src/mari_kit/algorithms/temporal.py",
       "group": "Selectable algorithm additions",
       "summary": "Hindsight-inspired temporal ranking, with caller-supplied dates and scores.",
       "definitions": [
@@ -733,8 +733,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.airtable",
-      "path": "src/mark_kit/connectors/airtable.py",
+      "module": "mari_kit.connectors.airtable",
+      "path": "src/mari_kit/connectors/airtable.py",
       "group": "Source connectors and event handling",
       "summary": "Airtable base/table snapshot ingestion.",
       "definitions": [
@@ -759,8 +759,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.asana",
-      "path": "src/mark_kit/connectors/asana.py",
+      "module": "mari_kit.connectors.asana",
+      "path": "src/mari_kit/connectors/asana.py",
       "group": "Source connectors and event handling",
       "summary": "Asana project/task ingestion with offset checkpoints.",
       "definitions": [
@@ -785,8 +785,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.box",
-      "path": "src/mark_kit/connectors/box.py",
+      "module": "mari_kit.connectors.box",
+      "path": "src/mari_kit/connectors/box.py",
       "group": "Source connectors and event handling",
       "summary": "Box folder batch ingestion with marker checkpoints.",
       "definitions": [
@@ -811,8 +811,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.catalog",
-      "path": "src/mark_kit/connectors/catalog.py",
+      "module": "mari_kit.connectors.catalog",
+      "path": "src/mari_kit/connectors/catalog.py",
       "group": "Source connectors and event handling",
       "summary": "Declarative connector catalog and raw-configuration adapters.",
       "definitions": [
@@ -868,8 +868,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.confluence",
-      "path": "src/mark_kit/connectors/confluence.py",
+      "module": "mari_kit.connectors.confluence",
+      "path": "src/mari_kit/connectors/confluence.py",
       "group": "Source connectors and event handling",
       "summary": "Confluence Cloud validation, canonical page fetch, and ordered polling.",
       "definitions": [
@@ -906,8 +906,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.dropbox",
-      "path": "src/mark_kit/connectors/dropbox.py",
+      "module": "mari_kit.connectors.dropbox",
+      "path": "src/mari_kit/connectors/dropbox.py",
       "group": "Source connectors and event handling",
       "summary": "Dropbox native delta-cursor ingestion with explicit deleted entries.",
       "definitions": [
@@ -932,8 +932,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.events",
-      "path": "src/mark_kit/connectors/events.py",
+      "module": "mari_kit.connectors.events",
+      "path": "src/mari_kit/connectors/events.py",
       "group": "Source connectors and event handling",
       "summary": "Pure verification and bounded change-hint parsing for provider events.",
       "definitions": [
@@ -1030,8 +1030,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.filesystem",
-      "path": "src/mark_kit/connectors/filesystem.py",
+      "module": "mari_kit.connectors.filesystem",
+      "path": "src/mari_kit/connectors/filesystem.py",
       "group": "Source connectors and event handling",
       "summary": "Stable, bounded local-filesystem batch ingestion.",
       "definitions": [
@@ -1056,8 +1056,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.github",
-      "path": "src/mark_kit/connectors/github.py",
+      "module": "mari_kit.connectors.github",
+      "path": "src/mari_kit/connectors/github.py",
       "group": "Source connectors and event handling",
       "summary": "GitHub repository, issue/PR, commit, and deletion ingestion.",
       "definitions": [
@@ -1169,8 +1169,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.gitlab",
-      "path": "src/mark_kit/connectors/gitlab.py",
+      "module": "mari_kit.connectors.gitlab",
+      "path": "src/mari_kit/connectors/gitlab.py",
       "group": "Source connectors and event handling",
       "summary": "GitLab repository batch ingestion and canonical webhook hints.",
       "definitions": [
@@ -1201,8 +1201,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.google_drive",
-      "path": "src/mark_kit/connectors/google_drive.py",
+      "module": "mari_kit.connectors.google_drive",
+      "path": "src/mari_kit/connectors/google_drive.py",
       "group": "Source connectors and event handling",
       "summary": "Google Drive/Docs validation, OAuth refresh, snapshots, and Changes polling.",
       "definitions": [
@@ -1257,8 +1257,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.jira",
-      "path": "src/mark_kit/connectors/jira.py",
+      "module": "mari_kit.connectors.jira",
+      "path": "src/mari_kit/connectors/jira.py",
       "group": "Source connectors and event handling",
       "summary": "Jira Cloud issue ingestion with bounded ordered JQL paging.",
       "definitions": [
@@ -1283,8 +1283,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.json_api",
-      "path": "src/mark_kit/connectors/json_api.py",
+      "module": "mari_kit.connectors.json_api",
+      "path": "src/mari_kit/connectors/json_api.py",
       "group": "Source connectors and event handling",
       "summary": "Declarative, bounded batch ingestion for JSON REST collections.",
       "definitions": [
@@ -1303,8 +1303,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.linear",
-      "path": "src/mark_kit/connectors/linear.py",
+      "module": "mari_kit.connectors.linear",
+      "path": "src/mari_kit/connectors/linear.py",
       "group": "Source connectors and event handling",
       "summary": "Linear issue/comment ingestion through its GraphQL API.",
       "definitions": [
@@ -1329,8 +1329,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.microsoft_drive",
-      "path": "src/mark_kit/connectors/microsoft_drive.py",
+      "module": "mari_kit.connectors.microsoft_drive",
+      "path": "src/mari_kit/connectors/microsoft_drive.py",
       "group": "Source connectors and event handling",
       "summary": "Microsoft Graph delta ingestion for OneDrive and SharePoint document libraries.",
       "definitions": [
@@ -1355,8 +1355,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.notion",
-      "path": "src/mark_kit/connectors/notion.py",
+      "module": "mari_kit.connectors.notion",
+      "path": "src/mari_kit/connectors/notion.py",
       "group": "Source connectors and event handling",
       "summary": "Notion page search and bounded block-tree ingestion.",
       "definitions": [
@@ -1381,8 +1381,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.object_storage",
-      "path": "src/mark_kit/connectors/object_storage.py",
+      "module": "mari_kit.connectors.object_storage",
+      "path": "src/mari_kit/connectors/object_storage.py",
       "group": "Source connectors and event handling",
       "summary": "SDK-neutral batch ingestion for S3, GCS, Azure Blob, and compatible stores.",
       "definitions": [
@@ -1413,8 +1413,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.protocol",
-      "path": "src/mark_kit/connectors/protocol.py",
+      "module": "mari_kit.connectors.protocol",
+      "path": "src/mari_kit/connectors/protocol.py",
       "group": "Source connectors and event handling",
       "summary": "Connector error and validation functions without runtime orchestration.",
       "definitions": [
@@ -1481,8 +1481,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.rss",
-      "path": "src/mark_kit/connectors/rss.py",
+      "module": "mari_kit.connectors.rss",
+      "path": "src/mari_kit/connectors/rss.py",
       "group": "Source connectors and event handling",
       "summary": "Bounded RSS and Atom feed ingestion with conditional batch polling.",
       "definitions": [
@@ -1507,8 +1507,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.singer",
-      "path": "src/mark_kit/connectors/singer.py",
+      "module": "mari_kit.connectors.singer",
+      "path": "src/mari_kit/connectors/singer.py",
       "group": "Source connectors and event handling",
       "summary": "Singer/Meltano message adapter for batch connector interoperability.",
       "definitions": [
@@ -1521,8 +1521,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.slack",
-      "path": "src/mark_kit/connectors/slack.py",
+      "module": "mari_kit.connectors.slack",
+      "path": "src/mari_kit/connectors/slack.py",
       "group": "Source connectors and event handling",
       "summary": "Slack channel/DM history and canonical thread document ingestion.",
       "definitions": [
@@ -1559,8 +1559,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.streaming",
-      "path": "src/mark_kit/connectors/streaming.py",
+      "module": "mari_kit.connectors.streaming",
+      "path": "src/mari_kit/connectors/streaming.py",
       "group": "Source connectors and event handling",
       "summary": "Verified event ingestion and canonical refetch for streaming connectors.",
       "definitions": [
@@ -1614,8 +1614,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.trello",
-      "path": "src/mark_kit/connectors/trello.py",
+      "module": "mari_kit.connectors.trello",
+      "path": "src/mari_kit/connectors/trello.py",
       "group": "Source connectors and event handling",
       "summary": "Trello board/list/card snapshot ingestion.",
       "definitions": [
@@ -1640,8 +1640,8 @@
       ]
     },
     {
-      "module": "mark_kit.connectors.zendesk",
-      "path": "src/mark_kit/connectors/zendesk.py",
+      "module": "mari_kit.connectors.zendesk",
+      "path": "src/mari_kit/connectors/zendesk.py",
       "group": "Source connectors and event handling",
       "summary": "Zendesk Guide article ingestion with bounded page checkpoints.",
       "definitions": [
@@ -1666,8 +1666,8 @@
       ]
     },
     {
-      "module": "mark_kit.contracts",
-      "path": "src/mark_kit/contracts.py",
+      "module": "mari_kit.contracts",
+      "path": "src/mari_kit/contracts.py",
       "group": "Shared values and contracts",
       "summary": "Backend-neutral boundaries used to compose Mari algorithms.",
       "definitions": [
@@ -1718,8 +1718,8 @@
       ]
     },
     {
-      "module": "mark_kit.conversation_knowledge",
-      "path": "src/mark_kit/conversation_knowledge.py",
+      "module": "mari_kit.conversation_knowledge",
+      "path": "src/mari_kit/conversation_knowledge.py",
       "group": "Conversations and topics",
       "summary": "Compile conversations and observable trajectories into searchable evidence.",
       "definitions": [
@@ -1813,8 +1813,8 @@
       ]
     },
     {
-      "module": "mark_kit.conversation_topics",
-      "path": "src/mark_kit/conversation_topics.py",
+      "module": "mari_kit.conversation_topics",
+      "path": "src/mari_kit/conversation_topics.py",
       "group": "Conversations and topics",
       "summary": "Semantic conversation grouping and incremental, evidence-bound topic briefs.",
       "definitions": [
@@ -1921,8 +1921,8 @@
       ]
     },
     {
-      "module": "mark_kit.dependencies",
-      "path": "src/mark_kit/dependencies.py",
+      "module": "mari_kit.dependencies",
+      "path": "src/mari_kit/dependencies.py",
       "group": "Incremental maintenance",
       "summary": "Shared dependency receipts and incremental planning for derived material.",
       "definitions": [
@@ -2017,8 +2017,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents",
-      "path": "src/mark_kit/documents/__init__.py",
+      "module": "mari_kit.documents",
+      "path": "src/mari_kit/documents/__init__.py",
       "group": "Documents and source structure",
       "summary": "Canonical structured-document and code-graph values.",
       "definitions": [
@@ -2132,8 +2132,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.atoms",
-      "path": "src/mark_kit/documents/atoms.py",
+      "module": "mari_kit.documents.atoms",
+      "path": "src/mari_kit/documents/atoms.py",
       "group": "Documents and source structure",
       "summary": "Stable semantic atoms, temporal versions, and incremental refresh plans.",
       "definitions": [
@@ -2240,8 +2240,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.code",
-      "path": "src/mark_kit/documents/code.py",
+      "module": "mari_kit.documents.code",
+      "path": "src/mari_kit/documents/code.py",
       "group": "Documents and source structure",
       "summary": "Concrete, dependency-free Python structure extraction.",
       "definitions": [
@@ -2265,8 +2265,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.coordinates",
-      "path": "src/mark_kit/documents/coordinates.py",
+      "module": "mari_kit.documents.coordinates",
+      "path": "src/mari_kit/documents/coordinates.py",
       "group": "Documents and source structure",
       "summary": "Explicit conversion between character and encoded-byte source offsets.",
       "definitions": [
@@ -2310,8 +2310,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.dependencies",
-      "path": "src/mark_kit/documents/dependencies.py",
+      "module": "mari_kit.documents.dependencies",
+      "path": "src/mari_kit/documents/dependencies.py",
       "group": "Documents and source structure",
       "summary": "Semantic atoms as shared, scoped inputs to any Mari derivation.",
       "definitions": [
@@ -2341,8 +2341,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.docling",
-      "path": "src/mark_kit/documents/docling.py",
+      "module": "mari_kit.documents.docling",
+      "path": "src/mari_kit/documents/docling.py",
       "group": "Documents and source structure",
       "summary": "Adapt Docling's exported document tree without importing its runtime.",
       "definitions": [
@@ -2361,8 +2361,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.html",
-      "path": "src/mark_kit/documents/html.py",
+      "module": "mari_kit.documents.html",
+      "path": "src/mari_kit/documents/html.py",
       "group": "Documents and source structure",
       "summary": "Small HTML-to-block adapter with raw source spans and table topology.",
       "definitions": [
@@ -2375,8 +2375,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.markdown",
-      "path": "src/mark_kit/documents/markdown.py",
+      "module": "mari_kit.documents.markdown",
+      "path": "src/mari_kit/documents/markdown.py",
       "group": "Documents and source structure",
       "summary": "Dependency-free structural Markdown parsing with exact character spans.",
       "definitions": [
@@ -2389,8 +2389,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.records",
-      "path": "src/mark_kit/documents/records.py",
+      "module": "mari_kit.documents.records",
+      "path": "src/mari_kit/documents/records.py",
       "group": "Documents and source structure",
       "summary": "Delimited and JSON Lines records with exact source coordinates.",
       "definitions": [
@@ -2415,8 +2415,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.results",
-      "path": "src/mark_kit/documents/results.py",
+      "module": "mari_kit.documents.results",
+      "path": "src/mari_kit/documents/results.py",
       "group": "Documents and source structure",
       "summary": "Parser-neutral results, issues, and stable source identities.",
       "definitions": [
@@ -2452,8 +2452,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.sequence_diff",
-      "path": "src/mark_kit/documents/sequence_diff.py",
+      "module": "mari_kit.documents.sequence_diff",
+      "path": "src/mari_kit/documents/sequence_diff.py",
       "group": "Documents and source structure",
       "summary": "Myers and patience sequence alignment with coalesced edit spans.",
       "definitions": [
@@ -2484,8 +2484,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.tables",
-      "path": "src/mark_kit/documents/tables.py",
+      "module": "mari_kit.documents.tables",
+      "path": "src/mari_kit/documents/tables.py",
       "group": "Documents and source structure",
       "summary": "Table topology normalization without format or domain assumptions.",
       "definitions": [
@@ -2504,8 +2504,8 @@
       ]
     },
     {
-      "module": "mark_kit.documents.validation",
-      "path": "src/mark_kit/documents/validation.py",
+      "module": "mari_kit.documents.validation",
+      "path": "src/mari_kit/documents/validation.py",
       "group": "Documents and source structure",
       "summary": "Structural validation for parser-neutral document values.",
       "definitions": [
@@ -2558,8 +2558,8 @@
       ]
     },
     {
-      "module": "mark_kit.errors",
-      "path": "src/mark_kit/errors.py",
+      "module": "mari_kit.errors",
+      "path": "src/mari_kit/errors.py",
       "group": "Shared values and contracts",
       "summary": "Typed failures which hosts can retry, display, or reject explicitly.",
       "definitions": [
@@ -2602,8 +2602,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.cases",
-      "path": "src/mark_kit/evaluation/cases.py",
+      "module": "mari_kit.evaluation.cases",
+      "path": "src/mari_kit/evaluation/cases.py",
       "group": "Evaluation and statistics",
       "summary": "Normalized cases and adapters for public knowledge-system corpora.",
       "definitions": [
@@ -2652,8 +2652,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.catalog",
-      "path": "src/mark_kit/evaluation/catalog.py",
+      "module": "mari_kit.evaluation.catalog",
+      "path": "src/mari_kit/evaluation/catalog.py",
       "group": "Evaluation and statistics",
       "summary": "Read and validate Mari benchmark corpus catalogs.",
       "definitions": [
@@ -2689,8 +2689,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.gates",
-      "path": "src/mark_kit/evaluation/gates.py",
+      "module": "mari_kit.evaluation.gates",
+      "path": "src/mari_kit/evaluation/gates.py",
       "group": "Evaluation and statistics",
       "summary": "Hard regression gates for benchmark reports.",
       "definitions": [
@@ -2727,8 +2727,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.graph",
-      "path": "src/mark_kit/evaluation/graph.py",
+      "module": "mari_kit.evaluation.graph",
+      "path": "src/mari_kit/evaluation/graph.py",
       "group": "Evaluation and statistics",
       "summary": "Component metrics for graph construction and selection.",
       "definitions": [
@@ -2807,8 +2807,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.metrics",
-      "path": "src/mark_kit/evaluation/metrics.py",
+      "module": "mari_kit.evaluation.metrics",
+      "path": "src/mari_kit/evaluation/metrics.py",
       "group": "Evaluation and statistics",
       "summary": "Deterministic metrics for retrieval and labeled decisions.",
       "definitions": [
@@ -2887,8 +2887,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.runs",
-      "path": "src/mark_kit/evaluation/runs.py",
+      "module": "mari_kit.evaluation.runs",
+      "path": "src/mari_kit/evaluation/runs.py",
       "group": "Evaluation and statistics",
       "summary": "Reproducibility metadata for persisted evaluation outputs.",
       "definitions": [
@@ -2901,8 +2901,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.statistics",
-      "path": "src/mark_kit/evaluation/statistics.py",
+      "module": "mari_kit.evaluation.statistics",
+      "path": "src/mari_kit/evaluation/statistics.py",
       "group": "Evaluation and statistics",
       "summary": "Paired uncertainty, slice summaries, reliability, and repeated-trial metrics.",
       "definitions": [
@@ -2975,8 +2975,8 @@
       ]
     },
     {
-      "module": "mark_kit.evaluation.suites",
-      "path": "src/mark_kit/evaluation/suites.py",
+      "module": "mari_kit.evaluation.suites",
+      "path": "src/mari_kit/evaluation/suites.py",
       "group": "Evaluation and statistics",
       "summary": "Machine-readable mappings from papers and APIs to benchmark contracts.",
       "definitions": [
@@ -3010,8 +3010,8 @@
       ]
     },
     {
-      "module": "mark_kit.governance",
-      "path": "src/mark_kit/governance/__init__.py",
+      "module": "mari_kit.governance",
+      "path": "src/mari_kit/governance/__init__.py",
       "group": "Governance policies",
       "summary": "Trust, authority, scope, and retention policy primitives.",
       "definitions": [
@@ -3167,8 +3167,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.adjacency",
-      "path": "src/mark_kit/graph/adjacency.py",
+      "module": "mari_kit.graph.adjacency",
+      "path": "src/mari_kit/graph/adjacency.py",
       "group": "Graph algorithms and interchange",
       "summary": "Adjacency projections over caller-owned edge iterables.",
       "definitions": [
@@ -3181,8 +3181,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.centrality",
-      "path": "src/mark_kit/graph/centrality.py",
+      "module": "mari_kit.graph.centrality",
+      "path": "src/mari_kit/graph/centrality.py",
       "group": "Graph algorithms and interchange",
       "summary": "Reference centrality algorithms over neighbor callbacks.",
       "definitions": [
@@ -3213,8 +3213,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.communities",
-      "path": "src/mark_kit/graph/communities.py",
+      "module": "mari_kit.graph.communities",
+      "path": "src/mari_kit/graph/communities.py",
       "group": "Graph algorithms and interchange",
       "summary": "Deterministic graph communities and model-injected corpus aggregation.",
       "definitions": [
@@ -3251,8 +3251,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.construction",
-      "path": "src/mark_kit/graph/construction.py",
+      "module": "mari_kit.graph.construction",
+      "path": "src/mari_kit/graph/construction.py",
       "group": "Graph algorithms and interchange",
       "summary": "Deterministic blocking and threshold clustering for caller-owned entities.",
       "definitions": [
@@ -3331,8 +3331,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.diagnostics",
-      "path": "src/mark_kit/graph/diagnostics.py",
+      "module": "mari_kit.graph.diagnostics",
+      "path": "src/mari_kit/graph/diagnostics.py",
       "group": "Graph algorithms and interchange",
       "summary": "Exact graph diffs and policy-neutral structural observations.",
       "definitions": [
@@ -3393,8 +3393,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.evidence_projection",
-      "path": "src/mark_kit/graph/evidence_projection.py",
+      "module": "mari_kit.graph.evidence_projection",
+      "path": "src/mari_kit/graph/evidence_projection.py",
       "group": "Graph algorithms and interchange",
       "summary": "Many-to-many projections from graph values to evidence artifacts.",
       "definitions": [
@@ -3424,8 +3424,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.interop",
-      "path": "src/mark_kit/graph/interop.py",
+      "module": "mari_kit.graph.interop",
+      "path": "src/mari_kit/graph/interop.py",
       "group": "Graph algorithms and interchange",
       "summary": "Transient graph projections and loss-visible interchange encoders.",
       "definitions": [
@@ -3492,8 +3492,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.provenance",
-      "path": "src/mark_kit/graph/provenance.py",
+      "module": "mari_kit.graph.provenance",
+      "path": "src/mari_kit/graph/provenance.py",
       "group": "Graph algorithms and interchange",
       "summary": "Bounded lineage and taint traversal over arbitrary artifact IDs.",
       "definitions": [
@@ -3542,8 +3542,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.resolution",
-      "path": "src/mark_kit/graph/resolution.py",
+      "module": "mari_kit.graph.resolution",
+      "path": "src/mari_kit/graph/resolution.py",
       "group": "Graph algorithms and interchange",
       "summary": "Fellegi--Sunter entity-resolution scoring with explicit review bands.",
       "definitions": [
@@ -3580,8 +3580,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.similarity",
-      "path": "src/mark_kit/graph/similarity.py",
+      "module": "mari_kit.graph.similarity",
+      "path": "src/mari_kit/graph/similarity.py",
       "group": "Graph algorithms and interchange",
       "summary": "Topology-only link-candidate scoring.",
       "definitions": [
@@ -3606,8 +3606,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.subgraphs",
-      "path": "src/mark_kit/graph/subgraphs.py",
+      "module": "mari_kit.graph.subgraphs",
+      "path": "src/mari_kit/graph/subgraphs.py",
       "group": "Graph algorithms and interchange",
       "summary": "Budgeted selection over caller-owned graph topology.",
       "definitions": [
@@ -3632,8 +3632,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.temporal",
-      "path": "src/mark_kit/graph/temporal.py",
+      "module": "mari_kit.graph.temporal",
+      "path": "src/mari_kit/graph/temporal.py",
       "group": "Graph algorithms and interchange",
       "summary": "Append-only bi-temporal fact operations.",
       "definitions": [
@@ -3658,8 +3658,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.temporal_tools",
-      "path": "src/mark_kit/graph/temporal_tools.py",
+      "module": "mari_kit.graph.temporal_tools",
+      "path": "src/mari_kit/graph/temporal_tools.py",
       "group": "Graph algorithms and interchange",
       "summary": "Half-open interval operations independent of graph representation.",
       "definitions": [
@@ -3720,8 +3720,8 @@
       ]
     },
     {
-      "module": "mark_kit.graph.traversal",
-      "path": "src/mark_kit/graph/traversal.py",
+      "module": "mari_kit.graph.traversal",
+      "path": "src/mari_kit/graph/traversal.py",
       "group": "Graph algorithms and interchange",
       "summary": "Graph traversal over caller-owned node IDs and neighbor callbacks.",
       "definitions": [
@@ -3834,8 +3834,8 @@
       ]
     },
     {
-      "module": "mark_kit.grouping",
-      "path": "src/mark_kit/grouping.py",
+      "module": "mari_kit.grouping",
+      "path": "src/mari_kit/grouping.py",
       "group": "Incremental maintenance",
       "summary": "Deterministic overlap lineage across episode/topic/community regrouping.",
       "definitions": [
@@ -3866,8 +3866,8 @@
       ]
     },
     {
-      "module": "mark_kit.http",
-      "path": "src/mark_kit/http.py",
+      "module": "mari_kit.http",
+      "path": "src/mari_kit/http.py",
       "group": "Shared values and contracts",
       "summary": "Minimal injected HTTP boundary shared by connector functions.",
       "definitions": [
@@ -3886,8 +3886,8 @@
       ]
     },
     {
-      "module": "mark_kit.incremental",
-      "path": "src/mark_kit/incremental.py",
+      "module": "mari_kit.incremental",
+      "path": "src/mari_kit/incremental.py",
       "group": "Incremental maintenance",
       "summary": "Indexed, process-local dependency planning. Persistence remains host-owned.",
       "definitions": [
@@ -3909,8 +3909,8 @@
       ]
     },
     {
-      "module": "mark_kit.json",
-      "path": "src/mark_kit/json.py",
+      "module": "mari_kit.json",
+      "path": "src/mari_kit/json.py",
       "group": "Shared values and contracts",
       "summary": "Provider-neutral JSON generation contracts and validation.",
       "definitions": [
@@ -3953,8 +3953,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.admission",
-      "path": "src/mark_kit/knowledge/admission.py",
+      "module": "mari_kit.knowledge.admission",
+      "path": "src/mari_kit/knowledge/admission.py",
       "group": "Knowledge and memory",
       "summary": "Evidence and safety admission before memory reconciliation.",
       "definitions": [
@@ -3991,8 +3991,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.aggregation",
-      "path": "src/mark_kit/knowledge/aggregation.py",
+      "module": "mari_kit.knowledge.aggregation",
+      "path": "src/mari_kit/knowledge/aggregation.py",
       "group": "Knowledge and memory",
       "summary": "Policy-neutral scalar uncertainty and weighted aggregation utilities.",
       "definitions": [
@@ -4035,8 +4035,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.answers",
-      "path": "src/mark_kit/knowledge/answers.py",
+      "module": "mari_kit.knowledge.answers",
+      "path": "src/mari_kit/knowledge/answers.py",
       "group": "Knowledge and memory",
       "summary": "Grounded answer generation and reusable FAQ candidate mining.",
       "definitions": [
@@ -4072,8 +4072,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.artifacts",
-      "path": "src/mark_kit/knowledge/artifacts.py",
+      "module": "mari_kit.knowledge.artifacts",
+      "path": "src/mari_kit/knowledge/artifacts.py",
       "group": "Knowledge and memory",
       "summary": "Generic immutable envelopes for governed knowledge artifacts.",
       "definitions": [
@@ -4122,8 +4122,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.assertions",
-      "path": "src/mark_kit/knowledge/assertions.py",
+      "module": "mari_kit.knowledge.assertions",
+      "path": "src/mari_kit/knowledge/assertions.py",
       "group": "Knowledge and memory",
       "summary": "Evidence-bearing temporal assertions and caller-selected update plans.",
       "definitions": [
@@ -4178,8 +4178,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.changesets",
-      "path": "src/mark_kit/knowledge/changesets.py",
+      "module": "mari_kit.knowledge.changesets",
+      "path": "src/mari_kit/knowledge/changesets.py",
       "group": "Knowledge and memory",
       "summary": "Cross-document edit validation with previews and inverse operations.",
       "definitions": [
@@ -4227,8 +4227,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.citations",
-      "path": "src/mark_kit/knowledge/citations.py",
+      "module": "mari_kit.knowledge.citations",
+      "path": "src/mari_kit/knowledge/citations.py",
       "group": "Knowledge and memory",
       "summary": "Inspect citation declarations against explicit evidence event ordering.",
       "definitions": [
@@ -4271,8 +4271,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.compaction",
-      "path": "src/mark_kit/knowledge/compaction.py",
+      "module": "mari_kit.knowledge.compaction",
+      "path": "src/mari_kit/knowledge/compaction.py",
       "group": "Knowledge and memory",
       "summary": "Plan conversation evidence retention without rewriting stored history.",
       "definitions": [
@@ -4320,8 +4320,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.consolidation",
-      "path": "src/mark_kit/knowledge/consolidation.py",
+      "module": "mari_kit.knowledge.consolidation",
+      "path": "src/mari_kit/knowledge/consolidation.py",
       "group": "Knowledge and memory",
       "summary": "Budgeted, model-neutral consolidation and promotion planning.",
       "definitions": [
@@ -4352,8 +4352,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.decisions",
-      "path": "src/mark_kit/knowledge/decisions.py",
+      "module": "mari_kit.knowledge.decisions",
+      "path": "src/mari_kit/knowledge/decisions.py",
       "group": "Knowledge and memory",
       "summary": "Product decision extraction with source evidence.",
       "definitions": [
@@ -4366,8 +4366,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.derivations",
-      "path": "src/mark_kit/knowledge/derivations.py",
+      "module": "mari_kit.knowledge.derivations",
+      "path": "src/mari_kit/knowledge/derivations.py",
       "group": "Knowledge and memory",
       "summary": "Provenance checks that keep derived knowledge from becoming fresh evidence.",
       "definitions": [
@@ -4421,8 +4421,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.evidence",
-      "path": "src/mark_kit/knowledge/evidence.py",
+      "module": "mari_kit.knowledge.evidence",
+      "path": "src/mari_kit/knowledge/evidence.py",
       "group": "Knowledge and memory",
       "summary": "Artifact-neutral evidence resolution and exact-material validation.",
       "definitions": [
@@ -4493,8 +4493,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.excerpt",
-      "path": "src/mark_kit/knowledge/excerpt.py",
+      "module": "mari_kit.knowledge.excerpt",
+      "path": "src/mari_kit/knowledge/excerpt.py",
       "group": "Knowledge and memory",
       "summary": "Extract a clean prose preview from Markdown or HTML knowledge content.",
       "definitions": [
@@ -4507,8 +4507,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.experience",
-      "path": "src/mark_kit/knowledge/experience.py",
+      "module": "mari_kit.knowledge.experience",
+      "path": "src/mari_kit/knowledge/experience.py",
       "group": "Knowledge and memory",
       "summary": "Turn trajectory evidence and expert feedback into reviewable knowledge changes.",
       "definitions": [
@@ -4649,8 +4649,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.fact_scans",
-      "path": "src/mark_kit/knowledge/fact_scans.py",
+      "module": "mari_kit.knowledge.fact_scans",
+      "path": "src/mari_kit/knowledge/fact_scans.py",
       "group": "Knowledge and memory",
       "summary": "Content-addressed, passage-level planning for incremental fact extraction.",
       "definitions": [
@@ -4669,8 +4669,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.facts",
-      "path": "src/mark_kit/knowledge/facts.py",
+      "module": "mari_kit.knowledge.facts",
+      "path": "src/mari_kit/knowledge/facts.py",
       "group": "Knowledge and memory",
       "summary": "Fact extraction and evidence-based claim assessment.",
       "definitions": [
@@ -4707,8 +4707,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.freshness",
-      "path": "src/mark_kit/knowledge/freshness.py",
+      "module": "mari_kit.knowledge.freshness",
+      "path": "src/mari_kit/knowledge/freshness.py",
       "group": "Knowledge and memory",
       "summary": "Fine-grained dependency and change-impact decisions for governed knowledge.",
       "definitions": [
@@ -4801,8 +4801,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.glossary",
-      "path": "src/mark_kit/knowledge/glossary.py",
+      "module": "mari_kit.knowledge.glossary",
+      "path": "src/mari_kit/knowledge/glossary.py",
       "group": "Knowledge and memory",
       "summary": "Evidence-backed glossary harvesting.",
       "definitions": [
@@ -4815,8 +4815,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.links",
-      "path": "src/mark_kit/knowledge/links.py",
+      "module": "mari_kit.knowledge.links",
+      "path": "src/mari_kit/knowledge/links.py",
       "group": "Knowledge and memory",
       "summary": "Explicit-reference parsing and caller-scored semantic link selection.",
       "definitions": [
@@ -4841,8 +4841,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.multimodal",
-      "path": "src/mark_kit/knowledge/multimodal.py",
+      "module": "mari_kit.knowledge.multimodal",
+      "path": "src/mari_kit/knowledge/multimodal.py",
       "group": "Knowledge and memory",
       "summary": "Revision-bound asset selection; byte loading and message rendering stay external.",
       "definitions": [
@@ -4879,8 +4879,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.mutations",
-      "path": "src/mark_kit/knowledge/mutations.py",
+      "module": "mari_kit.knowledge.mutations",
+      "path": "src/mari_kit/knowledge/mutations.py",
       "group": "Knowledge and memory",
       "summary": "Validated, storage-neutral memory mutation plans.",
       "definitions": [
@@ -4936,8 +4936,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.observations",
-      "path": "src/mark_kit/knowledge/observations.py",
+      "module": "mari_kit.knowledge.observations",
+      "path": "src/mari_kit/knowledge/observations.py",
       "group": "Knowledge and memory",
       "summary": "Immutable records of how knowledge moved through one observed task.",
       "definitions": [
@@ -4985,8 +4985,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.refinement",
-      "path": "src/mark_kit/knowledge/refinement.py",
+      "module": "mari_kit.knowledge.refinement",
+      "path": "src/mari_kit/knowledge/refinement.py",
       "group": "Knowledge and memory",
       "summary": "Bounded, exact-substring document refinement proposals.",
       "definitions": [
@@ -5005,8 +5005,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.research",
-      "path": "src/mark_kit/knowledge/research.py",
+      "module": "mari_kit.knowledge.research",
+      "path": "src/mari_kit/knowledge/research.py",
       "group": "Knowledge and memory",
       "summary": "Deterministic memory organization and retrieval policies from research.",
       "definitions": [
@@ -5043,8 +5043,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.scoring",
-      "path": "src/mark_kit/knowledge/scoring.py",
+      "module": "mari_kit.knowledge.scoring",
+      "path": "src/mari_kit/knowledge/scoring.py",
       "group": "Knowledge and memory",
       "summary": "Deterministic scores derived from validated evidence, never model opinion.",
       "definitions": [
@@ -5057,8 +5057,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.sections",
-      "path": "src/mark_kit/knowledge/sections.py",
+      "module": "mari_kit.knowledge.sections",
+      "path": "src/mari_kit/knowledge/sections.py",
       "group": "Knowledge and memory",
       "summary": "Deterministic Markdown sections for fine-grained knowledge dependencies.",
       "definitions": [
@@ -5077,8 +5077,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.segmentation",
-      "path": "src/mark_kit/knowledge/segmentation.py",
+      "module": "mari_kit.knowledge.segmentation",
+      "path": "src/mari_kit/knowledge/segmentation.py",
       "group": "Knowledge and memory",
       "summary": "Topic-aware segmentation for bounded memory consolidation.",
       "definitions": [
@@ -5097,8 +5097,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.summaries",
-      "path": "src/mark_kit/knowledge/summaries.py",
+      "module": "mari_kit.knowledge.summaries",
+      "path": "src/mari_kit/knowledge/summaries.py",
       "group": "Knowledge and memory",
       "summary": "Digest summarization and evidence-linked impact assessment.",
       "definitions": [
@@ -5135,8 +5135,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.tags",
-      "path": "src/mark_kit/knowledge/tags.py",
+      "module": "mari_kit.knowledge.tags",
+      "path": "src/mari_kit/knowledge/tags.py",
       "group": "Knowledge and memory",
       "summary": "Workspace-defined document tags and retrieval behavior.",
       "definitions": [
@@ -5178,8 +5178,8 @@
       ]
     },
     {
-      "module": "mark_kit.knowledge.versions",
-      "path": "src/mark_kit/knowledge/versions.py",
+      "module": "mari_kit.knowledge.versions",
+      "path": "src/mari_kit/knowledge/versions.py",
       "group": "Knowledge and memory",
       "summary": "Grouping and representative proposals for immutable manifestations.",
       "definitions": [
@@ -5198,8 +5198,8 @@
       ]
     },
     {
-      "module": "mark_kit.lifecycle",
-      "path": "src/mark_kit/lifecycle.py",
+      "module": "mari_kit.lifecycle",
+      "path": "src/mari_kit/lifecycle.py",
       "group": "Retrieval and context",
       "summary": "Framework-neutral context lifecycle contracts.",
       "definitions": [
@@ -5270,8 +5270,8 @@
       ]
     },
     {
-      "module": "mark_kit.platform.compiler",
-      "path": "src/mark_kit/platform/compiler.py",
+      "module": "mari_kit.platform.compiler",
+      "path": "src/mari_kit/platform/compiler.py",
       "group": "Platform composition and reference storage",
       "summary": "Constraint-first search over externally evaluated knowledge configurations.",
       "definitions": [
@@ -5308,8 +5308,8 @@
       ]
     },
     {
-      "module": "mark_kit.platform.pipeline",
-      "path": "src/mark_kit/platform/pipeline.py",
+      "module": "mari_kit.platform.pipeline",
+      "path": "src/mari_kit/platform/pipeline.py",
       "group": "Platform composition and reference storage",
       "summary": "Small deterministic pipeline runner with visible stage failures.",
       "definitions": [
@@ -5355,8 +5355,8 @@
       ]
     },
     {
-      "module": "mark_kit.platform.projections",
-      "path": "src/mark_kit/platform/projections.py",
+      "module": "mari_kit.platform.projections",
+      "path": "src/mari_kit/platform/projections.py",
       "group": "Platform composition and reference storage",
       "summary": "Ordered event replay into disposable deterministic projections.",
       "definitions": [
@@ -5381,8 +5381,8 @@
       ]
     },
     {
-      "module": "mark_kit.platform.stores",
-      "path": "src/mark_kit/platform/stores.py",
+      "module": "mari_kit.platform.stores",
+      "path": "src/mari_kit/platform/stores.py",
       "group": "Platform composition and reference storage",
       "summary": "Reference in-memory store for revision and point-in-time conformance.",
       "definitions": [
@@ -5509,8 +5509,8 @@
       ]
     },
     {
-      "module": "mark_kit.platform.views",
-      "path": "src/mark_kit/platform/views.py",
+      "module": "mari_kit.platform.views",
+      "path": "src/mari_kit/platform/views.py",
       "group": "Platform composition and reference storage",
       "summary": "Dependency-aware materialized-view refresh planning.",
       "definitions": [
@@ -5547,8 +5547,8 @@
       ]
     },
     {
-      "module": "mark_kit.portability",
-      "path": "src/mark_kit/portability.py",
+      "module": "mari_kit.portability",
+      "path": "src/mari_kit/portability.py",
       "group": "Platform composition and reference storage",
       "summary": "Deterministic in-memory knowledge bundles and import planning.",
       "definitions": [
@@ -5591,8 +5591,8 @@
       ]
     },
     {
-      "module": "mark_kit.references",
-      "path": "src/mark_kit/references.py",
+      "module": "mari_kit.references",
+      "path": "src/mari_kit/references.py",
       "group": "Shared values and contracts",
       "summary": "Structural identities and locators shared across knowledge subsystems.",
       "definitions": [
@@ -5674,8 +5674,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.atoms",
-      "path": "src/mark_kit/retrieval/atoms.py",
+      "module": "mari_kit.retrieval.atoms",
+      "path": "src/mari_kit/retrieval/atoms.py",
       "group": "Retrieval and context",
       "summary": "Atom-hit aggregation and retrieval-time context assembly.",
       "definitions": [
@@ -5735,8 +5735,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.composition",
-      "path": "src/mark_kit/retrieval/composition.py",
+      "module": "mari_kit.retrieval.composition",
+      "path": "src/mari_kit/retrieval/composition.py",
       "group": "Retrieval and context",
       "summary": "Typed handoffs from ranked IDs to artifact-neutral context material.",
       "definitions": [
@@ -5838,8 +5838,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.context",
-      "path": "src/mark_kit/retrieval/context.py",
+      "module": "mari_kit.retrieval.context",
+      "path": "src/mari_kit/retrieval/context.py",
       "group": "Retrieval and context",
       "summary": "Auditable whole-excerpt context packing under explicit budgets.",
       "definitions": [
@@ -5882,8 +5882,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.contextual",
-      "path": "src/mark_kit/retrieval/contextual.py",
+      "module": "mari_kit.retrieval.contextual",
+      "path": "src/mari_kit/retrieval/contextual.py",
       "group": "Retrieval and context",
       "summary": "Revision-bound contextual representations that preserve original source text.",
       "definitions": [
@@ -5914,8 +5914,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.contradiction",
-      "path": "src/mark_kit/retrieval/contradiction.py",
+      "module": "mari_kit.retrieval.contradiction",
+      "path": "src/mari_kit/retrieval/contradiction.py",
       "group": "Retrieval and context",
       "summary": "Sparse embedding operations for efficient contradiction retrieval.",
       "definitions": [
@@ -5964,8 +5964,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.decisions",
-      "path": "src/mark_kit/retrieval/decisions.py",
+      "module": "mari_kit.retrieval.decisions",
+      "path": "src/mari_kit/retrieval/decisions.py",
       "group": "Retrieval and context",
       "summary": "Composable filtering and cross-stage candidate decision traces.",
       "definitions": [
@@ -6041,8 +6041,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.disclosure",
-      "path": "src/mark_kit/retrieval/disclosure.py",
+      "module": "mari_kit.retrieval.disclosure",
+      "path": "src/mari_kit/retrieval/disclosure.py",
       "group": "Retrieval and context",
       "summary": "Conditional and progressive disclosure over caller-owned knowledge.",
       "definitions": [
@@ -6138,8 +6138,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.fusion",
-      "path": "src/mark_kit/retrieval/fusion.py",
+      "module": "mari_kit.retrieval.fusion",
+      "path": "src/mari_kit/retrieval/fusion.py",
       "group": "Retrieval and context",
       "summary": "Storage-neutral rank fusion and diversity-aware selection.",
       "definitions": [
@@ -6176,8 +6176,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.graph",
-      "path": "src/mark_kit/retrieval/graph.py",
+      "module": "mari_kit.retrieval.graph",
+      "path": "src/mari_kit/retrieval/graph.py",
       "group": "Retrieval and context",
       "summary": "Deterministic graph propagation and passage projection for retrieval.",
       "definitions": [
@@ -6208,8 +6208,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.index",
-      "path": "src/mark_kit/retrieval/index.py",
+      "module": "mari_kit.retrieval.index",
+      "path": "src/mari_kit/retrieval/index.py",
       "group": "Retrieval and context",
       "summary": "Immutable in-memory MUVERA index built from arbitrary embedding vectors.",
       "definitions": [
@@ -6240,8 +6240,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.indexes",
-      "path": "src/mark_kit/retrieval/indexes.py",
+      "module": "mari_kit.retrieval.indexes",
+      "path": "src/mari_kit/retrieval/indexes.py",
       "group": "Retrieval and context",
       "summary": "Dependency-light reference indexes with authorization-aware search.",
       "definitions": [
@@ -6405,8 +6405,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.maxsim",
-      "path": "src/mark_kit/retrieval/maxsim.py",
+      "module": "mari_kit.retrieval.maxsim",
+      "path": "src/mari_kit/retrieval/maxsim.py",
       "group": "Retrieval and context",
       "summary": "Exact late-interaction MaxSim scoring.",
       "definitions": [
@@ -6419,8 +6419,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.muvera",
-      "path": "src/mark_kit/retrieval/muvera.py",
+      "module": "mari_kit.retrieval.muvera",
+      "path": "src/mari_kit/retrieval/muvera.py",
       "group": "Retrieval and context",
       "summary": "Data-oblivious MUVERA fixed-dimensional encodings.",
       "definitions": [
@@ -6454,8 +6454,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.polarquant",
-      "path": "src/mark_kit/retrieval/polarquant.py",
+      "module": "mari_kit.retrieval.polarquant",
+      "path": "src/mari_kit/retrieval/polarquant.py",
       "group": "Retrieval and context",
       "summary": "Deterministic 0.5-bit block-2 PolarQuant encoding for MUVERA FDEs.",
       "definitions": [
@@ -6486,8 +6486,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.research",
-      "path": "src/mark_kit/retrieval/research.py",
+      "module": "mari_kit.retrieval.research",
+      "path": "src/mari_kit/retrieval/research.py",
       "group": "Retrieval and context",
       "summary": "Model-neutral execution boundaries derived from retrieval research.",
       "definitions": [
@@ -6578,8 +6578,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.serialization",
-      "path": "src/mark_kit/retrieval/serialization.py",
+      "module": "mari_kit.retrieval.serialization",
+      "path": "src/mari_kit/retrieval/serialization.py",
       "group": "Retrieval and context",
       "summary": "Provisional storage-neutral byte serialization for immutable indexes.",
       "definitions": [
@@ -6598,8 +6598,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.structure",
-      "path": "src/mark_kit/retrieval/structure.py",
+      "module": "mari_kit.retrieval.structure",
+      "path": "src/mari_kit/retrieval/structure.py",
       "group": "Retrieval and context",
       "summary": "Section-aware context windows with exact retained spans and provenance.",
       "definitions": [
@@ -6665,8 +6665,8 @@
       ]
     },
     {
-      "module": "mark_kit.retrieval.sufficiency",
-      "path": "src/mark_kit/retrieval/sufficiency.py",
+      "module": "mari_kit.retrieval.sufficiency",
+      "path": "src/mari_kit/retrieval/sufficiency.py",
       "group": "Retrieval and context",
       "summary": "Evidence requirements, context sufficiency, and retrieval-gap proposals.",
       "definitions": [
@@ -6744,8 +6744,8 @@
       ]
     },
     {
-      "module": "mark_kit.schema",
-      "path": "src/mark_kit/schema.py",
+      "module": "mari_kit.schema",
+      "path": "src/mari_kit/schema.py",
       "group": "Shared values and contracts",
       "summary": "Small backend-neutral semantic-schema kernel.",
       "definitions": [
@@ -6816,8 +6816,8 @@
       ]
     },
     {
-      "module": "mark_kit.selections",
-      "path": "src/mark_kit/selections.py",
+      "module": "mari_kit.selections",
+      "path": "src/mari_kit/selections.py",
       "group": "Incremental maintenance",
       "summary": "Conservative selection dependencies, including previously unseen members.",
       "definitions": [
@@ -6864,8 +6864,8 @@
       ]
     },
     {
-      "module": "mark_kit.sync.application",
-      "path": "src/mark_kit/sync/application.py",
+      "module": "mari_kit.sync.application",
+      "path": "src/mari_kit/sync/application.py",
       "group": "Source synchronization",
       "summary": "Transaction protocol and conformance helper for applying synchronization plans.",
       "definitions": [
@@ -6901,8 +6901,8 @@
       ]
     },
     {
-      "module": "mark_kit.sync.planning",
-      "path": "src/mark_kit/sync/planning.py",
+      "module": "mari_kit.sync.planning",
+      "path": "src/mari_kit/sync/planning.py",
       "group": "Source synchronization",
       "summary": "Side-effect-free synchronization planning with replay-safe invariants.",
       "definitions": [
@@ -6945,8 +6945,8 @@
       ]
     },
     {
-      "module": "mark_kit.testing.connectors",
-      "path": "src/mark_kit/testing/connectors.py",
+      "module": "mari_kit.testing.connectors",
+      "path": "src/mari_kit/testing/connectors.py",
       "group": "Conformance utilities",
       "summary": "Storage-independent connector contract checks.",
       "definitions": [
@@ -6971,8 +6971,8 @@
       ]
     },
     {
-      "module": "mark_kit.testing.contracts",
-      "path": "src/mark_kit/testing/contracts.py",
+      "module": "mari_kit.testing.contracts",
+      "path": "src/mari_kit/testing/contracts.py",
       "group": "Conformance utilities",
       "summary": "Behavioral checks for application-owned boundary implementations.",
       "definitions": [
@@ -7003,8 +7003,8 @@
       ]
     },
     {
-      "module": "mark_kit.testing.stores",
-      "path": "src/mark_kit/testing/stores.py",
+      "module": "mari_kit.testing.stores",
+      "path": "src/mari_kit/testing/stores.py",
       "group": "Conformance utilities",
       "summary": "Reusable conformance checks for artifact-store adapters.",
       "definitions": [
@@ -7023,8 +7023,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.adapters",
-      "path": "src/mark_kit/trajectories/adapters.py",
+      "module": "mari_kit.trajectories.adapters",
+      "path": "src/mari_kit/trajectories/adapters.py",
       "group": "Agent activity and experience",
       "summary": "Small adapters from common trace exports into normalized trajectory steps.",
       "definitions": [
@@ -7061,8 +7061,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.episodes",
-      "path": "src/mark_kit/trajectories/episodes.py",
+      "module": "mari_kit.trajectories.episodes",
+      "path": "src/mari_kit/trajectories/episodes.py",
       "group": "Agent activity and experience",
       "summary": "Evidence-bound turn, episode, and cross-episode reflection values.",
       "definitions": [
@@ -7111,8 +7111,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.experience",
-      "path": "src/mark_kit/trajectories/experience.py",
+      "module": "mari_kit.trajectories.experience",
+      "path": "src/mari_kit/trajectories/experience.py",
       "group": "Agent activity and experience",
       "summary": "Contrastive trajectory associations and evidence-bound reasoning memories.",
       "definitions": [
@@ -7166,8 +7166,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.intent_analysis",
-      "path": "src/mark_kit/trajectories/intent_analysis.py",
+      "module": "mari_kit.trajectories.intent_analysis",
+      "path": "src/mari_kit/trajectories/intent_analysis.py",
       "group": "Agent activity and experience",
       "summary": "Caller-embedded intent clustering, novelty detection, and temporal drift.",
       "definitions": [
@@ -7227,8 +7227,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.intents",
-      "path": "src/mark_kit/trajectories/intents.py",
+      "module": "mari_kit.trajectories.intents",
+      "path": "src/mari_kit/trajectories/intents.py",
       "group": "Agent activity and experience",
       "summary": "Evidence-bound intent proposals and corpus-level intent aggregation.",
       "definitions": [
@@ -7305,8 +7305,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.invariants",
-      "path": "src/mark_kit/trajectories/invariants.py",
+      "module": "mari_kit.trajectories.invariants",
+      "path": "src/mari_kit/trajectories/invariants.py",
       "group": "Agent activity and experience",
       "summary": "Evidence-bearing invariant mining from successful agent trajectories.",
       "definitions": [
@@ -7348,8 +7348,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.matching",
-      "path": "src/mark_kit/trajectories/matching.py",
+      "module": "mari_kit.trajectories.matching",
+      "path": "src/mari_kit/trajectories/matching.py",
       "group": "Agent activity and experience",
       "summary": "Reference-trajectory comparison without framework message types.",
       "definitions": [
@@ -7386,8 +7386,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.mine",
-      "path": "src/mark_kit/trajectories/mine.py",
+      "module": "mari_kit.trajectories.mine",
+      "path": "src/mari_kit/trajectories/mine.py",
       "group": "Agent activity and experience",
       "summary": "Grounded trajectory analysis using one caller-supplied model invocation.",
       "definitions": [
@@ -7417,8 +7417,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.normalize",
-      "path": "src/mark_kit/trajectories/normalize.py",
+      "module": "mari_kit.trajectories.normalize",
+      "path": "src/mari_kit/trajectories/normalize.py",
       "group": "Agent activity and experience",
       "summary": "Privacy-bounded normalization of observable tool telemetry.",
       "definitions": [
@@ -7446,8 +7446,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.procedures",
-      "path": "src/mark_kit/trajectories/procedures.py",
+      "module": "mari_kit.trajectories.procedures",
+      "path": "src/mari_kit/trajectories/procedures.py",
       "group": "Agent activity and experience",
       "summary": "Versioned procedural candidates learned from successful tool traces.",
       "definitions": [
@@ -7472,8 +7472,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.process",
-      "path": "src/mark_kit/trajectories/process.py",
+      "module": "mari_kit.trajectories.process",
+      "path": "src/mari_kit/trajectories/process.py",
       "group": "Agent activity and experience",
       "summary": "Deterministic process-mining summaries over caller-owned trajectories.",
       "definitions": [
@@ -7536,8 +7536,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.rubrics",
-      "path": "src/mark_kit/trajectories/rubrics.py",
+      "module": "mari_kit.trajectories.rubrics",
+      "path": "src/mari_kit/trajectories/rubrics.py",
       "group": "Agent activity and experience",
       "summary": "Task-adaptive rubric values and confidence-visible trajectory scoring.",
       "definitions": [
@@ -7586,8 +7586,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.sampling",
-      "path": "src/mark_kit/trajectories/sampling.py",
+      "module": "mari_kit.trajectories.sampling",
+      "path": "src/mari_kit/trajectories/sampling.py",
       "group": "Agent activity and experience",
       "summary": "Diversity-aware sampling for inspecting large trajectory corpora.",
       "definitions": [
@@ -7612,8 +7612,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.traces",
-      "path": "src/mark_kit/trajectories/traces.py",
+      "module": "mari_kit.trajectories.traces",
+      "path": "src/mari_kit/trajectories/traces.py",
       "group": "Agent activity and experience",
       "summary": "Loss-bounded GenAI trace normalization and structural integrity checks.",
       "definitions": [
@@ -7690,8 +7690,8 @@
       ]
     },
     {
-      "module": "mark_kit.trajectories.workflows",
-      "path": "src/mark_kit/trajectories/workflows.py",
+      "module": "mari_kit.trajectories.workflows",
+      "path": "src/mari_kit/trajectories/workflows.py",
       "group": "Agent activity and experience",
       "summary": "Match reviewed intents and safely reuse their knowledge dependencies.",
       "definitions": [
@@ -7798,10 +7798,10 @@
       ]
     },
     {
-      "module": "mark_kit.types",
-      "path": "src/mark_kit/types.py",
+      "module": "mari_kit.types",
+      "path": "src/mari_kit/types.py",
       "group": "Shared values and contracts",
-      "summary": "Canonical immutable values shared by Mark Kit.",
+      "summary": "Canonical immutable values shared by Mari Kit.",
       "definitions": [
         {
           "name": "canonical_document_id",
@@ -7926,8 +7926,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.consensus",
-      "path": "src/mark_kit/verification/consensus.py",
+      "module": "mari_kit.verification.consensus",
+      "path": "src/mari_kit/verification/consensus.py",
       "group": "Verification and evidence decisions",
       "summary": "Evidence-aware consensus for repeated fact assessments.",
       "definitions": [
@@ -7940,8 +7940,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.contradiction",
-      "path": "src/mark_kit/verification/contradiction.py",
+      "module": "mari_kit.verification.contradiction",
+      "path": "src/mari_kit/verification/contradiction.py",
       "group": "Verification and evidence decisions",
       "summary": "Document-level self-contradiction validation and reward components.",
       "definitions": [
@@ -7983,8 +7983,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.models",
-      "path": "src/mark_kit/verification/models.py",
+      "module": "mari_kit.verification.models",
+      "path": "src/mari_kit/verification/models.py",
       "group": "Verification and evidence decisions",
       "summary": "Immutable results shared by verification algorithms.",
       "definitions": [
@@ -8026,8 +8026,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.portfolio",
-      "path": "src/mark_kit/verification/portfolio.py",
+      "module": "mari_kit.verification.portfolio",
+      "path": "src/mari_kit/verification/portfolio.py",
       "group": "Verification and evidence decisions",
       "summary": "Bounded, auditable selection over repeated callable results.",
       "definitions": [
@@ -8040,8 +8040,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.research",
-      "path": "src/mark_kit/verification/research.py",
+      "module": "mari_kit.verification.research",
+      "path": "src/mari_kit/verification/research.py",
       "group": "Verification and evidence decisions",
       "summary": "Deterministic controls around model-produced RAG judgments.",
       "definitions": [
@@ -8084,8 +8084,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.scoring",
-      "path": "src/mark_kit/verification/scoring.py",
+      "module": "mari_kit.verification.scoring",
+      "path": "src/mari_kit/verification/scoring.py",
       "group": "Verification and evidence decisions",
       "summary": "Deterministic score breakdowns for grounded Mari values.",
       "definitions": [
@@ -8110,8 +8110,8 @@
       ]
     },
     {
-      "module": "mark_kit.verification.selection",
-      "path": "src/mark_kit/verification/selection.py",
+      "module": "mari_kit.verification.selection",
+      "path": "src/mari_kit/verification/selection.py",
       "group": "Verification and evidence decisions",
       "summary": "Best-of-N selection over candidates produced by any runtime.",
       "definitions": [
@@ -8132,56 +8132,56 @@
   ],
   "facades": [
     {
-      "module": "mark_kit",
-      "path": "src/mark_kit/__init__.py"
+      "module": "mari_kit",
+      "path": "src/mari_kit/__init__.py"
     },
     {
-      "module": "mark_kit.agents",
-      "path": "src/mark_kit/agents/__init__.py"
+      "module": "mari_kit.agents",
+      "path": "src/mari_kit/agents/__init__.py"
     },
     {
-      "module": "mark_kit.algorithms",
-      "path": "src/mark_kit/algorithms/__init__.py"
+      "module": "mari_kit.algorithms",
+      "path": "src/mari_kit/algorithms/__init__.py"
     },
     {
-      "module": "mark_kit.connectors",
-      "path": "src/mark_kit/connectors/__init__.py"
+      "module": "mari_kit.connectors",
+      "path": "src/mari_kit/connectors/__init__.py"
     },
     {
-      "module": "mark_kit.evaluation",
-      "path": "src/mark_kit/evaluation/__init__.py"
+      "module": "mari_kit.evaluation",
+      "path": "src/mari_kit/evaluation/__init__.py"
     },
     {
-      "module": "mark_kit.graph",
-      "path": "src/mark_kit/graph/__init__.py"
+      "module": "mari_kit.graph",
+      "path": "src/mari_kit/graph/__init__.py"
     },
     {
-      "module": "mark_kit.knowledge",
-      "path": "src/mark_kit/knowledge/__init__.py"
+      "module": "mari_kit.knowledge",
+      "path": "src/mari_kit/knowledge/__init__.py"
     },
     {
-      "module": "mark_kit.platform",
-      "path": "src/mark_kit/platform/__init__.py"
+      "module": "mari_kit.platform",
+      "path": "src/mari_kit/platform/__init__.py"
     },
     {
-      "module": "mark_kit.retrieval",
-      "path": "src/mark_kit/retrieval/__init__.py"
+      "module": "mari_kit.retrieval",
+      "path": "src/mari_kit/retrieval/__init__.py"
     },
     {
-      "module": "mark_kit.sync",
-      "path": "src/mark_kit/sync/__init__.py"
+      "module": "mari_kit.sync",
+      "path": "src/mari_kit/sync/__init__.py"
     },
     {
-      "module": "mark_kit.testing",
-      "path": "src/mark_kit/testing/__init__.py"
+      "module": "mari_kit.testing",
+      "path": "src/mari_kit/testing/__init__.py"
     },
     {
-      "module": "mark_kit.trajectories",
-      "path": "src/mark_kit/trajectories/__init__.py"
+      "module": "mari_kit.trajectories",
+      "path": "src/mari_kit/trajectories/__init__.py"
     },
     {
-      "module": "mark_kit.verification",
-      "path": "src/mark_kit/verification/__init__.py"
+      "module": "mari_kit.verification",
+      "path": "src/mari_kit/verification/__init__.py"
     }
   ],
   "private_modules": [

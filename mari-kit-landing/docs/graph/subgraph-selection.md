@@ -21,7 +21,7 @@ Multiple seeds can produce disconnected components. A single seed gives a connec
 ```{code-block} python
 :caption: Select connected evidence through callbacks
 
-from mari_components.graph import prize_guided_subgraph
+from mark_kit.graph import prize_guided_subgraph
 
 selection = prize_guided_subgraph(
     seeds=("claim:refund-window",),

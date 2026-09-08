@@ -51,12 +51,12 @@ callbacks remain caller-supplied.
 ```{code-block} python
 :caption: Authorized recall and community map-reduce
 
-from mari_components.graph import (
+from mark_kit.graph import (
     build_community_reports,
     leiden_communities,
     map_reduce_reports,
 )
-from mari_components.retrieval import personalized_pagerank
+from mark_kit.retrieval import personalized_pagerank
 
 recall = personalized_pagerank(
     graph,

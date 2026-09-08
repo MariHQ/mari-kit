@@ -40,7 +40,7 @@ callbacks are deterministic fixtures. See `docs/incremental-maintenance.md`.
 
 ### Original foundation
 
-The common update algorithm now lives in `mari_components.dependencies`.
+The common update algorithm now lives in `mark_kit.dependencies`.
 Atoms expose exact content/context stamps and occurrence-specific bindings,
 while retrieval units and evidence use the same scoped source revision.
 Governed artifacts expose versioned computation specifications. Legacy view
@@ -60,7 +60,7 @@ their reference values can enter the planner without a new identity system.
 
 ## Conversation knowledge
 
-The independent `mari_components.conversation_knowledge` module adds episode
+The independent `mark_kit.conversation_knowledge` module adds episode
 segmentation, evidence-bound extraction, multivector retrieval facets, scoped
 topic histories, and observable trajectory adaptation. Compilation supports
 settling windows, revision caches, and explicit call budgets; evidence rendering
@@ -110,7 +110,7 @@ values requires a later versioned deprecation cycle.
   out-of-order commits.
 - `InMemoryDocumentStore` provides a small reference implementation.
 - Store, index, authorizer, clock, and serializer conformance helpers are public
-  under `mari_components.testing`.
+  under `mark_kit.testing`.
 
 ### Retrieval and serialization
 
@@ -147,7 +147,7 @@ cycle, then include it in every source ID and sync-state binding.
 - Platform contracts, store behavior, typed evidence, revision identity,
   freshness, source identity, and structural retrieval have dedicated pages.
 - The public name is Mari Kit. The distribution and import names remain
-  `mari-components` and `mari_components`.
+  `mark-kit` and `mark_kit`.
 
 ### Verification on 2026-09-03
 

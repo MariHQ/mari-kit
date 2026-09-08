@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from mari_components import KnowledgeDocument, PollPage
-from mari_components.connectors import validate_hint_hydration
-from mari_components.documents import (
+from mark_kit import KnowledgeDocument, PollPage
+from mark_kit.connectors import validate_hint_hydration
+from mark_kit.documents import (
     BoundingBox,
     DocumentRegion,
     ParsedBlock,
@@ -24,14 +24,14 @@ from mari_components.documents import (
     validate_region_evidence,
     validate_structured_document,
 )
-from mari_components.schema import (
+from mark_kit.schema import (
     ConceptType,
     KnowledgeSchema,
     PropertyConstraint,
     SemanticRecord,
     validate_records,
 )
-from mari_components.types import ChangeHint
+from mark_kit.types import ChangeHint
 
 
 def test_markdown_parser_preserves_spans_tables_and_stable_blocks() -> None:

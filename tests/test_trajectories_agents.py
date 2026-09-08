@@ -3,16 +3,16 @@ from __future__ import annotations
 import asyncio
 import unittest
 
-from mari_components import KnowledgeDocument
-from mari_components.agents import (
+from mark_kit import KnowledgeDocument
+from mark_kit.agents import (
     AgentEvent,
     EventKind,
     evaluate_outcome,
     evaluate_tools,
 )
-from mari_components.errors import MalformedModelOutput
-from mari_components.knowledge import impacted_artifacts, parse_answer
-from mari_components.trajectories import (
+from mark_kit.errors import MalformedModelOutput
+from mark_kit.knowledge import impacted_artifacts, parse_answer
+from mark_kit.trajectories import (
     CacheDecisionReason,
     ReviewedWorkflow,
     WorkflowAction,

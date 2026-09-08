@@ -49,6 +49,6 @@
         "tests/test_priority_connectors.py::PriorityConnectorTests::test_event_helpers_refetch_canonical_slack_thread_and_create_drive_watch"
       ]
     },
-    "implementation": "mari_components.connectors"
+    "implementation": "mark_kit.connectors"
   }
 }

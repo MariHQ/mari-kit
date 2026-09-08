@@ -45,7 +45,7 @@ Tag keys are normalized before add/remove set operations. Definitions validate t
 ```{code-block} python
 :caption: curation.py
 
-from mari_components.knowledge import (
+from mark_kit.knowledge import (
     TagAssignments, TagDefinition, assign_tags, derive_links, search_weight,
 )
 

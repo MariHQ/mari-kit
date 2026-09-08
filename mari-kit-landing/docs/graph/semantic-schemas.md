@@ -17,7 +17,7 @@
 ```{code-block} python
 :caption: Define a backend-neutral semantic contract
 
-from mari_components.schema import (
+from mark_kit.schema import (
     ConceptType,
     KnowledgeSchema,
     PropertyConstraint,

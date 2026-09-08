@@ -61,6 +61,6 @@
         "tests/test_remaining_connectors.py::RemainingConnectorTests::test_zendesk_article_cursor"
       ]
     },
-    "implementation": "mari_components.connectors"
+    "implementation": "mark_kit.connectors"
   }
 }

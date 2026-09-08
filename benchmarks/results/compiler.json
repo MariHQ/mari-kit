@@ -74,6 +74,6 @@
         }
       ]
     },
-    "implementation": "mari_components.platform.compile_configurations"
+    "implementation": "mark_kit.platform.compile_configurations"
   }
 }

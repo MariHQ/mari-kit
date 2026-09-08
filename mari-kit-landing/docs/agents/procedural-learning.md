@@ -51,7 +51,7 @@ attempt carries its own record type.
 ```{code-block} python
 :caption: Require independent quality and safety gates before review
 
-from mari_components.evaluation import GateMode, MetricGate, regression_gate
+from mark_kit.evaluation import GateMode, MetricGate, regression_gate
 
 report = regression_gate(
     {"task_success": 0.86, "groundedness": 0.97, "acl_leakage": 0.0},

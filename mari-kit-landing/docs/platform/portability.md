@@ -36,7 +36,7 @@ handling, and applying records or tombstones belong to the application.
 ```{code-block} python
 :caption: Export, verify, and plan a portable import
 
-from mari_components.portability import export_bundle, plan_bundle_import, verify_bundle
+from mark_kit.portability import export_bundle, plan_bundle_import, verify_bundle
 
 bundle = export_bundle(
     records=records,
@@ -71,7 +71,7 @@ fail explicitly.
 :caption: Encode an immutable change hint with the JSON adapter
 
 import json
-from mari_components.json import to_json_value
+from mark_kit.json import to_json_value
 
 payload = json.dumps(to_json_value(change_hint), sort_keys=True)
 ```

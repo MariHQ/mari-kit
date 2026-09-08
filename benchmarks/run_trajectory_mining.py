@@ -9,8 +9,8 @@ import subprocess
 from collections import defaultdict
 from pathlib import Path
 
-from mari_components.errors import MalformedModelOutput
-from mari_components.trajectories import (
+from mark_kit.errors import MalformedModelOutput
+from mark_kit.trajectories import (
     IntentReview,
     TrajectoryInvariantKind,
     TrajectoryMatchMode,

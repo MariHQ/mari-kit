@@ -56,7 +56,7 @@ as library policies.
 ```{code-block} python
 :caption: Extract the stable tool subsequence across successful traces
 
-from mari_components.trajectories import TrajectoryStep, learn_procedure
+from mark_kit.trajectories import TrajectoryStep, learn_procedure
 
 runs = {
     "run-1": [

@@ -48,7 +48,7 @@ table rows, and code blocks become independently versionable units.
 ```{code-block} python
 :caption: Parse Markdown and create stable atom identities
 
-from mari_components.documents import parse_markdown, semantic_atoms
+from mark_kit.documents import parse_markdown, semantic_atoms
 
 parsed = parse_markdown(
     markdown,
@@ -95,7 +95,7 @@ Gear-hash-style boundary rule between minimum, average, and maximum sizes.
 ```{code-block} python
 :caption: Bound a giant block with content-defined boundaries
 
-from mari_components.documents import content_defined_spans
+from mark_kit.documents import content_defined_spans
 
 spans = content_defined_spans(
     giant_code_block,
@@ -125,7 +125,7 @@ the exact normalized content hashes.
 ```{code-block} python
 :caption: Choose an alignment algorithm explicitly
 
-from mari_components.documents import (
+from mark_kit.documents import (
     AtomDiffAlgorithm, align_atoms, myers_diff, patience_diff,
 )
 
@@ -172,7 +172,7 @@ The pairing records provenance. Changed text receives a new embedding.
 ```{code-block} python
 :caption: Reuse exact atoms and defer parent vectors
 
-from mari_components.documents import plan_atom_refresh
+from mark_kit.documents import plan_atom_refresh
 
 plan = plan_atom_refresh(
     alignment,
@@ -216,9 +216,9 @@ collection, including insertion, deletion, and the empty collection.
 ```{code-block} python
 :caption: Carry one scoped atom identity into retrieval and evidence
 
-from mari_components import ObjectRef, ScopeRef
-from mari_components.documents import atom_collection_stamp, atom_dependencies
-from mari_components.retrieval import RetrievalUnit
+from mark_kit import ObjectRef, ScopeRef
+from mark_kit.documents import atom_collection_stamp, atom_dependencies
+from mark_kit.retrieval import RetrievalUnit
 
 source = ObjectRef(
     namespace="document", object_id="pricing",
@@ -254,7 +254,7 @@ the returned hits by source or by the collision-safe `source#section` parent.
 ```{code-block} python
 :caption: Let one exact paragraph retrieve its section
 
-from mari_components.retrieval import AtomVectorHit, aggregate_atom_hits
+from mark_kit.retrieval import AtomVectorHit, aggregate_atom_hits
 
 parents = aggregate_atom_hits(
     [
@@ -296,7 +296,7 @@ vectors. The encoder remains caller-owned.
 ```{code-block} python
 :caption: Match separate query concepts to separate atoms
 
-from mari_components.retrieval import MultiVectorSection, maxsim_section_score
+from mark_kit.retrieval import MultiVectorSection, maxsim_section_score
 
 section = MultiVectorSection(
     source_id="pricing",
@@ -332,7 +332,7 @@ MaxSim.
 ```{code-block} python
 :caption: Expand a hit to neighboring atoms under a token budget
 
-from mari_components.retrieval import assemble_atom_context
+from mark_kit.retrieval import assemble_atom_context
 
 context = assemble_atom_context(
     current_atoms,
@@ -368,7 +368,7 @@ intervals to answer current and historical questions.
 :caption: Keep old pricing searchable for historical questions
 
 from datetime import datetime, timezone
-from mari_components.documents import TemporalAtom, active_atoms
+from mark_kit.documents import TemporalAtom, active_atoms
 
 history = [
     TemporalAtom(

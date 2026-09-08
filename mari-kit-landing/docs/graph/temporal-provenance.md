@@ -24,8 +24,8 @@ malformed lineage. Visit limits bound traversal.
 ```{code-block} python
 :caption: Join temporal records and explain a derived result
 
-from mari_components.graph import temporal_join, trace_lineage_edges
-from mari_components.knowledge import Assertion, valid_at
+from mark_kit.graph import temporal_join, trace_lineage_edges
+from mark_kit.knowledge import Assertion, valid_at
 
 pairs = temporal_join(
     prices,
@@ -69,7 +69,7 @@ The caller assigns conflict, precedence, and violation semantics.
 ```{code-block} python
 :caption: Find unique effective-time collisions inside caller scopes
 
-from mari_components.graph import grouped_interval_overlaps
+from mark_kit.graph import grouped_interval_overlaps
 
 candidates = grouped_interval_overlaps(
     clauses,
@@ -85,7 +85,7 @@ implementations: adjacent `[a, b)` and `[b, c)` intervals avoid overlap.
 ```{code-block} python
 :caption: Keep evidence and temporal accuracy as separate measurements
 
-from mari_components.evaluation import evaluate_graph_context
+from mark_kit.evaluation import evaluate_graph_context
 
 metrics = evaluate_graph_context(
     selected_nodes=context.nodes,

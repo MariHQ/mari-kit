@@ -18,7 +18,7 @@ Mari assigns independent values for origin channel, trust, interpretation, taint
 ```{code-block} python
 :caption: Screen before admission and preserve the decision
 
-from mari_components.governance import (
+from mark_kit.governance import (
     ContentInterpretation,
     MemoryWrite,
     TrustLevel,

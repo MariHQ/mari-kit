@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from mari_components.evaluation import (
+from mark_kit.evaluation import (
     boundary_metrics,
     classification_metrics,
     evaluate_retrieval,

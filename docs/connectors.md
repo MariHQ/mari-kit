@@ -18,8 +18,8 @@ accepts its frozen provider configuration, a `PollRequest`, and an injected
 `HttpTransport`; it yields canonical `PollPage` values.
 
 ```python
-from mari_components import PollRequest
-from mari_components.connectors import GitHubConfig, poll_github
+from mark_kit import PollRequest
+from mark_kit.connectors import GitHubConfig, poll_github
 
 request = PollRequest(
     cursor=state.cursor,
@@ -47,8 +47,8 @@ credentials, and retry schedule. Mari requires an injected verifier before
 parsing the raw body.
 
 ```python
-from mari_components.connectors import StreamEvent, stream_hints
-from mari_components.connectors.events import verify_slack_signature
+from mark_kit.connectors import StreamEvent, stream_hints
+from mark_kit.connectors.events import verify_slack_signature
 
 event = StreamEvent(
     provider="slack",
@@ -93,7 +93,7 @@ making Meltano taps usable without making Mari launch subprocesses or own tap
 state.
 
 ```python
-from mari_components.connectors import ObjectStoreConfig, poll_object_store
+from mark_kit.connectors import ObjectStoreConfig, poll_object_store
 
 pages = poll_object_store(
     ObjectStoreConfig(provider="s3", container="knowledge", prefix="docs/"),
@@ -106,7 +106,7 @@ pages = poll_object_store(
 ## Capability discovery
 
 ```python
-from mari_components.connectors import ConnectorMode, connector_definitions
+from mark_kit.connectors import ConnectorMode, connector_definitions
 
 polling = [row.key for row in connector_definitions() if row.supports(ConnectorMode.POLL)]
 streaming = [row.key for row in connector_definitions() if row.supports(ConnectorMode.STREAM)]

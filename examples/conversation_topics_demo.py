@@ -6,11 +6,11 @@ Vectors and extraction/model outputs are planted, NOT a semantic benchmark.
 
 import json
 
-from mari_components.conversation_knowledge import (
+from mark_kit.conversation_knowledge import (
     KnowledgeEvent,
     compile_episodes,
 )
-from mari_components.conversation_topics import (
+from mark_kit.conversation_topics import (
     compile_topic_briefs,
     event_vector_key,
     knowledge_vector_key,

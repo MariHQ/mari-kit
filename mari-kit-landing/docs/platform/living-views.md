@@ -22,7 +22,7 @@ tasks and reused artifact IDs. Execution and storage remain caller-owned.
 ```{code-block} python
 :caption: Plan an incremental refresh with recorded dependencies
 
-from mari_components.platform import MaterializedView, plan_view_refresh
+from mark_kit.platform import MaterializedView, plan_view_refresh
 
 view = MaterializedView(
     view_id="project-summary",

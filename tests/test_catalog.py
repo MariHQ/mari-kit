@@ -2,27 +2,27 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components.connectors import (
+from mark_kit.connectors import (
     CONNECTOR_CATALOG,
     ConnectorMode,
     StreamEvent,
     connector_definitions,
 )
-from mari_components.connectors.airtable import AirtableConfig
-from mari_components.connectors.asana import AsanaConfig
-from mari_components.connectors.confluence import ConfluenceConfig
-from mari_components.connectors.dropbox import DropboxConfig
-from mari_components.connectors.github import GitHubConfig
-from mari_components.connectors.google_drive import (
+from mark_kit.connectors.airtable import AirtableConfig
+from mark_kit.connectors.asana import AsanaConfig
+from mark_kit.connectors.confluence import ConfluenceConfig
+from mark_kit.connectors.dropbox import DropboxConfig
+from mark_kit.connectors.github import GitHubConfig
+from mark_kit.connectors.google_drive import (
     GoogleDriveConfig,
     GoogleOAuthRefresh,
 )
-from mari_components.connectors.jira import JiraConfig
-from mari_components.connectors.linear import LinearConfig
-from mari_components.connectors.notion import NotionConfig
-from mari_components.connectors.slack import SlackConfig
-from mari_components.connectors.trello import TrelloConfig
-from mari_components.connectors.zendesk import ZendeskConfig
+from mark_kit.connectors.jira import JiraConfig
+from mark_kit.connectors.linear import LinearConfig
+from mark_kit.connectors.notion import NotionConfig
+from mark_kit.connectors.slack import SlackConfig
+from mark_kit.connectors.trello import TrelloConfig
+from mark_kit.connectors.zendesk import ZendeskConfig
 
 
 class CatalogTests(unittest.TestCase):

@@ -31,6 +31,6 @@
       "stable_sequence": "longest common subsequence",
       "trajectories_per_task": 2
     },
-    "implementation": "mari_components.trajectories.normalize_steps/learn_procedure"
+    "implementation": "mark_kit.trajectories.normalize_steps/learn_procedure"
   }
 }

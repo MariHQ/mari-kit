@@ -32,6 +32,6 @@
     "config": {
       "probability_source": "gold-relevance profile"
     },
-    "implementation": "mari_components.verification.score_self_rag_candidate"
+    "implementation": "mark_kit.verification.score_self_rag_candidate"
   }
 }

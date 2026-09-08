@@ -25,7 +25,7 @@ proposed in hindsight from an unsuccessful run.
 ```{code-block} python
 :caption: Validate intent labels proposed by any model
 
-from mari_components.trajectories import parse_intent_candidates
+from mark_kit.trajectories import parse_intent_candidates
 
 candidates = parse_intent_candidates(
     runs,
@@ -62,7 +62,7 @@ mapping owned by the application.
 ```{code-block} python
 :caption: Supply a reviewed grouping
 
-from mari_components.trajectories import aggregate_intents
+from mark_kit.trajectories import aggregate_intents
 
 groups = aggregate_intents(
     candidates,
@@ -82,7 +82,7 @@ matches with Jensen–Shannon divergence and explicit new or retired clusters.
 ```{code-block} python
 :caption: Discover intent families from caller-owned vectors
 
-from mari_components.trajectories import cluster_intents, detect_novel_intents
+from mark_kit.trajectories import cluster_intents, detect_novel_intents
 
 clustering = cluster_intents(
     candidates,
@@ -123,7 +123,7 @@ adapter owned by the application.
 ```{code-block} python
 :caption: Summarize independent semantic reviews
 
-from mari_components.trajectories import IntentReview, summarize_intent_reviews
+from mark_kit.trajectories import IntentReview, summarize_intent_reviews
 
 reviews = summarize_intent_reviews(
     candidates,
@@ -153,7 +153,7 @@ criteria used to judge that behavior. Mari stores each as a separate value.
 ```{code-block} python
 :caption: Generate elsewhere, validate and score here
 
-from mari_components.trajectories import (
+from mark_kit.trajectories import (
     parse_rubric_assessments,
     parse_trajectory_rubric,
     score_trajectory_rubric,

@@ -13,8 +13,8 @@ from urllib.parse import parse_qs, urlparse
 
 import numpy as np
 
-from mari_components import KnowledgeDocument
-from mari_components.http import HttpRequest, HttpResponse
+from mark_kit import KnowledgeDocument
+from mark_kit.http import HttpRequest, HttpResponse
 
 
 def required(environment: Mapping[str, str], key: str) -> str:

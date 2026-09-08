@@ -33,6 +33,6 @@
       "judgments": "gold qrels",
       "notes": "top-5 BM25 results"
     },
-    "implementation": "mari_components.verification.decide_from_evidence_notes"
+    "implementation": "mark_kit.verification.decide_from_evidence_notes"
   }
 }

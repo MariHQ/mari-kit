@@ -37,9 +37,9 @@ alone carry application-defined isolation rules.
 ```{code-block} python
 :caption: Reuse one atom for retrieval and exact evidence
 
-from mari_components import ObjectRef, ScopeRef
-from mari_components.documents import atom_dependencies, parse_markdown, semantic_atoms
-from mari_components.retrieval import RetrievalUnit
+from mark_kit import ObjectRef, ScopeRef
+from mark_kit.documents import atom_dependencies, parse_markdown, semantic_atoms
+from mark_kit.retrieval import RetrievalUnit
 
 source = ObjectRef(
     namespace="document",

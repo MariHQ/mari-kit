@@ -1,4 +1,4 @@
-from mari_components.graph import (
+from mark_kit.graph import (
     build_community_reports,
     leiden_communities,
     map_reduce_reports,

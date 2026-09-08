@@ -10,7 +10,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from typing import Any
 
-from mari_components import (
+from mark_kit import (
     CountReducer,
     DeltaAggregate,
     DependencyIndex,
@@ -31,15 +31,15 @@ from mari_components import (
     plan_selection,
     reconcile_groups,
 )
-from mari_components.conversation_knowledge import (
+from mark_kit.conversation_knowledge import (
     EpisodeKnowledge,
     KnowledgeEvent,
     evidence_context,
     parse_episode_knowledge,
     segment_conversations,
 )
-from mari_components.knowledge import ArtifactRef
-from mari_components.retrieval import RetrievalUnit, RevisionBM25Index
+from mark_kit.knowledge import ArtifactRef
+from mark_kit.retrieval import RetrievalUnit, RevisionBM25Index
 
 SCOPE = ScopeRef(tenant="acme", space="support")
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components.knowledge import (
+from mark_kit.knowledge import (
     MemoryDecision,
     MemoryOperation,
     apply_memory_mutations,

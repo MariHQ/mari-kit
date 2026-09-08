@@ -16,11 +16,11 @@
 ```{code-block} console
 :caption: terminal
 
-python -m pip install 'mari-components @ git+https://github.com/MariHQ/mari-kit.git'
+python -m pip install 'mark-kit @ git+https://github.com/MariHQ/mari-kit.git'
 
 # Install a runtime adapter when the application uses one
-python -m pip install 'mari-components[openai-agents] @ git+https://github.com/MariHQ/mari-kit.git'
-python -m pip install 'mari-components[langchain] @ git+https://github.com/MariHQ/mari-kit.git'
+python -m pip install 'mark-kit[openai-agents] @ git+https://github.com/MariHQ/mari-kit.git'
+python -m pip install 'mark-kit[langchain] @ git+https://github.com/MariHQ/mari-kit.git'
 ```
 
 ## Run the examples

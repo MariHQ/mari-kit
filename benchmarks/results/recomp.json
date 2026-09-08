@@ -33,6 +33,6 @@
       "relevance_scorer": "BM25Index",
       "token_budget": 512
     },
-    "implementation": "mari_components.retrieval.selective_compression"
+    "implementation": "mark_kit.retrieval.selective_compression"
   }
 }

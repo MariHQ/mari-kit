@@ -26,7 +26,7 @@ F(q, p) = cosine(E(q), E(p)) + alpha * Hoyer(E_s(q), E_s(p))
 ```
 
 ```python
-from mari_components.retrieval import (
+from mark_kit.retrieval import (
     SparseContradictionCandidate,
     rank_sparse_contradictions,
 )
@@ -72,7 +72,7 @@ Mari does not ship the teacher or train an LLM. It implements the reusable,
 testable boundary around that process:
 
 ```python
-from mari_components.verification import (
+from mark_kit.verification import (
     document_contradiction_rewards,
     validate_document_contradiction,
 )

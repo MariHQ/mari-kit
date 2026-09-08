@@ -73,7 +73,7 @@ recent
 ```{code-block} python
 :caption: context.py
 
-from mari_components.retrieval import ContextBudget, ContextCandidate, assemble_context
+from mark_kit.retrieval import ContextBudget, ContextCandidate, assemble_context
 
 context = assemble_context([
     ContextCandidate(document_id=hit.document_id, revision=revisions[hit.document_id],
@@ -97,7 +97,7 @@ retains every eligibility or budget rejection.
 ```{code-block} python
 :caption: Hydrate ranked units and apply token and latency budgets
 
-from mari_components.retrieval import (
+from mark_kit.retrieval import (
     ContextItem, hydrate_hits, select_context,
 )
 
@@ -150,7 +150,7 @@ separately describes each candidate against the final selected set.
 ```{code-block} python
 :caption: Keep independent evidence families in a two-item context
 
-from mari_components.retrieval import select_context_diverse
+from mark_kit.retrieval import select_context_diverse
 
 selection = select_context_diverse(
     candidates,
@@ -174,7 +174,7 @@ precision and relevance.
 ```{code-block} python
 :caption: Detect a context containing two versions of one study
 
-from mari_components.evaluation import evaluate_grouped_coverage
+from mark_kit.evaluation import evaluate_grouped_coverage
 
 coverage = evaluate_grouped_coverage(
     selected_ids,
@@ -194,7 +194,7 @@ each stage.
 ```{code-block} python
 :caption: Preserve an expired-item rejection before retrieval
 
-from mari_components.retrieval import (
+from mark_kit.retrieval import (
     CandidateHistory, FilterPredicate, decisions_from_context,
     decisions_from_filter, filter_with_reasons,
 )

@@ -34,6 +34,6 @@
       "relevance_scorer": "BM25Index",
       "tokens": 1024
     },
-    "implementation": "mari_components.retrieval.assemble_context"
+    "implementation": "mark_kit.retrieval.assemble_context"
   }
 }

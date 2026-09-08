@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from mari_components import KnowledgeDocument, PollRequest
-from mari_components.connectors import (
+from mark_kit import KnowledgeDocument, PollRequest
+from mark_kit.connectors import (
     BoxConfig,
     FilesystemConfig,
     GitHubConfig,
@@ -29,9 +29,9 @@ from mari_components.connectors import (
     stream_change_hint,
     stream_hints,
 )
-from mari_components.connectors.protocol import ConnectorMode, StreamEvent
-from mari_components.errors import PermanentFailure
-from mari_components.http import HttpRequest, HttpResponse
+from mark_kit.connectors.protocol import ConnectorMode, StreamEvent
+from mark_kit.errors import PermanentFailure
+from mark_kit.http import HttpRequest, HttpResponse
 
 
 class QueueHttp:

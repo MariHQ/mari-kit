@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / "src" / "mari_components"
+SOURCE = ROOT / "src" / "mark_kit"
 GROUPS = {
     "algorithms": "Selectable algorithm additions",
     "retrieval": "Retrieval and context",
@@ -63,7 +63,7 @@ def declaration(node: ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef) -> 
 
 def generate() -> dict[Path, str]:
     revision = subprocess.check_output(
-        ["git", "log", "-1", "--format=%H", "--", "src/mari_components"],
+        ["git", "log", "-1", "--format=%H", "--", "src/mark_kit"],
         cwd=ROOT,
         text=True,
     ).strip()
@@ -78,7 +78,7 @@ def generate() -> dict[Path, str]:
             continue
         tree = ast.parse(path.read_text())
         name = ".".join(
-            ("mari_components", *(parts[:-1] if parts[-1] == "__init__" else parts))
+            ("mark_kit", *(parts[:-1] if parts[-1] == "__init__" else parts))
         )
         definitions = [
             declaration(node)
@@ -129,7 +129,7 @@ def generate() -> dict[Path, str]:
         "",
         "The [algorithm choices guide](https://kit.mari.guru/start/algorithm-choices.html) compares workloads and tradeoffs. Use this index to locate every public implementation family and inspect exact source definitions. Imported aliases, constants, private helpers, and dunder methods are outside the definition counts. Package facades appear separately below.",
         "",
-        f"Source reference: [Mari Kit at {revision[:7]}](https://github.com/MariHQ/mari-kit/tree/{revision}/src/mari_components). Each declaration links to its implementation. Research citations and adaptation boundaries appear in the algorithm guide and feature pages.",
+        f"Source reference: [Mari Kit at {revision[:7]}](https://github.com/MariHQ/mari-kit/tree/{revision}/src/mark_kit). Each declaration links to its implementation. Research citations and adaptation boundaries appear in the algorithm guide and feature pages.",
         "",
         "## Areas",
         "",
@@ -185,7 +185,7 @@ def generate() -> dict[Path, str]:
             "",
             "## Generation scope",
             "",
-            "The index scans every Python source file in `src/mari_components`, including definitions housed in package initializers. Private modules are excluded from the public index: "
+            "The index scans every Python source file in `src/mark_kit`, including definitions housed in package initializers. Private modules are excluded from the public index: "
             + ", ".join(f"`{path}`" for path in private)
             + ".",
             "",

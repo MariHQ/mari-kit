@@ -4,12 +4,12 @@ import unittest
 
 import numpy as np
 
-from mari_components.knowledge import (
+from mark_kit.knowledge import (
     MemorySignal,
     plan_note_evolution,
     rank_salient_memories,
 )
-from mari_components.retrieval import (
+from mark_kit.retrieval import (
     CompressionSentence,
     CorrectiveAction,
     build_summary_tree,
@@ -19,7 +19,7 @@ from mari_components.retrieval import (
     selective_compression,
     walk_summary_tree,
 )
-from mari_components.verification import (
+from mark_kit.verification import (
     AnswerSource,
     EvidenceNote,
     decide_from_evidence_notes,

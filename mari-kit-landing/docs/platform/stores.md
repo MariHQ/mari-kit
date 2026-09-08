@@ -51,8 +51,8 @@ library design.
 ```{code-block} python
 :caption: Compare-and-swap revisions with explicit lineage
 
-from mari_components.platform import InMemoryArtifactStore, RevisionConflict
-from mari_components.testing import assert_artifact_store_conforms
+from mark_kit.platform import InMemoryArtifactStore, RevisionConflict
+from mark_kit.testing import assert_artifact_store_conforms
 
 store = InMemoryArtifactStore()
 store.commit(first_revision, expected_revision=None)

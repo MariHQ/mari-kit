@@ -26,8 +26,8 @@ from typing import Any
 
 import numpy as np
 
-from mari_components.evaluation import evaluate_retrieval
-from mari_components.retrieval import BM25Index, DenseFlatIndex, HNSWIndex, IVFPQIndex
+from mark_kit.evaluation import evaluate_retrieval
+from mark_kit.retrieval import BM25Index, DenseFlatIndex, HNSWIndex, IVFPQIndex
 
 SCIFACT_URL = (
     "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip"
@@ -102,7 +102,7 @@ def environment() -> dict[str, Any]:
         "source_worktree_dirty": bool(source_changes),
         "runner_sha256": digest(Path(__file__), "sha256"),
         "index_implementation_sha256": digest(
-            repository / "src/mari_components/retrieval/indexes.py", "sha256"
+            repository / "src/mark_kit/retrieval/indexes.py", "sha256"
         ),
         "python": sys.version.split()[0],
         "numpy": np.__version__,
@@ -172,7 +172,7 @@ def scifact_retrieval(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, An
             "queries": len(cases),
         },
         "system": {
-            "retriever": "mari_components.retrieval.BM25Index",
+            "retriever": "mark_kit.retrieval.BM25Index",
             "k1": 1.2,
             "b": 0.75,
         },
@@ -431,7 +431,7 @@ def longmemeval_retrieval(
             "official_evaluator_commit": LONGMEM_EVALUATOR_COMMIT,
         },
         "system": {
-            "retriever": "mari_components.retrieval.BM25Index",
+            "retriever": "mark_kit.retrieval.BM25Index",
             "granularity": "session",
             "session_key": "timestamp plus role-prefixed turns",
             "k1": 1.2,

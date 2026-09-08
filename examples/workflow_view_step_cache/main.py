@@ -7,10 +7,10 @@ import os
 from collections.abc import Mapping
 
 from examples.support import json_generator, required, selected_mode, text_embedder
-from mari_components import KnowledgeDocument
-from mari_components.errors import MalformedModelOutput
-from mari_components.knowledge import impacted_artifacts, parse_answer
-from mari_components.trajectories import (
+from mark_kit import KnowledgeDocument
+from mark_kit.errors import MalformedModelOutput
+from mark_kit.knowledge import impacted_artifacts, parse_answer
+from mark_kit.trajectories import (
     ReviewedWorkflow,
     WorkflowAction,
     WorkflowPolicy,

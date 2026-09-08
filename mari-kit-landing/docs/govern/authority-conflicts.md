@@ -25,7 +25,7 @@ independence, and adds a bonus for distinct source kinds. A margin below
 ```{code-block} python
 :caption: Resolve a claim and preserve disagreement
 
-from mari_components.governance import AuthorityPolicy, SourceAssertion, resolve_assertions
+from mark_kit.governance import AuthorityPolicy, SourceAssertion, resolve_assertions
 
 result = resolve_assertions(
     assertions=(filing_assertion, blog_assertion),

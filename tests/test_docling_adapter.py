@@ -2,9 +2,9 @@ from copy import deepcopy
 
 import pytest
 
-from mari_components.documents.docling import adapt_docling_json
-from mari_components.references import ObjectRef
-from mari_components.retrieval import context_items_from_document
+from mark_kit.documents.docling import adapt_docling_json
+from mark_kit.references import ObjectRef
+from mark_kit.retrieval import context_items_from_document
 
 
 def fixture():

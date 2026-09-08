@@ -49,8 +49,8 @@ Credentials are excluded from connector configuration representations. `HttpRequ
 ```{code-block} python
 :caption: connector_test.py
 
-from mari_components import SyncMode
-from mari_components.testing import check_connector_contract
+from mark_kit import SyncMode
+from mark_kit.testing import check_connector_contract
 
 pages = tuple(my_connector(config, request, http=fake_http))
 report = check_connector_contract(pages, mode=SyncMode.FULL,

@@ -4,7 +4,7 @@ from graphlib import CycleError
 import pytest
 
 from examples.quickstarts.dependency_updates import materialize, scenario
-from mari_components import (
+from mark_kit import (
     DependencyKey,
     DependencyStamp,
     DerivationSpec,
@@ -15,7 +15,7 @@ from mari_components import (
     materialization_receipt,
     plan_dependency_updates,
 )
-from mari_components.documents import (
+from mark_kit.documents import (
     align_atoms,
     atom_collection_stamp,
     atom_dependencies,
@@ -23,7 +23,7 @@ from mari_components.documents import (
     plan_atom_refresh,
     semantic_atoms,
 )
-from mari_components.retrieval import RetrievalUnit, RevisionBM25Index
+from mark_kit.retrieval import RetrievalUnit, RevisionBM25Index
 
 
 def key(name, *, tenant="acme", aspect="content"):

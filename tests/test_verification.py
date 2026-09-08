@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components import Evidence, FactCandidate
-from mari_components.knowledge import FactAssessment
-from mari_components.verification import (
+from mark_kit import Evidence, FactCandidate
+from mark_kit.knowledge import FactAssessment
+from mark_kit.verification import (
     best_of_n,
     harmonic_score,
     score_grounded,

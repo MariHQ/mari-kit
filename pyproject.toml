@@ -3,7 +3,7 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mari-components"
+name = "mark-kit"
 version = "0.1.0.dev0"
 description = "Backend-agnostic tools for versioned, evidence-linked knowledge systems"
 readme = "README.md"
@@ -45,7 +45,7 @@ dev = ["build>=1.2", "pyright>=1.1", "pytest>=8", "ruff>=0.12"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-mari_components = ["py.typed"]
+mark_kit = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components import (
+from mark_kit import (
     DocumentACL,
     KnowledgeDocument,
     PollRequest,
@@ -10,7 +10,7 @@ from mari_components import (
     RevisionRef,
     parse_document_id,
 )
-from mari_components.http import HttpRequest
+from mark_kit.http import HttpRequest
 
 
 class TypesTests(unittest.TestCase):

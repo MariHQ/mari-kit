@@ -40,10 +40,10 @@ Note evolution applies a link threshold and a stricter metadata-evolution thresh
 ```{code-block} python
 :caption: memory_evidence.py · current
 
-from mari_components.knowledge import (
+from mark_kit.knowledge import (
     MemorySignal, plan_note_evolution, rank_salient_memories,
 )
-from mari_components.verification import (
+from mark_kit.verification import (
     EvidenceNote, decide_from_evidence_notes,
 )
 

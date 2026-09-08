@@ -1,6 +1,6 @@
 import pytest
 
-from mari_components.algorithms.graph_retrieval import (
+from mark_kit.algorithms.graph_retrieval import (
     TypedLink,
     UnionCandidate,
     expand_typed_links,
@@ -10,7 +10,7 @@ from mari_components.algorithms.graph_retrieval import (
     rank_graph_distances,
     weighted_chunk_polling,
 )
-from mari_components.algorithms.graphs import (
+from mark_kit.algorithms.graphs import (
     cohesive_subgraph,
     condense_graph,
     hierarchical_leiden_partition,

@@ -53,7 +53,7 @@ memory and returns a storage-free plan. The host controls the final commit.
 ```{code-block} python
 :caption: Decide admission before calling a mutation planner
 
-from mari_components.knowledge import (
+from mark_kit.knowledge import (
     AdmissionDisposition,
     AdmissionSignals,
     AdmissionThresholds,

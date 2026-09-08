@@ -33,6 +33,6 @@
       "link_threshold": 0.35,
       "scorer": "BM25Index"
     },
-    "implementation": "mari_components.knowledge.plan_note_evolution"
+    "implementation": "mark_kit.knowledge.plan_note_evolution"
   }
 }

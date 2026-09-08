@@ -57,7 +57,7 @@ jobs:
       - run: python -m build
       - run: python -m venv /tmp/mari-wheel-check
       - run: /tmp/mari-wheel-check/bin/pip install dist/*.whl
-      - run: /tmp/mari-wheel-check/bin/python -c "import mari_components"
+      - run: /tmp/mari-wheel-check/bin/python -c "import mark_kit"
 
   algorithm-solvers:
     runs-on: ubuntu-latest

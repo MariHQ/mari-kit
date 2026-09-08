@@ -56,7 +56,7 @@ support. Mari preserves that granularity and can retain structured relation
 fields for later graph projection.
 
 ```python
-from mari_components.knowledge import parse_facts
+from mark_kit.knowledge import parse_facts
 
 facts = parse_facts(documents, {
     "facts": [{

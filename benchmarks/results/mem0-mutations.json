@@ -30,6 +30,6 @@
     "config": {
       "decisions": "gold chronological add/update replay"
     },
-    "implementation": "mari_components.knowledge.plan_memory_mutations/apply_memory_mutations"
+    "implementation": "mark_kit.knowledge.plan_memory_mutations/apply_memory_mutations"
   }
 }

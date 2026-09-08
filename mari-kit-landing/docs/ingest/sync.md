@@ -63,9 +63,9 @@
 ```{code-block} python
 :caption: sync.py
 
-from mari_components import SyncMode
-from mari_components.connectors import connector_configuration_fingerprint
-from mari_components.sync import SyncState, plan_sync
+from mark_kit import SyncMode
+from mark_kit.connectors import connector_configuration_fingerprint
+from mark_kit.sync import SyncState, plan_sync
 
 state = load_state() or SyncState()
 scope_fingerprint = connector_configuration_fingerprint({
@@ -89,7 +89,7 @@ state through that caller-owned protocol.
 ```{code-block} python
 :caption: Apply a plan through application storage
 
-from mari_components.sync import apply_sync_plan
+from mark_kit.sync import apply_sync_plan
 
 with store.sync_transaction(source_id) as transaction:
     apply_sync_plan(plan, transaction=transaction)

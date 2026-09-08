@@ -56,7 +56,7 @@ contributions and the resulting review volume.
 ```{code-block} python
 :caption: resolution.py
 
-from mari_components.graph import FieldAgreement, ResolutionDecision, resolve_entity
+from mark_kit.graph import FieldAgreement, ResolutionDecision, resolve_entity
 
 resolution = resolve_entity([
     FieldAgreement(field="email", agrees=True,

@@ -84,7 +84,7 @@ reverse dependency lookup
 ```{code-block} python
 :caption: freshness.py
 
-from mari_components.knowledge import (
+from mark_kit.knowledge import (
     FreshnessStatus, assess_dependencies, assess_freshness,
     impacted_artifacts,
 )
@@ -101,7 +101,7 @@ stale = impacted_artifacts(dependencies_by_artifact, current_revisions,
 ```{code-block} python
 :caption: Assess a structured record dependency
 
-from mari_components.knowledge import assess_revision_refs
+from mark_kit.knowledge import assess_revision_refs
 
 report = assess_revision_refs(
     expected=[account_revision_used_by_fact],

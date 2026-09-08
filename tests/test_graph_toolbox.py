@@ -5,13 +5,13 @@ from datetime import UTC, datetime
 
 import pytest
 
-from mari_components.evaluation import (
+from mark_kit.evaluation import (
     evaluate_clustering,
     evaluate_link_prediction,
     evaluate_path,
     evaluate_subgraph,
 )
-from mari_components.graph import (
+from mark_kit.graph import (
     GraphProjection,
     ProjectionEdge,
     TimeInterval,

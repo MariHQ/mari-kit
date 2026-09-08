@@ -49,7 +49,7 @@ drop after the Hoyer term was added.
 ```{code-block} python
 :caption: sparsecl.py
 
-from mari_components.retrieval import (
+from mark_kit.retrieval import (
     SparseContradictionCandidate, rank_sparse_contradictions,
 )
 

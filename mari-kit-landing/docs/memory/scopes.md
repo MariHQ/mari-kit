@@ -22,7 +22,7 @@ new artifact linked to its origin. That new identity preserves the review bounda
 ```{code-block} python
 :caption: Propose a reviewable cross-scope promotion
 
-from mari_components.governance import ScopeGrant, ScopePolicy, propose_promotion
+from mark_kit.governance import ScopeGrant, ScopePolicy, propose_promotion
 
 policy = ScopePolicy(
     grants=(

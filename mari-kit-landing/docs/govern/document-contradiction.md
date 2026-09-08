@@ -61,7 +61,7 @@ checkpoints over time.
 ```{code-block} python
 :caption: document_contradiction.py
 
-from mari_components.verification import (
+from mark_kit.verification import (
     document_contradiction_rewards, validate_document_contradiction,
 )
 

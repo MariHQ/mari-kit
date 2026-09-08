@@ -1,4 +1,4 @@
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     ContextBudget,
     ContextCandidate,
     ContextExclusion,

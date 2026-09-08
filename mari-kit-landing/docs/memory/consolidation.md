@@ -77,7 +77,7 @@ consolidation work after unrelated changes.
 ```{code-block} python
 :caption: Select promotions under explicit model-call and token budgets
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     ConsolidationBudget,
     PromotionSignal,
     plan_consolidation,

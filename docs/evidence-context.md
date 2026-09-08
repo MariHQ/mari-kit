@@ -12,14 +12,14 @@ python -m examples.evidence_context_demo
 
 ## Expand retrieved evidence using document structure
 
-`mark_kit.retrieval.expand_structured_context` accepts
+`mari_kit.retrieval.expand_structured_context` accepts
 `StructuredContextItem` values and scored `ContextHit` references. Construct items
 from existing semantic atoms with `context_items_from_atoms`, or from a
 `ParsedDocument` with `context_items_from_document`. Source identity uses
 `ObjectRef` and `RevisionRef`, including the caller's scope.
 
 ```python
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     ContextExpansionPolicy, ContextHit, context_items_from_atoms,
     expand_structured_context,
 )
@@ -62,7 +62,7 @@ and duplicate item identities are errors rather than silent fallbacks.
 
 ## Inspect declarations across evidence owners
 
-`mark_kit.knowledge.inspect_citation_declarations` consumes immutable
+`mari_kit.knowledge.inspect_citation_declarations` consumes immutable
 `CitationEvent` values for one activity. Event ordinals establish order across
 all evidence owners within that activity; they do not depend on transcript
 length. `OwnedEvidenceRef` includes both an owner and a full source revision.
@@ -112,7 +112,7 @@ content and user attachments. The plan never edits the durable transcript.
 ## Map Docling exports to existing Mari document types
 
 ```python
-from mark_kit.documents.docling import adapt_docling_json
+from mari_kit.documents.docling import adapt_docling_json
 
 result = adapt_docling_json(
     docling_document.model_dump(mode="json"),

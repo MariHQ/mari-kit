@@ -7,14 +7,14 @@ import os
 from collections.abc import Mapping
 
 from examples.support import selected_mode
-from mark_kit import KnowledgeDocument
-from mark_kit.knowledge import (
+from mari_kit import KnowledgeDocument
+from mari_kit.knowledge import (
     KnowledgeDependency,
     impacted_artifacts,
     parse_answer,
     section_revisions,
 )
-from mark_kit.trajectories import (
+from mari_kit.trajectories import (
     ReviewedWorkflow,
     WorkflowAction,
     WorkflowPolicy,

@@ -10,7 +10,7 @@ to its detailed behavior and sources.
 The [complete module and API index](https://kit.mari.guru/start/algorithm-inventory.html)
 accounts for every public implementation module, including the contracts,
 connectors, and adapters that support algorithms. Module paths in the tables are
-relative to `mark_kit`. The index links definitions to inspected source
+relative to `mari_kit`. The index links definitions to inspected source
 lines. A source citation identifies provenance or a related method. Individual
 pages explain which computations Mari implements and which model calls the host
 supplies.
@@ -202,10 +202,10 @@ alternative ranking objectives.
 ## Run and inspect the implementations
 
 ```python
-from mark_kit.algorithms.subsets import LogDeterminant, maximize_subset
-from mark_kit.retrieval.indexes import BM25Index, DenseFlatIndex
-from mark_kit.retrieval.fusion import maximal_marginal_relevance
-from mark_kit.dependencies import plan_dependency_updates
+from mari_kit.algorithms.subsets import LogDeterminant, maximize_subset
+from mari_kit.retrieval.indexes import BM25Index, DenseFlatIndex
+from mari_kit.retrieval.fusion import maximal_marginal_relevance
+from mari_kit.dependencies import plan_dependency_updates
 ```
 
 Imports illustrate independent choices. The [feature guides](https://kit.mari.guru/)
@@ -213,7 +213,7 @@ show function signatures and runnable compositions. Use the
 [complete module/API index](https://kit.mari.guru/start/algorithm-inventory.html)
 to locate additional helpers, records, methods, and exact source definitions.
 Base numerical implementations depend on NumPy. Native graph and centroid
-operations are loaded lazily through `mark-kit[algorithm-solvers]`.
+operations are loaded lazily through `mari-kit[algorithm-solvers]`.
 
 Some research-inspired boundaries consume model outputs or callbacks. The
 library supplies the documented computation, validation, or plan. The host
@@ -598,27 +598,27 @@ presented as complete upstream systems.
 [structure]: https://github.com/networkx/networkx/tree/0db8227000872d7a9f6ce84c54ba1e5e99429122/networkx/algorithms
 [union]: https://github.com/ggozad/haiku.rag/blob/cf674b93ce50a742371addbfb8f9aa0bfa733ae7/haiku_rag_slim/haiku/rag/client/search.py
 
-[mari-polar]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/retrieval/polarquant.py
-[mari-fusion]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/retrieval/fusion.py
-[mari-context]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/retrieval/context.py
-[mari-markdown]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/documents/markdown.py
-[mari-atoms]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/documents/atoms.py
-[mari-links]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/knowledge/links.py
-[mari-admission]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/knowledge/admission.py
-[mari-governance]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/governance/__init__.py
-[mari-provenance]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/graph/provenance.py
-[mari-diagnostics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/graph/diagnostics.py
-[mari-topics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/conversation_topics.py
-[mari-dependencies]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/dependencies.py
-[mari-grouping]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/grouping.py
-[mari-aggregates]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/aggregates.py
-[mari-freshness]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/knowledge/freshness.py
-[mari-sync]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/sync/planning.py
-[mari-assertions]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/knowledge/assertions.py
-[mari-decisions]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/retrieval/decisions.py
-[mari-metrics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/evaluation/metrics.py
-[mari-graph-eval]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/evaluation/graph.py
-[mari-statistics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/evaluation/statistics.py
-[mari-gates]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/evaluation/gates.py
-[mari-package]: https://github.com/MariHQ/mari-kit/tree/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit
-[mari-connectors]: https://github.com/MariHQ/mari-kit/tree/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mark_kit/connectors
+[mari-polar]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/retrieval/polarquant.py
+[mari-fusion]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/retrieval/fusion.py
+[mari-context]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/retrieval/context.py
+[mari-markdown]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/documents/markdown.py
+[mari-atoms]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/documents/atoms.py
+[mari-links]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/knowledge/links.py
+[mari-admission]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/knowledge/admission.py
+[mari-governance]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/governance/__init__.py
+[mari-provenance]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/graph/provenance.py
+[mari-diagnostics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/graph/diagnostics.py
+[mari-topics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/conversation_topics.py
+[mari-dependencies]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/dependencies.py
+[mari-grouping]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/grouping.py
+[mari-aggregates]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/aggregates.py
+[mari-freshness]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/knowledge/freshness.py
+[mari-sync]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/sync/planning.py
+[mari-assertions]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/knowledge/assertions.py
+[mari-decisions]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/retrieval/decisions.py
+[mari-metrics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/evaluation/metrics.py
+[mari-graph-eval]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/evaluation/graph.py
+[mari-statistics]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/evaluation/statistics.py
+[mari-gates]: https://github.com/MariHQ/mari-kit/blob/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/evaluation/gates.py
+[mari-package]: https://github.com/MariHQ/mari-kit/tree/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit
+[mari-connectors]: https://github.com/MariHQ/mari-kit/tree/b89792aea1d14366d71e9ac26c15afddb9cb76f3/src/mari_kit/connectors

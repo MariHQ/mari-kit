@@ -4,8 +4,8 @@ import math
 import numpy as np
 import pytest
 
-from mark_kit.algorithms.lexical import BM25Variant, BM25VariantIndex
-from mark_kit.algorithms.subsets import (
+from mari_kit.algorithms.lexical import BM25Variant, BM25VariantIndex
+from mari_kit.algorithms.subsets import (
     FacilityLocation,
     GreedyMethod,
     LogDeterminant,

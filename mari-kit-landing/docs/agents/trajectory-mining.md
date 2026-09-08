@@ -37,7 +37,7 @@ requires an explicit source field.
 ```{code-block} python
 :caption: Preserve an unknown tool outcome
 
-from mark_kit.trajectories import normalize_openai_trajectory
+from mari_kit.trajectories import normalize_openai_trajectory
 
 result = normalize_openai_trajectory(messages, maximum_events=10_000)
 step = result.steps[0]
@@ -66,7 +66,7 @@ to the activity `chat`. The caller can retain the model separately.
 ```{code-block} python
 :caption: Direct-follow edges, exact path variants, rework, and cost
 
-from mark_kit.trajectories import TrajectoryRun, mine_trajectory_process
+from mari_kit.trajectories import TrajectoryRun, mine_trajectory_process
 
 process = mine_trajectory_process(
     [TrajectoryRun(trajectory_id="run-17", steps=result.steps)],
@@ -91,7 +91,7 @@ for edge in process.transitions:
 ```{code-block} python
 :caption: Compare a shorter observed path with its reference
 
-from mark_kit.trajectories import (
+from mari_kit.trajectories import (
     TrajectoryMatchMode,
     compare_trajectories,
 )
@@ -128,7 +128,7 @@ into tests, policies, or gates.
 ```{code-block} python
 :caption: Inspect learned regularities before deciding whether to enforce them
 
-from mark_kit.trajectories import (
+from mari_kit.trajectories import (
     check_trajectory_invariant,
     mine_trajectory_invariants,
 )

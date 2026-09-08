@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-from mark_kit import KnowledgeDocument, PollPage, SyncMode, Tombstone
-from mark_kit.connectors import StreamEvent
-from mark_kit.testing import (
+from mari_kit import KnowledgeDocument, PollPage, SyncMode, Tombstone
+from mari_kit.connectors import StreamEvent
+from mari_kit.testing import (
     check_connector_contract,
     check_streaming_connector_contract,
 )

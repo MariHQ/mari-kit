@@ -19,22 +19,22 @@ from examples.support import (
     token_vectors,
     urllib_transport,
 )
-from mark_kit.connectors import (
+from mari_kit.connectors import (
     GitHubConfig,
     github_source_id,
     poll_github,
     validate_github,
 )
-from mark_kit.connectors.events import (
+from mari_kit.connectors.events import (
     coalesce_hints,
     github_change_hint,
     parse_json_object,
     verify_hmac_sha256,
 )
-from mark_kit.knowledge import parse_answer
-from mark_kit.retrieval import build_index, search_index
-from mark_kit.sync import SyncState, plan_sync
-from mark_kit.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
+from mari_kit.knowledge import parse_answer
+from mari_kit.retrieval import build_index, search_index
+from mari_kit.sync import SyncState, plan_sync
+from mari_kit.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
 
 
 def _apply(

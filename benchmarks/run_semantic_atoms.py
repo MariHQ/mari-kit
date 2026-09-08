@@ -10,7 +10,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from mark_kit.documents import (
+from mari_kit.documents import (
     align_atoms,
     parse_markdown,
     plan_atom_refresh,

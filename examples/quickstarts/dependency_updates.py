@@ -4,7 +4,7 @@ import datetime as dt
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from mark_kit import (
+from mari_kit import (
     DependencyKey,
     DependencyStamp,
     DerivationSpec,
@@ -17,19 +17,19 @@ from mark_kit import (
     materialization_receipt,
     plan_dependency_updates,
 )
-from mark_kit.documents import (
+from mari_kit.documents import (
     atom_collection_stamp,
     atom_dependencies,
     parse_markdown,
     semantic_atoms,
 )
-from mark_kit.graph import trace_lineage
-from mark_kit.knowledge import (
+from mari_kit.graph import trace_lineage
+from mari_kit.knowledge import (
     Activity,
     KnowledgeArtifact,
     validate_located_evidence,
 )
-from mark_kit.retrieval import RetrievalUnit, RevisionBM25Index
+from mari_kit.retrieval import RetrievalUnit, RevisionBM25Index
 
 SCOPE = ScopeRef(tenant="acme", space="support")
 SOURCE = ObjectRef(namespace="document", object_id="refund-policy", scope=SCOPE)

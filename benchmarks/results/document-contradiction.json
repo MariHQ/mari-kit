@@ -38,6 +38,6 @@
       "sentencing": "regex",
       "temperature": 0
     },
-    "implementation": "mark_kit.verification.validate_document_contradiction/document_contradiction_rewards"
+    "implementation": "mari_kit.verification.validate_document_contradiction/document_contradiction_rewards"
   }
 }

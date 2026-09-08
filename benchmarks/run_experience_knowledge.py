@@ -7,15 +7,15 @@ import argparse
 import json
 from pathlib import Path
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     ExpertFeedback,
     KnowledgeUse,
     TrajectoryEvidence,
     build_knowledge_use_manifest,
     parse_feedback_diagnoses,
 )
-from mark_kit.trajectories import mine_outcome_associations, normalize_steps
-from mark_kit.trajectories.process import TrajectoryRun
+from mari_kit.trajectories import mine_outcome_associations, normalize_steps
+from mari_kit.trajectories.process import TrajectoryRun
 
 
 def main() -> None:

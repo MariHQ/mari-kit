@@ -24,7 +24,7 @@ A `StructuredDocument` preserves a hierarchy of pages and regions. Each `Documen
 ```{code-block} python
 :caption: Preserve a table as structure, text, and page evidence
 
-from mark_kit.documents import (
+from mari_kit.documents import (
     BoundingBox,
     DocumentRegion,
     RegionKind,
@@ -55,7 +55,7 @@ citation against the original region.
 :caption: Adapt any parser through a caller-owned dependency
 
 from typing import Protocol
-from mark_kit.documents import StructuredDocument
+from mari_kit.documents import StructuredDocument
 
 # BinaryDocument and docling_adapter are application-defined integration types.
 class StructuredDocumentParser(Protocol):
@@ -84,7 +84,7 @@ downloads.
 ```{code-block} python
 :caption: Validate structure before indexing
 
-from mark_kit.documents import (
+from mari_kit.documents import (
     normalize_table, validate_region_evidence, validate_structured_document,
 )
 
@@ -107,7 +107,7 @@ describe chat messages, HTML nodes, or database rows in their native terms.
 ```{code-block} python
 :caption: Represent a parsed chat thread with its native conversation structure
 
-from mark_kit.documents import ParsedBlock, ParsedDocument
+from mari_kit.documents import ParsedBlock, ParsedDocument
 
 thread = ParsedDocument(
     artifact_id="support-thread:42",

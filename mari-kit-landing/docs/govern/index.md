@@ -28,7 +28,7 @@ Validation turns generated proposals into revision-bound knowledge. The modules 
 | Located citation bound to a stale revision | Current visible revision differs | Rejected by `validate_located_evidence` as outside visible references |
 
 ```python
-from mark_kit.knowledge import parse_answer
+from mari_kit.knowledge import parse_answer
 
 answer = parse_answer(
     "How long is the refund window?",

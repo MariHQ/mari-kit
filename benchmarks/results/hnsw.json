@@ -37,6 +37,6 @@
       "m": 16,
       "metric": "cosine"
     },
-    "implementation": "mark_kit.retrieval.HNSWIndex"
+    "implementation": "mari_kit.retrieval.HNSWIndex"
   }
 }

@@ -90,7 +90,7 @@ metrics, nonfinite values, and a search with zero feasible candidates raise
 ```{code-block} python
 :caption: Constraint-first configuration search
 
-from mark_kit.platform import (
+from mari_kit.platform import (
     MetricObjective,
     ObjectiveDirection,
     compile_configurations,

@@ -1,5 +1,5 @@
-from mark_kit import KnowledgeIndex, ObjectRef, RevisionRef, ScopeRef
-from mark_kit.retrieval import (
+from mari_kit import KnowledgeIndex, ObjectRef, RevisionRef, ScopeRef
+from mari_kit.retrieval import (
     BM25Index,
     DenseFlatIndex,
     HNSWIndex,
@@ -7,7 +7,7 @@ from mark_kit.retrieval import (
     RevisionBM25Index,
     SparseVectorIndex,
 )
-from mark_kit.testing import assert_index_authorization_conforms
+from mari_kit.testing import assert_index_authorization_conforms
 
 
 def test_dense_flat_metrics_and_acl_filtering() -> None:

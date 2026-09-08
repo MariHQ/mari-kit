@@ -33,7 +33,7 @@ calls, definitions, inheritance, routes, and references become typed edges.
 ```{code-block} python
 :caption: Represent code structure with a caller-owned language server boundary
 
-from mark_kit.documents import CodeEdge, CodeEdgeKind, CodeSymbol, CodeSymbolKind
+from mari_kit.documents import CodeEdge, CodeEdgeKind, CodeSymbol, CodeSymbolKind
 
 handler = CodeSymbol(
     symbol_id="src/api.py::refund_order",
@@ -75,7 +75,7 @@ Repeated definitions retain the same qualified name and receive deterministic
 ```{code-block} python
 :caption: Extract Python through the standard-library parser
 
-from mark_kit.documents import parse_python
+from mari_kit.documents import parse_python
 
 parsed = parse_python(
     source,

@@ -18,16 +18,16 @@ from examples.support import (
     text_embedder,
     urllib_transport,
 )
-from mark_kit import KnowledgeDocument, PollRequest
-from mark_kit.agents import AgentEvent, EventKind
-from mark_kit.connectors import GitHubConfig, poll_github, validate_github
-from mark_kit.knowledge import (
+from mari_kit import KnowledgeDocument, PollRequest
+from mari_kit.agents import AgentEvent, EventKind
+from mari_kit.connectors import GitHubConfig, poll_github, validate_github
+from mari_kit.knowledge import (
     KnowledgeDependency,
     impacted_artifacts,
     parse_answer,
 )
-from mark_kit.retrieval import build_index, search_index
-from mark_kit.trajectories import (
+from mari_kit.retrieval import build_index, search_index
+from mari_kit.trajectories import (
     ReviewedWorkflow,
     WorkflowAction,
     WorkflowPolicy,

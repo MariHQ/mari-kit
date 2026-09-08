@@ -33,6 +33,6 @@
       "limit": 100,
       "weighting": "sublinear-tf-idf"
     },
-    "implementation": "mark_kit.retrieval.SparseVectorIndex"
+    "implementation": "mari_kit.retrieval.SparseVectorIndex"
   }
 }

@@ -34,6 +34,6 @@
       "similarity": "token-jaccard",
       "threshold": 0.12
     },
-    "implementation": "mark_kit.knowledge.hybrid_topic_segments"
+    "implementation": "mari_kit.knowledge.hybrid_topic_segments"
   }
 }

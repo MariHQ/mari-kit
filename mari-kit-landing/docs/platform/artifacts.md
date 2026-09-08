@@ -76,7 +76,7 @@ supersedes
 
 from datetime import datetime, timezone
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     Activity,
     KnowledgeArtifact,
     KnowledgeScope,

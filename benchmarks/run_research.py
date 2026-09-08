@@ -45,8 +45,8 @@ else:
         scifact_indexes,
         scifact_retrieval,
     )
-from mark_kit.connectors import connector_definitions
-from mark_kit.graph import (
+from mari_kit.connectors import connector_definitions
+from mari_kit.graph import (
     FieldAgreement,
     ResolutionDecision,
     TemporalFact,
@@ -54,7 +54,7 @@ from mark_kit.graph import (
     query_temporal_facts,
     resolve_entity,
 )
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     MemoryDecision,
     MemoryOperation,
     MemorySignal,
@@ -64,12 +64,12 @@ from mark_kit.knowledge import (
     plan_note_evolution,
     rank_salient_memories,
 )
-from mark_kit.platform import (
+from mari_kit.platform import (
     MetricObjective,
     ObjectiveDirection,
     compile_configurations,
 )
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     BM25Index,
     CompressionSentence,
     ContextBudget,
@@ -92,8 +92,8 @@ from mark_kit.retrieval import (
     selective_compression,
     walk_summary_tree,
 )
-from mark_kit.trajectories import learn_procedure, normalize_steps
-from mark_kit.verification import (
+from mari_kit.trajectories import learn_procedure, normalize_steps
+from mari_kit.verification import (
     EvidenceNote,
     decide_from_evidence_notes,
     document_contradiction_rewards,
@@ -460,9 +460,9 @@ def run_raptor_memwalker(
         evaluation_type="end-to-end-deterministic",
         data=dataset("qasper", split="validation:first-160-questions-with-evidence", cases=len(cases)),
         implementation=(
-            "mark_kit.retrieval.build_summary_tree"
+            "mari_kit.retrieval.build_summary_tree"
             if suite == "raptor"
-            else "mark_kit.retrieval.walk_summary_tree"
+            else "mari_kit.retrieval.walk_summary_tree"
         ),
         config={
             "cluster_size": 4,
@@ -516,7 +516,7 @@ def run_recomp(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "recomp",
         evaluation_type="end-to-end-deterministic",
         data=dataset("qasper", split="validation:first-160-questions-with-evidence", cases=len(cases)),
-        implementation="mark_kit.retrieval.selective_compression",
+        implementation="mari_kit.retrieval.selective_compression",
         config={"token_budget": 512, "relevance_scorer": "BM25Index"},
         metrics={
             "evidence_recall": mean(row["evidence_recall"] for row in cases),
@@ -572,7 +572,7 @@ def run_context_envelope(data_dir: Path) -> tuple[dict[str, Any], list[dict[str,
         "context-envelope",
         evaluation_type="end-to-end-deterministic",
         data=dataset("qasper", split="validation:first-160-questions-with-evidence", cases=len(cases)),
-        implementation="mark_kit.retrieval.assemble_context",
+        implementation="mari_kit.retrieval.assemble_context",
         config={"tokens": 1024, "documents": 12, "relevance_scorer": "BM25Index"},
         metrics={
             "evidence_recall": mean(row["evidence_recall"] for row in cases),
@@ -621,7 +621,7 @@ def run_hyde(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "hyde",
         evaluation_type="component-oracle",
         data=dataset("qasper", split="validation:first-160-answerable-questions-with-evidence", cases=len(cases)),
-        implementation="mark_kit.retrieval.hypothetical_document_embedding",
+        implementation="mari_kit.retrieval.hypothetical_document_embedding",
         config={"embedding": "signed-feature-hash-128", "hypothesis": "gold-answer proxy"},
         metrics={
             "baseline_evidence_recall_at_10": mean(row["baseline_recall_at_10"] for row in cases),
@@ -675,7 +675,7 @@ def run_index_suite(
             suite,
             evaluation_type="end-to-end-deterministic",
             data=scifact_dataset(len(cases)),
-            implementation="mark_kit.retrieval.BM25Index",
+            implementation="mari_kit.retrieval.BM25Index",
             config={"k1": 1.2, "b": 0.75, "limit": 100},
             metrics=metrics,
             limitations=("In-memory Python implementation; latency is machine-specific.",),
@@ -689,9 +689,9 @@ def run_index_suite(
         evaluation_type="end-to-end-deterministic",
         data=scifact_dataset(len(cases), documents=512),
         implementation={
-            "dense-flat": "mark_kit.retrieval.DenseFlatIndex",
-            "hnsw": "mark_kit.retrieval.HNSWIndex",
-            "ivfpq": "mark_kit.retrieval.IVFPQIndex",
+            "dense-flat": "mari_kit.retrieval.DenseFlatIndex",
+            "hnsw": "mari_kit.retrieval.HNSWIndex",
+            "ivfpq": "mari_kit.retrieval.IVFPQIndex",
         }[suite],
         config=metrics["config"],
         metrics={key: value for key, value in metrics.items() if key != "config"},
@@ -772,7 +772,7 @@ def run_sparsecl(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             split="positive:first-256-with-reference-sentences",
             cases=len(cases),
         ),
-        implementation="mark_kit.retrieval.rank_sparse_contradictions",
+        implementation="mari_kit.retrieval.rank_sparse_contradictions",
         config={
             "similarity_embedding": "signed-feature-hash-128",
             "sparse_embedding": "signed-feature-hash-128",
@@ -843,7 +843,7 @@ def run_learned_sparse(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, A
         "learned-sparse",
         evaluation_type="end-to-end-deterministic",
         data=scifact_dataset(len(cases)),
-        implementation="mark_kit.retrieval.SparseVectorIndex",
+        implementation="mari_kit.retrieval.SparseVectorIndex",
         config={"weighting": "sublinear-tf-idf", "limit": 100},
         metrics={
             "ndcg_at_10": mean(row["ndcg_at_10"] for row in cases),
@@ -905,7 +905,7 @@ def run_rag_fusion(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]
         "rag-fusion",
         evaluation_type="end-to-end-deterministic",
         data=scifact_dataset(len(cases)),
-        implementation="mark_kit.retrieval.reciprocal_rank_fusion",
+        implementation="mari_kit.retrieval.reciprocal_rank_fusion",
         config={"rank_constant": 60, "arms": ["BM25", "signed-feature-hash-128"]},
         metrics=metrics,
         limitations=("Dense arm uses a deterministic feature hash, not a neural encoder.",),
@@ -955,7 +955,7 @@ def run_muvera(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "muvera-maxsim",
         evaluation_type="end-to-end-deterministic",
         data=scifact_dataset(len(cases), documents=len(selected_ids)),
-        implementation="mark_kit.retrieval.build_index/search_index",
+        implementation="mari_kit.retrieval.build_index/search_index",
         config=asdict(config) | {"candidate_limit": 32, "token_vectors": "signed-feature-hash-32"},
         metrics={
             "recall_vs_exact_at_10": mean(row["candidate_recall_at_10"] for row in cases),
@@ -1006,7 +1006,7 @@ def run_crag(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "crag",
         evaluation_type="component-oracle",
         data=scifact_dataset(len(cases)),
-        implementation="mark_kit.retrieval.plan_corrective_retrieval",
+        implementation="mari_kit.retrieval.plan_corrective_retrieval",
         config={"lower_threshold": 0.25, "upper_threshold": 0.75},
         metrics={
             "routing_accuracy": mean(float(row["correct"]) for row in cases),
@@ -1052,7 +1052,7 @@ def run_self_rag(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "self-rag",
         evaluation_type="component-oracle",
         data=scifact_dataset(len(cases)),
-        implementation="mark_kit.verification.score_self_rag_candidate",
+        implementation="mari_kit.verification.score_self_rag_candidate",
         config={"probability_source": "gold-relevance profile"},
         metrics={
             "selection_accuracy": mean(float(row["decision_correct"]) for row in cases),
@@ -1094,7 +1094,7 @@ def run_chain_of_note(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, An
         "chain-of-note",
         evaluation_type="component-oracle",
         data=scifact_dataset(len(cases)),
-        implementation="mark_kit.verification.decide_from_evidence_notes",
+        implementation="mari_kit.verification.decide_from_evidence_notes",
         config={"notes": "top-5 BM25 results", "judgments": "gold qrels"},
         metrics={
             "source_decision_accuracy": mean(float(row["decision_correct"]) for row in cases),
@@ -1134,7 +1134,7 @@ def run_flare(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "flare",
         evaluation_type="component-oracle",
         data=dataset("qasper", split="validation:first-160-answerable-questions", cases=len(cases)),
-        implementation="mark_kit.retrieval.plan_active_retrieval",
+        implementation="mari_kit.retrieval.plan_active_retrieval",
         config={"threshold": 0.2, "probabilities": "gold-answer novelty profile"},
         metrics={
             "trigger_accuracy": mean(float(row["triggered"] == row["expected_trigger"]) for row in cases),
@@ -1222,7 +1222,7 @@ def run_generative_agents(data_dir: Path) -> tuple[dict[str, Any], list[dict[str
             "split": "cleaned-s:non-abstention",
             "cases": len(cases),
         },
-        implementation="mark_kit.knowledge.rank_salient_memories",
+        implementation="mari_kit.knowledge.rank_salient_memories",
         config={"recency_weight": 0.15, "importance_weight": 0.15, "relevance_weight": 0.7},
         metrics={
             "evidence_recall_at_10": mean(row["evidence_recall_at_10"] for row in cases),
@@ -1272,7 +1272,7 @@ def run_a_mem(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             "split": "cleaned-s:non-abstention",
             "cases": len(cases),
         },
-        implementation="mark_kit.knowledge.plan_note_evolution",
+        implementation="mari_kit.knowledge.plan_note_evolution",
         config={"link_threshold": 0.35, "evolution_threshold": 0.75, "limit": 10, "scorer": "BM25Index"},
         metrics={"link_precision": precision, "link_recall": recall, "link_f1": f1(precision, recall)},
         limitations=("Uses BM25 similarity rather than an A-MEM embedding model.",),
@@ -1327,7 +1327,7 @@ def run_mem0(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             "split": "cleaned-s:evidence-session-replay",
             "cases": len(cases),
         },
-        implementation="mark_kit.knowledge.plan_memory_mutations/apply_memory_mutations",
+        implementation="mari_kit.knowledge.plan_memory_mutations/apply_memory_mutations",
         config={"decisions": "gold chronological add/update replay"},
         metrics={
             "update_fidelity": mean(row["update_fidelity"] for row in cases),
@@ -1389,7 +1389,7 @@ def run_lightmem(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "lightmem",
         evaluation_type="end-to-end-deterministic",
         data=dataset("wikisection", split="en_disease_validation:first-160", cases=len(cases)),
-        implementation="mark_kit.knowledge.hybrid_topic_segments",
+        implementation="mari_kit.knowledge.hybrid_topic_segments",
         config={"similarity": "token-jaccard", "attention": "one-minus-similarity", "threshold": 0.12},
         metrics={
             "boundary_precision": mean(row["precision"] for row in cases),
@@ -1452,7 +1452,7 @@ def run_hipporag(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "hipporag",
         evaluation_type="end-to-end-deterministic",
         data=dataset("qasc", split="validation:first-256", cases=len(cases)),
-        implementation="mark_kit.retrieval.personalized_pagerank/project_graph_scores",
+        implementation="mari_kit.retrieval.personalized_pagerank/project_graph_scores",
         config={"graph": "term-passage bipartite", "distractors_per_case": 8, "limit": 5},
         metrics={
             "passage_recall_at_5": mean(row["passage_recall_at_5"] for row in cases),
@@ -1500,7 +1500,7 @@ def run_graph_communities(data_dir: Path) -> tuple[dict[str, Any], list[dict[str
         "graph-communities",
         evaluation_type="end-to-end-deterministic",
         data=dataset("docred", split="dev:first-256", cases=len(cases)),
-        implementation="mark_kit.graph.leiden_communities",
+        implementation="mari_kit.graph.leiden_communities",
         config={"edge": "entity co-mention count", "resolution": 1.0},
         metrics={
             "modularity_mean": mean(row["modularity"] for row in cases),
@@ -1611,7 +1611,7 @@ def run_entity_resolution(data_dir: Path) -> tuple[dict[str, Any], list[dict[str
             "split": "odd rows per label; even rows train probabilities/threshold",
             "cases": len(cases),
         },
-        implementation="mark_kit.graph.resolve_entity",
+        implementation="mari_kit.graph.resolve_entity",
         config={"fields": list(probabilities), "probabilities": probabilities, "link_threshold": best_threshold},
         metrics={
             "pair_precision": precision,
@@ -1797,7 +1797,7 @@ def run_document_contradiction(
         data=dataset(
             "contradoc", split="lexicographic-first-80-per-label", cases=len(cases)
         ),
-        implementation="mark_kit.verification.validate_document_contradiction/document_contradiction_rewards",
+        implementation="mari_kit.verification.validate_document_contradiction/document_contradiction_rewards",
         config={
             "judge": "deepseek-chat",
             "temperature": 0,
@@ -1875,7 +1875,7 @@ def run_temporal_graph(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, A
             "split": "cleaned-s:all",
             "cases": len(cases),
         },
-        implementation="mark_kit.graph.query_temporal_facts",
+        implementation="mari_kit.graph.query_temporal_facts",
         config={"valid_time": "session timestamp", "known_at": "question timestamp"},
         metrics={
             "provenance_recall": mean(row["provenance_recall"] for row in cases),
@@ -1927,7 +1927,7 @@ def run_procedures(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]
         "procedures",
         evaluation_type="component-corpus",
         data=dataset("agentbench", split="dbbench:dev", cases=len(cases)),
-        implementation="mark_kit.trajectories.normalize_steps/learn_procedure",
+        implementation="mari_kit.trajectories.normalize_steps/learn_procedure",
         config={"trajectories_per_task": 2, "stable_sequence": "longest common subsequence"},
         metrics={
             "tool_sequence_f1": mean(row["tool_sequence_f1"] for row in cases),
@@ -1991,7 +1991,7 @@ def run_compiler(data_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
             "source_queries": len(query_ids),
             "cases": len(cases),
         },
-        implementation="mark_kit.platform.compile_configurations",
+        implementation="mari_kit.platform.compile_configurations",
         config={
             "development": "alternating sorted query IDs",
             "heldout": "complementary alternating query IDs",
@@ -2055,7 +2055,7 @@ def run_connector_suite(
             "split": suite.removeprefix("connector-"),
             "cases": len(cases),
         },
-        implementation="mark_kit.connectors",
+        implementation="mari_kit.connectors",
         config={"connectors": len(definitions), "pytest_nodes": selected},
         metrics={
             "passed": len(cases),

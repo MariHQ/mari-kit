@@ -78,7 +78,7 @@ and visit budgets. It returns visited paths with the exhaustion state.
 ```{code-block} python
 :caption: hyde_raptor_memwalker.py · current
 
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     build_summary_tree, hypothetical_document_embedding, walk_summary_tree,
 )
 

@@ -5,9 +5,9 @@ import hmac
 import json
 import unittest
 
-from mark_kit import KnowledgeDocument, PollPage
-from mark_kit.connectors import StreamEvent, stream_change_hint, stream_pages
-from mark_kit.connectors.events import (
+from mari_kit import KnowledgeDocument, PollPage
+from mari_kit.connectors import StreamEvent, stream_change_hint, stream_pages
+from mari_kit.connectors.events import (
     coalesce_hints,
     confluence_change_hint,
     gdrive_change_hint,
@@ -16,7 +16,7 @@ from mark_kit.connectors.events import (
     verify_hmac_sha256,
     verify_slack_signature,
 )
-from mark_kit.errors import AuthenticationFailure
+from mari_kit.errors import AuthenticationFailure
 
 
 class ConnectorEventTests(unittest.TestCase):

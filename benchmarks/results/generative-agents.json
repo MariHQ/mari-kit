@@ -32,6 +32,6 @@
       "recency_weight": 0.15,
       "relevance_weight": 0.7
     },
-    "implementation": "mark_kit.knowledge.rank_salient_memories"
+    "implementation": "mari_kit.knowledge.rank_salient_memories"
   }
 }

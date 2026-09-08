@@ -15,7 +15,7 @@ This preserves the structural pair when either component contains `/` or `%`.
 ```{code-block} python
 :caption: Convert stored structural fields to canonical IDs
 
-from mark_kit import canonical_document_id, parse_document_id
+from mari_kit import canonical_document_id, parse_document_id
 
 document_id = canonical_document_id(row.source_id, row.external_id)
 source_id, external_id = parse_document_id(document_id)
@@ -35,7 +35,7 @@ objects a connector observes. GitHub and GitLab expose `github_source_id` and
 ```{code-block} python
 :caption: Bind sync state to one configured source
 
-from mark_kit.connectors import GitHubConfig, github_source_id
+from mari_kit.connectors import GitHubConfig, github_source_id
 
 config = GitHubConfig(
     token=token,

@@ -78,7 +78,7 @@ Metadata is recursively frozen inside a strict JSON-compatible domain.
 ```{code-block} python
 :caption: document.py
 
-from mark_kit import DocumentACL, KnowledgeDocument, Principal
+from mari_kit import DocumentACL, KnowledgeDocument, Principal
 
 doc = KnowledgeDocument(
     source_id="github:acme/product",
@@ -114,7 +114,7 @@ encoded source length, with one BOM for the complete source.
 ```{code-block} python
 :caption: Preserve parser provenance and explicit coordinate units
 
-from mark_kit.documents import SourceCoordinateMap, stable_source_id
+from mari_kit.documents import SourceCoordinateMap, stable_source_id
 
 record_id = stable_source_id(
     (source_id, row["policy_id"], row["jurisdiction"]),

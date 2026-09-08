@@ -1,7 +1,7 @@
 """Run with python -m examples.evidence_context_demo; no services required."""
 
-from mark_kit.documents.docling import adapt_docling_json
-from mark_kit.knowledge import (
+from mari_kit.documents.docling import adapt_docling_json
+from mari_kit.knowledge import (
     CitationEvent,
     CitationEventKind,
     CompactionEvidence,
@@ -12,8 +12,8 @@ from mark_kit.knowledge import (
     plan_evidence_compaction,
     select_evidence_assets,
 )
-from mark_kit.references import ObjectRef
-from mark_kit.retrieval import (
+from mari_kit.references import ObjectRef
+from mari_kit.retrieval import (
     ContextExpansionPolicy,
     ContextHit,
     context_items_from_document,

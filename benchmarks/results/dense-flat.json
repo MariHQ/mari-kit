@@ -35,6 +35,6 @@
     "config": {
       "metric": "cosine"
     },
-    "implementation": "mark_kit.retrieval.DenseFlatIndex"
+    "implementation": "mari_kit.retrieval.DenseFlatIndex"
   }
 }

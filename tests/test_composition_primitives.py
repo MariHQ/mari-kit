@@ -4,11 +4,11 @@ from datetime import UTC, datetime
 
 import pytest
 
-from mark_kit import JsonPointer, ObjectRef, RevisionRef, TextSpan
-from mark_kit.connectors import hydrate_hints
-from mark_kit.documents import ParsedBlock, ParsedDocument
-from mark_kit.evaluation import evaluate_graph_context
-from mark_kit.graph import (
+from mari_kit import JsonPointer, ObjectRef, RevisionRef, TextSpan
+from mari_kit.connectors import hydrate_hints
+from mari_kit.documents import ParsedBlock, ParsedDocument
+from mari_kit.evaluation import evaluate_graph_context
+from mari_kit.graph import (
     LineageEdge,
     TimeInterval,
     build_adjacency,
@@ -22,7 +22,7 @@ from mark_kit.graph import (
     resolve_relation_evidence,
     trace_lineage_edges,
 )
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     ArtifactEvidence,
     ArtifactRef,
     Assertion,
@@ -36,7 +36,7 @@ from mark_kit.knowledge import (
     validate_artifact_evidence,
     validate_located_evidence,
 )
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     BM25Index,
     ContextItem,
     IndexDelta,
@@ -45,8 +45,8 @@ from mark_kit.retrieval import (
     hydrate_hits,
     select_context,
 )
-from mark_kit.sync import SyncState, apply_sync_plan, plan_sync
-from mark_kit.types import ChangeHint, KnowledgeDocument, PollPage, SyncMode
+from mari_kit.sync import SyncState, apply_sync_plan, plan_sync
+from mari_kit.types import ChangeHint, KnowledgeDocument, PollPage, SyncMode
 
 NOW = datetime(2026, 7, 1, tzinfo=UTC)
 

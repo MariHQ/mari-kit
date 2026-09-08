@@ -5,30 +5,30 @@ import json
 import unittest
 import urllib.parse
 
-from mark_kit.connectors.confluence import (
+from mari_kit.connectors.confluence import (
     ConfluenceConfig,
     poll_confluence,
     storage_to_text,
     validate_confluence,
 )
-from mark_kit.connectors.github import (
+from mari_kit.connectors.github import (
     GitHubConfig,
     list_github_repositories,
     poll_github,
     validate_github_team,
 )
-from mark_kit.connectors.google_drive import (
+from mari_kit.connectors.google_drive import (
     GoogleDriveConfig,
     poll_google_drive,
     start_google_drive_watch,
 )
-from mark_kit.connectors.slack import (
+from mari_kit.connectors.slack import (
     SlackConfig,
     fetch_slack_thread_by_id,
     poll_slack,
 )
-from mark_kit.http import HttpResponse
-from mark_kit.types import PollRequest
+from mari_kit.http import HttpResponse
+from mari_kit.types import PollRequest
 
 
 class FakeHttp:

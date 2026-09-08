@@ -56,7 +56,7 @@ named `request` and caller-owned credentials or adapter callbacks.
 Files, issues, pull requests, and commits.
 
 ```python
-from mark_kit.connectors import GitHubConfig, github_source_id, poll_github
+from mari_kit.connectors import GitHubConfig, github_source_id, poll_github
 cfg = GitHubConfig(token=token, repository="acme/product",
     branch="main", paths=("docs/**",),
     content_types=("files", "issues", "pull_requests"))
@@ -71,7 +71,7 @@ pages = poll_github(cfg, request, http=http)
 Channels, DMs, and canonical thread documents.
 
 ```python
-from mark_kit.connectors import SlackConfig, poll_slack
+from mari_kit.connectors import SlackConfig, poll_slack
 cfg = SlackConfig(bot_token=bot_token,
     history_token=history_token, channels=("C0123",))
 pages = poll_slack(cfg, request, http=http)
@@ -84,7 +84,7 @@ pages = poll_slack(cfg, request, http=http)
 Drive files, Google Docs, changes, and push watches.
 
 ```python
-from mark_kit.connectors import GoogleDriveConfig, poll_google_drive
+from mari_kit.connectors import GoogleDriveConfig, poll_google_drive
 cfg = GoogleDriveConfig(access_token=token, folder_id="folder-id")
 pages = poll_google_drive(cfg, request, http=http)
 # poll_google_drive_changes(...) and start_google_drive_watch(...)
@@ -97,7 +97,7 @@ pages = poll_google_drive(cfg, request, http=http)
 Cloud pages converted from storage HTML to Markdown-like text.
 
 ```python
-from mark_kit.connectors import ConfluenceConfig, poll_confluence
+from mari_kit.connectors import ConfluenceConfig, poll_confluence
 cfg = ConfluenceConfig(site_url="https://acme.atlassian.net/wiki",
     email="bot@acme.com", api_token=token, space_key="ENG")
 pages = poll_confluence(cfg, request, http=http)
@@ -110,7 +110,7 @@ pages = poll_confluence(cfg, request, http=http)
 Native delta cursor with explicit deleted entries.
 
 ```python
-from mark_kit.connectors import DropboxConfig, poll_dropbox
+from mari_kit.connectors import DropboxConfig, poll_dropbox
 cfg = DropboxConfig(token=token, path="/Knowledge")
 pages = poll_dropbox(cfg, request, http=http)
 ```
@@ -122,7 +122,7 @@ pages = poll_dropbox(cfg, request, http=http)
 Page search and bounded block-tree ingestion.
 
 ```python
-from mark_kit.connectors import NotionConfig, poll_notion
+from mari_kit.connectors import NotionConfig, poll_notion
 cfg = NotionConfig(token=token)
 pages = poll_notion(cfg, request, http=http)
 ```
@@ -134,7 +134,7 @@ pages = poll_notion(cfg, request, http=http)
 Base metadata and table snapshots.
 
 ```python
-from mark_kit.connectors import AirtableConfig, poll_airtable
+from mari_kit.connectors import AirtableConfig, poll_airtable
 cfg = AirtableConfig(token=token, base_id="appABC123")
 pages = poll_airtable(cfg, request, http=http)
 ```
@@ -146,7 +146,7 @@ pages = poll_airtable(cfg, request, http=http)
 Workspace or project tasks with offset checkpoints.
 
 ```python
-from mark_kit.connectors import AsanaConfig, poll_asana
+from mari_kit.connectors import AsanaConfig, poll_asana
 cfg = AsanaConfig(token=token, workspace_gid="workspace-gid",
     project_gid="project-gid")
 pages = poll_asana(cfg, request, http=http)
@@ -159,7 +159,7 @@ pages = poll_asana(cfg, request, http=http)
 Cloud issues with project or custom JQL scope.
 
 ```python
-from mark_kit.connectors import JiraConfig, poll_jira
+from mari_kit.connectors import JiraConfig, poll_jira
 cfg = JiraConfig(site_url="https://acme.atlassian.net",
     email="bot@acme.com", api_token=token, project_key="SUP")
 pages = poll_jira(cfg, request, http=http)
@@ -172,7 +172,7 @@ pages = poll_jira(cfg, request, http=http)
 Issues and comments through the GraphQL API.
 
 ```python
-from mark_kit.connectors import LinearConfig, poll_linear
+from mari_kit.connectors import LinearConfig, poll_linear
 cfg = LinearConfig(api_key=api_key, team_id="team-id")
 pages = poll_linear(cfg, request, http=http)
 ```
@@ -184,7 +184,7 @@ pages = poll_linear(cfg, request, http=http)
 Open boards, lists, and cards.
 
 ```python
-from mark_kit.connectors import TrelloConfig, poll_trello
+from mari_kit.connectors import TrelloConfig, poll_trello
 cfg = TrelloConfig(api_key=api_key, token=token)
 pages = poll_trello(cfg, request, http=http)
 ```
@@ -196,7 +196,7 @@ pages = poll_trello(cfg, request, http=http)
 Guide articles with ordered page checkpoints.
 
 ```python
-from mark_kit.connectors import ZendeskConfig, poll_zendesk
+from mari_kit.connectors import ZendeskConfig, poll_zendesk
 cfg = ZendeskConfig(subdomain="acme",
     email="bot@acme.com", api_token=token)
 pages = poll_zendesk(cfg, request, http=http)
@@ -209,7 +209,7 @@ pages = poll_zendesk(cfg, request, http=http)
 Repository documents with head cursors and resumable tree pages.
 
 ```python
-from mark_kit.connectors import GitLabConfig, poll_gitlab
+from mari_kit.connectors import GitLabConfig, poll_gitlab
 cfg = GitLabConfig(token=token, project="acme/handbook",
     branch="main", paths=("docs/**", "README.md"))
 pages = poll_gitlab(cfg, request, http=http)
@@ -222,7 +222,7 @@ pages = poll_gitlab(cfg, request, http=http)
 Microsoft Graph drive deltas, downloads, and deleted items.
 
 ```python
-from mark_kit.connectors import MicrosoftDriveConfig, poll_microsoft_drive
+from mari_kit.connectors import MicrosoftDriveConfig, poll_microsoft_drive
 cfg = MicrosoftDriveConfig(access_token=token, drive_id="drive-id",
     folder_id="root", provider="sharepoint")
 pages = poll_microsoft_drive(cfg, request, http=http)
@@ -235,7 +235,7 @@ pages = poll_microsoft_drive(cfg, request, http=http)
 Folder files with marker pagination.
 
 ```python
-from mark_kit.connectors import BoxConfig, poll_box
+from mari_kit.connectors import BoxConfig, poll_box
 cfg = BoxConfig(access_token=token, folder_id="0")
 pages = poll_box(cfg, request, http=http)
 ```
@@ -247,7 +247,7 @@ pages = poll_box(cfg, request, http=http)
 Bounded XML feeds with ETag and Last-Modified conditional polling.
 
 ```python
-from mark_kit.connectors import RSSConfig, poll_rss
+from mari_kit.connectors import RSSConfig, poll_rss
 cfg = RSSConfig(feed_url="https://example.com/feed.xml")
 pages = poll_rss(cfg, request, http=http)
 ```
@@ -259,7 +259,7 @@ pages = poll_rss(cfg, request, http=http)
 SDK-neutral object listing and reading.
 
 ```python
-from mark_kit.connectors import ObjectStoreConfig, poll_object_store
+from mari_kit.connectors import ObjectStoreConfig, poll_object_store
 cfg = ObjectStoreConfig(provider="s3", container="knowledge", prefix="docs/")
 pages = poll_object_store(cfg, request,
     list_objects=s3_adapter.list_objects, read_object=s3_adapter.read_object)
@@ -272,7 +272,7 @@ pages = poll_object_store(cfg, request,
 Singer RECORD and STATE messages from external taps.
 
 ```python
-from mark_kit.connectors import singer_pages
+from mari_kit.connectors import singer_pages
 pages = singer_pages(tap_stdout, document=normalize_record, page_size=100)
 ```
 :::
@@ -284,7 +284,7 @@ Stable snapshots with content revisions and resumable bounded pages.
 
 ```python
 from pathlib import Path
-from mark_kit.connectors import FilesystemConfig, poll_filesystem
+from mari_kit.connectors import FilesystemConfig, poll_filesystem
 cfg = FilesystemConfig(root=Path("knowledge"), patterns=("*.md", "*.txt"))
 pages = poll_filesystem(cfg, request)
 ```
@@ -296,7 +296,7 @@ pages = poll_filesystem(cfg, request)
 Same-origin pagination with an injected record-to-document mapping.
 
 ```python
-from mark_kit.connectors import JSONAPIConfig, poll_json_api
+from mari_kit.connectors import JSONAPIConfig, poll_json_api
 cfg = JSONAPIConfig(url="https://api.example.com/articles",
     records_path=("data",), next_path=("paging", "next"))
 pages = poll_json_api(cfg, request, http=http, document=normalize_article)
@@ -307,8 +307,8 @@ pages = poll_json_api(cfg, request, http=http, document=normalize_article)
 ```{code-block} python
 :caption: connector.py
 
-from mark_kit import PollRequest
-from mark_kit.connectors import GitHubConfig, poll_github, validate_github
+from mari_kit import PollRequest
+from mari_kit.connectors import GitHubConfig, poll_github, validate_github
 
 config = GitHubConfig(token=token, repository="acme/product",
     paths=("docs/**",), content_types=("files", "issues"))
@@ -335,7 +335,7 @@ keys from `selected`. An explicit resolver can select a tied hint.
 ```{code-block} python
 :caption: Coalesce out-of-order changes using explicit revision keys
 
-from mark_kit.connectors import coalesce_hints_ordered
+from mari_kit.connectors import coalesce_hints_ordered
 
 report = coalesce_hints_ordered(
     hints,
@@ -350,7 +350,7 @@ for hint in report.selected:
 ```{code-block} python
 :caption: stream.py
 
-from mark_kit.connectors import StreamEvent, stream_hints
+from mari_kit.connectors import StreamEvent, stream_hints
 
 event = StreamEvent(provider="slack", raw_body=raw_body, headers=headers)
 

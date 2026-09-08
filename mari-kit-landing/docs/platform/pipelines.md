@@ -58,7 +58,7 @@ expresses this boundary through generic stage and mutation types.
 ```{code-block} python
 :caption: A deterministic pipeline with stage fingerprints and visible failure
 
-from mark_kit.platform import Pipeline, Stage
+from mari_kit.platform import Pipeline, Stage
 
 pipeline = Pipeline(
     stages=(

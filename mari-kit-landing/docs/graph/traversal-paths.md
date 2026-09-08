@@ -21,7 +21,7 @@ representations remain consistent across runs.
 ```{code-block} python
 :caption: Traverse application-owned storage
 
-from mark_kit.graph import shortest_path
+from mari_kit.graph import shortest_path
 
 path = shortest_path(
     "customer:42",
@@ -44,7 +44,7 @@ BFS parent.
 ```{code-block} python
 :caption: Retain two equally short impact paths
 
-from mark_kit.graph import build_adjacency, predecessor_dag
+from mari_kit.graph import build_adjacency, predecessor_dag
 
 outgoing = build_adjacency(
     call_edges, endpoints=lambda edge: (edge.caller, edge.callee),
@@ -65,7 +65,7 @@ and rejected edges with reasons.
 ```{code-block} python
 :caption: Traverse citations and retain retraction decisions
 
-from mark_kit.graph import traverse_edges
+from mari_kit.graph import traverse_edges
 
 trace = traverse_edges(
     [review_id],

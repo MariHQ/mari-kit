@@ -1,6 +1,6 @@
 import json
 
-from mark_kit.evaluation import (
+from mari_kit.evaluation import (
     load_beir_cases,
     load_fever_cases,
     load_longmemeval_cases,

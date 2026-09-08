@@ -1,7 +1,7 @@
 """Independent algorithm choices, using fixture callbacks and no storage/model.
 
 Run ``python -m examples.algorithm_choices_demo``; add ``--solvers`` after
-installing ``mark-kit[algorithm-solvers]`` for native graph/linkage choices.
+installing ``mari-kit[algorithm-solvers]`` for native graph/linkage choices.
 See docs/algorithm-choices.md for pinned project and paper references.
 """
 
@@ -11,38 +11,38 @@ import argparse
 import io
 import json
 
-from mark_kit.algorithms.compression import (
+from mari_kit.algorithms.compression import (
     TextSpan,
     fastcdc_chunks,
     select_surprising_words,
 )
-from mark_kit.algorithms.graph_retrieval import (
+from mari_kit.algorithms.graph_retrieval import (
     UnionCandidate,
     hipporag_seed_weights,
     rank_candidate_union,
     weighted_chunk_polling,
 )
-from mark_kit.algorithms.lexical import BM25Variant, BM25VariantIndex
-from mark_kit.algorithms.linkage import BlockingPredicate, learn_blocking
-from mark_kit.algorithms.memory import (
+from mari_kit.algorithms.lexical import BM25Variant, BM25VariantIndex
+from mari_kit.algorithms.linkage import BlockingPredicate, learn_blocking
+from mari_kit.algorithms.memory import (
     MemoryNote,
     NoteUpdate,
     evolve_neighborhood,
     memory_heat,
 )
-from mark_kit.algorithms.search import (
+from mari_kit.algorithms.search import (
     DriftQuery,
     DriftResponse,
     drift_search,
     refine_extraction,
 )
-from mark_kit.algorithms.subsets import (
+from mari_kit.algorithms.subsets import (
     FacilityLocation,
     GreedyMethod,
     maximize_subset,
 )
-from mark_kit.algorithms.temporal import recency_decay, temporal_proof_score
-from mark_kit.retrieval.graph import personalized_pagerank
+from mari_kit.algorithms.temporal import recency_decay, temporal_proof_score
+from mari_kit.retrieval.graph import personalized_pagerank
 
 
 def run(*, include_solvers: bool = False) -> dict[str, object]:
@@ -130,12 +130,12 @@ def run(*, include_solvers: bool = False) -> dict[str, object]:
         "union_score": union[0].score,
     }
     if include_solvers:
-        from mark_kit.algorithms.graphs import (
+        from mari_kit.algorithms.graphs import (
             hierarchical_leiden_partition,
             louvain_partition,
             prize_collecting_forest,
         )
-        from mark_kit.algorithms.linkage import PairScore, centroid_clusters
+        from mari_kit.algorithms.linkage import PairScore, centroid_clusters
 
         nodes = ["a", "b", "c"]
         edges = [("a", "b", 1.0), ("b", "c", 1.0)]

@@ -20,7 +20,7 @@ thresholds and acceptance policy.
 ```{code-block} python
 :caption: Inspect two arbitrary graph projections
 
-from mark_kit.graph import graph_diff, inspect_graph_quality
+from mari_kit.graph import graph_diff, inspect_graph_quality
 
 change = graph_diff(
     before_nodes=previous.node_ids,
@@ -51,7 +51,7 @@ caller projections.
 ```{code-block} python
 :caption: Separate structural and attribute changes
 
-from mark_kit.graph import diff_records
+from mari_kit.graph import diff_records
 
 records = diff_records(
     previous.symbols,
@@ -70,7 +70,7 @@ the caller-projected fields responsible for the change.
 ```{code-block} python
 :caption: Explain a stable policy clause revision
 
-from mark_kit.graph import diff_record_fields
+from mari_kit.graph import diff_record_fields
 
 changes = diff_record_fields(
     previous.clauses,

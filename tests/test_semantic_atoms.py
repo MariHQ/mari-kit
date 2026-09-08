@@ -5,7 +5,7 @@ import itertools
 
 import pytest
 
-from mark_kit.documents import (
+from mari_kit.documents import (
     AtomDiffAlgorithm,
     AtomKind,
     DiffKind,
@@ -19,7 +19,7 @@ from mark_kit.documents import (
     plan_atom_refresh,
     semantic_atoms,
 )
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     AtomVectorHit,
     MultiVectorSection,
     aggregate_atom_hits,

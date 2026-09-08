@@ -32,6 +32,6 @@
       "edge": "entity co-mention count",
       "resolution": 1.0
     },
-    "implementation": "mark_kit.graph.leiden_communities"
+    "implementation": "mari_kit.graph.leiden_communities"
   }
 }

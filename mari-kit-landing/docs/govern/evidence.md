@@ -68,7 +68,7 @@ literal containment + unique section
 ```{code-block} python
 :caption: evidence.py
 
-from mark_kit.knowledge import parse_facts
+from mari_kit.knowledge import parse_facts
 
 raw = {"facts": [{
     "claim": "Enterprise refunds close after 30 days.",
@@ -87,7 +87,7 @@ assert doc.body[e.start:e.end] == e.quote
 ```{code-block} python
 :caption: Validate citations against exactly what the model saw
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     ArtifactEvidence, ArtifactRef, validate_artifact_evidence,
 )
 
@@ -110,8 +110,8 @@ assert report.accepted
 ```{code-block} python
 :caption: Resolve evidence from structured material
 
-from mark_kit import JsonPointer, ObjectRef, RevisionRef
-from mark_kit.knowledge import LocatedEvidence, validate_located_evidence
+from mari_kit import JsonPointer, ObjectRef, RevisionRef
+from mari_kit.knowledge import LocatedEvidence, validate_located_evidence
 
 source = RevisionRef(
     object=ObjectRef(namespace="crm", object_id="account:42", scope=scope),

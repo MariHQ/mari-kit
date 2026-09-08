@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     DerivationInput,
     DerivationIssueKind,
     KnowledgeDerivation,
@@ -13,8 +13,8 @@ from mark_kit.knowledge import (
     inspect_knowledge_observations,
     validate_knowledge_changeset,
 )
-from mark_kit.knowledge.artifacts import ArtifactRef
-from mark_kit.retrieval import (
+from mari_kit.knowledge.artifacts import ArtifactRef
+from mari_kit.retrieval import (
     DisclosureCondition,
     DisclosureLevel,
     DisclosureOperator,
@@ -25,7 +25,7 @@ from mark_kit.retrieval import (
     expand_disclosure,
     inspect_disclosure_manifest,
 )
-from mark_kit.types import KnowledgeDocument
+from mari_kit.types import KnowledgeDocument
 
 
 def _ref(identifier: str, revision: str = "r1") -> ArtifactRef:

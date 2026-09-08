@@ -33,6 +33,6 @@
       "similarity_embedding": "signed-feature-hash-128",
       "sparse_embedding": "signed-feature-hash-128"
     },
-    "implementation": "mark_kit.retrieval.rank_sparse_contradictions"
+    "implementation": "mari_kit.retrieval.rank_sparse_contradictions"
   }
 }

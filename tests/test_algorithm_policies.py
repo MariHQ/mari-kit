@@ -4,12 +4,12 @@ from datetime import UTC, datetime
 
 import pytest
 
-from mark_kit.algorithms.compression import (
+from mari_kit.algorithms.compression import (
     TextSpan,
     fastcdc_chunks,
     select_surprising_words,
 )
-from mark_kit.algorithms.linkage import (
+from mari_kit.algorithms.linkage import (
     BlockingPredicate,
     PairScore,
     acquire_disagreement,
@@ -18,7 +18,7 @@ from mark_kit.algorithms.linkage import (
     greedy_matching,
     learn_blocking,
 )
-from mark_kit.algorithms.memory import (
+from mari_kit.algorithms.memory import (
     MemoryNote,
     NoteUpdate,
     SkillDecision,
@@ -30,13 +30,13 @@ from mark_kit.algorithms.memory import (
     memory_heat,
     reduce_skill_feedback,
 )
-from mark_kit.algorithms.search import (
+from mari_kit.algorithms.search import (
     DriftQuery,
     DriftResponse,
     drift_search,
     refine_extraction,
 )
-from mark_kit.algorithms.temporal import (
+from mari_kit.algorithms.temporal import (
     dated_recency,
     recency_decay,
     temporal_proof_score,

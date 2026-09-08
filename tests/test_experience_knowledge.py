@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from mark_kit.errors import MalformedModelOutput
-from mark_kit.evaluation import (
+from mari_kit.errors import MalformedModelOutput
+from mari_kit.evaluation import (
     PairedMetric,
     RepeatedTrialResult,
     ReviewLabel,
@@ -11,7 +11,7 @@ from mark_kit.evaluation import (
     summarize_repeated_trials,
     summarize_review_reliability,
 )
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     ExpertFeedback,
     FeedbackRootCause,
     KnowledgeFile,
@@ -23,7 +23,7 @@ from mark_kit.knowledge import (
     parse_feedback_diagnoses,
     parse_knowledge_change,
 )
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     ContextUse,
     InformationRequirement,
     RequirementAssessment,
@@ -34,7 +34,7 @@ from mark_kit.retrieval import (
     parse_retrieval_gap_queries,
     pool_token_spans,
 )
-from mark_kit.trajectories import (
+from mari_kit.trajectories import (
     IntentCandidate,
     IntentEvidence,
     IntentKind,
@@ -47,9 +47,9 @@ from mark_kit.trajectories import (
     project_tool_trajectory,
     segment_episodes,
 )
-from mark_kit.trajectories.normalize import normalize_steps
-from mark_kit.trajectories.process import TrajectoryRun
-from mark_kit.types import KnowledgeDocument, KnowledgeSection
+from mari_kit.trajectories.normalize import normalize_steps
+from mari_kit.trajectories.process import TrajectoryRun
+from mari_kit.types import KnowledgeDocument, KnowledgeSection
 
 
 def _run(identifier: str, tools: list[str], outcome: str) -> TrajectoryRun:

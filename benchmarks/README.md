@@ -22,7 +22,7 @@ The remaining entries in `catalog.json` are candidates, not completed benchmarks
 ## Catalog access
 
 ```python
-from mark_kit.evaluation import load_catalog
+from mari_kit.evaluation import load_catalog
 
 catalog = load_catalog("benchmarks/catalog.json")
 for corpus in catalog.for_task("evidence-retrieval"):
@@ -32,7 +32,7 @@ for corpus in catalog.for_task("evidence-retrieval"):
 The paper-to-suite contract is queryable independently:
 
 ```python
-from mark_kit.evaluation import load_suite_catalog
+from mari_kit.evaluation import load_suite_catalog
 
 suites = load_suite_catalog("benchmarks/suites.json")
 for suite in suites.for_paper("2406.10746"):

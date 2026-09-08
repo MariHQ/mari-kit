@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from mark_kit.documents import (
+from mari_kit.documents import (
     BoundingBox,
     CodeEdge,
     CodeEdgeKind,
@@ -15,8 +15,8 @@ from mark_kit.documents import (
     TableCell,
     impacted_symbols,
 )
-from mark_kit.evaluation import TaskOutcome, compare_task_outcomes
-from mark_kit.governance import (
+from mari_kit.evaluation import TaskOutcome, compare_task_outcomes
+from mari_kit.governance import (
     AuthorityPolicy,
     ContentInterpretation,
     MemoryWrite,
@@ -35,24 +35,24 @@ from mark_kit.governance import (
     propose_promotion,
     resolve_assertions,
 )
-from mark_kit.lifecycle import (
+from mari_kit.lifecycle import (
     ContextRequest,
     InterventionDisposition,
     select_intervention,
 )
-from mark_kit.platform import (
+from mari_kit.platform import (
     MaterializedView,
     ViewMaterialization,
     plan_view_refresh,
 )
-from mark_kit.portability import (
+from mari_kit.portability import (
     KnowledgeBundle,
     export_bundle,
     plan_bundle_import,
     verify_bundle,
 )
-from mark_kit.retrieval import ContextEnvelope
-from mark_kit.schema import (
+from mari_kit.retrieval import ContextEnvelope
+from mari_kit.schema import (
     ConceptType,
     KnowledgeSchema,
     PropertyConstraint,

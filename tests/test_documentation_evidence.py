@@ -147,7 +147,7 @@ def test_documented_python_imports_exist() -> None:
                 for node in ast.walk(tree):
                     if isinstance(node, ast.ImportFrom) and (
                         node.module or ""
-                    ).startswith("mark_kit"):
+                    ).startswith("mari_kit"):
                         module = importlib.import_module(node.module)
                         for name in node.names:
                             if name.name != "*" and not hasattr(module, name.name):
@@ -173,7 +173,7 @@ def test_direct_public_api_call_signatures() -> None:
             imports = {}
             for node in ast.walk(tree):
                 if isinstance(node, ast.ImportFrom) and (node.module or "").startswith(
-                    "mark_kit"
+                    "mari_kit"
                 ):
                     module = importlib.import_module(node.module)
                     imports.update(

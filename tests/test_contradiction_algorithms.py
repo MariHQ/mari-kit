@@ -4,14 +4,14 @@ import unittest
 
 import numpy as np
 
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     SparseContradictionCandidate,
     hoyer_difference_sparsity,
     rank_sparse_contradictions,
     sparse_contradiction_score,
     sparse_contrastive_losses,
 )
-from mark_kit.verification import (
+from mari_kit.verification import (
     document_contradiction_rewards,
     reasoning_sentence_references,
     validate_document_contradiction,

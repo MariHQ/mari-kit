@@ -1,6 +1,6 @@
 import datetime as dt
 
-from mark_kit.evaluation import (
+from mari_kit.evaluation import (
     EvaluationRun,
     GateMode,
     MetricGate,

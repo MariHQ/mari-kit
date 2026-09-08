@@ -39,6 +39,6 @@
       "probes": 8,
       "subquantizers": 8
     },
-    "implementation": "mark_kit.retrieval.IVFPQIndex"
+    "implementation": "mari_kit.retrieval.IVFPQIndex"
   }
 }

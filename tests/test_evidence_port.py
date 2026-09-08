@@ -2,7 +2,7 @@ from dataclasses import replace
 
 import pytest
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     AssetBinding,
     CitationDeclarationStatus,
     CitationEvent,
@@ -17,7 +17,7 @@ from mark_kit.knowledge import (
     plan_evidence_compaction,
     select_evidence_assets,
 )
-from mark_kit.references import LocatedEvidence, ObjectRef, RevisionRef, ScopeRef
+from mari_kit.references import LocatedEvidence, ObjectRef, RevisionRef, ScopeRef
 
 
 def ref(unit="chunk", *, revision="r1", tenant="tenant", document="doc"):

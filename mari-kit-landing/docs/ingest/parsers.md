@@ -57,7 +57,7 @@ caller. Batch claim assessment keys rows to caller order. Absent rows become
 ```{code-block} python
 :caption: answer.py
 
-from mark_kit.knowledge import parse_answer
+from mari_kit.knowledge import parse_answer
 
 raw = model(question, documents)
 answer = parse_answer(question, documents, raw)
@@ -92,7 +92,7 @@ severity. Warnings and accepted values remain available in the result.
 ```{code-block} python
 :caption: Keep accepted records beside malformed siblings
 
-from mark_kit.documents import parse_json_lines
+from mari_kit.documents import parse_json_lines
 
 result = parse_json_lines(
     payload,

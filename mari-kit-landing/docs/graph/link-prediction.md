@@ -23,7 +23,7 @@ filters and authorization before returning adjacent nodes.
 ```{code-block} python
 :caption: Rank application-approved candidate pairs
 
-from mark_kit.graph import score_link_candidates
+from mari_kit.graph import score_link_candidates
 
 scores = score_link_candidates(
     candidate_pairs=(("alice", "project-x"), ("alice", "project-y")),

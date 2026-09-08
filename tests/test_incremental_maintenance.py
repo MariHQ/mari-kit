@@ -4,7 +4,7 @@ from graphlib import CycleError
 
 import pytest
 
-from mark_kit import (
+from mari_kit import (
     CountReducer,
     DeltaAggregate,
     DependencyIndex,

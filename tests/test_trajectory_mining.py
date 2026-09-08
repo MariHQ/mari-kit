@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from mark_kit.errors import MalformedModelOutput
-from mark_kit.trajectories import (
+from mari_kit.errors import MalformedModelOutput
+from mari_kit.trajectories import (
     IntentKind,
     IntentReview,
     TrajectoryInvariantKind,

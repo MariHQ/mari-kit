@@ -2,7 +2,7 @@ from dataclasses import replace
 
 import pytest
 
-from mark_kit.conversation_knowledge import (
+from mari_kit.conversation_knowledge import (
     KnowledgeEvent,
     compile_episodes,
     evidence_context,
@@ -11,8 +11,8 @@ from mark_kit.conversation_knowledge import (
     topic_history,
     trajectory_events,
 )
-from mark_kit.errors import MalformedModelOutput
-from mark_kit.trajectories import TrajectoryRun, TrajectoryStep
+from mari_kit.errors import MalformedModelOutput
+from mari_kit.trajectories import TrajectoryRun, TrajectoryStep
 
 
 def event(identifier="1", **kwargs):

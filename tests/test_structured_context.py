@@ -3,9 +3,9 @@ from dataclasses import replace
 
 import pytest
 
-from mark_kit.documents import parse_markdown, semantic_atoms
-from mark_kit.references import LocatedEvidence, ObjectRef, RevisionRef, TextSpan
-from mark_kit.retrieval import (
+from mari_kit.documents import parse_markdown, semantic_atoms
+from mari_kit.references import LocatedEvidence, ObjectRef, RevisionRef, TextSpan
+from mari_kit.retrieval import (
     ContextExpansionPolicy,
     ContextHit,
     StructuredContextItem,

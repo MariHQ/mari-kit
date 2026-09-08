@@ -38,6 +38,6 @@
       "k1": 1.2,
       "limit": 100
     },
-    "implementation": "mark_kit.retrieval.BM25Index"
+    "implementation": "mari_kit.retrieval.BM25Index"
   }
 }

@@ -40,6 +40,6 @@
       ],
       "rank_constant": 60
     },
-    "implementation": "mark_kit.retrieval.reciprocal_rank_fusion"
+    "implementation": "mari_kit.retrieval.reciprocal_rank_fusion"
   }
 }

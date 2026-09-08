@@ -63,7 +63,7 @@ for caller-labeled binary outcomes. The caller names outcomes, selects actions, 
 ```{code-block} python
 :caption: Preserve outcome uncertainty as ranking features
 
-from mark_kit.knowledge import WeightedObservation, weighted_mean, wilson_proportion
+from mari_kit.knowledge import WeightedObservation, weighted_mean, wilson_proportion
 
 estimate = weighted_mean([
     WeightedObservation(observation_id="study-a", value=0.20, weight=2.0),
@@ -104,7 +104,7 @@ Probability calibration requires separate work.
 ```{code-block} python
 :caption: verify.py
 
-from mark_kit.verification import best_of_n, score_grounded
+from mari_kit.verification import best_of_n, score_grounded
 
 result = best_of_n(
     lambda: model(question, documents),

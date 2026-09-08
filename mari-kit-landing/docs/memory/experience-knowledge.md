@@ -45,7 +45,7 @@ alongside the observed ratio.
 ```{code-block} python
 :caption: Bind a correction to the knowledge visible during the run
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     ExpertFeedback, KnowledgeUse, TrajectoryEvidence,
     build_knowledge_use_manifest, parse_feedback_diagnoses,
 )
@@ -98,7 +98,7 @@ on the result.
 ```{code-block} python
 :caption: Preserve the difference between retrieval and demonstrated use
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     KnowledgeObservation, KnowledgeObservationStage,
     inspect_knowledge_observations,
 )
@@ -145,7 +145,7 @@ kinds. It leaves storage and composition to the caller.
 ```{code-block} python
 :caption: Parse an evidence-bound candidate for review
 
-from mark_kit.knowledge import parse_experience_knowledge
+from mari_kit.knowledge import parse_experience_knowledge
 
 candidates = parse_experience_knowledge(
     [run],
@@ -198,7 +198,7 @@ confidence. It returns the reflection for a later knowledge decision.
 ```{code-block} python
 :caption: Record segmentation and knowledge extraction independently
 
-from mark_kit.trajectories import (
+from mari_kit.trajectories import (
     parse_episode_reflection, parse_turn_assessments, segment_episodes,
 )
 
@@ -229,7 +229,7 @@ reflection = parse_episode_reflection(
 ```{code-block} python
 :caption: Validate an exact, revision-bound edit proposal
 
-from mark_kit.knowledge import parse_knowledge_change
+from mari_kit.knowledge import parse_knowledge_change
 
 proposal = parse_knowledge_change(
     {policy.document_id: policy},
@@ -280,7 +280,7 @@ transaction boundary.
 ```{code-block} python
 :caption: Preview a coordinated correction across two artifacts
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     KnowledgeEdit, validate_knowledge_changeset,
 )
 
@@ -333,7 +333,7 @@ The report returns available choices for caller selection.
 ```{code-block} python
 :caption: Inspect a caller-defined file hierarchy
 
-from mark_kit.knowledge import KnowledgeFile, inspect_knowledge_structure
+from mari_kit.knowledge import KnowledgeFile, inspect_knowledge_structure
 
 report = inspect_knowledge_structure([
     KnowledgeFile(
@@ -365,7 +365,7 @@ references, missing inputs, derivation cycles, and any derived input labeled
 ```{code-block} python
 :caption: Keep a generated summary linked to its source
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     DerivationInput, KnowledgeDerivation, KnowledgeOrigin,
     inspect_knowledge_derivations,
 )
@@ -410,7 +410,7 @@ Mari's compact activity values.
 ```{code-block} python
 :caption: Inspect telemetry before using it as knowledge evidence
 
-from mark_kit.trajectories import (
+from mari_kit.trajectories import (
     inspect_trace_integrity, normalize_genai_trace, project_tool_trajectory,
 )
 

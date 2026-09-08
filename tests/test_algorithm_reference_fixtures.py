@@ -8,9 +8,9 @@ from pathlib import Path
 
 import pytest
 
-from mark_kit.algorithms.compression import fastcdc_chunks
-from mark_kit.algorithms.lexical import BM25Variant, BM25VariantIndex
-from mark_kit.algorithms.linkage import BlockingPredicate, learn_blocking
+from mari_kit.algorithms.compression import fastcdc_chunks
+from mari_kit.algorithms.lexical import BM25Variant, BM25VariantIndex
+from mari_kit.algorithms.linkage import BlockingPredicate, learn_blocking
 
 FIXTURES = Path(__file__).parent / "fixtures" / "algorithms"
 

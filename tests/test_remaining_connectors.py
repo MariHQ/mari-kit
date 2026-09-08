@@ -3,16 +3,16 @@ from __future__ import annotations
 import json
 import unittest
 
-from mark_kit.connectors.airtable import AirtableConfig, poll_airtable
-from mark_kit.connectors.asana import AsanaConfig, poll_asana
-from mark_kit.connectors.dropbox import DropboxConfig, poll_dropbox
-from mark_kit.connectors.jira import JiraConfig, poll_jira
-from mark_kit.connectors.linear import LinearConfig, poll_linear
-from mark_kit.connectors.notion import NotionConfig, poll_notion
-from mark_kit.connectors.trello import TrelloConfig, poll_trello
-from mark_kit.connectors.zendesk import ZendeskConfig, poll_zendesk
-from mark_kit.http import HttpResponse
-from mark_kit.types import PollRequest
+from mari_kit.connectors.airtable import AirtableConfig, poll_airtable
+from mari_kit.connectors.asana import AsanaConfig, poll_asana
+from mari_kit.connectors.dropbox import DropboxConfig, poll_dropbox
+from mari_kit.connectors.jira import JiraConfig, poll_jira
+from mari_kit.connectors.linear import LinearConfig, poll_linear
+from mari_kit.connectors.notion import NotionConfig, poll_notion
+from mari_kit.connectors.trello import TrelloConfig, poll_trello
+from mari_kit.connectors.zendesk import ZendeskConfig, poll_zendesk
+from mari_kit.http import HttpResponse
+from mari_kit.types import PollRequest
 
 
 class FakeHttp:

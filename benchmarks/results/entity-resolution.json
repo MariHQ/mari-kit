@@ -62,6 +62,6 @@
         ]
       }
     },
-    "implementation": "mark_kit.graph.resolve_entity"
+    "implementation": "mari_kit.graph.resolve_entity"
   }
 }

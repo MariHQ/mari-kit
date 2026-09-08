@@ -14,7 +14,7 @@ class ArchitectureTests(unittest.TestCase):
 
     @property
     def package(self):
-        return self.repository / "src" / "mark_kit"
+        return self.repository / "src" / "mari_kit"
 
     def test_package_has_no_application_container(self):
         root = self.package
@@ -89,14 +89,14 @@ class ArchitectureTests(unittest.TestCase):
         projects = tuple(self.repository.rglob("pyproject.toml"))
         self.assertEqual(projects, (self.repository / "pyproject.toml",))
         metadata = tomllib.loads(projects[0].read_text())
-        self.assertEqual(metadata["project"]["name"], "mark-kit")
+        self.assertEqual(metadata["project"]["name"], "mari-kit")
         self.assertFalse((self.repository / "packages").exists())
 
     def test_installed_package_identity_and_typing_marker(self):
-        import mark_kit
+        import mari_kit
 
-        self.assertEqual(distribution("mark-kit").metadata["Name"], "mark-kit")
-        self.assertEqual(Path(mark_kit.__file__).parent, self.package)
+        self.assertEqual(distribution("mari-kit").metadata["Name"], "mari-kit")
+        self.assertEqual(Path(mari_kit.__file__).parent, self.package)
         self.assertTrue((self.package / "py.typed").is_file())
 
 

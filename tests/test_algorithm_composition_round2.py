@@ -6,24 +6,24 @@ from datetime import UTC, datetime
 
 import pytest
 
-from mark_kit.connectors import coalesce_hints_ordered
-from mark_kit.evaluation import evaluate_grouped_coverage
-from mark_kit.graph import (
+from mari_kit.connectors import coalesce_hints_ordered
+from mari_kit.evaluation import evaluate_grouped_coverage
+from mari_kit.graph import (
     TimeInterval,
     diff_record_fields,
     grouped_interval_overlaps,
     project_graph_evidence,
     traverse_edges,
 )
-from mark_kit.json import to_json_value
-from mark_kit.knowledge import (
+from mari_kit.json import to_json_value
+from mari_kit.knowledge import (
     ArtifactRef,
     WeightedObservation,
     resolve_version_families,
     weighted_mean,
     wilson_proportion,
 )
-from mark_kit.retrieval import (
+from mari_kit.retrieval import (
     ArtifactBM25Index,
     ArtifactIndexDelta,
     CandidateDecision,
@@ -38,7 +38,7 @@ from mark_kit.retrieval import (
     filter_with_reasons,
     select_context_diverse,
 )
-from mark_kit.types import ChangeHint
+from mari_kit.types import ChangeHint
 
 
 def context_item(

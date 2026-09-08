@@ -40,7 +40,7 @@ retryable.
 ```{code-block} python
 :caption: fact_scan.py
 
-from mark_kit.knowledge import (
+from mari_kit.knowledge import (
     document_sections, fact_scan_revisions, pending_fact_sections,
 )
 

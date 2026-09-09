@@ -12,6 +12,7 @@ site build and deployment before they appear there.
 | [Dependency updates](dependency-updates.md) | Shared atom identity, input aspects, completed receipts, and selective rebuilds |
 | [Incremental maintenance](incremental-maintenance.md) | Selection dependencies, indexed planning, stable group lineage, and delta aggregates |
 | [Conversation knowledge](conversation-knowledge.md) | Episode extraction, retrieval facets, and current authorized source evidence |
+| [Email](email.md) | RFC 822 parsing with quote segmentation, header-free threading, and conversation events |
 | [Connectors](connectors.md) | Polling, verified event hints, canonical refetch, and sync handoffs |
 | [Knowledge parsers](knowledge-parsers.md) | Evidence-validation contracts and task-specific parser behavior |
 | [Algorithm choices](algorithm-choices.md) | 21 independently selectable families with pinned project citations, fidelity notes, and workload tradeoffs |

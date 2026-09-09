@@ -14,6 +14,8 @@ Its callback is a fixture, not a quality benchmark or a working model service.
 1. Normalize messages into `KnowledgeEvent`: stable event ID, revision, author,
    timestamp, source link, stream (channel/run) and application scope. Resolve
    edits/deletions first. Give a Slack root and its replies the same thread ID.
+   For email, `documents.email` and `documents.email_threads` produce these
+   events with quoted text removed and threads rebuilt; see [email.md](email.md).
 2. `segment_conversations` retains threads and splits unthreaded conversations
    on inactivity. Supply topic labels from a semantic segmenter to separate
    interleaved discussions. It does not guess whether shared participants imply
@@ -108,6 +110,59 @@ episode per invocation when independent failure recovery matters.
 outside the returned claim quotes. An edit, deletion, metadata change, or access
 loss anywhere in that episode invalidates its context. Resolve against the
 complete current event snapshot for that episode.
+
+## Resolve evidence and report failures
+
+Models often return the right quote with the wrong offsets, a loosely formatted
+event ID, or an alias such as `warning` for `failure`. `resolve_evidence(episode,
+output)` repairs that class of output before the strict parser sees it. It never
+mutates its input. For each claim it coerces the text, maps kind and status
+aliases (unknown values become `summary` and `explicit`), normalizes evidence
+event IDs, splits quotes on `...`, and locates each quote in the named event with
+`str.find`, then with a whitespace-tolerant match, then in every other event of
+the episode. Matching spans are recomputed from the source text. A claim whose
+evidence cannot be located is not guessed; it is returned in `dropped` as a
+`DroppedClaim` with a reason (`quote-not-found`, `no-evidence`, `empty-text`,
+`bad-row`, `claim-cap`). Titles, topics and questions are sanitized, and a
+missing title falls back to the first line of the first event.
+
+The strict contract is unchanged. `parse_episode_knowledge` still rejects any
+span that does not reproduce its quote at the stated revision, and resolution
+only produces output that satisfies it. Malformed input the resolver cannot fix
+still fails at the parser, so an invalid output is never returned as an artifact.
+
+```python
+result = compile_episodes(
+    episodes,
+    generate=generate,
+    cache=cache,
+    now=now_seconds,
+    resolve=True,   # run resolve_evidence before the parser
+    retries=1,      # re-ask once with request["prior_error"] set
+    fail_fast=False # record EpisodeFailure instead of raising
+)
+result.dropped   # DroppedClaim rows from resolution
+result.failed    # EpisodeFailure(episode_id, reason, attempts)
+```
+
+`retries` re-sends the same request with a `prior_error` key holding the
+message of the failed attempt. Every attempt, including retries, counts against
+`maximum_calls`. With the default `fail_fast=True` the last error propagates as
+before. With `fail_fast=False` the episode is appended to `failed` and
+compilation moves on, so one bad episode does not discard the batch.
+
+Episodes that exceed the model's input budget go through `split_for_output`,
+which returns consecutive windows (`episode_id#0`, `episode_id#1`, ...) with the
+last `overlap_events` events repeated at the start of the next window. No event
+text is truncated; an oversized single event gets its own window. Compile each
+chunk normally, then `merge_chunk_knowledge(chunks, episode=parent, recipe=...)`
+concatenates claims (identical claims collapse), unions topics and questions,
+takes the first chunk's title and rebinds the artifact to the parent episode.
+Every chunk event, cited or not, must match a parent event by ID and revision,
+and every span is re-checked against the parent, so a chunk extracted before a
+source edit cannot be rebound to the edited episode. Evidence event IDs are
+matched exactly first; the lenient form (trimmed, unbracketed, lowercased) is
+used only when there is no exact match and it names a single event.
 
 ## Compose with shared update planning
 

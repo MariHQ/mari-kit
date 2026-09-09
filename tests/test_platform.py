@@ -2,8 +2,8 @@ import datetime as dt
 
 import pytest
 
-from mari_components.knowledge import Activity, KnowledgeArtifact, KnowledgeScope
-from mari_components.platform import (
+from mari_kit.knowledge import Activity, KnowledgeArtifact, KnowledgeScope
+from mari_kit.platform import (
     InMemoryArtifactStore,
     InMemoryDocumentStore,
     KnowledgeEvent,
@@ -14,8 +14,8 @@ from mari_components.platform import (
     compile_configurations,
     replay_projection,
 )
-from mari_components.portability import export_bundle
-from mari_components.testing import (
+from mari_kit.portability import export_bundle
+from mari_kit.testing import (
     assert_artifact_store_conforms,
     assert_document_store_conforms,
 )

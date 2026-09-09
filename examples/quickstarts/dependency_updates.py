@@ -4,7 +4,7 @@ import datetime as dt
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from mari_components import (
+from mari_kit import (
     DependencyKey,
     DependencyStamp,
     DerivationSpec,
@@ -17,19 +17,19 @@ from mari_components import (
     materialization_receipt,
     plan_dependency_updates,
 )
-from mari_components.documents import (
+from mari_kit.documents import (
     atom_collection_stamp,
     atom_dependencies,
     parse_markdown,
     semantic_atoms,
 )
-from mari_components.graph import trace_lineage
-from mari_components.knowledge import (
+from mari_kit.graph import trace_lineage
+from mari_kit.knowledge import (
     Activity,
     KnowledgeArtifact,
     validate_located_evidence,
 )
-from mari_components.retrieval import RetrievalUnit, RevisionBM25Index
+from mari_kit.retrieval import RetrievalUnit, RevisionBM25Index
 
 SCOPE = ScopeRef(tenant="acme", space="support")
 SOURCE = ObjectRef(namespace="document", object_id="refund-policy", scope=SCOPE)

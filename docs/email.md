@@ -1,8 +1,8 @@
 # Email as conversation events
 
-`mari_components.documents.email` parses one RFC 822 message into an immutable
+`mari_kit.documents.email` parses one RFC 822 message into an immutable
 value with the sender's own words separated from quoted replies, forwarded
-blocks and signatures. `mari_components.documents.email_threads` rebuilds
+blocks and signatures. `mari_kit.documents.email_threads` rebuilds
 threads when reply headers are missing and emits `KnowledgeEvent` values for
 `segment_conversations`. Both modules are standard library only and never touch
 the filesystem or the network: the host reads bytes and supplies locators.
@@ -10,7 +10,7 @@ the filesystem or the network: the host reads bytes and supplies locators.
 ## Parse one message
 
 ```python
-from mari_components.documents.email import parse_email
+from mari_kit.documents.email import parse_email
 
 message = parse_email(raw_bytes, source="maildir/buy-r/inbox/1068")
 message.own_text        # what this sender wrote, quotes and signature removed
@@ -37,7 +37,7 @@ break density makes the encoding unambiguous.
 ## Rebuild threads without headers
 
 ```python
-from mari_components.documents.email_threads import email_events, thread_emails
+from mari_kit.documents.email_threads import email_events, thread_emails
 
 threads = thread_emails(messages, gap_seconds=14 * 86400)
 for thread in threads:

@@ -19,7 +19,7 @@ Mari uses a transient `GraphProjection` at the conversion boundary. Application 
 ```{code-block} python
 :caption: Export a temporary projection and inspect losses
 
-from mari_components.graph import GraphProjection, ProjectionEdge, to_graphml
+from mari_kit.graph import GraphProjection, ProjectionEdge, to_graphml
 
 projection = GraphProjection(
     nodes=(

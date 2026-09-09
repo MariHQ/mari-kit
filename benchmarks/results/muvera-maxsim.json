@@ -38,6 +38,6 @@
       "simhash_bits": 3,
       "token_vectors": "signed-feature-hash-32"
     },
-    "implementation": "mari_components.retrieval.build_index/search_index"
+    "implementation": "mari_kit.retrieval.build_index/search_index"
   }
 }

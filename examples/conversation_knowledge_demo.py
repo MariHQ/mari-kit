@@ -1,6 +1,6 @@
 """Run without credentials: python examples/conversation_knowledge_demo.py."""
 
-from mari_components.conversation_knowledge import (
+from mari_kit.conversation_knowledge import (
     KnowledgeEvent,
     compile_episodes,
     evidence_context,

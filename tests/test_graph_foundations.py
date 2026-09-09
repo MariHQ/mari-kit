@@ -4,7 +4,7 @@ import datetime as dt
 
 import pytest
 
-from mari_components.graph import (
+from mari_kit.graph import (
     FieldAgreement,
     ResolutionDecision,
     TemporalFact,

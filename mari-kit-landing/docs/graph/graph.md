@@ -68,7 +68,7 @@ domain.
 
 from datetime import datetime, timezone
 
-from mari_components.graph import TemporalFact, query_temporal_facts
+from mari_kit.graph import TemporalFact, query_temporal_facts
 
 utc = timezone.utc
 facts = [

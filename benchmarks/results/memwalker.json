@@ -38,6 +38,6 @@
       "retrieved_nodes": 5,
       "scorer": "BM25Index"
     },
-    "implementation": "mari_components.retrieval.walk_summary_tree"
+    "implementation": "mari_kit.retrieval.walk_summary_tree"
   }
 }

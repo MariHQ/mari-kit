@@ -25,7 +25,7 @@ Mari validates them and returns immutable, auditable results.
 ### HyDE query vectors
 
 ```python
-from mari_components.retrieval import hypothetical_document_embedding
+from mari_kit.retrieval import hypothetical_document_embedding
 
 hypotheses = generate_hypothetical_documents(query, samples=4)
 vectors = [document_encoder(text) for text in hypotheses]
@@ -40,7 +40,7 @@ one-dimensional, finite, non-zero, L2-normalized `float32`.
 ### RAPTOR construction and MemWalker traversal
 
 ```python
-from mari_components.retrieval import build_summary_tree, walk_summary_tree
+from mari_kit.retrieval import build_summary_tree, walk_summary_tree
 
 tree = build_summary_tree(
     section_text_by_id,
@@ -68,7 +68,7 @@ uses stable ID tie-breaking, and reports whether the frontier was exhausted.
 ### CRAG action routing
 
 ```python
-from mari_components.retrieval import CorrectiveAction, plan_corrective_retrieval
+from mari_kit.retrieval import CorrectiveAction, plan_corrective_retrieval
 
 plan = plan_corrective_retrieval(
     evaluator.score(query, retrieved_documents),
@@ -93,7 +93,7 @@ the remainder is ambiguous.
 ### FLARE retrieval triggers
 
 ```python
-from mari_components.retrieval import plan_active_retrieval
+from mari_kit.retrieval import plan_active_retrieval
 
 prediction = predict_next_sentence(prefix, return_token_probabilities=True)
 request = plan_active_retrieval(
@@ -113,7 +113,7 @@ to generate or splice the replacement sentence.
 ### Self-RAG inference scoring
 
 ```python
-from mari_components.verification import score_self_rag_candidate
+from mari_kit.verification import score_self_rag_candidate
 
 score = score_self_rag_candidate(
     generation_probability=signals.generation,
@@ -137,7 +137,7 @@ sum.
 ### A-MEM note evolution
 
 ```python
-from mari_components.knowledge import plan_note_evolution
+from mari_kit.knowledge import plan_note_evolution
 
 plan = plan_note_evolution(
     new_note.id,
@@ -158,7 +158,7 @@ patches and review them.
 ### Generative Agents salience
 
 ```python
-from mari_components.knowledge import MemorySignal, rank_salient_memories
+from mari_kit.knowledge import MemorySignal, rank_salient_memories
 
 hits = rank_salient_memories(
     [
@@ -184,7 +184,7 @@ they do not introduce arbitrary ordering. Equal totals break by memory ID.
 ### Chain-of-Note answerability
 
 ```python
-from mari_components.verification import EvidenceNote, decide_from_evidence_notes
+from mari_kit.verification import EvidenceNote, decide_from_evidence_notes
 
 notes = tuple(
     EvidenceNote(
@@ -207,7 +207,7 @@ being marked irrelevant.
 ### RECOMP extractive execution
 
 ```python
-from mari_components.retrieval import CompressionSentence, selective_compression
+from mari_kit.retrieval import CompressionSentence, selective_compression
 
 compressed = selective_compression(
     [

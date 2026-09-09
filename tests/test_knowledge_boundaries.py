@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from mari_components.knowledge import (
+from mari_kit.knowledge import (
     DerivationInput,
     DerivationIssueKind,
     KnowledgeDerivation,
@@ -13,8 +13,8 @@ from mari_components.knowledge import (
     inspect_knowledge_observations,
     validate_knowledge_changeset,
 )
-from mari_components.knowledge.artifacts import ArtifactRef
-from mari_components.retrieval import (
+from mari_kit.knowledge.artifacts import ArtifactRef
+from mari_kit.retrieval import (
     DisclosureCondition,
     DisclosureLevel,
     DisclosureOperator,
@@ -25,7 +25,7 @@ from mari_components.retrieval import (
     expand_disclosure,
     inspect_disclosure_manifest,
 )
-from mari_components.types import KnowledgeDocument
+from mari_kit.types import KnowledgeDocument
 
 
 def _ref(identifier: str, revision: str = "r1") -> ArtifactRef:

@@ -33,6 +33,6 @@
       "graph": "term-passage bipartite",
       "limit": 5
     },
-    "implementation": "mari_components.retrieval.personalized_pagerank/project_graph_scores"
+    "implementation": "mari_kit.retrieval.personalized_pagerank/project_graph_scores"
   }
 }

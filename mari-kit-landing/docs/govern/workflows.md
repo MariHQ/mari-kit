@@ -49,7 +49,7 @@ Cache quality depends on caller-provided query vectors and the threshold. Mari p
 ```{code-block} python
 :caption: workflow.py
 
-from mari_components.trajectories import (
+from mari_kit.trajectories import (
     WorkflowPolicy, build_reviewed_workflow_index, decide_reviewed_workflow,
 )
 

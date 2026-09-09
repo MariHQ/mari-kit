@@ -22,9 +22,9 @@ can use a local process, managed service, database, queue, or model runtime.
 ```{code-block} python
 :caption: Type-check application adapters against Mari contracts
 
-from mari_components import Authorizer, Clock, KnowledgeIndex, RevisionRef, Serializer
-from mari_components.platform import ArtifactStore, DocumentStore
-from mari_components.retrieval import RevisionIndexHit
+from mari_kit import Authorizer, Clock, KnowledgeIndex, RevisionRef, Serializer
+from mari_kit.platform import ArtifactStore, DocumentStore
+from mari_kit.retrieval import RevisionIndexHit
 
 documents: DocumentStore = postgres_documents
 artifacts: ArtifactStore = postgres_artifacts
@@ -40,7 +40,7 @@ behavior that structural typing cannot establish:
 ```{code-block} python
 :caption: Check a production store adapter
 
-from mari_components.testing import (
+from mari_kit.testing import (
     assert_artifact_store_conforms,
     assert_clock_conforms,
     assert_document_store_conforms,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components import (
+from mari_kit import (
     DocumentACL,
     KnowledgeDocument,
     PollPage,
@@ -10,7 +10,7 @@ from mari_components import (
     SyncMode,
     Tombstone,
 )
-from mari_components.sync import ManifestEntry, SyncState, plan_sync, stream_sync
+from mari_kit.sync import ManifestEntry, SyncState, plan_sync, stream_sync
 
 
 class SyncPlanningTests(unittest.TestCase):

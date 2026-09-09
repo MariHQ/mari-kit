@@ -66,8 +66,8 @@ known family for each tool.
 ```{code-block} python
 :caption: agents.py
 
-from mari_components.agents import evaluate_outcome, evaluate_tools
-from mari_components.trajectories import normalize_steps
+from mari_kit.agents import evaluate_outcome, evaluate_tools
+from mari_kit.trajectories import normalize_steps
 
 steps = normalize_steps(runtime_events)
 tools = evaluate_tools(events, expected_tools=("search_knowledge",))
@@ -80,7 +80,7 @@ outcome = evaluate_outcome(paths=("resolved",),
 ```{code-block} python
 :caption: trajectory_analysis.py
 
-from mari_components.trajectories import parse_trajectory_analysis
+from mari_kit.trajectories import parse_trajectory_analysis
 
 analysis = parse_trajectory_analysis(normalized_events, model_labels,
     family_map={"search_product_knowledge": "inspect",

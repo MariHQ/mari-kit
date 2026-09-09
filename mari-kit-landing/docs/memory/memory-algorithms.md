@@ -66,7 +66,7 @@ Normalize boundary and adjacent-similarity arrays to the `n−1` gaps between `n
 ```{code-block} python
 :caption: memory_update.py
 
-from mari_components.knowledge import (
+from mari_kit.knowledge import (
     MemoryDecision, MemoryOperation, hybrid_topic_segments,
     plan_memory_mutations,
 )

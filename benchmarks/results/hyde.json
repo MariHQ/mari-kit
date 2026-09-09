@@ -33,6 +33,6 @@
       "embedding": "signed-feature-hash-128",
       "hypothesis": "gold-answer proxy"
     },
-    "implementation": "mari_components.retrieval.hypothetical_document_embedding"
+    "implementation": "mari_kit.retrieval.hypothetical_document_embedding"
   }
 }

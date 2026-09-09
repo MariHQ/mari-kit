@@ -25,7 +25,7 @@ accepted link. The link set exposes transitive merges.
 ```{code-block} python
 :caption: Compose construction primitives explicitly
 
-from mari_components.graph import (
+from mari_kit.graph import (
     explain_candidate_pairs, cluster_matches, inspect_clusters,
     resolve_relation_evidence,
 )
@@ -69,7 +69,7 @@ reported separately.
 ```{code-block} python
 :caption: Project a selected graph into auditable artifacts
 
-from mari_components.graph import project_graph_evidence
+from mari_kit.graph import project_graph_evidence
 
 projection = project_graph_evidence(
     selected.nodes,
@@ -99,7 +99,7 @@ as explicit ties. Publication and revision policy remain visible to the caller.
 ```{code-block} python
 :caption: Group a preprint, journal article, and correction
 
-from mari_components.knowledge import resolve_version_families
+from mari_kit.knowledge import resolve_version_families
 
 families = resolve_version_families(
     papers,

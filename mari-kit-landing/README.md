@@ -1,8 +1,8 @@
 # Mari Kit documentation landing page
 
 The documentation published at <https://kit.mari.guru> is authored as MyST
-Markdown and built with Sphinx and the Read the Docs theme. Each feature has its
-own Markdown document, grouped beneath expandable knowledge-system categories
+Markdown and built with Sphinx and the Furo theme, styled with Mari tokens.
+Each feature has its own Markdown document, grouped beneath visible categories
 in the left navigation.
 
 The page distinguishes importable, current APIs from proposed interfaces.
@@ -25,6 +25,48 @@ From the repository's virtual environment, the equivalent strict build is:
 Warnings fail the build, including unresolved local links and invalid includes.
 Repository tests also check page navigation, Python imports, and the shared-atom
 architecture example.
+
+## Navigation and inventory checks
+
+The sidebar saves its scroll position per browser tab using session storage.
+It restores a visible link and its offset across clicks, reloads, and history
+navigation. A fresh deep link reveals the active item without scrolling the
+article. Storage denial falls back to normal navigation. Section labels use
+18px bold, full-contrast text, a tinted background, and a 5px accent border in
+both themes, with extra spacing between sections.
+
+Run the browser regression checks against a strict build:
+
+```sh
+python -m pip install playwright
+python -m playwright install chromium
+python mari-kit-landing/tools/check_sidebar.py --site-dir mari-kit-landing/_build/html
+```
+
+The checks cover desktop/light, mobile/dark, click/reload/history restoration,
+fresh deep links, section contrast, and unavailable or malformed storage.
+Use `--browser-path` to test with an existing Chrome executable.
+
+After deploying, run the same checks against the actual public site:
+
+```sh
+python mari-kit-landing/tools/check_sidebar.py --base-url https://kit.mari.guru/
+```
+
+A passing local build does not verify deployment: the live pages must load the
+scroll-preservation script and the updated stylesheet too.
+
+The complete API inventory is generated from source definitions rather than
+maintained as a handwritten count:
+
+```sh
+python mari-kit-landing/tools/generate_algorithm_inventory.py
+python mari-kit-landing/tools/generate_algorithm_inventory.py --check
+```
+
+Regenerate after committing source changes so the inventory's pinned source
+links identify the matching revision. CI checks inventory freshness with full
+Git history, builds the site, and runs the sidebar browser checks.
 
 Open `mari-kit-landing/_build/html/index.html`, or serve the build directory:
 

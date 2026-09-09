@@ -5,10 +5,15 @@
 Backend-agnostic Python tools for knowledge systems.
 
 Mari Kit turns changing company sources into versioned, permission-aware,
-evidence-linked knowledge. The Python distribution is named `mari-components`.
+evidence-linked knowledge. The Python distribution is named `mari-kit`, and
+Python imports use `mari_kit`.
+
+The package rename is a breaking change: update dependency declarations and all
+imports to these names. No legacy import alias is provided. The repository and
+documentation URLs are unchanged.
 
 Use it with OpenAI Agents SDK, LangGraph, PydanticAI, or any other agent
-runtime. Mari Components does not implement an agent loop, model client,
+runtime. Mari Kit does not implement an agent loop, model client,
 database, scheduler, or authorization system.
 
 Mari also does not define a canonical knowledge graph, ontology, construction
@@ -43,7 +48,7 @@ design notes and reference audits.
 The project currently targets Python 3.11 through 3.13.
 
 ```bash
-python -m pip install 'mari-components @ git+https://github.com/MariHQ/mari-kit.git'
+python -m pip install 'mari-kit @ git+https://github.com/MariHQ/mari-kit.git'
 ```
 
 For development:
@@ -58,7 +63,7 @@ python -m pip install -e '.[dev,examples]'
 
 NumPy is the only required third-party runtime dependency. The `examples`
 extra installs the official OpenAI and Slack Python SDKs. The `openai-agents`
-and `langchain` extras install those runtimes alongside Mari Components; they
+and `langchain` extras install those runtimes alongside Mari Kit; they
 do not replace their native agent APIs with Mari wrappers.
 
 ## Core model
@@ -68,7 +73,7 @@ is namespaced through `document_id`, so IDs from different systems cannot
 collide.
 
 ```python
-from mari_components import DocumentACL, KnowledgeDocument, Principal
+from mari_kit import DocumentACL, KnowledgeDocument, Principal
 
 document = KnowledgeDocument(
     source_id="github:acme/product",
@@ -98,8 +103,8 @@ upserts, deletes, unchanged IDs, and the next durable state without performing
 storage writes.
 
 ```python
-from mari_components import SyncMode
-from mari_components.sync import SyncState, plan_sync
+from mari_kit import SyncMode
+from mari_kit.sync import SyncState, plan_sync
 
 state = SyncState()
 
@@ -141,7 +146,7 @@ rank the final results.
 ```python
 import numpy as np
 
-from mari_components.retrieval import build_index, search_index
+from mari_kit.retrieval import build_index, search_index
 
 index = build_index({
     "docs/refunds": np.asarray([
@@ -204,12 +209,12 @@ versions. Successful materialization receipts allow unchanged outputs to stop
 downstream recomputation. See [shared dependency updates](docs/dependency-updates.md)
 and the [executable integration](examples/quickstarts/dependency_updates.py).
 
-Mari Components does not own prompts or model calls. Give your agent the source
+Mari Kit does not own prompts or model calls. Give your agent the source
 documents, then pass its structured output to a parser. The parser verifies
 document IDs, exact quotes, character spans, and source revisions.
 
 ```python
-from mari_components.knowledge import assess_freshness, parse_answer
+from mari_kit.knowledge import assess_freshness, parse_answer
 
 model_output = {
     "answer": "Enterprise purchases can be refunded within 30 days.",
@@ -260,7 +265,7 @@ and conditions are preserved in `FactCandidate.qualifiers`.
 Applications can make repeated extraction incremental at section granularity:
 
 ```python
-from mari_components.knowledge import fact_scan_revisions, pending_fact_sections
+from mari_kit.knowledge import fact_scan_revisions, pending_fact_sections
 
 pending = pending_fact_sections(
     documents,
@@ -286,8 +291,8 @@ model runtime. The result contains the winner plus every score and failed
 attempt:
 
 ```python
-from mari_components.knowledge import parse_claim_assessments
-from mari_components.verification import best_of_n, score_grounded
+from mari_kit.knowledge import parse_claim_assessments
+from mari_kit.verification import best_of_n, score_grounded
 
 
 def parse_prediction(prediction):
@@ -324,7 +329,7 @@ content hash. Supply current section revisions to avoid invalidating artifacts
 for unrelated edits in the same document:
 
 ```python
-from mari_components.knowledge import section_revisions
+from mari_kit.knowledge import section_revisions
 
 freshness = assess_freshness(
     answer.evidence,
@@ -342,7 +347,7 @@ Tags are deliberately separate from connector-owned documents. A new provider
 revision therefore cannot erase workspace curation.
 
 ```python
-from mari_components.knowledge import (
+from mari_kit.knowledge import (
     TagAssignments,
     TagDefinition,
     assign_tags,
@@ -384,7 +389,7 @@ for safe speculative reads and complete cached responses:
 - `relevant_document_threshold=0.85`
 
 ```python
-from mari_components.trajectories import (
+from mari_kit.trajectories import (
     WorkflowAction,
     WorkflowPolicy,
     decide_reviewed_workflow,
@@ -432,7 +437,7 @@ namespaced mapping of answers, facts, digests, or workflows to their exact
 dependencies:
 
 ```python
-from mari_components.knowledge import impacted_artifacts
+from mari_kit.knowledge import impacted_artifacts
 
 impacts = impacted_artifacts(
     {
@@ -453,7 +458,7 @@ label the completed trajectory, and validate that the returned phase ranges
 cover the observed events exactly.
 
 ```python
-from mari_components.trajectories import parse_trajectory_analysis
+from mari_kit.trajectories import parse_trajectory_analysis
 
 analysis = parse_trajectory_analysis(
     normalized_events,
@@ -467,7 +472,7 @@ not hide a trajectory prompt or execute an agent.
 
 ## Conversations as searchable knowledge
 
-`mari_components.conversation_knowledge` groups conversations and observable
+`mari_kit.conversation_knowledge` groups conversations and observable
 trajectory content into revision-bound episodes, validates cited knowledge,
 and emits summary, question, and topic retrieval facets. Settling windows,
 revision caching, and explicit call budgets bound extraction work. Returning
@@ -586,4 +591,4 @@ families, with pinned source-project citations and explicit adaptation notes.
 Choose lexical variants, subset objectives/optimizers, graph solvers, retrieval
 policies, compression, linkage, or memory evolution independently. Models and
 storage remain caller choices. Run `python -m examples.algorithm_choices_demo`
-from a checkout; optional native solvers use `mari-components[algorithm-solvers]`.
+from a checkout; optional native solvers use `mari-kit[algorithm-solvers]`.

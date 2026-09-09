@@ -28,7 +28,7 @@ one-based, duplicate IDs contribute once per source, and final ties break by
 document ID. Every result retains its per-source contribution.
 
 ```python
-from mari_components.retrieval import reciprocal_rank_fusion
+from mari_kit.retrieval import reciprocal_rank_fusion
 
 hits = reciprocal_rank_fusion(
     {
@@ -61,7 +61,7 @@ MMR(d) = lambda * relevance(d) - (1 - lambda) * max similarity(d, selected)
 ```
 
 ```python
-from mari_components.retrieval import maximal_marginal_relevance
+from mari_kit.retrieval import maximal_marginal_relevance
 
 packed = maximal_marginal_relevance(
     {hit.document_id: hit.score for hit in hits},
@@ -85,7 +85,7 @@ the iteration count and convergence state instead of hiding budget exhaustion.
 node-to-passage incidence map.
 
 ```python
-from mari_components.retrieval import personalized_pagerank, project_graph_scores
+from mari_kit.retrieval import personalized_pagerank, project_graph_scores
 
 recall = personalized_pagerank(
     graph={
@@ -131,7 +131,7 @@ unknown candidates, absent update/delete targets, add collisions, and multiple
 operations against the same target.
 
 ```python
-from mari_components.knowledge import (
+from mari_kit.knowledge import (
     MemoryDecision,
     MemoryOperation,
     apply_memory_mutations,
@@ -170,7 +170,7 @@ only when cross-item attention is an interior local maximum and adjacent
 semantic similarity is below the configured threshold.
 
 ```python
-from mari_components.knowledge import hybrid_topic_segments
+from mari_kit.knowledge import hybrid_topic_segments
 
 segments = hybrid_topic_segments(
     turns,

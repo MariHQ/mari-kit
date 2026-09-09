@@ -97,7 +97,7 @@ policy, or packing decision that produced it.
 
 from datetime import datetime, timezone
 
-from mari_components.evaluation import EvaluationRun, load_longmemeval_cases
+from mari_kit.evaluation import EvaluationRun, load_longmemeval_cases
 
 cases = load_longmemeval_cases("data/longmemeval_s.json")
 metrics = evaluate_memory_cases(system, cases)  # application-owned execution
@@ -134,7 +134,7 @@ configuration for each knowledge strategy. Pair results by task ID.
 ```{code-block} python
 :caption: Compare paired variants across separate measures
 
-from mari_components.evaluation import TaskOutcome, compare_task_outcomes
+from mari_kit.evaluation import TaskOutcome, compare_task_outcomes
 
 comparison = compare_task_outcomes(
     baseline=(TaskOutcome(task_id="return-17", success=False, turns=9, tokens=8_400),),

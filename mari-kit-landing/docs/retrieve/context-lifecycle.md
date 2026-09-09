@@ -63,7 +63,7 @@ Outcome and context cost
 ```{code-block} python
 :caption: Put Mari around a framework-owned model call
 
-from mari_components.lifecycle import ContextRequest, LifecycleEvent, LifecyclePhase
+from mari_kit.lifecycle import ContextRequest, LifecycleEvent, LifecyclePhase
 
 request = ContextRequest(
     request_id="answer-refund-17",
@@ -107,7 +107,7 @@ separate.
 ```{code-block} python
 :caption: Retrieve for unresolved requirements
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     RequirementAssessment, RequirementStatus,
     assess_context_sufficiency, parse_information_requirements,
     parse_retrieval_gap_queries,
@@ -147,7 +147,7 @@ closed.
 ```{code-block} python
 :caption: Record observed use and ablation evidence
 
-from mari_components.retrieval import ContextUse, evaluate_context_contribution
+from mari_kit.retrieval import ContextUse, evaluate_context_contribution
 
 contribution = evaluate_context_contribution(
     [
@@ -182,7 +182,7 @@ this predicate.
 ```{code-block} python
 :caption: Evaluate an inspectable trigger over caller facts
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     DisclosureCondition, DisclosureOperator, DisclosureRule,
     evaluate_disclosure,
 )
@@ -232,7 +232,7 @@ over caller-tokenized half-open spans.
 ```{code-block} python
 :caption: Index a contextual representation and cite the original
 
-from mari_components.retrieval import parse_chunk_context
+from mari_kit.retrieval import parse_chunk_context
 
 representation = parse_chunk_context(
     document,
@@ -267,7 +267,7 @@ leaves unit generation and ranking to the caller.
 ```{code-block} python
 :caption: Spend seven tokens on an index and summary before expanding to source
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     DisclosureLevel, DisclosureUnit, ProgressiveDisclosureManifest,
     expand_disclosure, inspect_disclosure_manifest,
 )

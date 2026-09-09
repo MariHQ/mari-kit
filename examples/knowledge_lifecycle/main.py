@@ -7,8 +7,8 @@ import os
 from collections.abc import Mapping
 
 from examples.support import json_generator
-from mari_components import KnowledgeDocument
-from mari_components.knowledge import (
+from mari_kit import KnowledgeDocument
+from mari_kit.knowledge import (
     assess_freshness,
     parse_answer_candidates,
     parse_decisions,

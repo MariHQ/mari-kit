@@ -1,1 +1,1 @@
-"""Runnable mari-components examples used by the verification suite."""
+"""Runnable mari-kit examples used by the verification suite."""

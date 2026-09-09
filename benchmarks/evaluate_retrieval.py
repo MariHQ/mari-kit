@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from mari_components.evaluation import evaluate_retrieval
+from mari_kit.evaluation import evaluate_retrieval
 
 
 def main() -> None:

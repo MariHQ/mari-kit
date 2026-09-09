@@ -1,4 +1,4 @@
-from mari_components.documents.email import (
+from mari_kit.documents.email import (
     FragmentKind,
     classify_lines,
     normalize_address,

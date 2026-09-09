@@ -3,16 +3,16 @@ from __future__ import annotations
 import json
 import unittest
 
-from mari_components.connectors.airtable import AirtableConfig, poll_airtable
-from mari_components.connectors.asana import AsanaConfig, poll_asana
-from mari_components.connectors.dropbox import DropboxConfig, poll_dropbox
-from mari_components.connectors.jira import JiraConfig, poll_jira
-from mari_components.connectors.linear import LinearConfig, poll_linear
-from mari_components.connectors.notion import NotionConfig, poll_notion
-from mari_components.connectors.trello import TrelloConfig, poll_trello
-from mari_components.connectors.zendesk import ZendeskConfig, poll_zendesk
-from mari_components.http import HttpResponse
-from mari_components.types import PollRequest
+from mari_kit.connectors.airtable import AirtableConfig, poll_airtable
+from mari_kit.connectors.asana import AsanaConfig, poll_asana
+from mari_kit.connectors.dropbox import DropboxConfig, poll_dropbox
+from mari_kit.connectors.jira import JiraConfig, poll_jira
+from mari_kit.connectors.linear import LinearConfig, poll_linear
+from mari_kit.connectors.notion import NotionConfig, poll_notion
+from mari_kit.connectors.trello import TrelloConfig, poll_trello
+from mari_kit.connectors.zendesk import ZendeskConfig, poll_zendesk
+from mari_kit.http import HttpResponse
+from mari_kit.types import PollRequest
 
 
 class FakeHttp:

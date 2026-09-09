@@ -3,7 +3,7 @@ from dataclasses import replace
 
 import pytest
 
-from mari_components.conversation_knowledge import (
+from mari_kit.conversation_knowledge import (
     CLAIM_KINDS,
     EpisodeFailure,
     KnowledgeEpisode,
@@ -19,8 +19,8 @@ from mari_components.conversation_knowledge import (
     topic_history,
     trajectory_events,
 )
-from mari_components.errors import MalformedModelOutput, TransientFailure
-from mari_components.trajectories import TrajectoryRun, TrajectoryStep
+from mari_kit.errors import MalformedModelOutput, TransientFailure
+from mari_kit.trajectories import TrajectoryRun, TrajectoryStep
 
 
 def event(identifier="1", **kwargs):

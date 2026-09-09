@@ -134,7 +134,7 @@
     "b": 0.75,
     "granularity": "session",
     "k1": 1.2,
-    "retriever": "mari_components.retrieval.BM25Index",
+    "retriever": "mari_kit.retrieval.BM25Index",
     "session_key": "timestamp plus role-prefixed turns"
   }
 }

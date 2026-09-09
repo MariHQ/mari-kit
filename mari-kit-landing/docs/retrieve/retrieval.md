@@ -68,7 +68,7 @@ compression, and exact normalized MaxSim reranking in one retrieval path.
 ```{code-block} python
 :caption: retrieve.py
 
-from mari_components.retrieval import FDEConfig, build_index, search_index
+from mari_kit.retrieval import FDEConfig, build_index, search_index
 
 index = build_index({doc.document_id: token_vectors},
     config=FDEConfig(repetitions=20, projection_dimension=16))
@@ -88,7 +88,7 @@ for compatibility and lower-level use.
 ```{code-block} python
 :caption: Search exact revisions through the generic index boundary
 
-from mari_components.retrieval import RevisionBM25Index
+from mari_kit.retrieval import RevisionBM25Index
 
 index = RevisionBM25Index({document_ref: document_text})
 hits = index.search(query, limit=10, allowed_refs=authorized_refs)
@@ -152,7 +152,7 @@ and ACL-filter behavior.
 ```{code-block} python
 :caption: indexes.py
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     BM25Index, DenseFlatIndex, HNSWIndex, IVFPQIndex, SparseVectorIndex,
 )
 
@@ -173,7 +173,7 @@ so a streaming change can update a revisioned snapshot directly.
 ```{code-block} python
 :caption: Explain and incrementally replace one lexical unit
 
-from mari_components.retrieval import IndexDelta, IndexOperation
+from mari_kit.retrieval import IndexDelta, IndexOperation
 
 lexical = BM25Index(
     passages,
@@ -204,7 +204,7 @@ field. Use `RevisionBM25Index` for the shared structural-reference contract.
 ```{code-block} python
 :caption: Search immutable artifact revisions directly
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     ArtifactBM25Index, ArtifactIndexDelta, IndexOperation,
 )
 
@@ -256,7 +256,7 @@ recent
 ```{code-block} python
 :caption: compose_retrieval.py
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     maximal_marginal_relevance, personalized_pagerank,
     project_graph_scores, reciprocal_rank_fusion,
 )

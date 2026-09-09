@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from mari_components.evaluation import load_suite_catalog
+from mari_kit.evaluation import load_suite_catalog
 
 
 def test_suite_catalog_can_select_every_suite_for_a_paper() -> None:

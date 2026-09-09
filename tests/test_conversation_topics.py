@@ -2,12 +2,12 @@ from dataclasses import replace
 
 import pytest
 
-from mari_components.conversation_knowledge import (
+from mari_kit.conversation_knowledge import (
     KnowledgeEvent,
     parse_episode_knowledge,
     segment_conversations,
 )
-from mari_components.conversation_topics import (
+from mari_kit.conversation_topics import (
     TopicGroup,
     compile_topic_briefs,
     event_vector_key,
@@ -19,8 +19,8 @@ from mari_components.conversation_topics import (
     topic_evidence_context,
     topic_request,
 )
-from mari_components.dependencies import plan_dependency_updates
-from mari_components.errors import MalformedModelOutput
+from mari_kit.dependencies import plan_dependency_updates
+from mari_kit.errors import MalformedModelOutput
 
 
 def event(i, **changes):

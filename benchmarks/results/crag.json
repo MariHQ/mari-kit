@@ -34,6 +34,6 @@
       "lower_threshold": 0.25,
       "upper_threshold": 0.75
     },
-    "implementation": "mari_components.retrieval.plan_corrective_retrieval"
+    "implementation": "mari_kit.retrieval.plan_corrective_retrieval"
   }
 }

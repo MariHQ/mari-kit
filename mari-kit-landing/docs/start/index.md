@@ -10,6 +10,7 @@
 | [Agent knowledge](agent-knowledge.md) | Completed activity to reviewable proposals |
 | [Conversation knowledge](../agents/conversation-knowledge.md) | Settled conversations to searchable, evidence-bound episodes |
 | [Algorithm choices](algorithm-choices.md) | Independent algorithms, workloads, fidelity, and pinned project citations |
+| [Complete module and API index](algorithm-inventory.md) | Source-derived definitions and public methods across the package |
 | [Install](install.md) | Base package, optional integrations, injected dependencies |
 | [Architecture](architecture.md) | Layer ownership, data flow, framework and storage boundaries |
 | [Maturity](maturity.md) | Stability and support labels |
@@ -34,6 +35,7 @@ governed-knowledge
 agent-knowledge
 install
 algorithm-choices
+algorithm-inventory
 architecture
 maturity
 identity-migration

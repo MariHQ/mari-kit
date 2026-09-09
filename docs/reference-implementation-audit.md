@@ -76,7 +76,7 @@ vendored.
 
 For entries marked inspect-only, Mari is based on the published mathematics and independently written conformance cases. For permissive references, compatible licensing permits comparison, but Mari still keeps independent APIs and tests rather than vendoring the systems.
 
-The first-pass lifecycle additions are clean-room, standard-library implementations. No files from the checked-out repositories are copied into `mari_components`; the repositories supply observable behavior, data-model comparisons, benchmark adapters, and future conformance fixtures.
+The first-pass lifecycle additions are clean-room, standard-library implementations. No files from the checked-out repositories are copied into `mari_kit`; the repositories supply observable behavior, data-model comparisons, benchmark adapters, and future conformance fixtures.
 
 The callback-driven graph algorithms were differentially checked against the
 shallow NetworkX checkout for weighted shortest paths, connected components,

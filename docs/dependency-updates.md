@@ -2,7 +2,7 @@
 
 Mari uses scoped object references, semantic atoms, and dependency receipts to
 connect parsing, retrieval, evidence, derived knowledge, and projections.
-`mari_components.dependencies` owns the common change-propagation algorithm.
+`mari_kit.dependencies` owns the common change-propagation algorithm.
 Specialized algorithms consume these values through their existing interfaces.
 Applications continue to own model calls, authorization, storage, and scheduling.
 
@@ -90,11 +90,11 @@ envelope allows text reuse while updating its citation coordinates.
 ## Plan, materialize, and replan
 
 ```python
-from mari_components import (
+from mari_kit import (
     DependencyKey, DerivationSpec, dependency_fingerprint,
     materialization_receipt, plan_dependency_updates,
 )
-from mari_components.documents import atom_dependencies
+from mari_kit.documents import atom_dependencies
 
 inputs = atom_dependencies(atom, source=source)
 embedding = DerivationSpec(

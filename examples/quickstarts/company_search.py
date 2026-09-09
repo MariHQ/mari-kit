@@ -1,8 +1,8 @@
 """Synchronize revisions, apply host authorization, and retrieve evidence."""
 
-from mari_components import KnowledgeDocument, ScopeRef
-from mari_components.platform import InMemoryDocumentStore
-from mari_components.retrieval import RevisionBM25Index
+from mari_kit import KnowledgeDocument, ScopeRef
+from mari_kit.platform import InMemoryDocumentStore
+from mari_kit.retrieval import RevisionBM25Index
 
 
 def run() -> dict[str, object]:

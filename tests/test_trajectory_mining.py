@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from mari_components.errors import MalformedModelOutput
-from mari_components.trajectories import (
+from mari_kit.errors import MalformedModelOutput
+from mari_kit.trajectories import (
     IntentKind,
     IntentReview,
     TrajectoryInvariantKind,

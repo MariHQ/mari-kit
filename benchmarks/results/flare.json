@@ -32,6 +32,6 @@
       "probabilities": "gold-answer novelty profile",
       "threshold": 0.2
     },
-    "implementation": "mari_components.retrieval.plan_active_retrieval"
+    "implementation": "mari_kit.retrieval.plan_active_retrieval"
   }
 }

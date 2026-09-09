@@ -1,6 +1,6 @@
 # Conversations and trajectories as searchable knowledge
 
-`mari_components.conversation_knowledge` turns source events into revision-bound
+`mari_kit.conversation_knowledge` turns source events into revision-bound
 episodes and model-proposed knowledge. Search can match vocabulary absent from
 the original messages: for example, “Why does Mari delay summarizing Slack?”
 can retrieve a discussion saying “wait until it settles” and “each reply costs
@@ -75,7 +75,7 @@ The application supplies normalized `events`, a model or fixture callback named
 `generate`, and a cache mapping artifact cache keys to `EpisodeKnowledge` values.
 
 ```python
-from mari_components.conversation_knowledge import (
+from mari_kit.conversation_knowledge import (
     compile_episodes,
     evidence_context,
     segment_conversations,
@@ -224,13 +224,13 @@ integration remain host responsibilities.
 
 ## Group interleaved conversations and reconnect episodes
 
-`mari_components.conversation_topics` adds an embedding-based path. Run
+`mari_kit.conversation_topics` adds an embedding-based path. Run
 `python -m examples.conversation_topics_demo` for the complete credential-free
 example, including extraction, topic grouping, relationship proposals, original
 evidence, and an unchanged second pass with no consolidation calls.
 
 ```python
-from mari_components.conversation_topics import (
+from mari_kit.conversation_topics import (
     event_vector_key,
     knowledge_vector_key,
     semantic_conversation_episodes,

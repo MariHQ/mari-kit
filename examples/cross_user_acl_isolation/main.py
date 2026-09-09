@@ -9,10 +9,10 @@ from collections.abc import Collection, Mapping
 import numpy as np
 
 from examples.support import selected_mode
-from mari_components import DocumentACL, KnowledgeDocument, Principal
-from mari_components.knowledge import parse_answer
-from mari_components.retrieval import build_index, search_index
-from mari_components.trajectories import (
+from mari_kit import DocumentACL, KnowledgeDocument, Principal
+from mari_kit.knowledge import parse_answer
+from mari_kit.retrieval import build_index, search_index
+from mari_kit.trajectories import (
     ReviewedWorkflow,
     WorkflowAction,
     WorkflowPolicy,

@@ -30,6 +30,6 @@
       "known_at": "question timestamp",
       "valid_time": "session timestamp"
     },
-    "implementation": "mari_components.graph.query_temporal_facts"
+    "implementation": "mari_kit.graph.query_temporal_facts"
   }
 }

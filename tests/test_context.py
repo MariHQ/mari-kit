@@ -1,4 +1,4 @@
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     ContextBudget,
     ContextCandidate,
     ContextExclusion,

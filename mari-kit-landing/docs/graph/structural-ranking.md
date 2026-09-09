@@ -28,7 +28,7 @@ traversals make closeness and betweenness more expensive than degree ranking.
 ```{code-block} python
 :caption: Compare caller-selected structural signals
 
-from mari_components.graph import (
+from mari_kit.graph import (
     betweenness_centrality,
     degree_centrality,
     hits,

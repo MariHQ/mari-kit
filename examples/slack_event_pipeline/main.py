@@ -9,20 +9,20 @@ import os
 from collections.abc import Iterable, Mapping
 
 from examples.support import FakeSlack, required, selected_mode, urllib_transport
-from mari_components.connectors import (
+from mari_kit.connectors import (
     SlackConfig,
     fetch_slack_thread_by_id,
     poll_slack,
     validate_slack,
 )
-from mari_components.connectors.events import (
+from mari_kit.connectors.events import (
     coalesce_hints,
     parse_json_object,
     slack_change_hint,
     verify_slack_signature,
 )
-from mari_components.sync import SyncState, plan_sync
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
+from mari_kit.sync import SyncState, plan_sync
+from mari_kit.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
 
 
 def _fake_event(secret: str, request_timestamp: str) -> tuple[bytes, str]:

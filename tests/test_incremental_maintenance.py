@@ -4,7 +4,7 @@ from graphlib import CycleError
 
 import pytest
 
-from mari_components import (
+from mari_kit import (
     CountReducer,
     DeltaAggregate,
     DependencyIndex,

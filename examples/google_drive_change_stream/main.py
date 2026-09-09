@@ -16,16 +16,16 @@ from examples.support import (
     token_vectors,
     urllib_transport,
 )
-from mari_components.connectors import (
+from mari_kit.connectors import (
     GoogleDriveConfig,
     poll_google_drive,
     start_google_drive_watch,
     validate_google_drive,
 )
-from mari_components.connectors.events import gdrive_change_hint
-from mari_components.retrieval import build_index, search_index
-from mari_components.sync import SyncState, plan_sync
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
+from mari_kit.connectors.events import gdrive_change_hint
+from mari_kit.retrieval import build_index, search_index
+from mari_kit.sync import SyncState, plan_sync
+from mari_kit.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
 
 
 def _apply_pages(

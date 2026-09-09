@@ -1,7 +1,7 @@
 []{#overview}
 
 ::: version
-mari-components · 0.1.0.dev0
+mari-kit · 0.1.0.dev0
 :::
 
 # Mari Kit
@@ -119,10 +119,10 @@ implementations. **Experimental** and **Research** mark surfaces that may change
 
 ## How to use these docs
 
-Each feature page describes importable code in `mari_components`. Sources sit
+Each feature page describes importable code in `mari_kit`. Sources sit
 beside the mechanism they support. Code samples mark calls supplied by the
 application. They also show where data crosses a persistence boundary and how
 failures appear.
 
-**Package naming:** Mari Kit is the project. `mari-components` is the Python
-distribution. Public imports use `mari_components`.
+**Package naming:** Mari Kit is the project. `mari-kit` is the Python
+distribution. Public imports use `mari_kit`.

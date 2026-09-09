@@ -17,7 +17,7 @@ fingerprint every field the selector reads. Additional dependency stamps cover
 policy, query configuration, index versions, or external selection inputs.
 
 ```python
-from mari_components import (
+from mari_kit import (
     SelectionSpec, UpdateAction, complete_selection, plan_selection,
 )
 
@@ -65,7 +65,7 @@ dependents, propagating changes in completed fingerprints, availability, or
 blocked state. `last_evaluated` exposes the work inspected by the last update.
 
 ```python
-from mari_components import DependencyIndex
+from mari_kit import DependencyIndex
 
 index = DependencyIndex(
     sources=current_sources, derivations=recipes, materializations=receipts,
@@ -108,7 +108,7 @@ explicit scope and namespace. `GroupIdentity.members` uses stable `ObjectRef`
 values, rather than revision IDs, so content edits can retain membership identity.
 
 ```python
-from mari_components import reconcile_groups
+from mari_kit import reconcile_groups
 
 lineage = reconcile_groups(
     old_groups, new_candidate_groups,
@@ -149,7 +149,7 @@ idempotent. Invalid batches leave the aggregate unchanged.
 | `MembershipReducer` | Unique target strings per source | Target reference counts, with source targets retained in contributions |
 
 ```python
-from mari_components import DeltaAggregate, WeightedVectorReducer
+from mari_kit import DeltaAggregate, WeightedVectorReducer
 
 aggregate = DeltaAggregate(WeightedVectorReducer(), scope=scope)
 aggregate.apply(((atom_key, {"vector": [0.1, 0.2], "weight": 2}),))

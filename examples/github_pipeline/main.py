@@ -19,22 +19,22 @@ from examples.support import (
     token_vectors,
     urllib_transport,
 )
-from mari_components.connectors import (
+from mari_kit.connectors import (
     GitHubConfig,
     github_source_id,
     poll_github,
     validate_github,
 )
-from mari_components.connectors.events import (
+from mari_kit.connectors.events import (
     coalesce_hints,
     github_change_hint,
     parse_json_object,
     verify_hmac_sha256,
 )
-from mari_components.knowledge import parse_answer
-from mari_components.retrieval import build_index, search_index
-from mari_components.sync import SyncState, plan_sync
-from mari_components.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
+from mari_kit.knowledge import parse_answer
+from mari_kit.retrieval import build_index, search_index
+from mari_kit.sync import SyncState, plan_sync
+from mari_kit.types import KnowledgeDocument, PollPage, PollRequest, SyncMode
 
 
 def _apply(

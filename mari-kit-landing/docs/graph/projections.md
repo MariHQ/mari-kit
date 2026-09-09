@@ -72,7 +72,7 @@ side-effect-free because a later invalid event can fail after earlier folds.
 ```{code-block} python
 :caption: Deterministic replay with contiguous generations
 
-from mari_components.platform import KnowledgeEvent, replay_projection
+from mari_kit.platform import KnowledgeEvent, replay_projection
 
 events = [
     KnowledgeEvent(

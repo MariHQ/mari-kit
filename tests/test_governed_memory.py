@@ -4,7 +4,7 @@ import datetime as dt
 
 import pytest
 
-from mari_components.knowledge import (
+from mari_kit.knowledge import (
     Activity,
     AdmissionDisposition,
     AdmissionSignals,

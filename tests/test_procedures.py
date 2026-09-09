@@ -1,4 +1,4 @@
-from mari_components.trajectories import TrajectoryStep, learn_procedure
+from mari_kit.trajectories import TrajectoryStep, learn_procedure
 
 
 def step(ordinal: int, tool: str, **arguments: str) -> TrajectoryStep:

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import pytest
 
-from mari_components.conversation_knowledge import segment_conversations
-from mari_components.documents.email import (
+from mari_kit.conversation_knowledge import segment_conversations
+from mari_kit.documents.email import (
     BulkSignal,
     EmailMessage,
     Fragment,
     FragmentKind,
 )
-from mari_components.documents.email_threads import (
+from mari_kit.documents.email_threads import (
     EmailThread,
     LinkReason,
     ThreadLink,

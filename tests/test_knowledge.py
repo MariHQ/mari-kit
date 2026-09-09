@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components import (
+from mari_kit import (
     Evidence,
     KnowledgeDocument,
     ObjectRef,
     RevisionRef,
     ScopeRef,
 )
-from mari_components.errors import MalformedModelOutput
-from mari_components.knowledge import (
+from mari_kit.errors import MalformedModelOutput
+from mari_kit.knowledge import (
     AnswerDisposition,
     FreshnessStatus,
     KnowledgeDependency,

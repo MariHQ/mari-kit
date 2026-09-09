@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     maximal_marginal_relevance,
     personalized_pagerank,
     project_graph_scores,

@@ -2,14 +2,14 @@
 
 import datetime as dt
 
-from mari_components import JsonPointer, ObjectRef, RevisionRef, ScopeRef
-from mari_components.knowledge import (
+from mari_kit import JsonPointer, ObjectRef, RevisionRef, ScopeRef
+from mari_kit.knowledge import (
     Activity,
     KnowledgeArtifact,
     LocatedEvidence,
     validate_located_evidence,
 )
-from mari_components.platform import InMemoryArtifactStore
+from mari_kit.platform import InMemoryArtifactStore
 
 
 def run() -> dict[str, object]:

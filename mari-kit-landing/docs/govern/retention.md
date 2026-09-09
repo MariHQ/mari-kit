@@ -24,7 +24,7 @@ times, removes content from reads, and applies storage retention policy.
 
 from datetime import datetime, timezone
 
-from mari_components.governance import RetentionPolicy, plan_retention
+from mari_kit.governance import RetentionPolicy, plan_retention
 
 plan = plan_retention(
     records=records,

@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     FDEConfig,
     build_index,
     deserialize_index,
@@ -13,8 +13,8 @@ from mari_components.retrieval import (
     search_index,
     serialize_index,
 )
-from mari_components.retrieval.muvera import encode_fde, projection_parameters
-from mari_components.retrieval.polarquant import polar_scores, train_polar
+from mari_kit.retrieval.muvera import encode_fde, projection_parameters
+from mari_kit.retrieval.polarquant import polar_scores, train_polar
 
 
 class RetrievalTests(unittest.TestCase):
@@ -77,7 +77,7 @@ class RetrievalTests(unittest.TestCase):
             observed_rows.append(len(packed))
             return np.zeros(len(packed), dtype=np.float32)
 
-        with patch("mari_components.retrieval.index.polar_scores", score_allowed):
+        with patch("mari_kit.retrieval.index.polar_scores", score_allowed):
             search_index(
                 index,
                 np.asarray([[1, 0, 0]], np.float32),

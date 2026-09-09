@@ -40,11 +40,11 @@ CRAG routing maps evaluator scores through two thresholds to use the corpus, aug
 ```{code-block} python
 :caption: adaptive_retrieval.py · current
 
-from mari_components.retrieval import (
+from mari_kit.retrieval import (
     CompressionSentence, plan_active_retrieval, plan_corrective_retrieval,
     selective_compression,
 )
-from mari_components.verification import score_self_rag_candidate
+from mari_kit.verification import score_self_rag_candidate
 
 correction = plan_corrective_retrieval(retrieval_evaluator(query, hits),
     lower_threshold=-0.8, upper_threshold=0.6)

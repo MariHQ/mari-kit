@@ -1,11 +1,11 @@
 """Turn completed tool activity into a validated, reviewable memory plan."""
 
-from mari_components.knowledge import (
+from mari_kit.knowledge import (
     MemoryDecision,
     MemoryOperation,
     plan_memory_mutations,
 )
-from mari_components.trajectories import parse_trajectory_analysis
+from mari_kit.trajectories import parse_trajectory_analysis
 
 
 def run() -> dict[str, object]:

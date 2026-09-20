@@ -514,6 +514,17 @@ and tool results out of untrusted logs.
 
 ## Executable examples
 
+The [company brain scenarios](examples/company_brains/README.md) compose search,
+support, onboarding, incident response, decisions, conversation knowledge,
+synchronization, and tenant isolation into credential-free applications.
+Run all eight with `python -m examples.company_brains`; their behavioral tests
+are included in the normal test suite.
+
+The [persistent company brain](examples/company_brains/durable/README.md) adds
+a host-owned SQLite application, bounded caches, crash recovery, multiprocess
+synchronization and revocation tests, opt-in live-model evaluation, and
+scale/recall benchmarks.
+
 The integration examples below support deterministic fixture mode and form a
 machine-readable acceptance suite. The two additional starting points are
 [dependency updates](examples/quickstarts/dependency_updates.py) and

@@ -9,6 +9,7 @@ from mari_kit.errors import MalformedModelOutput
 from mari_kit.json import require_object
 from mari_kit.types import Evidence, KnowledgeDocument
 
+from ._documents import document_lookup
 from .facts import _evidence
 
 DIGEST_VERSION = "digest-summary-v1"
@@ -48,7 +49,7 @@ def parse_digest(
     summary consistency as separate from fluency. Mari resolves citations but
     does not treat exact quotation as proof of semantic entailment.
     """
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     value = require_object(model_output, recipe=DIGEST_VERSION)
     topics = value.get("topics")
     if not str(value.get("summary") or "").strip() or not isinstance(topics, list):
@@ -82,7 +83,7 @@ def parse_impact(
     model_output: object,
 ) -> ImpactAssessment:
     """Validate an in-scope, optionally evidenced change-impact proposal."""
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     value = require_object(model_output, recipe=IMPACT_VERSION)
     affected = value.get("affected_document_ids")
     if not str(value.get("summary") or "").strip() or not isinstance(affected, list):

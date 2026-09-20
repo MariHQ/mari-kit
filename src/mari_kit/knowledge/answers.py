@@ -11,6 +11,7 @@ from mari_kit.errors import MalformedModelOutput
 from mari_kit.json import require_list, require_object
 from mari_kit.types import AnswerCandidate, Evidence, KnowledgeDocument
 
+from ._documents import document_lookup
 from .facts import _evidence
 from .freshness import KnowledgeDependency, evidence_dependencies
 from .scoring import grounding_coverage
@@ -81,7 +82,7 @@ def parse_answer(
     question = question.strip()
     if not question:
         raise ValueError("question is required")
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     value = require_object(model_output, recipe=ANSWER_VERSION)
     answer = str(value.get("answer") or "").strip()
     if not answer:
@@ -119,7 +120,7 @@ def parse_answer_candidates(
     model_output: object,
 ) -> tuple[AnswerCandidate, ...]:
     """Validate reusable question-answer candidates with exact source evidence."""
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     rows = require_list(model_output, "answers", recipe=FAQ_VERSION)
     output: list[AnswerCandidate] = []
     for row in rows:

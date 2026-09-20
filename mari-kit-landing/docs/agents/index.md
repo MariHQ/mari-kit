@@ -29,6 +29,7 @@
 :maxdepth: 1
 
 conversation-knowledge
+email
 trajectories
 trajectory-mining
 intent-mining

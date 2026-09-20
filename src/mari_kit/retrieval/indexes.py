@@ -48,6 +48,19 @@ def _default_analyzer(text: str) -> tuple[str, ...]:
     return tuple(re.findall(r"\w+", text.casefold()))
 
 
+def _position_key(index: int, count: int) -> str:
+    """Lexicographically sortable synthetic ID that preserves structural order.
+
+    ``BM25Index`` breaks score ties by ``document_id`` comparison, so the
+    ref-keyed adapters must hand it IDs whose string order matches the sorted
+    ``ref.key`` order. Zero-padding the numeric position keeps that invariant
+    once the corpus reaches ten or more entries (``"10"`` no longer precedes
+    ``"2"``).
+    """
+
+    return str(index).zfill(len(str(max(count - 1, 0))))
+
+
 @dataclass(frozen=True, slots=True, kw_only=True)
 class BM25TermContribution:
     term: str
@@ -109,6 +122,29 @@ class ArtifactIndexDelta:
             self.previous_ref.unit_id,
         ) != (self.ref.namespace, self.ref.artifact_id, self.ref.unit_id):
             raise ValueError("replacement refs must identify the same artifact unit")
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class RevisionIndexDelta:
+    """An exact structural revision insertion, replacement, or deletion."""
+
+    ref: RevisionRef
+    operation: IndexOperation
+    text: str = ""
+    previous_ref: RevisionRef | None = None
+
+    def __post_init__(self) -> None:
+        if self.operation is IndexOperation.UPSERT and not self.text.strip():
+            raise ValueError("revision index upserts require text")
+        if self.operation is IndexOperation.DELETE and self.previous_ref is not None:
+            raise ValueError("revision index deletes do not accept previous_ref")
+        if self.previous_ref is not None and (
+            self.previous_ref.object != self.ref.object
+            or self.previous_ref.unit_id != self.ref.unit_id
+        ):
+            raise ValueError(
+                "replacement refs must identify the same scoped object unit"
+            )
 
 
 def _matrix(
@@ -393,7 +429,9 @@ class ArtifactBM25Index:
         self.b = b
         self.analyzer = analyzer
         ordered = tuple(sorted(units, key=lambda ref: ref.key))
-        self._refs = {str(index): ref for index, ref in enumerate(ordered)}
+        self._refs = {
+            _position_key(index, len(ordered)): ref for index, ref in enumerate(ordered)
+        }
         self._ids = {ref: item_id for item_id, ref in self._refs.items()}
         self._index = BM25Index(
             {self._ids[ref]: units[ref] for ref in ordered},
@@ -463,7 +501,9 @@ class RevisionBM25Index:
     ) -> None:
         self._units = dict(units)
         ordered = tuple(sorted(units, key=lambda ref: ref.key))
-        self._refs = {str(index): ref for index, ref in enumerate(ordered)}
+        self._refs = {
+            _position_key(index, len(ordered)): ref for index, ref in enumerate(ordered)
+        }
         self._ids = {ref: item_id for item_id, ref in self._refs.items()}
         self._index = BM25Index(
             {self._ids[ref]: units[ref] for ref in ordered},
@@ -498,6 +538,36 @@ class RevisionBM25Index:
         value = self._index.explain(query, item_id=self._ids[ref])
         return RevisionBM25Explanation(
             ref=ref, score=value.score, contributions=value.contributions
+        )
+
+    def with_deltas(self, deltas: Iterable[RevisionIndexDelta]) -> RevisionBM25Index:
+        """Return a rebuilt snapshot after exact revision-checked changes.
+
+        Supply ``previous_ref`` to replace an existing revision. Without it,
+        an upsert inserts or updates only the exact supplied reference. Failed
+        batches leave this snapshot intact. Structural scope and unit identity
+        must be preserved by replacements.
+        """
+
+        units = dict(self._units)
+        for delta in deltas:
+            if delta.operation is IndexOperation.DELETE:
+                if delta.ref not in units:
+                    raise ValueError(f"revision is absent: {delta.ref!r}")
+                del units[delta.ref]
+                continue
+            if delta.previous_ref is not None:
+                if delta.previous_ref not in units:
+                    raise ValueError(
+                        f"expected revision is absent: {delta.previous_ref!r}"
+                    )
+                del units[delta.previous_ref]
+            units[delta.ref] = delta.text
+        return RevisionBM25Index(
+            units,
+            k1=self._index.k1,
+            b=self._index.b,
+            analyzer=self._index.analyzer,
         )
 
 
@@ -563,40 +633,52 @@ class HNSWIndex:
             else -float(np.sum((left - right) ** 2))
         )
 
-    def search(
+    def _start_order(self, allowed: set[str], count: int) -> tuple[str, ...]:
+        """Return authorized start nodes: canonical entry first, then diverse.
+
+        The first element is the legacy entry (highest level, smallest ID), so
+        a single start reproduces the original traversal exactly. The remaining
+        authorized IDs follow a deterministic sha256 order; any prefix of this
+        ordering therefore nests candidate sets as ``search_starts`` grows.
+        The level scan runs once, so selecting the entry never rescans the
+        level table per candidate.
+        """
+
+        top_level = max(self.levels[identifier] for identifier in allowed)
+        primary = min(
+            identifier for identifier in allowed if self.levels[identifier] == top_level
+        )
+        if count <= 1 or len(allowed) == 1:
+            return (primary,)
+        remaining = sorted(
+            (identifier for identifier in allowed if identifier != primary),
+            key=lambda identifier: (
+                hashlib.sha256(f"hnsw-search-start:{identifier}".encode()).digest(),
+                identifier,
+            ),
+        )
+        return (primary, *remaining[: count - 1])
+
+    def _traverse(
         self,
-        query: Sequence[float],
+        value: npt.NDArray[np.float32],
         *,
-        limit: int,
-        ef_search: int = 64,
-        allowed_document_ids: Collection[str] | None = None,
-    ) -> tuple[IndexHit, ...]:
-        if limit < 0 or ef_search < max(1, limit):
-            raise ValueError("ef_search must be positive and at least limit")
-        value = _query(query, self.flat.vectors.shape[1])
-        if self.flat.metric == "cosine":
-            norm = float(np.linalg.norm(value))
-            if norm == 0:
-                raise ValueError("cosine query must be non-zero")
-            value = value / norm
-        positions = {
-            identifier: index for index, identifier in enumerate(self.flat.ids)
-        }
-        allowed = (
-            set(self.flat.ids)
-            if allowed_document_ids is None
-            else set(allowed_document_ids) & set(self.flat.ids)
-        )
-        if not allowed or limit == 0:
-            return ()
-        search_level = max(self.levels[identifier] for identifier in allowed)
-        current = min(
-            identifier
-            for identifier in allowed
-            if self.levels[identifier] == search_level
-        )
+        allowed: set[str],
+        positions: Mapping[str, int],
+        start: str,
+        ef_search: int,
+    ) -> dict[str, float]:
+        """Greedy-descend, then best-first expand one authorized start.
+
+        Only IDs in ``allowed`` are ever scored. For legacy compatibility,
+        expansion checks ``ef_search`` between neighbor batches, so a final
+        batch can exceed that target by at most ``m - 1`` nodes. Greedy descent
+        performs additional scoring.
+        """
+
+        current = start
         current_score = self._score(value, self.flat.vectors[positions[current]])
-        for level in range(search_level, 0, -1):
+        for level in range(self.levels[current], 0, -1):
             improved = True
             while improved:
                 improved = False
@@ -618,6 +700,80 @@ class HNSWIndex:
                 score = self._score(value, self.flat.vectors[positions[neighbor]])
                 scored[neighbor] = score
                 heapq.heappush(frontier, (-score, neighbor))
+        return scored
+
+    def search(
+        self,
+        query: Sequence[float],
+        *,
+        limit: int,
+        ef_search: int = 64,
+        allowed_document_ids: Collection[str] | None = None,
+        exact_filter_threshold: int = 0,
+        search_starts: int = 1,
+    ) -> tuple[IndexHit, ...]:
+        """Search authorized nodes, optionally exact or multi-start.
+
+        ``exact_filter_threshold=0`` preserves approximate graph traversal.
+        A positive threshold uses exact scoring when an explicit allowlist's
+        intersection with indexed IDs is no larger than the threshold. Only
+        authorized vectors are scored. Larger sets and unfiltered queries keep
+        approximate behavior; filtering can disconnect their graph paths.
+
+        ``search_starts`` runs independent bounded traversals from
+        deterministically chosen authorized start nodes, then merges the scored
+        candidates before ranking. The default of one start is the legacy
+        single-start traversal. Each additional start repeats greedy descent and
+        expansion with the same ``ef_search`` target (checked between neighbor
+        batches), so total work grows with ``search_starts``.
+        """
+        if limit < 0 or ef_search < max(1, limit):
+            raise ValueError("ef_search must be positive and at least limit")
+        if (
+            isinstance(exact_filter_threshold, bool)
+            or not isinstance(exact_filter_threshold, int)
+            or exact_filter_threshold < 0
+        ):
+            raise ValueError("exact_filter_threshold must be a non-negative integer")
+        if (
+            isinstance(search_starts, bool)
+            or not isinstance(search_starts, int)
+            or search_starts < 1
+        ):
+            raise ValueError("search_starts must be a positive integer")
+        value = _query(query, self.flat.vectors.shape[1])
+        if self.flat.metric == "cosine":
+            norm = float(np.linalg.norm(value))
+            if norm == 0:
+                raise ValueError("cosine query must be non-zero")
+            value = value / norm
+        positions = {
+            identifier: index for index, identifier in enumerate(self.flat.ids)
+        }
+        allowed = (
+            set(self.flat.ids)
+            if allowed_document_ids is None
+            else set(allowed_document_ids) & set(self.flat.ids)
+        )
+        if (
+            exact_filter_threshold
+            and allowed_document_ids is not None
+            and len(allowed) <= exact_filter_threshold
+        ):
+            return self.flat.search(query, limit=limit, allowed_document_ids=allowed)
+        if not allowed or limit == 0:
+            return ()
+        scored: dict[str, float] = {}
+        for start in self._start_order(allowed, search_starts):
+            scored.update(
+                self._traverse(
+                    value,
+                    allowed=allowed,
+                    positions=positions,
+                    start=start,
+                    ef_search=ef_search,
+                )
+            )
         hits = [
             IndexHit(document_id=identifier, score=score)
             for identifier, score in scored.items()

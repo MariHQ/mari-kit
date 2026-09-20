@@ -1,0 +1,175 @@
+{
+  "configuration": {
+    "allowlist_sizes": [
+      10,
+      50,
+      200,
+      1000
+    ],
+    "dimension": 24,
+    "ef_search": 64,
+    "hnsw_m": 8,
+    "k": 10,
+    "queries": 20,
+    "seed": 20240919,
+    "size": 1000
+  },
+  "dense_filtered_recall": {
+    "by_allowlist_size": [
+      {
+        "allowlist_size": 10,
+        "ef_search": 64,
+        "missed_relevant_hits": 178,
+        "queries": 20,
+        "recall": 0.11,
+        "recall_denominator": 200,
+        "recall_numerator": 22,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 50,
+        "ef_search": 64,
+        "missed_relevant_hits": 187,
+        "queries": 20,
+        "recall": 0.065,
+        "recall_denominator": 200,
+        "recall_numerator": 13,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 200,
+        "ef_search": 64,
+        "missed_relevant_hits": 151,
+        "queries": 20,
+        "recall": 0.245,
+        "recall_denominator": 200,
+        "recall_numerator": 49,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 1000,
+        "ef_search": 64,
+        "missed_relevant_hits": 56,
+        "queries": 20,
+        "recall": 0.72,
+        "recall_denominator": 200,
+        "recall_numerator": 144,
+        "unauthorized_hits": 0
+      }
+    ],
+    "corpus_size": 1000,
+    "dimension": 24,
+    "ef_search_sensitivity": [
+      {
+        "allowlist_size": 4,
+        "ef_search": 10,
+        "missed_relevant_hits": 59,
+        "queries": 20,
+        "recall": 0.2625,
+        "recall_denominator": 80,
+        "recall_numerator": 21,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 4,
+        "ef_search": 64,
+        "missed_relevant_hits": 59,
+        "queries": 20,
+        "recall": 0.2625,
+        "recall_denominator": 80,
+        "recall_numerator": 21,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 4,
+        "ef_search": 256,
+        "missed_relevant_hits": 59,
+        "queries": 20,
+        "recall": 0.2625,
+        "recall_denominator": 80,
+        "recall_numerator": 21,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 1000,
+        "ef_search": 10,
+        "missed_relevant_hits": 125,
+        "queries": 20,
+        "recall": 0.375,
+        "recall_denominator": 200,
+        "recall_numerator": 75,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 1000,
+        "ef_search": 64,
+        "missed_relevant_hits": 56,
+        "queries": 20,
+        "recall": 0.72,
+        "recall_denominator": 200,
+        "recall_numerator": 144,
+        "unauthorized_hits": 0
+      },
+      {
+        "allowlist_size": 1000,
+        "ef_search": 256,
+        "missed_relevant_hits": 10,
+        "queries": 20,
+        "recall": 0.95,
+        "recall_denominator": 200,
+        "recall_numerator": 190,
+        "unauthorized_hits": 0
+      }
+    ],
+    "k": 10,
+    "m": 8,
+    "metric": "cosine",
+    "timing_seconds": {
+      "filtered_query": 0.12125158400158398,
+      "hnsw_build": 1.1678913749929052
+    },
+    "totals": {
+      "recall": 0.285,
+      "recall_denominator": 800,
+      "recall_numerator": 228,
+      "unauthorized_hits": 0
+    }
+  },
+  "lexical_lifecycle": {
+    "after": {
+      "deleted_old_marker": [],
+      "edited_new_marker": [
+        "lex-0000"
+      ],
+      "edited_old_marker": [],
+      "inserted_marker": [
+        "lex-inserted"
+      ]
+    },
+    "before": {
+      "deleted_marker": [
+        "lex-0001"
+      ],
+      "edited_marker": [
+        "lex-0000"
+      ],
+      "edited_new_marker": [],
+      "inserted_marker": []
+    },
+    "corpus_size": 1000,
+    "deleted_document_visible": false,
+    "k": 10,
+    "rebuild_equivalence": {
+      "documents_equal": true,
+      "mismatches": [],
+      "queries_compared": 16,
+      "rankings_equal": true,
+      "revisions_equal": true
+    },
+    "restricted_query": {
+      "allowlist_size": 999,
+      "positive_hits": [],
+      "unauthorized_hits": 0
+    }
+  }
+}

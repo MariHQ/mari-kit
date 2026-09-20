@@ -1,0 +1,3087 @@
+{
+  "mode": "live",
+  "corpus_sha256": "7e8d89d40166cb9f1297545ab9ce36c29ca5ffe2007e037b5b2a35b7e60e84b0",
+  "model": "deepseek-flash",
+  "case_count": 25,
+  "attempted_answer_calls": 25,
+  "attempted_extraction_calls": 25,
+  "answer_request_failures": 0,
+  "extraction_valid_cases": 24,
+  "extraction_nonempty_cases": 15,
+  "elapsed_seconds": 43.94978695800819,
+  "summary": {
+    "case_count": 25,
+    "invalid_outputs": {
+      "count": 0,
+      "total": 25,
+      "rate": 0.0
+    },
+    "citation_validity": {
+      "valid": 10,
+      "total": 10,
+      "rate": 1.0,
+      "basis": "citation coverage of expected-grounded cases"
+    },
+    "emitted_citation_validity": {
+      "valid": 12,
+      "total": 12,
+      "rate": 1.0
+    },
+    "answer_correctness_proxy": {
+      "correct": 10,
+      "total": 10,
+      "rate": 1.0
+    },
+    "disposition_accuracy": {
+      "correct": 23,
+      "total": 25,
+      "rate": 0.92
+    },
+    "abstention": {
+      "abstained": 13,
+      "total": 25,
+      "rate": 0.52,
+      "expected": 15,
+      "correct_required_abstentions": 13,
+      "unnecessary_abstentions": 0,
+      "accuracy": {
+        "correct": 23,
+        "total": 25,
+        "rate": 0.92
+      }
+    },
+    "stale": {
+      "stale": 0,
+      "total": 12,
+      "rate": 0.0
+    },
+    "by_category": {
+      "ambiguity": {
+        "cases": 3,
+        "invalid": 0,
+        "expected_grounded": 0,
+        "citation_valid": 0,
+        "answer_correct": 0,
+        "grounded_attempts": 1,
+        "stale": 0,
+        "abstained": 2
+      },
+      "conflict": {
+        "cases": 3,
+        "invalid": 0,
+        "expected_grounded": 1,
+        "citation_valid": 1,
+        "answer_correct": 1,
+        "grounded_attempts": 2,
+        "stale": 0,
+        "abstained": 1
+      },
+      "current_policy": {
+        "cases": 4,
+        "invalid": 0,
+        "expected_grounded": 4,
+        "citation_valid": 4,
+        "answer_correct": 4,
+        "grounded_attempts": 4,
+        "stale": 0,
+        "abstained": 0
+      },
+      "irrelevant_matches": {
+        "cases": 4,
+        "invalid": 0,
+        "expected_grounded": 1,
+        "citation_valid": 1,
+        "answer_correct": 1,
+        "grounded_attempts": 1,
+        "stale": 0,
+        "abstained": 3
+      },
+      "missing_info": {
+        "cases": 3,
+        "invalid": 0,
+        "expected_grounded": 0,
+        "citation_valid": 0,
+        "answer_correct": 0,
+        "grounded_attempts": 0,
+        "stale": 0,
+        "abstained": 3
+      },
+      "restricted_evidence": {
+        "cases": 4,
+        "invalid": 0,
+        "expected_grounded": 0,
+        "citation_valid": 0,
+        "answer_correct": 0,
+        "grounded_attempts": 0,
+        "stale": 0,
+        "abstained": 4
+      },
+      "superseded_policy": {
+        "cases": 4,
+        "invalid": 0,
+        "expected_grounded": 4,
+        "citation_valid": 4,
+        "answer_correct": 4,
+        "grounded_attempts": 4,
+        "stale": 0,
+        "abstained": 0
+      }
+    }
+  },
+  "grading_limit": "Answer correctness uses an explicit lexical proxy; exact citations do not prove semantic entailment.",
+  "results": [
+    {
+      "id": "current.refund_window",
+      "category": "current_policy",
+      "model_input": {
+        "question": "How long is the enterprise refund window?",
+        "documents": [
+          {
+            "document_id": "handbook/refunds",
+            "revision": "refund-v3",
+            "title": "Enterprise refund policy",
+            "body": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval."
+          },
+          {
+            "document_id": "handbook/shipping",
+            "revision": "shipping-v1",
+            "title": "Shipping policy",
+            "body": "Standard shipping arrives in three business days; overnight is available for an extra fee."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The enterprise refund window is 45 days from invoice. After 45 days, requests require finance approval.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "handbook/refunds",
+            "revision": "refund-v3",
+            "quote": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.3445755419961642,
+        "usage": {
+          "prompt_tokens": 301,
+          "completion_tokens": 173,
+          "total_tokens": 474,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 85
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 173
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "current.refund_window",
+        "category": "current_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Enterprise customers may request a refund within 45 days of invoice.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds",
+                  "quote": "Enterprise customers may request a refund within 45 days of invoice."
+                }
+              ]
+            },
+            {
+              "claim": "After 45 days, enterprise refund requests require finance approval.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds",
+                  "quote": "After 45 days, requests require finance approval."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 2.6160395000042627,
+          "usage": {
+            "prompt_tokens": 269,
+            "completion_tokens": 353,
+            "total_tokens": 622,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 261
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 141
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "Enterprise customers may request a refund within 45 days of invoice.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds",
+                "revision": "refund-v3",
+                "quote": "Enterprise customers may request a refund within 45 days of invoice.",
+                "start": 0,
+                "end": 68,
+                "section_id": "root",
+                "section_revision": "70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "After 45 days, enterprise refund requests require finance approval.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds",
+                "revision": "refund-v3",
+                "quote": "After 45 days, requests require finance approval.",
+                "start": 69,
+                "end": 118,
+                "section_id": "root",
+                "section_revision": "70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d"
+              }
+            ],
+            "grounding_coverage": 0.7222,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "current.mfa",
+      "category": "current_policy",
+      "model_input": {
+        "question": "What multi-factor authentication does the company require for SSO?",
+        "documents": [
+          {
+            "document_id": "security/mfa-policy",
+            "revision": "mfa-v1",
+            "title": "Multi-factor authentication policy",
+            "body": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on. SMS codes are not accepted."
+          },
+          {
+            "document_id": "security/offboarding",
+            "revision": "offboard-v1",
+            "title": "Offboarding checklist",
+            "body": "Revoke SSO sessions, rotate shared secrets, and return hardware on the employee's last day."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The company requires phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on. SMS codes are not accepted.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "security/mfa-policy",
+            "revision": "mfa-v1",
+            "quote": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on. SMS codes are not accepted."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.8501079169946024,
+        "usage": {
+          "prompt_tokens": 316,
+          "completion_tokens": 300,
+          "total_tokens": 616,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 208
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 188
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "current.mfa",
+        "category": "current_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on.",
+              "evidence": [
+                {
+                  "document_id": "security/mfa-policy",
+                  "quote": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on."
+                }
+              ]
+            },
+            {
+              "claim": "SMS codes are not accepted.",
+              "evidence": [
+                {
+                  "document_id": "security/mfa-policy",
+                  "quote": "SMS codes are not accepted."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 2.92771995899966,
+          "usage": {
+            "prompt_tokens": 284,
+            "completion_tokens": 462,
+            "total_tokens": 746,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 358
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 156
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on.",
+            "evidence": [
+              {
+                "document_id": "security/mfa-policy",
+                "revision": "mfa-v1",
+                "quote": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on.",
+                "start": 0,
+                "end": 110,
+                "section_id": "root",
+                "section_revision": "ad392c19442118a79752e2f9c33a566224d86074dbb1bf73e53de5c3ba0c8cf2"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "SMS codes are not accepted.",
+            "evidence": [
+              {
+                "document_id": "security/mfa-policy",
+                "revision": "mfa-v1",
+                "quote": "SMS codes are not accepted.",
+                "start": 111,
+                "end": 138,
+                "section_id": "root",
+                "section_revision": "ad392c19442118a79752e2f9c33a566224d86074dbb1bf73e53de5c3ba0c8cf2"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "current.pto",
+      "category": "current_policy",
+      "model_input": {
+        "question": "How many paid time off days do employees receive per year?",
+        "documents": [
+          {
+            "document_id": "hr/pto",
+            "revision": "pto-v1",
+            "title": "Paid time off policy",
+            "body": "Employees receive 25 days of paid time off per calendar year. Unused PTO carries over up to 5 days."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Employees receive 25 days of paid time off per calendar year.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "hr/pto",
+            "revision": "pto-v1",
+            "quote": "Employees receive 25 days of paid time off per calendar year."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.5239422919985373,
+        "usage": {
+          "prompt_tokens": 257,
+          "completion_tokens": 134,
+          "total_tokens": 391,
+          "prompt_tokens_details": {
+            "cached_tokens": 123
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 67
+          },
+          "prompt_cache_hit_tokens": 123,
+          "prompt_cache_miss_tokens": 134
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "current.pto",
+        "category": "current_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Employees receive 25 days of paid time off per calendar year.",
+              "evidence": [
+                {
+                  "document_id": "hr/pto",
+                  "quote": "Employees receive 25 days of paid time off per calendar year."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 2.3340290000051027,
+          "usage": {
+            "prompt_tokens": 225,
+            "completion_tokens": 311,
+            "total_tokens": 536,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 225
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 1,
+        "facts": [
+          {
+            "claim": "Employees receive 25 days of paid time off per calendar year.",
+            "evidence": [
+              {
+                "document_id": "hr/pto",
+                "revision": "pto-v1",
+                "quote": "Employees receive 25 days of paid time off per calendar year.",
+                "start": 0,
+                "end": 61,
+                "section_id": "root",
+                "section_revision": "1759c08c4dbdc9865edc022ebb7c3486d498a6e428e2d59d7d6b549996c7e0af"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "current.sev1_sla",
+      "category": "current_policy",
+      "model_input": {
+        "question": "What is the first response target for Priority 1 incidents?",
+        "documents": [
+          {
+            "document_id": "support/sla",
+            "revision": "sla-v1",
+            "title": "Support response targets",
+            "body": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes."
+          },
+          {
+            "document_id": "support/tiers",
+            "revision": "tiers-v1",
+            "title": "Support tiers",
+            "body": "Priority levels range from Priority 1, the most severe, to Priority 4, a general question."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The first response target for Priority 1 incidents is 15 minutes.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "support/sla",
+            "revision": "sla-v1",
+            "quote": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.546276792010758,
+        "usage": {
+          "prompt_tokens": 304,
+          "completion_tokens": 183,
+          "total_tokens": 487,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 115
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 176
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "current.sev1_sla",
+        "category": "current_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Priority 1 incidents receive a first response within 15 minutes.",
+              "evidence": [
+                {
+                  "document_id": "support/sla",
+                  "quote": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 5.597489541003597,
+          "usage": {
+            "prompt_tokens": 272,
+            "completion_tokens": 947,
+            "total_tokens": 1219,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 890
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 144
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 1,
+        "facts": [
+          {
+            "claim": "Priority 1 incidents receive a first response within 15 minutes.",
+            "evidence": [
+              {
+                "document_id": "support/sla",
+                "revision": "sla-v1",
+                "quote": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes.",
+                "start": 0,
+                "end": 101,
+                "section_id": "root",
+                "section_revision": "77af77af71adf71ba81dfc5dfc2b5c953237122fbe83257a58cb49f834984fae"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "superseded.refund_window",
+      "category": "superseded_policy",
+      "model_input": {
+        "question": "How long is the enterprise refund window today?",
+        "documents": [
+          {
+            "document_id": "handbook/refunds",
+            "revision": "refund-v3",
+            "title": "Enterprise refund policy",
+            "body": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The enterprise refund window is 45 days from invoice.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "handbook/refunds",
+            "revision": "refund-v3",
+            "quote": "Enterprise customers may request a refund within 45 days of invoice."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.1256762499979232,
+        "usage": {
+          "prompt_tokens": 253,
+          "completion_tokens": 131,
+          "total_tokens": 384,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 63
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 253
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "superseded.refund_window",
+        "category": "superseded_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Enterprise customers may request a refund within 45 days of invoice.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds",
+                  "quote": "Enterprise customers may request a refund within 45 days of invoice."
+                }
+              ]
+            },
+            {
+              "claim": "After 45 days, refund requests require finance approval.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds",
+                  "quote": "After 45 days, requests require finance approval."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 4.999388291995274,
+          "usage": {
+            "prompt_tokens": 221,
+            "completion_tokens": 758,
+            "total_tokens": 979,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 667
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 221
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "Enterprise customers may request a refund within 45 days of invoice.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds",
+                "revision": "refund-v3",
+                "quote": "Enterprise customers may request a refund within 45 days of invoice.",
+                "start": 0,
+                "end": 68,
+                "section_id": "root",
+                "section_revision": "70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "After 45 days, refund requests require finance approval.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds",
+                "revision": "refund-v3",
+                "quote": "After 45 days, requests require finance approval.",
+                "start": 69,
+                "end": 118,
+                "section_id": "root",
+                "section_revision": "70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d"
+              }
+            ],
+            "grounding_coverage": 0.8,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "superseded.password_rotation",
+      "category": "superseded_policy",
+      "model_input": {
+        "question": "What is the current password rotation requirement?",
+        "documents": [
+          {
+            "document_id": "security/password-policy",
+            "revision": "password-v2",
+            "title": "Password policy",
+            "body": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "security/password-policy",
+            "revision": "password-v2",
+            "quote": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.832820499999798,
+        "usage": {
+          "prompt_tokens": 246,
+          "completion_tokens": 253,
+          "total_tokens": 499,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 172
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 246
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "superseded.password_rotation",
+        "category": "superseded_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "The password policy states that passwords must not be rotated on a fixed schedule; credentials should be rotated only when compromise is suspected.",
+              "evidence": [
+                {
+                  "document_id": "security/password-policy",
+                  "quote": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 2.9139033750107046,
+          "usage": {
+            "prompt_tokens": 214,
+            "completion_tokens": 397,
+            "total_tokens": 611,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 322
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 214
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 1,
+        "facts": [
+          {
+            "claim": "The password policy states that passwords must not be rotated on a fixed schedule; credentials should be rotated only when compromise is suspected.",
+            "evidence": [
+              {
+                "document_id": "security/password-policy",
+                "revision": "password-v2",
+                "quote": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected.",
+                "start": 0,
+                "end": 104,
+                "section_id": "root",
+                "section_revision": "29744255e416a90ce0bfd5b450f19ff900add552d414e876de89e3fb46201906"
+              }
+            ],
+            "grounding_coverage": 0.6714,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "superseded.log_retention",
+      "category": "superseded_policy",
+      "model_input": {
+        "question": "How long are production logs retained now?",
+        "documents": [
+          {
+            "document_id": "platform/log-retention",
+            "revision": "logs-v2",
+            "title": "Log retention",
+            "body": "Production logs are retained for 13 months and then deleted."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Production logs are retained for 13 months and then deleted.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "platform/log-retention",
+            "revision": "logs-v2",
+            "quote": "Production logs are retained for 13 months and then deleted."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.4752866249909857,
+        "usage": {
+          "prompt_tokens": 238,
+          "completion_tokens": 176,
+          "total_tokens": 414,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 110
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 238
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "superseded.log_retention",
+        "category": "superseded_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Production logs are retained for 13 months and then deleted.",
+              "evidence": [
+                {
+                  "document_id": "platform/log-retention",
+                  "quote": "Production logs are retained for 13 months and then deleted."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 2.934321708002244,
+          "usage": {
+            "prompt_tokens": 206,
+            "completion_tokens": 444,
+            "total_tokens": 650,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 396
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 206
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 1,
+        "facts": [
+          {
+            "claim": "Production logs are retained for 13 months and then deleted.",
+            "evidence": [
+              {
+                "document_id": "platform/log-retention",
+                "revision": "logs-v2",
+                "quote": "Production logs are retained for 13 months and then deleted.",
+                "start": 0,
+                "end": 60,
+                "section_id": "root",
+                "section_revision": "b25ea4c1ba3fd0f6da8622774b9a4d26f7ff20cd812457a4cb70857688dd95db"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "superseded.travel_class",
+      "category": "superseded_policy",
+      "model_input": {
+        "question": "When may employees book premium economy flights?",
+        "documents": [
+          {
+            "document_id": "finance/travel-policy",
+            "revision": "travel-v2",
+            "title": "Travel policy",
+            "body": "Flights longer than six hours may be booked in premium economy. All other flights are booked economy."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Employees may book premium economy flights when the flight is longer than six hours.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "finance/travel-policy",
+            "revision": "travel-v2",
+            "quote": "Flights longer than six hours may be booked in premium economy."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.8323825420084177,
+        "usage": {
+          "prompt_tokens": 247,
+          "completion_tokens": 225,
+          "total_tokens": 472,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 154
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 247
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "superseded.travel_class",
+        "category": "superseded_policy",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Flights longer than six hours may be booked in premium economy.",
+              "evidence": [
+                {
+                  "document_id": "finance/travel-policy",
+                  "quote": "Flights longer than six hours may be booked in premium economy."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 8.543689291996998,
+          "usage": {
+            "prompt_tokens": 215,
+            "completion_tokens": 1401,
+            "total_tokens": 1616,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1350
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 215
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 1,
+        "facts": [
+          {
+            "claim": "Flights longer than six hours may be booked in premium economy.",
+            "evidence": [
+              {
+                "document_id": "finance/travel-policy",
+                "revision": "travel-v2",
+                "quote": "Flights longer than six hours may be booked in premium economy.",
+                "start": 0,
+                "end": 63,
+                "section_id": "root",
+                "section_revision": "2a5a83439ad62414247a651f550b8745903e4e834363a00513d487959e21dbfa"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "conflict.client_meals",
+      "category": "conflict",
+      "model_input": {
+        "question": "What is the per-person reimbursement limit for client meals?",
+        "documents": [
+          {
+            "document_id": "sales/playbook",
+            "revision": "playbook-v2",
+            "title": "Sales playbook",
+            "body": "Client meals are reimbursed up to $150 per person during deal cycles."
+          },
+          {
+            "document_id": "finance/expenses",
+            "revision": "expense-v5",
+            "title": "Finance expense policy",
+            "body": "Client meals are reimbursed up to $75 per person when itemized."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The documents conflict and do not resolve which limit applies: the sales playbook states $150 per person, while the finance expense policy states $75 per person. Without a stated precedence or supersession rule, the per-person reimbursement limit cannot be determined from the supplied evidence.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "sales/playbook",
+            "revision": "playbook-v2",
+            "quote": "Client meals are reimbursed up to $150 per person during deal cycles."
+          },
+          {
+            "document_id": "finance/expenses",
+            "revision": "expense-v5",
+            "quote": "Client meals are reimbursed up to $75 per person when itemized."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 2.5332327079959214,
+        "usage": {
+          "prompt_tokens": 294,
+          "completion_tokens": 319,
+          "total_tokens": 613,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 180
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 166
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "conflict.client_meals",
+        "category": "conflict",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 2,
+        "current_citations": 2,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Client meals are reimbursed up to $150 per person during deal cycles under the Sales playbook (playbook-v2).",
+              "evidence": [
+                {
+                  "document_id": "sales/playbook",
+                  "quote": "Client meals are reimbursed up to $150 per person during deal cycles."
+                }
+              ]
+            },
+            {
+              "claim": "Client meals are reimbursed up to $75 per person when itemized under the Finance expense policy (expense-v5).",
+              "evidence": [
+                {
+                  "document_id": "finance/expenses",
+                  "quote": "Client meals are reimbursed up to $75 per person when itemized."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 5.257745957991574,
+          "usage": {
+            "prompt_tokens": 262,
+            "completion_tokens": 836,
+            "total_tokens": 1098,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 714
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 134
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "Client meals are reimbursed up to $150 per person during deal cycles under the Sales playbook (playbook-v2).",
+            "evidence": [
+              {
+                "document_id": "sales/playbook",
+                "revision": "playbook-v2",
+                "quote": "Client meals are reimbursed up to $150 per person during deal cycles.",
+                "start": 0,
+                "end": 69,
+                "section_id": "root",
+                "section_revision": "b7bf630474ce0fcfcfe78d40d96b6dc30e057822f98a4067938af3c23594b13d"
+              }
+            ],
+            "grounding_coverage": 0.6647,
+            "qualifiers": {}
+          },
+          {
+            "claim": "Client meals are reimbursed up to $75 per person when itemized under the Finance expense policy (expense-v5).",
+            "evidence": [
+              {
+                "document_id": "finance/expenses",
+                "revision": "expense-v5",
+                "quote": "Client meals are reimbursed up to $75 per person when itemized.",
+                "start": 0,
+                "end": 63,
+                "section_id": "root",
+                "section_revision": "f8cbca61638803f152e6dae2a86ed3e4a04afdfaace9ec6a59085756818020bf"
+              }
+            ],
+            "grounding_coverage": 0.6176,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "conflict.change_freeze",
+      "category": "conflict",
+      "model_input": {
+        "question": "When does the winter change freeze start?",
+        "documents": [
+          {
+            "document_id": "product/release-notes",
+            "revision": "notes-v1",
+            "title": "Release notes",
+            "body": "Deploys during the winter freeze are allowed with VP approval."
+          },
+          {
+            "document_id": "engineering/change-freeze",
+            "revision": "freeze-v4",
+            "title": "Change freeze policy",
+            "body": "A company-wide change freeze runs from December 20 to January 2. Emergency changes require the CTO."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The winter change freeze starts December 20.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "engineering/change-freeze",
+            "revision": "freeze-v4",
+            "quote": "A company-wide change freeze runs from December 20 to January 2."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.2878057079942664,
+        "usage": {
+          "prompt_tokens": 296,
+          "completion_tokens": 126,
+          "total_tokens": 422,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 58
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 168
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "conflict.change_freeze",
+        "category": "conflict",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "A company-wide change freeze runs from December 20 to January 2.",
+              "evidence": [
+                {
+                  "document_id": "engineering/change-freeze",
+                  "quote": "A company-wide change freeze runs from December 20 to January 2."
+                }
+              ]
+            },
+            {
+              "claim": "Emergency changes require the CTO.",
+              "evidence": [
+                {
+                  "document_id": "engineering/change-freeze",
+                  "quote": "Emergency changes require the CTO."
+                }
+              ]
+            },
+            {
+              "claim": "Deploys during the winter freeze are allowed with VP approval.",
+              "evidence": [
+                {
+                  "document_id": "product/release-notes",
+                  "quote": "Deploys during the winter freeze are allowed with VP approval."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 8.776533707990893,
+          "usage": {
+            "prompt_tokens": 264,
+            "completion_tokens": 1580,
+            "total_tokens": 1844,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1447
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 136
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 3,
+        "facts": [
+          {
+            "claim": "A company-wide change freeze runs from December 20 to January 2.",
+            "evidence": [
+              {
+                "document_id": "engineering/change-freeze",
+                "revision": "freeze-v4",
+                "quote": "A company-wide change freeze runs from December 20 to January 2.",
+                "start": 0,
+                "end": 64,
+                "section_id": "root",
+                "section_revision": "414836567382d1798252a3987a7218ffa365cb16ef7ff3baab025203563b36ee"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "Emergency changes require the CTO.",
+            "evidence": [
+              {
+                "document_id": "engineering/change-freeze",
+                "revision": "freeze-v4",
+                "quote": "Emergency changes require the CTO.",
+                "start": 65,
+                "end": 99,
+                "section_id": "root",
+                "section_revision": "414836567382d1798252a3987a7218ffa365cb16ef7ff3baab025203563b36ee"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "Deploys during the winter freeze are allowed with VP approval.",
+            "evidence": [
+              {
+                "document_id": "product/release-notes",
+                "revision": "notes-v1",
+                "quote": "Deploys during the winter freeze are allowed with VP approval.",
+                "start": 0,
+                "end": 62,
+                "section_id": "root",
+                "section_revision": "f746d75c32af9575802be5a49fb10d8f47cc64078e743c1bf8ee4aea114044c3"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "conflict.nda_review",
+      "category": "conflict",
+      "model_input": {
+        "question": "What approval is required before signing a mutual NDA?",
+        "documents": [
+          {
+            "document_id": "sales/nda-faq",
+            "revision": "ndafaq-v1",
+            "title": "NDA FAQ",
+            "body": "Standard NDAs under $10k need no review."
+          },
+          {
+            "document_id": "legal/nda-policy",
+            "revision": "nda-v3",
+            "title": "NDA policy",
+            "body": "Every mutual NDA must be reviewed by legal before signature."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Legal review is required before signing a mutual NDA.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "legal/nda-policy",
+            "revision": "nda-v3",
+            "quote": "Every mutual NDA must be reviewed by legal before signature."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 6.984967500000494,
+        "usage": {
+          "prompt_tokens": 289,
+          "completion_tokens": 1136,
+          "total_tokens": 1425,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 1079
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 161
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "conflict.nda_review",
+        "category": "conflict",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": true,
+        "disposition_correct": false,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "citation_valid": false,
+        "fact_count": 0,
+        "error": "ValueError: incomplete model response: length"
+      }
+    },
+    {
+      "id": "ambiguity.leave_length",
+      "category": "ambiguity",
+      "model_input": {
+        "question": "How long is leave?",
+        "documents": [
+          {
+            "document_id": "hr/medical-leave",
+            "revision": "medical-v1",
+            "title": "Medical leave",
+            "body": "Medical leave runs for 12 weeks with job protection."
+          },
+          {
+            "document_id": "hr/parental-leave",
+            "revision": "parental-v1",
+            "title": "Parental leave",
+            "body": "Parental leave runs for 16 weeks for all new parents."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The question is underspecified because the documents distinguish between medical leave and parental leave, which have different durations. No single leave duration can be determined without knowing which type of leave is meant.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "hr/medical-leave",
+            "revision": "medical-v1",
+            "quote": "Medical leave runs for 12 weeks with job protection."
+          },
+          {
+            "document_id": "hr/parental-leave",
+            "revision": "parental-v1",
+            "quote": "Parental leave runs for 16 weeks for all new parents."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 3.1927702920074807,
+        "usage": {
+          "prompt_tokens": 283,
+          "completion_tokens": 456,
+          "total_tokens": 739,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 323
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 155
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "ambiguity.leave_length",
+        "category": "ambiguity",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 2,
+        "current_citations": 2,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Medical leave runs for 12 weeks with job protection.",
+              "evidence": [
+                {
+                  "document_id": "hr/medical-leave",
+                  "quote": "Medical leave runs for 12 weeks with job protection."
+                }
+              ]
+            },
+            {
+              "claim": "Parental leave runs for 16 weeks for all new parents.",
+              "evidence": [
+                {
+                  "document_id": "hr/parental-leave",
+                  "quote": "Parental leave runs for 16 weeks for all new parents."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 3.0021342920081224,
+          "usage": {
+            "prompt_tokens": 251,
+            "completion_tokens": 481,
+            "total_tokens": 732,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 376
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 251
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "Medical leave runs for 12 weeks with job protection.",
+            "evidence": [
+              {
+                "document_id": "hr/medical-leave",
+                "revision": "medical-v1",
+                "quote": "Medical leave runs for 12 weeks with job protection.",
+                "start": 0,
+                "end": 52,
+                "section_id": "root",
+                "section_revision": "16c43abf2ae7af04e060ff497918a6c570a65560323490278ea2cf0ae66e24d0"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "Parental leave runs for 16 weeks for all new parents.",
+            "evidence": [
+              {
+                "document_id": "hr/parental-leave",
+                "revision": "parental-v1",
+                "quote": "Parental leave runs for 16 weeks for all new parents.",
+                "start": 0,
+                "end": 53,
+                "section_id": "root",
+                "section_revision": "695e51a4b14e89814feabebeace2f7313381c1e01eb5d8ccba048d2e8dc187b2"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguity.refund_region",
+      "category": "ambiguity",
+      "model_input": {
+        "question": "What is the refund window?",
+        "documents": [
+          {
+            "document_id": "handbook/refunds-us",
+            "revision": "refundus-v1",
+            "title": "US refunds",
+            "body": "US customers have a 30 day refund window."
+          },
+          {
+            "document_id": "handbook/refunds-eu",
+            "revision": "refundeu-v1",
+            "title": "EU refunds",
+            "body": "EU customers have a 14 day refund window."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The refund window depends on the customer's region: US customers have a 30 day refund window, while EU customers have a 14 day refund window.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "handbook/refunds-us",
+            "revision": "refundus-v1",
+            "quote": "US customers have a 30 day refund window."
+          },
+          {
+            "document_id": "handbook/refunds-eu",
+            "revision": "refundeu-v1",
+            "quote": "EU customers have a 14 day refund window."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 7.077862790989457,
+        "usage": {
+          "prompt_tokens": 286,
+          "completion_tokens": 1093,
+          "total_tokens": 1379,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 982
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 158
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "ambiguity.refund_region",
+        "category": "ambiguity",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": true,
+        "disposition_correct": false,
+        "evidence_count": 2,
+        "current_citations": 2,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "US customers have a 30 day refund window.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds-us",
+                  "quote": "US customers have a 30 day refund window."
+                }
+              ]
+            },
+            {
+              "claim": "EU customers have a 14 day refund window.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds-eu",
+                  "quote": "EU customers have a 14 day refund window."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 1.9654337920073885,
+          "usage": {
+            "prompt_tokens": 254,
+            "completion_tokens": 286,
+            "total_tokens": 540,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 187
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 254
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "US customers have a 30 day refund window.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds-us",
+                "revision": "refundus-v1",
+                "quote": "US customers have a 30 day refund window.",
+                "start": 0,
+                "end": 41,
+                "section_id": "root",
+                "section_revision": "afeb5ad3389d14e9351015613c18cf7f39a7d45ae173b0f4feaf29ece05525a3"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "EU customers have a 14 day refund window.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds-eu",
+                "revision": "refundeu-v1",
+                "quote": "EU customers have a 14 day refund window.",
+                "start": 0,
+                "end": 41,
+                "section_id": "root",
+                "section_revision": "fc56ebb5219390ef8f573dd2e661515b0b7538a3a1f8e92869ca186c9abf7699"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguity.escalation",
+      "category": "ambiguity",
+      "model_input": {
+        "question": "Without guessing severity, give the single escalation deadline for this incident.",
+        "documents": [
+          {
+            "document_id": "support/sev1",
+            "revision": "sev1-v1",
+            "title": "Severity 1 escalation",
+            "body": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes."
+          },
+          {
+            "document_id": "support/sev2",
+            "revision": "sev2-v1",
+            "title": "Severity 2 escalation",
+            "body": "Severity 2 incidents are escalated within four hours."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Insufficient evidence: the incident's severity is not specified, so a single escalation deadline cannot be determined without guessing. The documents provide different deadlines depending on severity (15 minutes for Severity 1, four hours for Severity 2).",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "support/sev1",
+            "revision": "sev1-v1",
+            "quote": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes."
+          },
+          {
+            "document_id": "support/sev2",
+            "revision": "sev2-v1",
+            "quote": "Severity 2 incidents are escalated within four hours."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.8233332910022,
+        "usage": {
+          "prompt_tokens": 299,
+          "completion_tokens": 247,
+          "total_tokens": 546,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 98
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 171
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "ambiguity.escalation",
+        "category": "ambiguity",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 2,
+        "current_citations": 2,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes.",
+              "evidence": [
+                {
+                  "document_id": "support/sev1",
+                  "quote": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes."
+                }
+              ]
+            },
+            {
+              "claim": "Severity 2 incidents are escalated within four hours.",
+              "evidence": [
+                {
+                  "document_id": "support/sev2",
+                  "quote": "Severity 2 incidents are escalated within four hours."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 2.6950693340040743,
+          "usage": {
+            "prompt_tokens": 267,
+            "completion_tokens": 391,
+            "total_tokens": 658,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 291
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 139
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes.",
+            "evidence": [
+              {
+                "document_id": "support/sev1",
+                "revision": "sev1-v1",
+                "quote": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes.",
+                "start": 0,
+                "end": 77,
+                "section_id": "root",
+                "section_revision": "d2fe61d375b78533f112db6cf8f92d1408638036eedaa7471292de1dc08b5c24"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "Severity 2 incidents are escalated within four hours.",
+            "evidence": [
+              {
+                "document_id": "support/sev2",
+                "revision": "sev2-v1",
+                "quote": "Severity 2 incidents are escalated within four hours.",
+                "start": 0,
+                "end": 53,
+                "section_id": "root",
+                "section_revision": "aecba377e47f3d436ebb1dfef8b68298cecc2b58fa6db032d2021debe1eff447"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "missing.soc2",
+      "category": "missing_info",
+      "model_input": {
+        "question": "Is the company SOC 2 certified?",
+        "documents": [
+          {
+            "document_id": "compliance/certifications",
+            "revision": "certs-v1",
+            "title": "Certifications",
+            "body": "The company holds ISO 27001 certification."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Insufficient evidence: the provided document states only ISO 27001 certification and does not mention SOC 2 certification.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "compliance/certifications",
+            "revision": "certs-v1",
+            "quote": "The company holds ISO 27001 certification."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 3.954226749992813,
+        "usage": {
+          "prompt_tokens": 237,
+          "completion_tokens": 582,
+          "total_tokens": 819,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 503
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 237
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "missing.soc2",
+        "category": "missing_info",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 3.8975305409985594,
+          "usage": {
+            "prompt_tokens": 205,
+            "completion_tokens": 525,
+            "total_tokens": 730,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 519
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 205
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "missing.holidays",
+      "category": "missing_info",
+      "model_input": {
+        "question": "What are the 2027 company holidays?",
+        "documents": [
+          {
+            "document_id": "hr/holidays-2026",
+            "revision": "holidays-v2026",
+            "title": "2026 holiday calendar",
+            "body": "The 2026 company holidays are New Year's Day, Memorial Day, Independence Day, Thanksgiving, and Christmas."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not contain a 2027 holiday calendar. Only a 2026 holiday calendar is provided, so the 2027 company holidays cannot be determined from the available evidence.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "hr/holidays-2026",
+            "revision": "holidays-v2026",
+            "quote": "The 2026 company holidays are New Year's Day, Memorial Day, Independence Day, Thanksgiving, and Christmas."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 2.4413773749984102,
+        "usage": {
+          "prompt_tokens": 258,
+          "completion_tokens": 380,
+          "total_tokens": 638,
+          "prompt_tokens_details": {
+            "cached_tokens": 124
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 269
+          },
+          "prompt_cache_hit_tokens": 124,
+          "prompt_cache_miss_tokens": 134
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "missing.holidays",
+        "category": "missing_info",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 1.5691288340021856,
+          "usage": {
+            "prompt_tokens": 226,
+            "completion_tokens": 195,
+            "total_tokens": 421,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 189
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 226
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "missing.headcount",
+      "category": "missing_info",
+      "model_input": {
+        "question": "How many engineers are on the platform team?",
+        "documents": [
+          {
+            "document_id": "engineering/teams",
+            "revision": "teams-v1",
+            "title": "Engineering teams",
+            "body": "The platform group owns shared services. Team size changes each quarter."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied document does not state how many engineers are on the platform team. It only notes that the platform group owns shared services and that team size changes each quarter, so no specific headcount can be determined.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "engineering/teams",
+            "revision": "teams-v1",
+            "quote": "The platform group owns shared services. Team size changes each quarter."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.4226496250048513,
+        "usage": {
+          "prompt_tokens": 241,
+          "completion_tokens": 137,
+          "total_tokens": 378,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 37
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 241
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "missing.headcount",
+        "category": "missing_info",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "The platform group's team size changes each quarter.",
+              "evidence": [
+                {
+                  "document_id": "engineering/teams",
+                  "quote": "Team size changes each quarter."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 3.679586874990491,
+          "usage": {
+            "prompt_tokens": 209,
+            "completion_tokens": 491,
+            "total_tokens": 700,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 445
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 209
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 1,
+        "facts": [
+          {
+            "claim": "The platform group's team size changes each quarter.",
+            "evidence": [
+              {
+                "document_id": "engineering/teams",
+                "revision": "teams-v1",
+                "quote": "Team size changes each quarter.",
+                "start": 41,
+                "end": 72,
+                "section_id": "root",
+                "section_revision": "a3c70a66a88adff552e7a73e21d96c4fb491f0481641ac024f6effa0bb934395"
+              }
+            ],
+            "grounding_coverage": 0.5444,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "restricted.compensation",
+      "category": "restricted_evidence",
+      "model_input": {
+        "question": "What is the Staff engineer salary band?",
+        "documents": [
+          {
+            "document_id": "hr/pto",
+            "revision": "pto-v1",
+            "title": "Paid time off policy",
+            "body": "Employees receive 25 days of paid time off per calendar year. Unused PTO carries over up to 5 days."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not contain information about the Staff engineer salary band.",
+        "disposition": "insufficient_evidence",
+        "evidence": []
+      },
+      "answer_request": {
+        "latency_seconds": 2.048461957994732,
+        "usage": {
+          "prompt_tokens": 253,
+          "completion_tokens": 266,
+          "total_tokens": 519,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 232
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 253
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "restricted.compensation",
+        "category": "restricted_evidence",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 0,
+        "current_citations": 0,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 0.8177847920014756,
+          "usage": {
+            "prompt_tokens": 221,
+            "completion_tokens": 32,
+            "total_tokens": 253,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 26
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 221
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "restricted.settlement",
+      "category": "restricted_evidence",
+      "model_input": {
+        "question": "What are the settlement terms in the Acme lawsuit?",
+        "documents": [
+          {
+            "document_id": "legal/nda-policy",
+            "revision": "nda-v3",
+            "title": "NDA policy",
+            "body": "Every mutual NDA must be reviewed by legal before signature."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "Insufficient evidence: the supplied documents contain no information about the Acme lawsuit or any settlement terms.",
+        "disposition": "insufficient_evidence",
+        "evidence": []
+      },
+      "answer_request": {
+        "latency_seconds": 1.5170642499870155,
+        "usage": {
+          "prompt_tokens": 243,
+          "completion_tokens": 194,
+          "total_tokens": 437,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 153
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 243
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "restricted.settlement",
+        "category": "restricted_evidence",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 0,
+        "current_citations": 0,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 1.4705199589952826,
+          "usage": {
+            "prompt_tokens": 211,
+            "completion_tokens": 159,
+            "total_tokens": 370,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 153
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 211
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "restricted.outage_cause",
+      "category": "restricted_evidence",
+      "model_input": {
+        "question": "What caused the March outage?",
+        "documents": [
+          {
+            "document_id": "support/sla",
+            "revision": "sla-v1",
+            "title": "Support response targets",
+            "body": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not contain information about the cause of the March outage. The only document concerns support response targets for Priority 1 incidents.",
+        "disposition": "insufficient_evidence",
+        "evidence": []
+      },
+      "answer_request": {
+        "latency_seconds": 1.7974313750019064,
+        "usage": {
+          "prompt_tokens": 246,
+          "completion_tokens": 214,
+          "total_tokens": 460,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 169
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 246
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "restricted.outage_cause",
+        "category": "restricted_evidence",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 0,
+        "current_citations": 0,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 3.642049166999641,
+          "usage": {
+            "prompt_tokens": 214,
+            "completion_tokens": 514,
+            "total_tokens": 728,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 508
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 214
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "restricted.roadmap",
+      "category": "restricted_evidence",
+      "model_input": {
+        "question": "When will the billing rewrite ship?",
+        "documents": [
+          {
+            "document_id": "legal/nda-policy",
+            "revision": "nda-v3",
+            "title": "NDA policy",
+            "body": "Every mutual NDA must be reviewed by legal before signature."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not contain information about the billing rewrite or its shipping date.",
+        "disposition": "insufficient_evidence",
+        "evidence": []
+      },
+      "answer_request": {
+        "latency_seconds": 1.8299370000022464,
+        "usage": {
+          "prompt_tokens": 239,
+          "completion_tokens": 170,
+          "total_tokens": 409,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 134
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 239
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "restricted.roadmap",
+        "category": "restricted_evidence",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 0,
+        "current_citations": 0,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 1.5914052500011167,
+          "usage": {
+            "prompt_tokens": 207,
+            "completion_tokens": 145,
+            "total_tokens": 352,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 139
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 207
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "irrelevant.giftcard_refund",
+      "category": "irrelevant_matches",
+      "model_input": {
+        "question": "Can a digital gift card be refunded?",
+        "documents": [
+          {
+            "document_id": "handbook/refunds-physical",
+            "revision": "physical-v1",
+            "title": "Physical goods refunds",
+            "body": "Refunds apply to physical goods returned within 45 days. Digital gift cards are non-refundable and final sale."
+          },
+          {
+            "document_id": "handbook/gift-cards",
+            "revision": "giftbuy-v1",
+            "title": "Gift card purchases",
+            "body": "Gift cards can be purchased in denominations from $10 to $500."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "No. Digital gift cards are non-refundable and final sale.",
+        "disposition": "grounded",
+        "evidence": [
+          {
+            "document_id": "handbook/refunds-physical",
+            "revision": "physical-v1",
+            "quote": "Digital gift cards are non-refundable and final sale."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 1.8750848750059959,
+        "usage": {
+          "prompt_tokens": 308,
+          "completion_tokens": 202,
+          "total_tokens": 510,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 140
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 180
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "irrelevant.giftcard_refund",
+        "category": "irrelevant_matches",
+        "expected_disposition": "grounded",
+        "predicted_disposition": "grounded",
+        "prediction_valid": true,
+        "grounded": true,
+        "grounded_attempt": true,
+        "abstained": false,
+        "expected_abstention": false,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": true,
+        "stale": false,
+        "answer_correct": true,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": [
+            {
+              "claim": "Digital gift cards are non-refundable and final sale.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds-physical",
+                  "quote": "Digital gift cards are non-refundable and final sale."
+                }
+              ]
+            },
+            {
+              "claim": "Refunds apply to physical goods returned within 45 days.",
+              "evidence": [
+                {
+                  "document_id": "handbook/refunds-physical",
+                  "quote": "Refunds apply to physical goods returned within 45 days."
+                }
+              ]
+            }
+          ]
+        },
+        "request": {
+          "latency_seconds": 7.786875666992273,
+          "usage": {
+            "prompt_tokens": 276,
+            "completion_tokens": 1255,
+            "total_tokens": 1531,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 1159
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 148
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 2,
+        "facts": [
+          {
+            "claim": "Digital gift cards are non-refundable and final sale.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds-physical",
+                "revision": "physical-v1",
+                "quote": "Digital gift cards are non-refundable and final sale.",
+                "start": 57,
+                "end": 110,
+                "section_id": "root",
+                "section_revision": "85b1d9f9d04c558c1e0b85b3671700893f30d0632725e5970fff3f5fca050dce"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          },
+          {
+            "claim": "Refunds apply to physical goods returned within 45 days.",
+            "evidence": [
+              {
+                "document_id": "handbook/refunds-physical",
+                "revision": "physical-v1",
+                "quote": "Refunds apply to physical goods returned within 45 days.",
+                "start": 0,
+                "end": 56,
+                "section_id": "root",
+                "section_revision": "85b1d9f9d04c558c1e0b85b3671700893f30d0632725e5970fff3f5fca050dce"
+              }
+            ],
+            "grounding_coverage": 0.9,
+            "qualifiers": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "irrelevant.visitor_parking",
+      "category": "irrelevant_matches",
+      "model_input": {
+        "question": "Where can visitors park at headquarters?",
+        "documents": [
+          {
+            "document_id": "facilities/parking",
+            "revision": "parking-v1",
+            "title": "Employee parking",
+            "body": "Employees park in the south garage using a badge. Carpool spots are reserved on level two."
+          },
+          {
+            "document_id": "facilities/transit",
+            "revision": "transit-v1",
+            "title": "Transit benefits",
+            "body": "Employees may enroll in a pre-tax transit benefit."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not state where visitors can park at headquarters. They only cover employee parking and transit benefits, so the question lacks necessary evidence.",
+        "disposition": "insufficient_evidence",
+        "evidence": []
+      },
+      "answer_request": {
+        "latency_seconds": 3.9837644999934128,
+        "usage": {
+          "prompt_tokens": 289,
+          "completion_tokens": 332,
+          "total_tokens": 621,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 286
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 161
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "irrelevant.visitor_parking",
+        "category": "irrelevant_matches",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 0,
+        "current_citations": 0,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 1.8252892080054153,
+          "usage": {
+            "prompt_tokens": 257,
+            "completion_tokens": 179,
+            "total_tokens": 436,
+            "prompt_tokens_details": {
+              "cached_tokens": 123
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 173
+            },
+            "prompt_cache_hit_tokens": 123,
+            "prompt_cache_miss_tokens": 134
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "irrelevant.internet_stipend",
+      "category": "irrelevant_matches",
+      "model_input": {
+        "question": "Is there a stipend for home internet?",
+        "documents": [
+          {
+            "document_id": "hr/remote-work",
+            "revision": "remote-v1",
+            "title": "Remote work policy",
+            "body": "Remote employees receive a one-time home office equipment stipend of $500."
+          },
+          {
+            "document_id": "hr/core-hours",
+            "revision": "corehours-v1",
+            "title": "Core hours",
+            "body": "All employees overlap at least four hours with 10:00 to 16:00 local time."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not address home internet stipends. The only stipend mentioned is a one-time home office equipment stipend of $500, which is not stated to cover home internet, and no other document provides relevant information.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "hr/remote-work",
+            "revision": "remote-v1",
+            "quote": "Remote employees receive a one-time home office equipment stipend of $500."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 2.6381769580038963,
+        "usage": {
+          "prompt_tokens": 294,
+          "completion_tokens": 194,
+          "total_tokens": 488,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 89
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 166
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "irrelevant.internet_stipend",
+        "category": "irrelevant_matches",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 5.92537591700966,
+          "usage": {
+            "prompt_tokens": 262,
+            "completion_tokens": 935,
+            "total_tokens": 1197,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 929
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 134
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    },
+    {
+      "id": "irrelevant.java_version",
+      "category": "irrelevant_matches",
+      "model_input": {
+        "question": "Which Java version does release 4.2 require?",
+        "documents": [
+          {
+            "document_id": "engineering/release-4.1",
+            "revision": "rel41-v1",
+            "title": "Release 4.1 notes",
+            "body": "Release 4.1 requires Java 17 and Node 20."
+          },
+          {
+            "document_id": "engineering/release-4.2",
+            "revision": "rel42-v1",
+            "title": "Release 4.2 notes",
+            "body": "Release 4.2 requires Node 22 and ships the new scheduler."
+          }
+        ]
+      },
+      "prediction": {
+        "answer": "The supplied documents do not state which Java version Release 4.2 requires. Release 4.2 notes mention Node 22 and the new scheduler, but not Java.",
+        "disposition": "insufficient_evidence",
+        "evidence": [
+          {
+            "document_id": "engineering/release-4.2",
+            "revision": "rel42-v1",
+            "quote": "Release 4.2 requires Node 22 and ships the new scheduler."
+          }
+        ]
+      },
+      "answer_request": {
+        "latency_seconds": 2.4825600840122206,
+        "usage": {
+          "prompt_tokens": 305,
+          "completion_tokens": 403,
+          "total_tokens": 708,
+          "prompt_tokens_details": {
+            "cached_tokens": 128
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 314
+          },
+          "prompt_cache_hit_tokens": 128,
+          "prompt_cache_miss_tokens": 177
+        },
+        "model": "deepseek-flash"
+      },
+      "metrics": {
+        "id": "irrelevant.java_version",
+        "category": "irrelevant_matches",
+        "expected_disposition": "insufficient_evidence",
+        "predicted_disposition": "insufficient_evidence",
+        "prediction_valid": true,
+        "grounded": false,
+        "grounded_attempt": false,
+        "abstained": true,
+        "expected_abstention": true,
+        "disposition_correct": true,
+        "evidence_count": 1,
+        "current_citations": 1,
+        "stale_citations": 0,
+        "stale_content_proxy": false,
+        "unauthorized_citations": 0,
+        "fabricated_citations": 0,
+        "citation_valid": false,
+        "stale": false,
+        "answer_correct": null,
+        "error": ""
+      },
+      "extraction": {
+        "prediction": {
+          "facts": []
+        },
+        "request": {
+          "latency_seconds": 5.377433250003378,
+          "usage": {
+            "prompt_tokens": 273,
+            "completion_tokens": 938,
+            "total_tokens": 1211,
+            "prompt_tokens_details": {
+              "cached_tokens": 128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 932
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 145
+          },
+          "model": "deepseek-flash"
+        },
+        "citation_valid": true,
+        "fact_count": 0,
+        "facts": []
+      }
+    }
+  ]
+}

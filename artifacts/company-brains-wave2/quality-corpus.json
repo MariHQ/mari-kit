@@ -1,0 +1,1924 @@
+[
+  {
+    "id": "current.refund_window",
+    "category": "current_policy",
+    "question": "How long is the enterprise refund window?",
+    "documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds",
+        "title": "Enterprise refund policy",
+        "body": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval.",
+        "revision": "refund-v3",
+        "provider_revision": "refund-v3",
+        "content_digest": "sha256:70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d",
+        "updated_at": "2025-02-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "shipping",
+        "title": "Shipping policy",
+        "body": "Standard shipping arrives in three business days; overnight is available for an extra fee.",
+        "revision": "shipping-v1",
+        "provider_revision": "shipping-v1",
+        "content_digest": "sha256:1824d61207d0b567292a73e710eef594e6292bf4e839e1e284b99bb49a6f7ec2",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds",
+        "title": "Enterprise refund policy",
+        "body": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval.",
+        "revision": "refund-v3",
+        "provider_revision": "refund-v3",
+        "content_digest": "sha256:70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d",
+        "updated_at": "2025-02-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "shipping",
+        "title": "Shipping policy",
+        "body": "Standard shipping arrives in three business days; overnight is available for an extra fee.",
+        "revision": "shipping-v1",
+        "provider_revision": "shipping-v1",
+        "content_digest": "sha256:1824d61207d0b567292a73e710eef594e6292bf4e839e1e284b99bb49a6f7ec2",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "handbook/refunds",
+      "handbook/shipping"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "45 days"
+    ],
+    "forbidden_terms": [
+      "30 days",
+      "60 days",
+      "90 days"
+    ],
+    "allowed_evidence_ids": [
+      "handbook/refunds"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "handbook/refunds",
+        "revision": "refund-v3"
+      }
+    ]
+  },
+  {
+    "id": "current.mfa",
+    "category": "current_policy",
+    "question": "What multi-factor authentication does the company require for SSO?",
+    "documents": [
+      {
+        "source_id": "security",
+        "external_id": "mfa-policy",
+        "title": "Multi-factor authentication policy",
+        "body": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on. SMS codes are not accepted.",
+        "revision": "mfa-v1",
+        "provider_revision": "mfa-v1",
+        "content_digest": "sha256:ad392c19442118a79752e2f9c33a566224d86074dbb1bf73e53de5c3ba0c8cf2",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "security",
+        "external_id": "offboarding",
+        "title": "Offboarding checklist",
+        "body": "Revoke SSO sessions, rotate shared secrets, and return hardware on the employee's last day.",
+        "revision": "offboard-v1",
+        "provider_revision": "offboard-v1",
+        "content_digest": "sha256:7d7021e2186c18c1272a75ca2f45285061f6a3a9244745340b3e1db64c71d6d9",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "security",
+        "external_id": "mfa-policy",
+        "title": "Multi-factor authentication policy",
+        "body": "All employees must use phishing-resistant MFA, such as passkeys or hardware security keys, for single sign-on. SMS codes are not accepted.",
+        "revision": "mfa-v1",
+        "provider_revision": "mfa-v1",
+        "content_digest": "sha256:ad392c19442118a79752e2f9c33a566224d86074dbb1bf73e53de5c3ba0c8cf2",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "security",
+        "external_id": "offboarding",
+        "title": "Offboarding checklist",
+        "body": "Revoke SSO sessions, rotate shared secrets, and return hardware on the employee's last day.",
+        "revision": "offboard-v1",
+        "provider_revision": "offboard-v1",
+        "content_digest": "sha256:7d7021e2186c18c1272a75ca2f45285061f6a3a9244745340b3e1db64c71d6d9",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "security/mfa-policy",
+      "security/offboarding"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "phishing-resistant",
+      "passkeys"
+    ],
+    "forbidden_terms": [
+      "sms codes are accepted"
+    ],
+    "allowed_evidence_ids": [
+      "security/mfa-policy"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "security/mfa-policy",
+        "revision": "mfa-v1"
+      }
+    ]
+  },
+  {
+    "id": "current.pto",
+    "category": "current_policy",
+    "question": "How many paid time off days do employees receive per year?",
+    "documents": [
+      {
+        "source_id": "hr",
+        "external_id": "pto",
+        "title": "Paid time off policy",
+        "body": "Employees receive 25 days of paid time off per calendar year. Unused PTO carries over up to 5 days.",
+        "revision": "pto-v1",
+        "provider_revision": "pto-v1",
+        "content_digest": "sha256:1759c08c4dbdc9865edc022ebb7c3486d498a6e428e2d59d7d6b549996c7e0af",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "hr",
+        "external_id": "pto",
+        "title": "Paid time off policy",
+        "body": "Employees receive 25 days of paid time off per calendar year. Unused PTO carries over up to 5 days.",
+        "revision": "pto-v1",
+        "provider_revision": "pto-v1",
+        "content_digest": "sha256:1759c08c4dbdc9865edc022ebb7c3486d498a6e428e2d59d7d6b549996c7e0af",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "hr/pto"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "25 days"
+    ],
+    "forbidden_terms": [
+      "20 days",
+      "30 days"
+    ],
+    "allowed_evidence_ids": [
+      "hr/pto"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "hr/pto",
+        "revision": "pto-v1"
+      }
+    ]
+  },
+  {
+    "id": "current.sev1_sla",
+    "category": "current_policy",
+    "question": "What is the first response target for Priority 1 incidents?",
+    "documents": [
+      {
+        "source_id": "support",
+        "external_id": "sla",
+        "title": "Support response targets",
+        "body": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes.",
+        "revision": "sla-v1",
+        "provider_revision": "sla-v1",
+        "content_digest": "sha256:77af77af71adf71ba81dfc5dfc2b5c953237122fbe83257a58cb49f834984fae",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "support",
+        "external_id": "tiers",
+        "title": "Support tiers",
+        "body": "Priority levels range from Priority 1, the most severe, to Priority 4, a general question.",
+        "revision": "tiers-v1",
+        "provider_revision": "tiers-v1",
+        "content_digest": "sha256:55654eb2a8991c57c20a9510584f8f710a50e2b847a4ecb29a4e4cbc36289f4c",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "support",
+        "external_id": "sla",
+        "title": "Support response targets",
+        "body": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes.",
+        "revision": "sla-v1",
+        "provider_revision": "sla-v1",
+        "content_digest": "sha256:77af77af71adf71ba81dfc5dfc2b5c953237122fbe83257a58cb49f834984fae",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "support",
+        "external_id": "tiers",
+        "title": "Support tiers",
+        "body": "Priority levels range from Priority 1, the most severe, to Priority 4, a general question.",
+        "revision": "tiers-v1",
+        "provider_revision": "tiers-v1",
+        "content_digest": "sha256:55654eb2a8991c57c20a9510584f8f710a50e2b847a4ecb29a4e4cbc36289f4c",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "support/sla",
+      "support/tiers"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "15 minutes"
+    ],
+    "forbidden_terms": [
+      "1 hour",
+      "4 hours"
+    ],
+    "allowed_evidence_ids": [
+      "support/sla"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "support/sla",
+        "revision": "sla-v1"
+      }
+    ]
+  },
+  {
+    "id": "superseded.refund_window",
+    "category": "superseded_policy",
+    "question": "How long is the enterprise refund window today?",
+    "documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds",
+        "title": "Enterprise refund policy",
+        "body": "Enterprise customers may request a refund within 30 days of invoice.",
+        "revision": "refund-v2",
+        "provider_revision": "refund-v2",
+        "content_digest": "sha256:e1a9551cf12ec134456465688de2f07a26c2205be93342e895f53f6582babdf8",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "refunds",
+        "title": "Enterprise refund policy",
+        "body": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval.",
+        "revision": "refund-v3",
+        "provider_revision": "refund-v3",
+        "content_digest": "sha256:70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d",
+        "updated_at": "2025-02-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds",
+        "title": "Enterprise refund policy",
+        "body": "Enterprise customers may request a refund within 45 days of invoice. After 45 days, requests require finance approval.",
+        "revision": "refund-v3",
+        "provider_revision": "refund-v3",
+        "content_digest": "sha256:70e1243dc2a9613592f4465565db1b426f5f78cbcb5364490052fb83e38af62d",
+        "updated_at": "2025-02-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "handbook/refunds"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "45 days"
+    ],
+    "forbidden_terms": [
+      "30 days"
+    ],
+    "allowed_evidence_ids": [
+      "handbook/refunds"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "handbook/refunds",
+        "revision": "refund-v3"
+      }
+    ]
+  },
+  {
+    "id": "superseded.password_rotation",
+    "category": "superseded_policy",
+    "question": "What is the current password rotation requirement?",
+    "documents": [
+      {
+        "source_id": "security",
+        "external_id": "password-policy",
+        "title": "Password policy",
+        "body": "Passwords must be rotated every 90 days.",
+        "revision": "password-v1",
+        "provider_revision": "password-v1",
+        "content_digest": "sha256:fca798f8b72b3163f582dc944c998385996e046660ffc7d7331fc0c790c1d5a1",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "security",
+        "external_id": "password-policy",
+        "title": "Password policy",
+        "body": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected.",
+        "revision": "password-v2",
+        "provider_revision": "password-v2",
+        "content_digest": "sha256:29744255e416a90ce0bfd5b450f19ff900add552d414e876de89e3fb46201906",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "security",
+        "external_id": "password-policy",
+        "title": "Password policy",
+        "body": "Passwords must not be rotated on a fixed schedule; rotate credentials only when compromise is suspected.",
+        "revision": "password-v2",
+        "provider_revision": "password-v2",
+        "content_digest": "sha256:29744255e416a90ce0bfd5b450f19ff900add552d414e876de89e3fb46201906",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "security/password-policy"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "not be rotated on a fixed schedule"
+    ],
+    "forbidden_terms": [
+      "every 90 days"
+    ],
+    "allowed_evidence_ids": [
+      "security/password-policy"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "security/password-policy",
+        "revision": "password-v2"
+      }
+    ]
+  },
+  {
+    "id": "superseded.log_retention",
+    "category": "superseded_policy",
+    "question": "How long are production logs retained now?",
+    "documents": [
+      {
+        "source_id": "platform",
+        "external_id": "log-retention",
+        "title": "Log retention",
+        "body": "Production logs are retained for 30 days.",
+        "revision": "logs-v1",
+        "provider_revision": "logs-v1",
+        "content_digest": "sha256:eadd39a8881dd2f67ff9c9164db88e532af83d432a5d4085452aeeed22406c98",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "platform",
+        "external_id": "log-retention",
+        "title": "Log retention",
+        "body": "Production logs are retained for 13 months and then deleted.",
+        "revision": "logs-v2",
+        "provider_revision": "logs-v2",
+        "content_digest": "sha256:b25ea4c1ba3fd0f6da8622774b9a4d26f7ff20cd812457a4cb70857688dd95db",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "platform",
+        "external_id": "log-retention",
+        "title": "Log retention",
+        "body": "Production logs are retained for 13 months and then deleted.",
+        "revision": "logs-v2",
+        "provider_revision": "logs-v2",
+        "content_digest": "sha256:b25ea4c1ba3fd0f6da8622774b9a4d26f7ff20cd812457a4cb70857688dd95db",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "platform/log-retention"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "13 months"
+    ],
+    "forbidden_terms": [
+      "30 days"
+    ],
+    "allowed_evidence_ids": [
+      "platform/log-retention"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "platform/log-retention",
+        "revision": "logs-v2"
+      }
+    ]
+  },
+  {
+    "id": "superseded.travel_class",
+    "category": "superseded_policy",
+    "question": "When may employees book premium economy flights?",
+    "documents": [
+      {
+        "source_id": "finance",
+        "external_id": "travel-policy",
+        "title": "Travel policy",
+        "body": "All flights must be booked in economy class.",
+        "revision": "travel-v1",
+        "provider_revision": "travel-v1",
+        "content_digest": "sha256:1c3b06d4ada6aca59841b41a11d3d8a15d4a48b6503b6537c9ff781c37b3b384",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "finance",
+        "external_id": "travel-policy",
+        "title": "Travel policy",
+        "body": "Flights longer than six hours may be booked in premium economy. All other flights are booked economy.",
+        "revision": "travel-v2",
+        "provider_revision": "travel-v2",
+        "content_digest": "sha256:2a5a83439ad62414247a651f550b8745903e4e834363a00513d487959e21dbfa",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "finance",
+        "external_id": "travel-policy",
+        "title": "Travel policy",
+        "body": "Flights longer than six hours may be booked in premium economy. All other flights are booked economy.",
+        "revision": "travel-v2",
+        "provider_revision": "travel-v2",
+        "content_digest": "sha256:2a5a83439ad62414247a651f550b8745903e4e834363a00513d487959e21dbfa",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "finance/travel-policy"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "six hours",
+      "premium economy"
+    ],
+    "forbidden_terms": [
+      "economy class"
+    ],
+    "allowed_evidence_ids": [
+      "finance/travel-policy"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "finance/travel-policy",
+        "revision": "travel-v2"
+      }
+    ]
+  },
+  {
+    "id": "conflict.client_meals",
+    "category": "conflict",
+    "question": "What is the per-person reimbursement limit for client meals?",
+    "documents": [
+      {
+        "source_id": "sales",
+        "external_id": "playbook",
+        "title": "Sales playbook",
+        "body": "Client meals are reimbursed up to $150 per person during deal cycles.",
+        "revision": "playbook-v2",
+        "provider_revision": "playbook-v2",
+        "content_digest": "sha256:b7bf630474ce0fcfcfe78d40d96b6dc30e057822f98a4067938af3c23594b13d",
+        "updated_at": "2024-06-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "finance",
+        "external_id": "expenses",
+        "title": "Finance expense policy",
+        "body": "Client meals are reimbursed up to $75 per person when itemized.",
+        "revision": "expense-v5",
+        "provider_revision": "expense-v5",
+        "content_digest": "sha256:f8cbca61638803f152e6dae2a86ed3e4a04afdfaace9ec6a59085756818020bf",
+        "updated_at": "2025-01-10T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "sales",
+        "external_id": "playbook",
+        "title": "Sales playbook",
+        "body": "Client meals are reimbursed up to $150 per person during deal cycles.",
+        "revision": "playbook-v2",
+        "provider_revision": "playbook-v2",
+        "content_digest": "sha256:b7bf630474ce0fcfcfe78d40d96b6dc30e057822f98a4067938af3c23594b13d",
+        "updated_at": "2024-06-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "finance",
+        "external_id": "expenses",
+        "title": "Finance expense policy",
+        "body": "Client meals are reimbursed up to $75 per person when itemized.",
+        "revision": "expense-v5",
+        "provider_revision": "expense-v5",
+        "content_digest": "sha256:f8cbca61638803f152e6dae2a86ed3e4a04afdfaace9ec6a59085756818020bf",
+        "updated_at": "2025-01-10T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "sales/playbook",
+      "finance/expenses"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "conflict.change_freeze",
+    "category": "conflict",
+    "question": "When does the winter change freeze start?",
+    "documents": [
+      {
+        "source_id": "product",
+        "external_id": "release-notes",
+        "title": "Release notes",
+        "body": "Deploys during the winter freeze are allowed with VP approval.",
+        "revision": "notes-v1",
+        "provider_revision": "notes-v1",
+        "content_digest": "sha256:f746d75c32af9575802be5a49fb10d8f47cc64078e743c1bf8ee4aea114044c3",
+        "updated_at": "2024-02-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "engineering",
+        "external_id": "change-freeze",
+        "title": "Change freeze policy",
+        "body": "A company-wide change freeze runs from December 20 to January 2. Emergency changes require the CTO.",
+        "revision": "freeze-v4",
+        "provider_revision": "freeze-v4",
+        "content_digest": "sha256:414836567382d1798252a3987a7218ffa365cb16ef7ff3baab025203563b36ee",
+        "updated_at": "2025-03-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "product",
+        "external_id": "release-notes",
+        "title": "Release notes",
+        "body": "Deploys during the winter freeze are allowed with VP approval.",
+        "revision": "notes-v1",
+        "provider_revision": "notes-v1",
+        "content_digest": "sha256:f746d75c32af9575802be5a49fb10d8f47cc64078e743c1bf8ee4aea114044c3",
+        "updated_at": "2024-02-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "engineering",
+        "external_id": "change-freeze",
+        "title": "Change freeze policy",
+        "body": "A company-wide change freeze runs from December 20 to January 2. Emergency changes require the CTO.",
+        "revision": "freeze-v4",
+        "provider_revision": "freeze-v4",
+        "content_digest": "sha256:414836567382d1798252a3987a7218ffa365cb16ef7ff3baab025203563b36ee",
+        "updated_at": "2025-03-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "product/release-notes",
+      "engineering/change-freeze"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "december 20"
+    ],
+    "forbidden_terms": [
+      "vp approval"
+    ],
+    "allowed_evidence_ids": [
+      "engineering/change-freeze"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "engineering/change-freeze",
+        "revision": "freeze-v4"
+      }
+    ]
+  },
+  {
+    "id": "conflict.nda_review",
+    "category": "conflict",
+    "question": "What approval is required before signing a mutual NDA?",
+    "documents": [
+      {
+        "source_id": "sales",
+        "external_id": "nda-faq",
+        "title": "NDA FAQ",
+        "body": "Standard NDAs under $10k need no review.",
+        "revision": "ndafaq-v1",
+        "provider_revision": "ndafaq-v1",
+        "content_digest": "sha256:41a0e8bbf47ae5c39dc207c86f4da093b1aa17fa3deb232ead8461de3543fa0c",
+        "updated_at": "2023-09-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "legal",
+        "external_id": "nda-policy",
+        "title": "NDA policy",
+        "body": "Every mutual NDA must be reviewed by legal before signature.",
+        "revision": "nda-v3",
+        "provider_revision": "nda-v3",
+        "content_digest": "sha256:e1a80bf99afb126a90a2270d05f34b5d15449bae11c7403647b2ca15422429ed",
+        "updated_at": "2025-04-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "sales",
+        "external_id": "nda-faq",
+        "title": "NDA FAQ",
+        "body": "Standard NDAs under $10k need no review.",
+        "revision": "ndafaq-v1",
+        "provider_revision": "ndafaq-v1",
+        "content_digest": "sha256:41a0e8bbf47ae5c39dc207c86f4da093b1aa17fa3deb232ead8461de3543fa0c",
+        "updated_at": "2023-09-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "legal",
+        "external_id": "nda-policy",
+        "title": "NDA policy",
+        "body": "Every mutual NDA must be reviewed by legal before signature.",
+        "revision": "nda-v3",
+        "provider_revision": "nda-v3",
+        "content_digest": "sha256:e1a80bf99afb126a90a2270d05f34b5d15449bae11c7403647b2ca15422429ed",
+        "updated_at": "2025-04-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "sales/nda-faq",
+      "legal/nda-policy"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "ambiguity.leave_length",
+    "category": "ambiguity",
+    "question": "How long is leave?",
+    "documents": [
+      {
+        "source_id": "hr",
+        "external_id": "medical-leave",
+        "title": "Medical leave",
+        "body": "Medical leave runs for 12 weeks with job protection.",
+        "revision": "medical-v1",
+        "provider_revision": "medical-v1",
+        "content_digest": "sha256:16c43abf2ae7af04e060ff497918a6c570a65560323490278ea2cf0ae66e24d0",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "hr",
+        "external_id": "parental-leave",
+        "title": "Parental leave",
+        "body": "Parental leave runs for 16 weeks for all new parents.",
+        "revision": "parental-v1",
+        "provider_revision": "parental-v1",
+        "content_digest": "sha256:695e51a4b14e89814feabebeace2f7313381c1e01eb5d8ccba048d2e8dc187b2",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "hr",
+        "external_id": "medical-leave",
+        "title": "Medical leave",
+        "body": "Medical leave runs for 12 weeks with job protection.",
+        "revision": "medical-v1",
+        "provider_revision": "medical-v1",
+        "content_digest": "sha256:16c43abf2ae7af04e060ff497918a6c570a65560323490278ea2cf0ae66e24d0",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "hr",
+        "external_id": "parental-leave",
+        "title": "Parental leave",
+        "body": "Parental leave runs for 16 weeks for all new parents.",
+        "revision": "parental-v1",
+        "provider_revision": "parental-v1",
+        "content_digest": "sha256:695e51a4b14e89814feabebeace2f7313381c1e01eb5d8ccba048d2e8dc187b2",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "hr/medical-leave",
+      "hr/parental-leave"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "ambiguity.refund_region",
+    "category": "ambiguity",
+    "question": "What is the refund window?",
+    "documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds-us",
+        "title": "US refunds",
+        "body": "US customers have a 30 day refund window.",
+        "revision": "refundus-v1",
+        "provider_revision": "refundus-v1",
+        "content_digest": "sha256:afeb5ad3389d14e9351015613c18cf7f39a7d45ae173b0f4feaf29ece05525a3",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "refunds-eu",
+        "title": "EU refunds",
+        "body": "EU customers have a 14 day refund window.",
+        "revision": "refundeu-v1",
+        "provider_revision": "refundeu-v1",
+        "content_digest": "sha256:fc56ebb5219390ef8f573dd2e661515b0b7538a3a1f8e92869ca186c9abf7699",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds-us",
+        "title": "US refunds",
+        "body": "US customers have a 30 day refund window.",
+        "revision": "refundus-v1",
+        "provider_revision": "refundus-v1",
+        "content_digest": "sha256:afeb5ad3389d14e9351015613c18cf7f39a7d45ae173b0f4feaf29ece05525a3",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "refunds-eu",
+        "title": "EU refunds",
+        "body": "EU customers have a 14 day refund window.",
+        "revision": "refundeu-v1",
+        "provider_revision": "refundeu-v1",
+        "content_digest": "sha256:fc56ebb5219390ef8f573dd2e661515b0b7538a3a1f8e92869ca186c9abf7699",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "handbook/refunds-us",
+      "handbook/refunds-eu"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "ambiguity.escalation",
+    "category": "ambiguity",
+    "question": "Without guessing severity, give the single escalation deadline for this incident.",
+    "documents": [
+      {
+        "source_id": "support",
+        "external_id": "sev1",
+        "title": "Severity 1 escalation",
+        "body": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes.",
+        "revision": "sev1-v1",
+        "provider_revision": "sev1-v1",
+        "content_digest": "sha256:d2fe61d375b78533f112db6cf8f92d1408638036eedaa7471292de1dc08b5c24",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "support",
+        "external_id": "sev2",
+        "title": "Severity 2 escalation",
+        "body": "Severity 2 incidents are escalated within four hours.",
+        "revision": "sev2-v1",
+        "provider_revision": "sev2-v1",
+        "content_digest": "sha256:aecba377e47f3d436ebb1dfef8b68298cecc2b58fa6db032d2021debe1eff447",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "support",
+        "external_id": "sev1",
+        "title": "Severity 1 escalation",
+        "body": "Severity 1 incidents are escalated to the on-call engineer within 15 minutes.",
+        "revision": "sev1-v1",
+        "provider_revision": "sev1-v1",
+        "content_digest": "sha256:d2fe61d375b78533f112db6cf8f92d1408638036eedaa7471292de1dc08b5c24",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "support",
+        "external_id": "sev2",
+        "title": "Severity 2 escalation",
+        "body": "Severity 2 incidents are escalated within four hours.",
+        "revision": "sev2-v1",
+        "provider_revision": "sev2-v1",
+        "content_digest": "sha256:aecba377e47f3d436ebb1dfef8b68298cecc2b58fa6db032d2021debe1eff447",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "support/sev1",
+      "support/sev2"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "missing.soc2",
+    "category": "missing_info",
+    "question": "Is the company SOC 2 certified?",
+    "documents": [
+      {
+        "source_id": "compliance",
+        "external_id": "certifications",
+        "title": "Certifications",
+        "body": "The company holds ISO 27001 certification.",
+        "revision": "certs-v1",
+        "provider_revision": "certs-v1",
+        "content_digest": "sha256:ae6b9a5ff082340f96fcdca8feced1ddfd1666d1e0a5c63183d82505b16d2ff3",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "compliance",
+        "external_id": "certifications",
+        "title": "Certifications",
+        "body": "The company holds ISO 27001 certification.",
+        "revision": "certs-v1",
+        "provider_revision": "certs-v1",
+        "content_digest": "sha256:ae6b9a5ff082340f96fcdca8feced1ddfd1666d1e0a5c63183d82505b16d2ff3",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "compliance/certifications"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "missing.holidays",
+    "category": "missing_info",
+    "question": "What are the 2027 company holidays?",
+    "documents": [
+      {
+        "source_id": "hr",
+        "external_id": "holidays-2026",
+        "title": "2026 holiday calendar",
+        "body": "The 2026 company holidays are New Year's Day, Memorial Day, Independence Day, Thanksgiving, and Christmas.",
+        "revision": "holidays-v2026",
+        "provider_revision": "holidays-v2026",
+        "content_digest": "sha256:d0a659f06454a3312c9d14d99d83f176f4f47ef46c18b79474db0c7ba5dbc296",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "hr",
+        "external_id": "holidays-2026",
+        "title": "2026 holiday calendar",
+        "body": "The 2026 company holidays are New Year's Day, Memorial Day, Independence Day, Thanksgiving, and Christmas.",
+        "revision": "holidays-v2026",
+        "provider_revision": "holidays-v2026",
+        "content_digest": "sha256:d0a659f06454a3312c9d14d99d83f176f4f47ef46c18b79474db0c7ba5dbc296",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "hr/holidays-2026"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "missing.headcount",
+    "category": "missing_info",
+    "question": "How many engineers are on the platform team?",
+    "documents": [
+      {
+        "source_id": "engineering",
+        "external_id": "teams",
+        "title": "Engineering teams",
+        "body": "The platform group owns shared services. Team size changes each quarter.",
+        "revision": "teams-v1",
+        "provider_revision": "teams-v1",
+        "content_digest": "sha256:a3c70a66a88adff552e7a73e21d96c4fb491f0481641ac024f6effa0bb934395",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "engineering",
+        "external_id": "teams",
+        "title": "Engineering teams",
+        "body": "The platform group owns shared services. Team size changes each quarter.",
+        "revision": "teams-v1",
+        "provider_revision": "teams-v1",
+        "content_digest": "sha256:a3c70a66a88adff552e7a73e21d96c4fb491f0481641ac024f6effa0bb934395",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "engineering/teams"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "restricted.compensation",
+    "category": "restricted_evidence",
+    "question": "What is the Staff engineer salary band?",
+    "documents": [
+      {
+        "source_id": "hr",
+        "external_id": "compensation",
+        "title": "Compensation bands",
+        "body": "The Staff engineer salary band is $210,000 to $260,000.",
+        "revision": "comp-v1",
+        "provider_revision": "comp-v1",
+        "content_digest": "sha256:851a2e453f9e1bad52cf41ba5745f3463f92ee273ed821352f2e2ed5875b15a9",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "restricted",
+          "principals": [
+            {
+              "kind": "team",
+              "identifier": "people"
+            }
+          ]
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "hr",
+        "external_id": "pto",
+        "title": "Paid time off policy",
+        "body": "Employees receive 25 days of paid time off per calendar year. Unused PTO carries over up to 5 days.",
+        "revision": "pto-v1",
+        "provider_revision": "pto-v1",
+        "content_digest": "sha256:1759c08c4dbdc9865edc022ebb7c3486d498a6e428e2d59d7d6b549996c7e0af",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "hr",
+        "external_id": "pto",
+        "title": "Paid time off policy",
+        "body": "Employees receive 25 days of paid time off per calendar year. Unused PTO carries over up to 5 days.",
+        "revision": "pto-v1",
+        "provider_revision": "pto-v1",
+        "content_digest": "sha256:1759c08c4dbdc9865edc022ebb7c3486d498a6e428e2d59d7d6b549996c7e0af",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "hr/pto"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "restricted.settlement",
+    "category": "restricted_evidence",
+    "question": "What are the settlement terms in the Acme lawsuit?",
+    "documents": [
+      {
+        "source_id": "legal",
+        "external_id": "acme-settlement",
+        "title": "Acme settlement memo",
+        "body": "The Acme settlement pays $1.2M in three installments.",
+        "revision": "acme-v1",
+        "provider_revision": "acme-v1",
+        "content_digest": "sha256:7b278359d1dd0cc9730736a150d09c24e6333793de5f1e851858eac9df7d94f6",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "restricted",
+          "principals": [
+            {
+              "kind": "team",
+              "identifier": "legal"
+            }
+          ]
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "legal",
+        "external_id": "nda-policy",
+        "title": "NDA policy",
+        "body": "Every mutual NDA must be reviewed by legal before signature.",
+        "revision": "nda-v3",
+        "provider_revision": "nda-v3",
+        "content_digest": "sha256:e1a80bf99afb126a90a2270d05f34b5d15449bae11c7403647b2ca15422429ed",
+        "updated_at": "2025-04-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "legal",
+        "external_id": "nda-policy",
+        "title": "NDA policy",
+        "body": "Every mutual NDA must be reviewed by legal before signature.",
+        "revision": "nda-v3",
+        "provider_revision": "nda-v3",
+        "content_digest": "sha256:e1a80bf99afb126a90a2270d05f34b5d15449bae11c7403647b2ca15422429ed",
+        "updated_at": "2025-04-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "legal/nda-policy"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "restricted.outage_cause",
+    "category": "restricted_evidence",
+    "question": "What caused the March outage?",
+    "documents": [
+      {
+        "source_id": "ops",
+        "external_id": "march-postmortem",
+        "title": "March outage postmortem",
+        "body": "The March outage was caused by an expired TLS certificate.",
+        "revision": "march-v1",
+        "provider_revision": "march-v1",
+        "content_digest": "sha256:bb058c9e915c3b903c1cfbf097ba7c2b44522f2cc75416f59f43ea1c4622e092",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "restricted",
+          "principals": [
+            {
+              "kind": "team",
+              "identifier": "oncall"
+            }
+          ]
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "support",
+        "external_id": "sla",
+        "title": "Support response targets",
+        "body": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes.",
+        "revision": "sla-v1",
+        "provider_revision": "sla-v1",
+        "content_digest": "sha256:77af77af71adf71ba81dfc5dfc2b5c953237122fbe83257a58cb49f834984fae",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "support",
+        "external_id": "sla",
+        "title": "Support response targets",
+        "body": "Priority 1 incidents receive a first response within 15 minutes and a status update every 30 minutes.",
+        "revision": "sla-v1",
+        "provider_revision": "sla-v1",
+        "content_digest": "sha256:77af77af71adf71ba81dfc5dfc2b5c953237122fbe83257a58cb49f834984fae",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "support/sla"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "restricted.roadmap",
+    "category": "restricted_evidence",
+    "question": "When will the billing rewrite ship?",
+    "documents": [
+      {
+        "source_id": "product",
+        "external_id": "roadmap-q3",
+        "title": "Q3 roadmap",
+        "body": "The billing rewrite ships in September.",
+        "revision": "roadmap-q3",
+        "provider_revision": "roadmap-q3",
+        "content_digest": "sha256:661e565667ba5869d9ccf61feebc139859b09808446f14fe8cc20d3528f70251",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "restricted",
+          "principals": [
+            {
+              "kind": "team",
+              "identifier": "product"
+            }
+          ]
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "legal",
+        "external_id": "nda-policy",
+        "title": "NDA policy",
+        "body": "Every mutual NDA must be reviewed by legal before signature.",
+        "revision": "nda-v3",
+        "provider_revision": "nda-v3",
+        "content_digest": "sha256:e1a80bf99afb126a90a2270d05f34b5d15449bae11c7403647b2ca15422429ed",
+        "updated_at": "2025-04-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "legal",
+        "external_id": "nda-policy",
+        "title": "NDA policy",
+        "body": "Every mutual NDA must be reviewed by legal before signature.",
+        "revision": "nda-v3",
+        "provider_revision": "nda-v3",
+        "content_digest": "sha256:e1a80bf99afb126a90a2270d05f34b5d15449bae11c7403647b2ca15422429ed",
+        "updated_at": "2025-04-01T00:00:00Z",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "legal/nda-policy"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "irrelevant.giftcard_refund",
+    "category": "irrelevant_matches",
+    "question": "Can a digital gift card be refunded?",
+    "documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds-physical",
+        "title": "Physical goods refunds",
+        "body": "Refunds apply to physical goods returned within 45 days. Digital gift cards are non-refundable and final sale.",
+        "revision": "physical-v1",
+        "provider_revision": "physical-v1",
+        "content_digest": "sha256:85b1d9f9d04c558c1e0b85b3671700893f30d0632725e5970fff3f5fca050dce",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "gift-cards",
+        "title": "Gift card purchases",
+        "body": "Gift cards can be purchased in denominations from $10 to $500.",
+        "revision": "giftbuy-v1",
+        "provider_revision": "giftbuy-v1",
+        "content_digest": "sha256:a02d7bce086351c6e1c9e0f0185858c7972162fa5d6a82b026179bedcf952a70",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "handbook",
+        "external_id": "refunds-physical",
+        "title": "Physical goods refunds",
+        "body": "Refunds apply to physical goods returned within 45 days. Digital gift cards are non-refundable and final sale.",
+        "revision": "physical-v1",
+        "provider_revision": "physical-v1",
+        "content_digest": "sha256:85b1d9f9d04c558c1e0b85b3671700893f30d0632725e5970fff3f5fca050dce",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "handbook",
+        "external_id": "gift-cards",
+        "title": "Gift card purchases",
+        "body": "Gift cards can be purchased in denominations from $10 to $500.",
+        "revision": "giftbuy-v1",
+        "provider_revision": "giftbuy-v1",
+        "content_digest": "sha256:a02d7bce086351c6e1c9e0f0185858c7972162fa5d6a82b026179bedcf952a70",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "handbook/refunds-physical",
+      "handbook/gift-cards"
+    ],
+    "expected_disposition": "grounded",
+    "required_terms": [
+      "non-refundable"
+    ],
+    "forbidden_terms": [],
+    "allowed_evidence_ids": [
+      "handbook/refunds-physical"
+    ],
+    "allowed_evidence_refs": [
+      {
+        "document_id": "handbook/refunds-physical",
+        "revision": "physical-v1"
+      }
+    ]
+  },
+  {
+    "id": "irrelevant.visitor_parking",
+    "category": "irrelevant_matches",
+    "question": "Where can visitors park at headquarters?",
+    "documents": [
+      {
+        "source_id": "facilities",
+        "external_id": "parking",
+        "title": "Employee parking",
+        "body": "Employees park in the south garage using a badge. Carpool spots are reserved on level two.",
+        "revision": "parking-v1",
+        "provider_revision": "parking-v1",
+        "content_digest": "sha256:1a43ed1da217cf92b0747cd9ac744c0c5e9dbe02901c6df5689bb490ec4b6d91",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "facilities",
+        "external_id": "transit",
+        "title": "Transit benefits",
+        "body": "Employees may enroll in a pre-tax transit benefit.",
+        "revision": "transit-v1",
+        "provider_revision": "transit-v1",
+        "content_digest": "sha256:836c93eaf8e0f25a9ef4bf3aed345ae1e7dfe7b7b6557b8d94a5af3ad55e876a",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "facilities",
+        "external_id": "parking",
+        "title": "Employee parking",
+        "body": "Employees park in the south garage using a badge. Carpool spots are reserved on level two.",
+        "revision": "parking-v1",
+        "provider_revision": "parking-v1",
+        "content_digest": "sha256:1a43ed1da217cf92b0747cd9ac744c0c5e9dbe02901c6df5689bb490ec4b6d91",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "facilities",
+        "external_id": "transit",
+        "title": "Transit benefits",
+        "body": "Employees may enroll in a pre-tax transit benefit.",
+        "revision": "transit-v1",
+        "provider_revision": "transit-v1",
+        "content_digest": "sha256:836c93eaf8e0f25a9ef4bf3aed345ae1e7dfe7b7b6557b8d94a5af3ad55e876a",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "facilities/parking",
+      "facilities/transit"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [
+      "south garage"
+    ],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "irrelevant.internet_stipend",
+    "category": "irrelevant_matches",
+    "question": "Is there a stipend for home internet?",
+    "documents": [
+      {
+        "source_id": "hr",
+        "external_id": "remote-work",
+        "title": "Remote work policy",
+        "body": "Remote employees receive a one-time home office equipment stipend of $500.",
+        "revision": "remote-v1",
+        "provider_revision": "remote-v1",
+        "content_digest": "sha256:4b818a31bb1570f7e3d62f76481383b2029bb12cba1c8f7c439224ee3da60dc8",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "hr",
+        "external_id": "core-hours",
+        "title": "Core hours",
+        "body": "All employees overlap at least four hours with 10:00 to 16:00 local time.",
+        "revision": "corehours-v1",
+        "provider_revision": "corehours-v1",
+        "content_digest": "sha256:7b70b87c6e3224087f9c59d9050c189966e12e59ab571e8321d9c0e456b8e209",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "hr",
+        "external_id": "remote-work",
+        "title": "Remote work policy",
+        "body": "Remote employees receive a one-time home office equipment stipend of $500.",
+        "revision": "remote-v1",
+        "provider_revision": "remote-v1",
+        "content_digest": "sha256:4b818a31bb1570f7e3d62f76481383b2029bb12cba1c8f7c439224ee3da60dc8",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "hr",
+        "external_id": "core-hours",
+        "title": "Core hours",
+        "body": "All employees overlap at least four hours with 10:00 to 16:00 local time.",
+        "revision": "corehours-v1",
+        "provider_revision": "corehours-v1",
+        "content_digest": "sha256:7b70b87c6e3224087f9c59d9050c189966e12e59ab571e8321d9c0e456b8e209",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "hr/remote-work",
+      "hr/core-hours"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [
+      "equipment stipend"
+    ],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  },
+  {
+    "id": "irrelevant.java_version",
+    "category": "irrelevant_matches",
+    "question": "Which Java version does release 4.2 require?",
+    "documents": [
+      {
+        "source_id": "engineering",
+        "external_id": "release-4.1",
+        "title": "Release 4.1 notes",
+        "body": "Release 4.1 requires Java 17 and Node 20.",
+        "revision": "rel41-v1",
+        "provider_revision": "rel41-v1",
+        "content_digest": "sha256:fab4b2ac92c3c1301b8310a35564ea10c2b1c5adcbced514f21a138270129028",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "engineering",
+        "external_id": "release-4.2",
+        "title": "Release 4.2 notes",
+        "body": "Release 4.2 requires Node 22 and ships the new scheduler.",
+        "revision": "rel42-v1",
+        "provider_revision": "rel42-v1",
+        "content_digest": "sha256:53838db9f7640010e079f9ae723bd7bb503b7ac0f2301480623d7bc286ca0ace",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_documents": [
+      {
+        "source_id": "engineering",
+        "external_id": "release-4.1",
+        "title": "Release 4.1 notes",
+        "body": "Release 4.1 requires Java 17 and Node 20.",
+        "revision": "rel41-v1",
+        "provider_revision": "rel41-v1",
+        "content_digest": "sha256:fab4b2ac92c3c1301b8310a35564ea10c2b1c5adcbced514f21a138270129028",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      },
+      {
+        "source_id": "engineering",
+        "external_id": "release-4.2",
+        "title": "Release 4.2 notes",
+        "body": "Release 4.2 requires Node 22 and ships the new scheduler.",
+        "revision": "rel42-v1",
+        "provider_revision": "rel42-v1",
+        "content_digest": "sha256:53838db9f7640010e079f9ae723bd7bb503b7ac0f2301480623d7bc286ca0ace",
+        "updated_at": "",
+        "source_url": "",
+        "acl": {
+          "visibility": "connector_scope",
+          "principals": []
+        },
+        "metadata": {}
+      }
+    ],
+    "authorized_document_ids": [
+      "engineering/release-4.1",
+      "engineering/release-4.2"
+    ],
+    "expected_disposition": "insufficient_evidence",
+    "required_terms": [],
+    "forbidden_terms": [
+      "java 17"
+    ],
+    "allowed_evidence_ids": [],
+    "allowed_evidence_refs": []
+  }
+]

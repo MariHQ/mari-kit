@@ -1,0 +1,159 @@
+{
+  "configuration": {
+    "allowlist_sizes": [
+      200,
+      1000
+    ],
+    "dimension": 24,
+    "ef_search": 64,
+    "exact_filter_threshold": 0,
+    "hnsw_m": 8,
+    "k": 10,
+    "metric": "cosine",
+    "queries": 20,
+    "search_starts": [
+      1,
+      4,
+      8
+    ],
+    "seed": 20240919,
+    "size": 1000
+  },
+  "multistart_recall": {
+    "by_allowlist_size": [
+      {
+        "allowlist_size": 200,
+        "recall_monotonic_in_starts": true,
+        "runs": [
+          {
+            "latency_ratio_vs_single": 1.0,
+            "missed_relevant_hits": 151,
+            "queries": 20,
+            "recall": 0.245,
+            "recall_denominator": 200,
+            "recall_gain_vs_single": 0.0,
+            "recall_numerator": 49,
+            "search_starts": 1,
+            "timing_seconds": {
+              "per_query": 0.00014717705198563635,
+              "per_query_ms": 0.14717705198563635,
+              "search": 0.002943541039712727
+            },
+            "unauthorized_hits": 0
+          },
+          {
+            "latency_ratio_vs_single": 2.6740887419628177,
+            "missed_relevant_hits": 104,
+            "queries": 20,
+            "recall": 0.48,
+            "recall_denominator": 200,
+            "recall_gain_vs_single": 0.235,
+            "recall_numerator": 96,
+            "search_starts": 4,
+            "timing_seconds": {
+              "per_query": 0.00039356449779006655,
+              "per_query_ms": 0.3935644977900665,
+              "search": 0.00787128995580133
+            },
+            "unauthorized_hits": 0
+          },
+          {
+            "latency_ratio_vs_single": 3.7734738029628443,
+            "missed_relevant_hits": 87,
+            "queries": 20,
+            "recall": 0.565,
+            "recall_denominator": 200,
+            "recall_gain_vs_single": 0.31999999999999995,
+            "recall_numerator": 113,
+            "search_starts": 8,
+            "timing_seconds": {
+              "per_query": 0.0005553687500650994,
+              "per_query_ms": 0.5553687500650994,
+              "search": 0.011107375001301989
+            },
+            "unauthorized_hits": 0
+          }
+        ],
+        "single_start": 1
+      },
+      {
+        "allowlist_size": 1000,
+        "recall_monotonic_in_starts": true,
+        "runs": [
+          {
+            "latency_ratio_vs_single": 1.0,
+            "missed_relevant_hits": 56,
+            "queries": 20,
+            "recall": 0.72,
+            "recall_denominator": 200,
+            "recall_gain_vs_single": 0.0,
+            "recall_numerator": 144,
+            "search_starts": 1,
+            "timing_seconds": {
+              "per_query": 0.00027704164895112624,
+              "per_query_ms": 0.27704164895112626,
+              "search": 0.005540832979022525
+            },
+            "unauthorized_hits": 0
+          },
+          {
+            "latency_ratio_vs_single": 3.591149212149454,
+            "missed_relevant_hits": 22,
+            "queries": 20,
+            "recall": 0.89,
+            "recall_denominator": 200,
+            "recall_gain_vs_single": 0.17000000000000004,
+            "recall_numerator": 178,
+            "search_starts": 4,
+            "timing_seconds": {
+              "per_query": 0.0009948978993634227,
+              "per_query_ms": 0.9948978993634228,
+              "search": 0.019897957987268455
+            },
+            "unauthorized_hits": 0
+          },
+          {
+            "latency_ratio_vs_single": 5.0632953752038965,
+            "missed_relevant_hits": 20,
+            "queries": 20,
+            "recall": 0.9,
+            "recall_denominator": 200,
+            "recall_gain_vs_single": 0.18000000000000005,
+            "recall_numerator": 180,
+            "search_starts": 8,
+            "timing_seconds": {
+              "per_query": 0.001402743699873099,
+              "per_query_ms": 1.402743699873099,
+              "search": 0.028054873997461982
+            },
+            "unauthorized_hits": 0
+          }
+        ],
+        "single_start": 1
+      }
+    ],
+    "corpus_size": 1000,
+    "dimension": 24,
+    "ef_search": 64,
+    "exact_filter_threshold": 0,
+    "k": 10,
+    "m": 8,
+    "metric": "cosine",
+    "queries": 20,
+    "search_starts": [
+      1,
+      4,
+      8
+    ],
+    "timing_seconds": {
+      "ground_truth": 0.013077541982056573,
+      "hnsw_build": 1.0036983329919167,
+      "multistart_sweeps": 0.07541587096056901
+    },
+    "totals": {
+      "recall_monotonic_in_starts": true,
+      "runs": 6,
+      "unauthorized_hits": 0
+    }
+  }
+}

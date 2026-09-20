@@ -1,0 +1,110 @@
+{
+  "count_only": {
+    "schema": "mari-kit.company-brain-cache-memory/1",
+    "seed": 20240919,
+    "documents": 240,
+    "sources": 5,
+    "users": 96,
+    "queries_per_user": 4,
+    "limit": 5,
+    "requests": 384,
+    "view_cache_size": 16,
+    "view_cache_bytes": null,
+    "retained_views": 16,
+    "retained_estimated_bytes": 17568323,
+    "evictions": 80,
+    "evicted_estimated_bytes": 86415819,
+    "max_views": 16,
+    "max_bytes": null,
+    "within_bounds": true,
+    "hits": 288,
+    "misses": 96,
+    "hit_rate": 0.75,
+    "authorized_documents": {
+      "min": 187,
+      "max": 240,
+      "mean": 213.562
+    },
+    "tracemalloc": {
+      "enabled": true,
+      "retained_bytes": 18833219,
+      "peak_bytes": 20361111,
+      "note": "Actual tracemalloc allocations made while tracing (brain, retained views, and indexes); corpus and store rows built before the window are not counted. Not an RSS reading."
+    },
+    "estimate_note": "retained_estimated_bytes is the engine's explicit object-size estimate, not RSS and not a hard process-memory cap; the byte budget uses the same estimate.",
+    "timing_note": "No machine-time threshold is applied. elapsed_seconds is informational only and varies by machine.",
+    "elapsed_seconds": 10.198637
+  },
+  "byte_budget": {
+    "schema": "mari-kit.company-brain-cache-memory/1",
+    "seed": 20240919,
+    "documents": 240,
+    "sources": 5,
+    "users": 96,
+    "queries_per_user": 4,
+    "limit": 5,
+    "requests": 384,
+    "view_cache_size": 16,
+    "view_cache_bytes": 3145728,
+    "retained_views": 2,
+    "retained_estimated_bytes": 2252953,
+    "evictions": 94,
+    "evicted_estimated_bytes": 101727269,
+    "max_views": 16,
+    "max_bytes": 3145728,
+    "within_bounds": true,
+    "hits": 288,
+    "misses": 96,
+    "hit_rate": 0.75,
+    "authorized_documents": {
+      "min": 187,
+      "max": 240,
+      "mean": 213.562
+    },
+    "tracemalloc": {
+      "enabled": true,
+      "retained_bytes": 3008171,
+      "peak_bytes": 5468708,
+      "note": "Actual tracemalloc allocations made while tracing (brain, retained views, and indexes); corpus and store rows built before the window are not counted. Not an RSS reading."
+    },
+    "estimate_note": "retained_estimated_bytes is the engine's explicit object-size estimate, not RSS and not a hard process-memory cap; the byte budget uses the same estimate.",
+    "timing_note": "No machine-time threshold is applied. elapsed_seconds is informational only and varies by machine.",
+    "elapsed_seconds": 13.840385
+  },
+  "zero_budget": {
+    "schema": "mari-kit.company-brain-cache-memory/1",
+    "seed": 20240919,
+    "documents": 240,
+    "sources": 5,
+    "users": 96,
+    "queries_per_user": 4,
+    "limit": 5,
+    "requests": 384,
+    "view_cache_size": 16,
+    "view_cache_bytes": 0,
+    "retained_views": 0,
+    "retained_estimated_bytes": 0,
+    "evictions": 384,
+    "evicted_estimated_bytes": 135491656,
+    "max_views": 16,
+    "max_bytes": 0,
+    "within_bounds": true,
+    "hits": 0,
+    "misses": 384,
+    "hit_rate": 0.0,
+    "authorized_documents": {
+      "min": 187,
+      "max": 240,
+      "mean": 213.562
+    },
+    "tracemalloc": {
+      "enabled": true,
+      "retained_bytes": 688248,
+      "peak_bytes": 3002703,
+      "note": "Actual tracemalloc allocations made while tracing (brain, retained views, and indexes); corpus and store rows built before the window are not counted. Not an RSS reading."
+    },
+    "estimate_note": "retained_estimated_bytes is the engine's explicit object-size estimate, not RSS and not a hard process-memory cap; the byte budget uses the same estimate.",
+    "timing_note": "No machine-time threshold is applied. elapsed_seconds is informational only and varies by machine.",
+    "elapsed_seconds": 36.43097
+  }
+}

@@ -614,7 +614,11 @@ def _resolve_claim_evidence(
             emit(named, start, end)
             continue
         parts = [p.strip() for p in _ELLIPSIS.split(quote)]
-        parts = [p for p in parts if len(p) >= _MINIMUM_PART] or [quote]
+        parts = (
+            [p for p in parts if len(p) >= _MINIMUM_PART]
+            or [p for p in parts if p]
+            or [quote]
+        )
         ordered = [named] if named is not None else []
         ordered += [e for e in episode.events if e is not named]
         for part in parts:

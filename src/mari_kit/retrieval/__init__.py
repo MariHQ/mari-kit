@@ -101,6 +101,7 @@ from .indexes import (
     IVFPQIndex,
     RevisionBM25Explanation,
     RevisionBM25Index,
+    RevisionIndexDelta,
     RevisionIndexHit,
     SparseVectorIndex,
 )
@@ -210,6 +211,7 @@ __all__ = [
     "RevisionBM25Explanation",
     "RevisionBM25Index",
     "RevisionIndexHit",
+    "RevisionIndexDelta",
     "SparseContradictionCandidate",
     "SparseVectorIndex",
     "SparseContradictionHit",

@@ -8,6 +8,7 @@ from mari_kit.errors import MalformedModelOutput
 from mari_kit.json import require_list
 from mari_kit.types import GlossaryCandidate, KnowledgeDocument
 
+from ._documents import document_lookup
 from .facts import _evidence
 
 GLOSSARY_VERSION = "glossary-harvest-v1"
@@ -21,7 +22,7 @@ def parse_glossary(
 
     The task is grounded in DeftEval definition extraction (arXiv:2008.13694).
     """
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     rows = require_list(model_output, "terms", recipe=GLOSSARY_VERSION)
     output: list[GlossaryCandidate] = []
     seen: set[str] = set()

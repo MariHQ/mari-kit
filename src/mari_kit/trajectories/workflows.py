@@ -295,11 +295,25 @@ def decide_reviewed_workflow(
     selected_policy = policy or WorkflowPolicy()
     relevant_scores = relevant_document_scores or {}
     decisions = impact_decisions or {}
-    match = match_reviewed_workflow(
+    cache = match_cached_response(
         query_vectors,
         index,
-        minimum_score=selected_policy.speculation_threshold,
+        current_revisions,
+        minimum_score=selected_policy.cache_threshold,
+        current_section_revisions=current_section_revisions,
         allowed_document_ids=allowed_document_ids,
+    )
+    # A stale top intent must not hide another sufficiently close, fresh cache.
+    # The impact gates below apply to the selected cache's own document set.
+    match = (
+        cache.match
+        if cache.reusable
+        else match_reviewed_workflow(
+            query_vectors,
+            index,
+            minimum_score=selected_policy.speculation_threshold,
+            allowed_document_ids=allowed_document_ids,
+        )
     )
     if match is None:
         return WorkflowDecision(

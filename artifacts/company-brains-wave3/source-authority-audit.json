@@ -1,0 +1,56 @@
+{
+  "corpus_sha256": "c5eaf349ea406fb0722d74b695e94035f0f23dc8111e5e3262d89f8a5ce3ac79",
+  "basis": "Raw document_id and revision compared with evaluator controlling sources. Additional citations can legitimately explain precedence; this check does not prove prose entailment.",
+  "cites_controlling_source": 7,
+  "only_controlling_sources": 6,
+  "grounded_outputs": 7,
+  "results": [
+    {
+      "id": "authority.retention_controls",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": false,
+      "additional_citation_refs": [
+        [
+          "wiki/data-retention-summary",
+          "summary-v1"
+        ]
+      ]
+    },
+    {
+      "id": "authority.secrets_rotation",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": true,
+      "additional_citation_refs": []
+    },
+    {
+      "id": "region.us_supported",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": true,
+      "additional_citation_refs": []
+    },
+    {
+      "id": "region.no_global_default",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": true,
+      "additional_citation_refs": []
+    },
+    {
+      "id": "superseded.refund_window",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": true,
+      "additional_citation_refs": []
+    },
+    {
+      "id": "superseded.password_rotation",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": true,
+      "additional_citation_refs": []
+    },
+    {
+      "id": "adversarial.incident_paging",
+      "cites_controlling_source": true,
+      "all_citations_use_gold_sources": true,
+      "additional_citation_refs": []
+    }
+  ]
+}

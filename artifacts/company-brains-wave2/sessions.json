@@ -1,0 +1,86 @@
+[
+  {
+    "task": "durability_breaker",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02432ffe3wTsLYLvPq7MBw",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "durability_builder",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02b8fffeCt8iopsXOcpLrV",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "durability_reviewer",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02711ffenrmK1Hx05VMt4L",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "permissions_breaker",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02c84ffeZwil9kSZgUj3HJ",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "permissions_builder",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02490ffe40j1uFVZaecXtr",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "permissions_reviewer",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02d5dffeYKNTIwtcQY2eM2",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "quality_breaker",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02e0effeX1wUM7ija2Op3l",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "quality_builder",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02c34ffex85b5Fgzrr2QhD",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "quality_reviewer",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02cb0ffe4tGrkuWEj2ppG5",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "scale_breaker",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02e30ffeJ4nLJHuOrpemb7",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "scale_builder",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d02370ffebmeU2YcI6YF8eM",
+    "agent_completed": false,
+    "integration_verified": true
+  },
+  {
+    "task": "scale_reviewer",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43d029edffeGHTUl1Oce20ALZ",
+    "agent_completed": true,
+    "integration_verified": true
+  }
+]

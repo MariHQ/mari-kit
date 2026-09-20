@@ -1,0 +1,47 @@
+{
+  "case_id": "conflict.nda_review",
+  "original_error": "ValueError: incomplete model response: length",
+  "max_tokens": 6000,
+  "original_benchmark_unchanged": true,
+  "prediction": {
+    "facts": [
+      {
+        "claim": "Every mutual NDA must be reviewed by legal before signature, per legal/nda-policy revision nda-v3.",
+        "evidence": [
+          {
+            "document_id": "legal/nda-policy",
+            "quote": "Every mutual NDA must be reviewed by legal before signature."
+          }
+        ]
+      },
+      {
+        "claim": "Standard NDAs under $10k need no review, per sales/nda-faq revision ndafaq-v1.",
+        "evidence": [
+          {
+            "document_id": "sales/nda-faq",
+            "quote": "Standard NDAs under $10k need no review."
+          }
+        ]
+      }
+    ]
+  },
+  "request": {
+    "latency_seconds": 7.308299541997258,
+    "usage": {
+      "prompt_tokens": 257,
+      "completion_tokens": 1557,
+      "total_tokens": 1814,
+      "prompt_tokens_details": {
+        "cached_tokens": 123
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1430
+      },
+      "prompt_cache_hit_tokens": 123,
+      "prompt_cache_miss_tokens": 134
+    },
+    "model": "deepseek-flash"
+  },
+  "accepted": true,
+  "fact_count": 2
+}

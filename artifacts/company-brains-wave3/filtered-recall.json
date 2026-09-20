@@ -1,0 +1,201 @@
+{
+  "configuration": {
+    "allowlist_sizes": [
+      10,
+      50,
+      200,
+      1000
+    ],
+    "dimension": 24,
+    "ef_search": 64,
+    "exact_filter_threshold": 200,
+    "hnsw_m": 8,
+    "k": 10,
+    "metric": "cosine",
+    "queries": 20,
+    "seed": 20240919,
+    "size": 1000
+  },
+  "filtered_fallback_recall": {
+    "by_allowlist_size": [
+      {
+        "allowlist_size": 10,
+        "approximate": {
+          "allowlist_size": 10,
+          "exact_filter_threshold": 0,
+          "fallback_engaged": false,
+          "missed_relevant_hits": 178,
+          "queries": 20,
+          "recall": 0.11,
+          "recall_denominator": 200,
+          "recall_numerator": 22,
+          "timing_seconds": {
+            "ground_truth": 0.0007487069960916415,
+            "search": 0.0011690800165524706
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback": {
+          "allowlist_size": 10,
+          "exact_filter_threshold": 200,
+          "fallback_engaged": true,
+          "missed_relevant_hits": 0,
+          "queries": 20,
+          "recall": 1.0,
+          "recall_denominator": 200,
+          "recall_numerator": 200,
+          "timing_seconds": {
+            "ground_truth": 0.0007446250092471018,
+            "search": 0.001715287973638624
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback_engaged": true,
+        "recall_gain": 0.89,
+        "timing_ratio": 1.4672117813602525
+      },
+      {
+        "allowlist_size": 50,
+        "approximate": {
+          "allowlist_size": 50,
+          "exact_filter_threshold": 0,
+          "fallback_engaged": false,
+          "missed_relevant_hits": 187,
+          "queries": 20,
+          "recall": 0.065,
+          "recall_denominator": 200,
+          "recall_numerator": 13,
+          "timing_seconds": {
+            "ground_truth": 0.0010805839847307652,
+            "search": 0.0011953300272580236
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback": {
+          "allowlist_size": 50,
+          "exact_filter_threshold": 200,
+          "fallback_engaged": true,
+          "missed_relevant_hits": 0,
+          "queries": 20,
+          "recall": 1.0,
+          "recall_denominator": 200,
+          "recall_numerator": 200,
+          "timing_seconds": {
+            "ground_truth": 0.0010891229467233643,
+            "search": 0.0020382500370033085
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback_engaged": true,
+        "recall_gain": 0.935,
+        "timing_ratio": 1.7051776417587914
+      },
+      {
+        "allowlist_size": 200,
+        "approximate": {
+          "allowlist_size": 200,
+          "exact_filter_threshold": 0,
+          "fallback_engaged": false,
+          "missed_relevant_hits": 151,
+          "queries": 20,
+          "recall": 0.245,
+          "recall_denominator": 200,
+          "recall_numerator": 49,
+          "timing_seconds": {
+            "ground_truth": 0.0025166239793179557,
+            "search": 0.002763668991974555
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback": {
+          "allowlist_size": 200,
+          "exact_filter_threshold": 200,
+          "fallback_engaged": true,
+          "missed_relevant_hits": 0,
+          "queries": 20,
+          "recall": 1.0,
+          "recall_denominator": 200,
+          "recall_numerator": 200,
+          "timing_seconds": {
+            "ground_truth": 0.002321165957255289,
+            "search": 0.0034572499862406403
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback_engaged": true,
+        "recall_gain": 0.755,
+        "timing_ratio": 1.250963844179669
+      },
+      {
+        "allowlist_size": 1000,
+        "approximate": {
+          "allowlist_size": 1000,
+          "exact_filter_threshold": 0,
+          "fallback_engaged": false,
+          "missed_relevant_hits": 56,
+          "queries": 20,
+          "recall": 0.72,
+          "recall_denominator": 200,
+          "recall_numerator": 144,
+          "timing_seconds": {
+            "ground_truth": 0.009573123053996824,
+            "search": 0.005204830027651042
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback": {
+          "allowlist_size": 1000,
+          "exact_filter_threshold": 200,
+          "fallback_engaged": false,
+          "missed_relevant_hits": 56,
+          "queries": 20,
+          "recall": 0.72,
+          "recall_denominator": 200,
+          "recall_numerator": 144,
+          "timing_seconds": {
+            "ground_truth": 0.009426959019037895,
+            "search": 0.005213708020164631
+          },
+          "unauthorized_hits": 0
+        },
+        "fallback_engaged": false,
+        "recall_gain": 0.0,
+        "timing_ratio": 1.0017057218903258
+      }
+    ],
+    "corpus_size": 1000,
+    "dimension": 24,
+    "ef_search": 64,
+    "exact_filter_threshold": 200,
+    "k": 10,
+    "m": 8,
+    "metric": "cosine",
+    "queries": 20,
+    "timing_seconds": {
+      "approximate_sweep": 0.010332909063436091,
+      "fallback_sweep": 0.012424496017047204,
+      "ground_truth_sweeps": 0.027500910946400836,
+      "hnsw_build": 0.9829908340034308
+    },
+    "totals": {
+      "approximate": {
+        "ground_truth_seconds": 0.013919038014137186,
+        "recall": 0.285,
+        "recall_denominator": 800,
+        "recall_numerator": 228,
+        "search_seconds": 0.010332909063436091,
+        "unauthorized_hits": 0
+      },
+      "fallback": {
+        "ground_truth_seconds": 0.01358187293226365,
+        "recall": 0.93,
+        "recall_denominator": 800,
+        "recall_numerator": 744,
+        "search_seconds": 0.012424496017047204,
+        "unauthorized_hits": 0
+      },
+      "recall_gain": 0.645,
+      "unauthorized_hits": 0
+    }
+  }
+}

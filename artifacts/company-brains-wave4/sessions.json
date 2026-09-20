@@ -1,0 +1,20 @@
+[
+  {
+    "role": "adversarial",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43a13298ffeHc1O4V1A75T6JQ",
+    "completed": true
+  },
+  {
+    "role": "memory",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43a17c4cffedf1JKKCZ42yGDH",
+    "completed": true
+  },
+  {
+    "role": "retrieval",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43a17c4effeZGnIBQADmp8eWR",
+    "completed": true
+  }
+]

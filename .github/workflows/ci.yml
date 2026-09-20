@@ -44,6 +44,8 @@ jobs:
       - run: pyright src
       - run: pytest -q
       - run: python -m examples.verify_all
+      - run: python -m examples.company_brains
+      - run: python -m examples.company_brains.durable
 
   wheel:
     runs-on: ubuntu-latest

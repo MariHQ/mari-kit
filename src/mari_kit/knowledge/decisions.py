@@ -8,6 +8,7 @@ from mari_kit.errors import MalformedModelOutput
 from mari_kit.json import require_list
 from mari_kit.types import DecisionCandidate, KnowledgeDocument
 
+from ._documents import document_lookup
 from .facts import _evidence
 from .scoring import grounding_coverage
 
@@ -24,7 +25,7 @@ def parse_decisions(
     and Karan et al. (SIGDIAL 2021, 2021.sigdial-1.56). Mari accepts proposed
     decisions but does not infer them from topical language.
     """
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     rows = require_list(model_output, "decisions", recipe=DECISION_VERSION)
     output: list[DecisionCandidate] = []
     for row in rows:

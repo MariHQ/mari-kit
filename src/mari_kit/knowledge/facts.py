@@ -13,6 +13,7 @@ from mari_kit.errors import MalformedModelOutput
 from mari_kit.json import require_list
 from mari_kit.types import Evidence, FactCandidate, KnowledgeDocument
 
+from ._documents import document_lookup
 from .scoring import grounding_coverage
 from .sections import document_sections
 
@@ -105,7 +106,7 @@ def parse_facts(
     arXiv:1906.06127). Mari validates supplied rows; it does not run those
     models or claim their benchmark behavior.
     """
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     rows = require_list(model_output, "facts", recipe=FACT_EXTRACTION_VERSION)
     output: list[FactCandidate] = []
     seen: set[str] = set()
@@ -168,7 +169,7 @@ def parse_claim_assessments(
     selected_claims = tuple(
         str(claim).strip() for claim in claims if str(claim).strip()
     )
-    allowed = {document.document_id: document for document in documents}
+    allowed = document_lookup(documents)
     rows = require_list(model_output, "assessments", recipe=FACT_CHECK_VERSION)
     matched = _match_assessments(selected_claims, rows)
     if selected_claims and not any(row is not None for row in matched):

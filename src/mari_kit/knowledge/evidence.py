@@ -16,6 +16,7 @@ from mari_kit.references import (
     PageRegion,
     RecordField,
     RevisionRef,
+    ScopeRef,
     TableCell,
     TextSpan,
 )
@@ -59,8 +60,14 @@ class LocatedEvidenceReport:
         return bool(self.valid) and not self.issues
 
 
-def document_evidence_ref(value: Evidence) -> ArtifactEvidence:
-    """Adapt the document-specific compatibility type to generic evidence."""
+def document_evidence_ref(
+    value: Evidence, *, scope: ScopeRef | None = None
+) -> ArtifactEvidence:
+    """Adapt document evidence, optionally retaining the host's tenant scope.
+
+    Legacy ``Evidence`` carries no scope. Hosts combining tenants must supply
+    the scope in which that evidence was validated.
+    """
 
     return ArtifactEvidence(
         ref=ArtifactRef(
@@ -68,6 +75,7 @@ def document_evidence_ref(value: Evidence) -> ArtifactEvidence:
             revision=value.revision,
             unit_id=value.section_id,
             namespace="document",
+            scope=scope,
         ),
         quote=value.quote,
         start=value.start,

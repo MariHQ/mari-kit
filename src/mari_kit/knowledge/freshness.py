@@ -190,7 +190,7 @@ def assess_dependencies(
         status = FreshnessStatus.CURRENT
     return FreshnessReport(
         status,
-        tuple(sorted(changes, key=lambda row: row.dependency_id)),
+        tuple(dict.fromkeys(sorted(changes, key=lambda row: row.dependency_id))),
         tuple(sorted(set(missing))),
         tuple(sorted(set(unversioned))),
     )

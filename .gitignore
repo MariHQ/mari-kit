@@ -10,3 +10,17 @@ dist/
 *.egg-info/
 mari-kit-landing/_build/
 benchmarks/data/
+artifacts/company-brains/*.jsonl
+artifacts/company-brains/*.log
+artifacts/company-brains-wave2/*.jsonl
+artifacts/company-brains-wave2/*.log
+artifacts/company-brains-wave2/*.sqlite*
+artifacts/company-brains-wave3/*.jsonl
+artifacts/company-brains-wave3/*.log
+artifacts/company-brains-wave3/*.sqlite*
+artifacts/company-brains-wave4/*.jsonl
+artifacts/company-brains-wave4/*.log
+artifacts/company-brains-wave4/*.sqlite*
+artifacts/company-brains-wave5/*.jsonl
+artifacts/company-brains-wave5/*.log
+artifacts/company-brains-wave5/*.sqlite*

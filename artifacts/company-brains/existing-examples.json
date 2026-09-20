@@ -1,0 +1,288 @@
+{
+  "passed": true,
+  "checks": {
+    "independent_algorithm_composition": true,
+    "conversation_maintenance_matches_clean_rebuild": true,
+    "dependency_updates_equal_rebuild_and_preserve_evidence": true,
+    "company_search_is_authorized_and_revision_bound": true,
+    "structured_evidence_commits_a_governed_artifact": true,
+    "completed_activity_produces_a_reviewable_proposal": true,
+    "acl_retrieval_isolated_before_scoring": true,
+    "acl_cache_isolated_before_matching": true,
+    "github_changes_planned": true,
+    "github_webhook_triggered_poll": true,
+    "github_deletion_reconciled": true,
+    "github_poll_repairs_lost_event": true,
+    "vectors_searched": true,
+    "answer_grounded": true,
+    "slack_signature_verified": true,
+    "slack_event_refetched_thread": true,
+    "slack_poll_repairs_lost_event": true,
+    "slack_acl_checked": true,
+    "slackbot_one_answer_round": true,
+    "slackbot_posthoc_analysis_round": true,
+    "slackbot_managed_voice": true,
+    "slackbot_evidence_verified": true,
+    "slackbot_speculative_retrieval": true,
+    "slackbot_trajectory_analyzed": true,
+    "slackbot_high_threshold_cache": true,
+    "slackbot_dependency_invalidated": true,
+    "slackbot_new_doc_falls_back": true,
+    "workflow_view_extracts_intra_workflow_answers": true,
+    "workflow_view_does_not_cache_compound_request": true,
+    "workflow_view_cache_threshold_is_tunable": true,
+    "workflow_view_invalidates_only_affected_step": true,
+    "knowledge_lifecycle_completed": true,
+    "reviewed_fact_invalidated": true,
+    "incident_drift_reports_all_impacted_artifacts": true,
+    "incident_drift_preserves_unchanged_section_cache": true,
+    "drive_change_stream_advanced": true,
+    "drive_edit_reembedded": true,
+    "drive_delete_removed_vector": true,
+    "drive_acl_change_skipped_embedding": true
+  },
+  "projects": {
+    "cross_user_acl_isolation": {
+      "mode": "fake",
+      "employee_allowed_document_ids": [
+        "github:acme%2Foperations/checkout-failover",
+        "status/checkout"
+      ],
+      "customer_allowed_document_ids": [
+        "status/checkout"
+      ],
+      "employee_retrieval_hits": [
+        "github:acme%2Foperations/checkout-failover",
+        "status/checkout"
+      ],
+      "customer_retrieval_hits": [
+        "status/checkout"
+      ],
+      "employee_cache_action": "cached_response",
+      "customer_cache_action": "cached_response",
+      "employee_workflow": "internal-checkout-mitigation",
+      "customer_workflow": "public-checkout-status",
+      "employee_answer": "Shift checkout traffic to the warm region.",
+      "customer_answer": "Follow checkout incident updates on the public status page.",
+      "restricted_document_hidden_from_customer": true,
+      "both_users_received_grounded_cache": true
+    },
+    "github": {
+      "mode": "fake",
+      "provider_identity": "acme/knowledge",
+      "initial_upserts": [
+        "file:README.md",
+        "file:docs/release.md"
+      ],
+      "initial_cursor_advanced": true,
+      "top_hit": "file:docs/release.md",
+      "answer": "Release Mari by deploying the tested main branch.",
+      "citations": [
+        "github:acme%2Fknowledge@c2b742db362c223f/file:docs%2Frelease.md"
+      ],
+      "webhook_verified": true,
+      "coalesced_events": 1,
+      "event_aggregate": "repository:acme/knowledge",
+      "event_poll_upserts": [
+        "file:README.md"
+      ],
+      "event_poll_deletes": [
+        "file:docs/release.md"
+      ],
+      "scheduled_poll_repairs": [
+        "file:README.md",
+        "file:docs/operations.md"
+      ],
+      "scheduled_poll_deletes": [],
+      "embedded_documents": [
+        "file:README.md",
+        "file:docs/release.md",
+        "file:README.md",
+        "file:README.md",
+        "file:docs/operations.md"
+      ],
+      "remaining": [
+        "file:README.md",
+        "file:docs/operations.md"
+      ],
+      "current_index_documents": [
+        "file:README.md",
+        "file:docs/operations.md"
+      ]
+    },
+    "slack": {
+      "mode": "fake",
+      "provider_identity": "Example",
+      "initial_polled_documents": [
+        "thread:C-ENG:100.000001"
+      ],
+      "initial_messages": 2,
+      "signature_verified": true,
+      "coalesced_events": 1,
+      "stream_updated_documents": [
+        "thread:C-ENG:100.000001"
+      ],
+      "stream_messages": 3,
+      "polling_repaired_documents": [
+        "thread:C-ENG:100.000001"
+      ],
+      "polling_unchanged_documents": [],
+      "final_messages": 4,
+      "poll_cursor": "103.000001",
+      "thread_id": "thread:C-ENG:100.000001",
+      "visibility": "restricted",
+      "authorized": true
+    },
+    "slackbot_reliable_answers": {
+      "mode": "fake",
+      "deepseek_answer_rounds": 1,
+      "deepseek_analysis_rounds": 1,
+      "openai_embedding_calls": 1,
+      "styleguide_revision": "style-v5",
+      "styleguide_applied": true,
+      "styleguide_checks": {
+        "no_exclamation": true,
+        "fixture_affirmative_opening": true
+      },
+      "speculative_tool_called": true,
+      "speculation_reason": "no_cached_response",
+      "speculation_score": 1.0,
+      "retrieved_document_ids": [
+        "mari/styleguide",
+        "mari/refund-policy"
+      ],
+      "trajectory_steps": 4,
+      "trajectory_phases": [
+        "Retrieve knowledge",
+        "Answer"
+      ],
+      "trajectory_analyzed_after_answer": true,
+      "cache_threshold": 0.97,
+      "cache_score": 1.0,
+      "cache_hit": true,
+      "nearby_query_action": "llm",
+      "cached_response": "Absolutely \u2014 enterprise customers may request a full refund within 30 days of purchase. [refund-policy]",
+      "changed_document": "mari/refund-policy",
+      "impacted_artifacts": [
+        "workflow:support-refunds"
+      ],
+      "action_after_document_change": "speculative_retrieval",
+      "new_document_unreviewed_action": "speculative_retrieval",
+      "new_document_nonimpacting_action": "cached_response",
+      "new_document_impacting_action": "speculative_retrieval",
+      "slack_post_timestamp": "fixture-post",
+      "answer": "Absolutely \u2014 enterprise customers may request a full refund within 30 days of purchase. [refund-policy]",
+      "citations": [
+        "refund-policy"
+      ],
+      "verified_evidence_blocks": 1
+    },
+    "knowledge_lifecycle": {
+      "facts": 1,
+      "decisions": 1,
+      "glossary_terms": 1,
+      "faq_answers": 1,
+      "digest_topics": 1,
+      "initial_freshness": "current",
+      "freshness_after_source_edit": "stale",
+      "stale_fact_reusable": false
+    },
+    "incident_response_drift": {
+      "mode": "fake",
+      "old_runbook_revision": "runbook-v11",
+      "new_runbook_revision": "runbook-v12",
+      "mitigation_section": "checkout-incident/mitigation",
+      "escalation_section": "checkout-incident/escalation",
+      "mitigation_sources": [
+        "github:acme%2Foperations/checkout-runbook.md",
+        "slack:acme/thread:checkout-1042"
+      ],
+      "impacted_artifacts": [
+        "answer:checkout-mitigation",
+        "digest:whole-checkout-runbook",
+        "workflow:checkout-mitigation"
+      ],
+      "changed_dependencies": [
+        "github:acme%2Foperations/checkout-runbook.md",
+        "github:acme%2Foperations/checkout-runbook.md#checkout-incident/mitigation"
+      ],
+      "mitigation_action_after_change": "speculative_retrieval",
+      "escalation_action_after_change": "cached_response",
+      "unchanged_escalation_cache_preserved": true
+    },
+    "google_drive": {
+      "mode": "fake",
+      "provider_identity": "owner@example.com",
+      "initial_documents": [
+        "doc-1",
+        "doc-2",
+        "doc-4"
+      ],
+      "watch_resource": "example-resource",
+      "notification_aggregate": "channel:example-channel",
+      "changed_documents": [
+        "doc-1",
+        "doc-3",
+        "doc-4"
+      ],
+      "deleted_documents": [
+        "doc-2"
+      ],
+      "embedded_documents": [
+        "doc-1",
+        "doc-2",
+        "doc-4",
+        "doc-1",
+        "doc-3"
+      ],
+      "embedding_changed_for_edit": true,
+      "deleted_vector_removed": true,
+      "acl_only_change_not_reembedded": true,
+      "acl_only_change_persisted": true,
+      "initial_index_documents": [
+        "doc-1",
+        "doc-2",
+        "doc-4"
+      ],
+      "current_index_documents": [
+        "doc-1",
+        "doc-3",
+        "doc-4"
+      ],
+      "top_hit_after_edit": "doc-1",
+      "cursor": "changes:stream-2"
+    },
+    "workflow_view_step_cache": {
+      "mode": "fake",
+      "deepseek_layer_rounds": 2,
+      "openai_embedding_calls": 1,
+      "events": 6,
+      "workflow": "Resolve a customer's feature eligibility and provide the relevant administrator configuration path.",
+      "activity": "Answer an account-specific SSO eligibility and setup question.",
+      "extracted_phases": [
+        "Resolve SSO entitlement",
+        "Find SSO setup path",
+        "Compose customer answer"
+      ],
+      "cacheable_steps": [
+        "sso-entitlement",
+        "sso-setup"
+      ],
+      "entitlement_cache_hit": true,
+      "setup_cache_hit": true,
+      "entitlement_answer": "Yes. The Business plan includes SSO.",
+      "setup_answer": "An admin configures SSO in Settings > Security > Single sign-on.",
+      "compound_request_action": "llm",
+      "paraphrase_score": 0.9428,
+      "strict_threshold": 0.9528,
+      "strict_threshold_action": "speculative_retrieval",
+      "relaxed_threshold": 0.9328,
+      "relaxed_threshold_action": "cached_response",
+      "impacted_after_entitlement_change": [
+        "workflow:sso-entitlement"
+      ],
+      "entitlement_after_change": "speculative_retrieval",
+      "setup_after_change": "cached_response"
+    }
+  }
+}

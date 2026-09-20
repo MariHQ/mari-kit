@@ -1,0 +1,88 @@
+[
+  {
+    "task": "conversation",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43dffacaffe1SxwVPEk6TYpNQ",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "decisions",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43dffae9ffe5rbUo0sFyds5Ik",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "duplicate_evidence",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43db1af1ffeWKqrdPkzhpOA9r",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "freshness_audit",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43df501affeDQ37u18cT7YNF7",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "incident",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43dffb0affewQkdP1s2WU387O",
+    "agent_completed": false,
+    "integration_verified": true,
+    "completion_note": "OpenCode external-directory permission rejected; coordinator completed report and verification."
+  },
+  {
+    "task": "isolation",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43dffaf5ffeurBGhQo6COprif",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "onboarding",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43e0ca6effeByRkny0h0L7oir",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "retrieval_audit",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43df5060ffeSIIuvybat4O0vL",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "search",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43e0e025ffeBctv1THgmWjnwb",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "support",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43e0d4afffeGXia5ltvwBdnEU",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "sync",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43dffae4ffeVJmY8RJLpR8Pd0",
+    "agent_completed": true,
+    "integration_verified": true
+  },
+  {
+    "task": "sync_audit",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43df4ff2ffe8u3vcQBSz67Q1n",
+    "agent_completed": false,
+    "integration_verified": true,
+    "completion_note": "Coordinator stopped session after deliverables and independent verification completed."
+  }
+]

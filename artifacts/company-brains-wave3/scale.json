@@ -1,0 +1,1088 @@
+{
+  "schema": "mari-kit.company-brain-scale/1",
+  "seed": 20240919,
+  "query_count": 20,
+  "sizes_requested": [
+    1000,
+    10000,
+    25000
+  ],
+  "scope": {
+    "tenant": "scale",
+    "space": "company"
+  },
+  "engine_available": true,
+  "timing_note": "Inputs are deterministic for a fixed seed; wall seconds are not. tracemalloc overhead is included unless --no-tracemalloc.",
+  "memory_note": "process_rss bytes are the ru_maxrss high-water mark normalized to bytes (macOS bytes, other platforms KB*1024).",
+  "reference_index_note": "RevisionBM25Index rebuilds corpus statistics on every with_deltas; batch index update times include a full rebuild. reference_index_query times a prebuilt index. The actual engine checks live access tokens and reuses authorized snapshots and indexes when unchanged; engine_search_repeated measures that warm path. Commit phase wall_seconds includes planning; its latency samples measure source-plan commits only. Each update serializes the full source manifest.",
+  "results": [
+    {
+      "size": 1000,
+      "seed": 20240919,
+      "documents": 1000,
+      "sources": 5,
+      "queries": 20,
+      "limit": 5,
+      "counts": {
+        "commit_plans": 5,
+        "commit_documents": 1000,
+        "live_documents": 1000,
+        "projection_documents": 1000,
+        "cold_index_units": 1000,
+        "sync_manifest_entries": 1000,
+        "queries_with_positive_hits": 20,
+        "positive_hits": 100,
+        "authorized_refs": 858,
+        "total_refs": 1000,
+        "edit_documents": 100,
+        "delete_documents": 50,
+        "final_live_documents": 950
+      },
+      "phases": {
+        "commit": {
+          "wall_seconds": 0.050885,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 60309504,
+          "process_rss_after_bytes": 63750144,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.036378,
+            "mean_seconds": 0.007276,
+            "min_seconds": 0.007031,
+            "p50_seconds": 0.007251,
+            "p95_seconds": 0.007555,
+            "max_seconds": 0.007555
+          }
+        },
+        "cold_index_build": {
+          "wall_seconds": 0.009553,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 69287936,
+          "process_rss_after_bytes": 70270976,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.009553,
+            "mean_seconds": 0.009553,
+            "min_seconds": 0.009553,
+            "p50_seconds": 0.009553,
+            "p95_seconds": 0.009553,
+            "max_seconds": 0.009553
+          }
+        },
+        "reference_index_query": {
+          "wall_seconds": 0.074291,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 70270976,
+          "process_rss_after_bytes": 70369280,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.07427,
+            "mean_seconds": 0.003714,
+            "min_seconds": 0.003012,
+            "p50_seconds": 0.00367,
+            "p95_seconds": 0.004381,
+            "max_seconds": 0.004409
+          }
+        },
+        "acl_filtered_query": {
+          "wall_seconds": 0.079918,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 72122368,
+          "process_rss_after_bytes": 72171520,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.07991,
+            "mean_seconds": 0.003996,
+            "min_seconds": 0.003321,
+            "p50_seconds": 0.003984,
+            "p95_seconds": 0.004601,
+            "max_seconds": 0.004718
+          }
+        },
+        "batch_edit_commit": {
+          "wall_seconds": 0.014143,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 72531968,
+          "process_rss_after_bytes": 72663040,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.011336,
+            "mean_seconds": 0.002267,
+            "min_seconds": 0.001345,
+            "p50_seconds": 0.00165,
+            "p95_seconds": 0.005003,
+            "max_seconds": 0.005003
+          }
+        },
+        "batch_edit_index_update": {
+          "wall_seconds": 0.010253,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 72663040,
+          "process_rss_after_bytes": 75268096,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.010253,
+            "mean_seconds": 0.010253,
+            "min_seconds": 0.010253,
+            "p50_seconds": 0.010253,
+            "p95_seconds": 0.010253,
+            "max_seconds": 0.010253
+          }
+        },
+        "batch_delete_commit": {
+          "wall_seconds": 0.004594,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 75612160,
+          "process_rss_after_bytes": 75644928,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.003265,
+            "mean_seconds": 0.000653,
+            "min_seconds": 0.000606,
+            "p50_seconds": 0.000629,
+            "p95_seconds": 0.000718,
+            "max_seconds": 0.000718
+          }
+        },
+        "batch_delete_index_update": {
+          "wall_seconds": 0.010401,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 75644928,
+          "process_rss_after_bytes": 77250560,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.010401,
+            "mean_seconds": 0.010401,
+            "min_seconds": 0.010401,
+            "p50_seconds": 0.010401,
+            "p95_seconds": 0.010401,
+            "max_seconds": 0.010401
+          }
+        },
+        "engine_search": {
+          "wall_seconds": 0.033773,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 77824000,
+          "process_rss_after_bytes": 78954496,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.033773,
+            "mean_seconds": 0.033773,
+            "min_seconds": 0.033773,
+            "p50_seconds": 0.033773,
+            "p95_seconds": 0.033773,
+            "max_seconds": 0.033773
+          }
+        },
+        "engine_search_repeated": {
+          "wall_seconds": 0.070596,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 78954496,
+          "process_rss_after_bytes": 78954496,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.07059,
+            "mean_seconds": 0.003529,
+            "min_seconds": 0.002956,
+            "p50_seconds": 0.003522,
+            "p95_seconds": 0.004079,
+            "max_seconds": 0.004169
+          }
+        },
+        "store_access_snapshot": {
+          "wall_seconds": 0.008965,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 78954496,
+          "process_rss_after_bytes": 80756736,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.008965,
+            "mean_seconds": 0.008965,
+            "min_seconds": 0.008965,
+            "p50_seconds": 0.008965,
+            "p95_seconds": 0.008965,
+            "max_seconds": 0.008965
+          }
+        },
+        "engine_answer": {
+          "wall_seconds": 0.009494,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 80756736,
+          "process_rss_after_bytes": 80789504,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.009494,
+            "mean_seconds": 0.009494,
+            "min_seconds": 0.009494,
+            "p50_seconds": 0.009494,
+            "p95_seconds": 0.009494,
+            "max_seconds": 0.009494
+          }
+        },
+        "engine_answer_cached": {
+          "wall_seconds": 0.017048,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 80789504,
+          "process_rss_after_bytes": 80789504,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.017041,
+            "mean_seconds": 0.000852,
+            "min_seconds": 0.00083,
+            "p50_seconds": 0.00084,
+            "p95_seconds": 0.000888,
+            "max_seconds": 0.000932
+          }
+        }
+      },
+      "engine": {
+        "probed": true,
+        "disposition": "grounded",
+        "evidence_count": 1
+      },
+      "database_bytes": 3133440,
+      "storage_bytes": {
+        "main": 3133440,
+        "-wal": 0,
+        "-shm": 0
+      },
+      "reference_allowlist_sweep": [
+        {
+          "authorized_refs": 10,
+          "total_refs": 1000,
+          "measurement": {
+            "wall_seconds": 0.001122,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 72237056,
+            "process_rss_after_bytes": 72237056,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.001117,
+              "mean_seconds": 5.6e-05,
+              "min_seconds": 4.6e-05,
+              "p50_seconds": 5.3e-05,
+              "p95_seconds": 7.2e-05,
+              "max_seconds": 8.5e-05
+            }
+          }
+        },
+        {
+          "authorized_refs": 100,
+          "total_refs": 1000,
+          "measurement": {
+            "wall_seconds": 0.008406,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 72237056,
+            "process_rss_after_bytes": 72237056,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.008402,
+              "mean_seconds": 0.00042,
+              "min_seconds": 0.000345,
+              "p50_seconds": 0.00042,
+              "p95_seconds": 0.000478,
+              "max_seconds": 0.0005
+            }
+          }
+        },
+        {
+          "authorized_refs": 1000,
+          "total_refs": 1000,
+          "measurement": {
+            "wall_seconds": 0.083505,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 72253440,
+            "process_rss_after_bytes": 72286208,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.083499,
+              "mean_seconds": 0.004175,
+              "min_seconds": 0.003432,
+              "p50_seconds": 0.004172,
+              "p95_seconds": 0.004799,
+              "max_seconds": 0.004914
+            }
+          }
+        }
+      ],
+      "final_projection_documents": 950,
+      "process_rss_peak_bytes": 80789504
+    },
+    {
+      "size": 10000,
+      "seed": 20240919,
+      "documents": 10000,
+      "sources": 5,
+      "queries": 20,
+      "limit": 5,
+      "counts": {
+        "commit_plans": 5,
+        "commit_documents": 10000,
+        "live_documents": 10000,
+        "projection_documents": 10000,
+        "cold_index_units": 10000,
+        "sync_manifest_entries": 10000,
+        "queries_with_positive_hits": 20,
+        "positive_hits": 100,
+        "authorized_refs": 8454,
+        "total_refs": 10000,
+        "edit_documents": 1000,
+        "delete_documents": 500,
+        "final_live_documents": 9500
+      },
+      "phases": {
+        "commit": {
+          "wall_seconds": 0.553959,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 81149952,
+          "process_rss_after_bytes": 82722816,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.404325,
+            "mean_seconds": 0.080865,
+            "min_seconds": 0.078726,
+            "p50_seconds": 0.080682,
+            "p95_seconds": 0.083739,
+            "max_seconds": 0.083739
+          }
+        },
+        "cold_index_build": {
+          "wall_seconds": 0.101495,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 134627328,
+          "process_rss_after_bytes": 146014208,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.101495,
+            "mean_seconds": 0.101495,
+            "min_seconds": 0.101495,
+            "p50_seconds": 0.101495,
+            "p95_seconds": 0.101495,
+            "max_seconds": 0.101495
+          }
+        },
+        "reference_index_query": {
+          "wall_seconds": 0.857032,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 146014208,
+          "process_rss_after_bytes": 147652608,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.856982,
+            "mean_seconds": 0.042849,
+            "min_seconds": 0.034133,
+            "p50_seconds": 0.041525,
+            "p95_seconds": 0.051078,
+            "max_seconds": 0.064174
+          }
+        },
+        "acl_filtered_query": {
+          "wall_seconds": 0.961089,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 164757504,
+          "process_rss_after_bytes": 167034880,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.961072,
+            "mean_seconds": 0.048054,
+            "min_seconds": 0.040383,
+            "p50_seconds": 0.045972,
+            "p95_seconds": 0.053344,
+            "max_seconds": 0.083261
+          }
+        },
+        "batch_edit_commit": {
+          "wall_seconds": 0.108927,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 169574400,
+          "process_rss_after_bytes": 171409408,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.082542,
+            "mean_seconds": 0.016508,
+            "min_seconds": 0.013628,
+            "p50_seconds": 0.014062,
+            "p95_seconds": 0.02085,
+            "max_seconds": 0.02085
+          }
+        },
+        "batch_edit_index_update": {
+          "wall_seconds": 0.10609,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 171409408,
+          "process_rss_after_bytes": 197509120,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.10609,
+            "mean_seconds": 0.10609,
+            "min_seconds": 0.10609,
+            "p50_seconds": 0.10609,
+            "p95_seconds": 0.10609,
+            "max_seconds": 0.10609
+          }
+        },
+        "batch_delete_commit": {
+          "wall_seconds": 0.058471,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 200425472,
+          "process_rss_after_bytes": 200425472,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.046257,
+            "mean_seconds": 0.009251,
+            "min_seconds": 0.005896,
+            "p50_seconds": 0.006449,
+            "p95_seconds": 0.01494,
+            "max_seconds": 0.01494
+          }
+        },
+        "batch_delete_index_update": {
+          "wall_seconds": 0.103426,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 200425472,
+          "process_rss_after_bytes": 216481792,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.103426,
+            "mean_seconds": 0.103426,
+            "min_seconds": 0.103426,
+            "p50_seconds": 0.103426,
+            "p95_seconds": 0.103426,
+            "max_seconds": 0.103426
+          }
+        },
+        "engine_search": {
+          "wall_seconds": 0.343087,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 216481792,
+          "process_rss_after_bytes": 232701952,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.343087,
+            "mean_seconds": 0.343087,
+            "min_seconds": 0.343087,
+            "p50_seconds": 0.343087,
+            "p95_seconds": 0.343087,
+            "max_seconds": 0.343087
+          }
+        },
+        "engine_search_repeated": {
+          "wall_seconds": 0.753617,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 232701952,
+          "process_rss_after_bytes": 232701952,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.753602,
+            "mean_seconds": 0.03768,
+            "min_seconds": 0.031855,
+            "p50_seconds": 0.037802,
+            "p95_seconds": 0.042651,
+            "max_seconds": 0.042797
+          }
+        },
+        "store_access_snapshot": {
+          "wall_seconds": 0.092022,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 232701952,
+          "process_rss_after_bytes": 250757120,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.092022,
+            "mean_seconds": 0.092022,
+            "min_seconds": 0.092022,
+            "p50_seconds": 0.092022,
+            "p95_seconds": 0.092022,
+            "max_seconds": 0.092022
+          }
+        },
+        "engine_answer": {
+          "wall_seconds": 0.089339,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 250757120,
+          "process_rss_after_bytes": 250757120,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.089339,
+            "mean_seconds": 0.089339,
+            "min_seconds": 0.089339,
+            "p50_seconds": 0.089339,
+            "p95_seconds": 0.089339,
+            "max_seconds": 0.089339
+          }
+        },
+        "engine_answer_cached": {
+          "wall_seconds": 0.169215,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 250757120,
+          "process_rss_after_bytes": 250757120,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.169203,
+            "mean_seconds": 0.00846,
+            "min_seconds": 0.008208,
+            "p50_seconds": 0.0084,
+            "p95_seconds": 0.008734,
+            "max_seconds": 0.008749
+          }
+        }
+      },
+      "engine": {
+        "probed": true,
+        "disposition": "grounded",
+        "evidence_count": 1
+      },
+      "database_bytes": 30728192,
+      "storage_bytes": {
+        "main": 30728192,
+        "-wal": 0,
+        "-shm": 0
+      },
+      "reference_allowlist_sweep": [
+        {
+          "authorized_refs": 100,
+          "total_refs": 10000,
+          "measurement": {
+            "wall_seconds": 0.012526,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 167591936,
+            "process_rss_after_bytes": 167591936,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.012518,
+              "mean_seconds": 0.000626,
+              "min_seconds": 0.000527,
+              "p50_seconds": 0.000628,
+              "p95_seconds": 0.000708,
+              "max_seconds": 0.000726
+            }
+          }
+        },
+        {
+          "authorized_refs": 1000,
+          "total_refs": 10000,
+          "measurement": {
+            "wall_seconds": 0.092245,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 167591936,
+            "process_rss_after_bytes": 167591936,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.092237,
+              "mean_seconds": 0.004612,
+              "min_seconds": 0.003893,
+              "p50_seconds": 0.004611,
+              "p95_seconds": 0.005209,
+              "max_seconds": 0.005241
+            }
+          }
+        },
+        {
+          "authorized_refs": 10000,
+          "total_refs": 10000,
+          "measurement": {
+            "wall_seconds": 0.966073,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 167591936,
+            "process_rss_after_bytes": 168394752,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.96606,
+              "mean_seconds": 0.048303,
+              "min_seconds": 0.039449,
+              "p50_seconds": 0.046821,
+              "p95_seconds": 0.054642,
+              "max_seconds": 0.074041
+            }
+          }
+        }
+      ],
+      "final_projection_documents": 9500,
+      "process_rss_peak_bytes": 250757120
+    },
+    {
+      "size": 25000,
+      "seed": 20240919,
+      "documents": 25000,
+      "sources": 5,
+      "queries": 20,
+      "limit": 5,
+      "counts": {
+        "commit_plans": 5,
+        "commit_documents": 25000,
+        "live_documents": 25000,
+        "projection_documents": 25000,
+        "cold_index_units": 25000,
+        "sync_manifest_entries": 25000,
+        "queries_with_positive_hits": 20,
+        "positive_hits": 100,
+        "authorized_refs": 21069,
+        "total_refs": 25000,
+        "edit_documents": 2500,
+        "delete_documents": 1250,
+        "final_live_documents": 23750
+      },
+      "phases": {
+        "commit": {
+          "wall_seconds": 1.367518,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 250757120,
+          "process_rss_after_bytes": 250757120,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 1.002716,
+            "mean_seconds": 0.200543,
+            "min_seconds": 0.190244,
+            "p50_seconds": 0.197849,
+            "p95_seconds": 0.211085,
+            "max_seconds": 0.211085
+          }
+        },
+        "cold_index_build": {
+          "wall_seconds": 0.248233,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 250757120,
+          "process_rss_after_bytes": 274595840,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.248233,
+            "mean_seconds": 0.248233,
+            "min_seconds": 0.248233,
+            "p50_seconds": 0.248233,
+            "p95_seconds": 0.248233,
+            "max_seconds": 0.248233
+          }
+        },
+        "reference_index_query": {
+          "wall_seconds": 2.191993,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 274595840,
+          "process_rss_after_bytes": 279953408,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 2.191922,
+            "mean_seconds": 0.109596,
+            "min_seconds": 0.08486,
+            "p50_seconds": 0.1027,
+            "p95_seconds": 0.135864,
+            "max_seconds": 0.154089
+          }
+        },
+        "acl_filtered_query": {
+          "wall_seconds": 2.545915,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 322404352,
+          "process_rss_after_bytes": 329383936,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 2.545898,
+            "mean_seconds": 0.127295,
+            "min_seconds": 0.0999,
+            "p50_seconds": 0.116383,
+            "p95_seconds": 0.20283,
+            "max_seconds": 0.204388
+          }
+        },
+        "batch_edit_commit": {
+          "wall_seconds": 0.283867,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 335757312,
+          "process_rss_after_bytes": 339902464,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.217312,
+            "mean_seconds": 0.043462,
+            "min_seconds": 0.042475,
+            "p50_seconds": 0.04305,
+            "p95_seconds": 0.045377,
+            "max_seconds": 0.045377
+          }
+        },
+        "batch_edit_index_update": {
+          "wall_seconds": 0.268021,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 339902464,
+          "process_rss_after_bytes": 409075712,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.268021,
+            "mean_seconds": 0.268021,
+            "min_seconds": 0.268021,
+            "p50_seconds": 0.268021,
+            "p95_seconds": 0.268021,
+            "max_seconds": 0.268021
+          }
+        },
+        "batch_delete_commit": {
+          "wall_seconds": 0.14001,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 418086912,
+          "process_rss_after_bytes": 418086912,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 5,
+            "latency_kind": "sampled",
+            "p95_valid": false,
+            "total_seconds": 0.107873,
+            "mean_seconds": 0.021575,
+            "min_seconds": 0.015475,
+            "p50_seconds": 0.01571,
+            "p95_seconds": 0.031777,
+            "max_seconds": 0.031777
+          }
+        },
+        "batch_delete_index_update": {
+          "wall_seconds": 0.25231,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 418086912,
+          "process_rss_after_bytes": 457703424,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.25231,
+            "mean_seconds": 0.25231,
+            "min_seconds": 0.25231,
+            "p50_seconds": 0.25231,
+            "p95_seconds": 0.25231,
+            "max_seconds": 0.25231
+          }
+        },
+        "engine_search": {
+          "wall_seconds": 0.857524,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 457703424,
+          "process_rss_after_bytes": 498384896,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.857524,
+            "mean_seconds": 0.857524,
+            "min_seconds": 0.857524,
+            "p50_seconds": 0.857524,
+            "p95_seconds": 0.857524,
+            "max_seconds": 0.857524
+          }
+        },
+        "engine_search_repeated": {
+          "wall_seconds": 2.223044,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 498384896,
+          "process_rss_after_bytes": 498384896,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 2.223027,
+            "mean_seconds": 0.111151,
+            "min_seconds": 0.082158,
+            "p50_seconds": 0.095978,
+            "p95_seconds": 0.23121,
+            "max_seconds": 0.247034
+          }
+        },
+        "store_access_snapshot": {
+          "wall_seconds": 0.231986,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 498384896,
+          "process_rss_after_bytes": 544063488,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.231986,
+            "mean_seconds": 0.231986,
+            "min_seconds": 0.231986,
+            "p50_seconds": 0.231986,
+            "p95_seconds": 0.231986,
+            "max_seconds": 0.231986
+          }
+        },
+        "engine_answer": {
+          "wall_seconds": 0.23035,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 544063488,
+          "process_rss_after_bytes": 544063488,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 1,
+            "latency_kind": "single_shot",
+            "p95_valid": false,
+            "total_seconds": 0.23035,
+            "mean_seconds": 0.23035,
+            "min_seconds": 0.23035,
+            "p50_seconds": 0.23035,
+            "p95_seconds": 0.23035,
+            "max_seconds": 0.23035
+          }
+        },
+        "engine_answer_cached": {
+          "wall_seconds": 0.444315,
+          "allocations_peak_bytes": 0,
+          "process_rss_before_bytes": 544063488,
+          "process_rss_after_bytes": 544063488,
+          "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+          "latency": {
+            "unit": "seconds",
+            "count": 20,
+            "latency_kind": "sampled",
+            "p95_valid": true,
+            "total_seconds": 0.444296,
+            "mean_seconds": 0.022215,
+            "min_seconds": 0.021709,
+            "p50_seconds": 0.022007,
+            "p95_seconds": 0.022868,
+            "max_seconds": 0.023572
+          }
+        }
+      },
+      "engine": {
+        "probed": true,
+        "disposition": "grounded",
+        "evidence_count": 1
+      },
+      "database_bytes": 76324864,
+      "storage_bytes": {
+        "main": 76324864,
+        "-wal": 0,
+        "-shm": 0
+      },
+      "reference_allowlist_sweep": [
+        {
+          "authorized_refs": 250,
+          "total_refs": 25000,
+          "measurement": {
+            "wall_seconds": 0.030306,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 330268672,
+            "process_rss_after_bytes": 330268672,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.0303,
+              "mean_seconds": 0.001515,
+              "min_seconds": 0.001334,
+              "p50_seconds": 0.001497,
+              "p95_seconds": 0.001671,
+              "max_seconds": 0.001676
+            }
+          }
+        },
+        {
+          "authorized_refs": 2500,
+          "total_refs": 25000,
+          "measurement": {
+            "wall_seconds": 0.241399,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 330268672,
+            "process_rss_after_bytes": 330268672,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 0.241385,
+              "mean_seconds": 0.012069,
+              "min_seconds": 0.009998,
+              "p50_seconds": 0.011821,
+              "p95_seconds": 0.013696,
+              "max_seconds": 0.013809
+            }
+          }
+        },
+        {
+          "authorized_refs": 25000,
+          "total_refs": 25000,
+          "measurement": {
+            "wall_seconds": 2.637922,
+            "allocations_peak_bytes": 0,
+            "process_rss_before_bytes": 330268672,
+            "process_rss_after_bytes": 332529664,
+            "rss_semantics": "process-lifetime peak at phase boundaries; not allocation deltas",
+            "latency": {
+              "unit": "seconds",
+              "count": 20,
+              "latency_kind": "sampled",
+              "p95_valid": true,
+              "total_seconds": 2.637907,
+              "mean_seconds": 0.131895,
+              "min_seconds": 0.102228,
+              "p50_seconds": 0.121043,
+              "p95_seconds": 0.18258,
+              "max_seconds": 0.197138
+            }
+          }
+        }
+      ],
+      "final_projection_documents": 23750,
+      "process_rss_peak_bytes": 544063488
+    }
+  ]
+}

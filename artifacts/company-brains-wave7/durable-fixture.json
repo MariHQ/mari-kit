@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": {
+    "initial_answer_grounded": true,
+    "warm_cache_reused": true,
+    "cache_survives_restart": true,
+    "group_revocation_blocks_old_answer": true,
+    "authorized_user_retains_access": true,
+    "edit_replaces_old_answer": true,
+    "same_revision_acl_change_blocks_cache": true,
+    "newly_authorized_user_can_answer": true,
+    "deletion_blocks_cached_answer": true,
+    "projection_matches_current_documents": true
+  },
+  "database": "/var/folders/rs/b3gpqxb14klgmlv6b4ctph180000gn/T/mari-company-brain-8ob69xr1/brain.sqlite",
+  "source_generation": 4,
+  "remaining_document_ids": [
+    "handbook/onboarding"
+  ],
+  "mode": "deterministic extractive fixture; durable SQLite storage"
+}

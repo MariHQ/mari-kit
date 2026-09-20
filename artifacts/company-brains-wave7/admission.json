@@ -1,0 +1,31 @@
+{
+  "byte_budget": 32768,
+  "warm_small_user": {
+    "views": 1,
+    "retained_estimated_bytes": 5674,
+    "evictions": 0,
+    "evicted_estimated_bytes": 0,
+    "max_views": 8,
+    "max_bytes": 32768
+  },
+  "after_oversized_user": {
+    "views": 1,
+    "retained_estimated_bytes": 5674,
+    "evictions": 1,
+    "evicted_estimated_bytes": 1467286,
+    "max_views": 8,
+    "max_bytes": 32768
+  },
+  "small_user_snapshot_reloads": 0,
+  "small_user_visible_ids": [
+    "handbook/public"
+  ],
+  "final": {
+    "views": 1,
+    "retained_estimated_bytes": 5674,
+    "evictions": 1,
+    "evicted_estimated_bytes": 1467286,
+    "max_views": 8,
+    "max_bytes": 32768
+  }
+}

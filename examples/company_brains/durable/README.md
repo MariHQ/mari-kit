@@ -41,7 +41,15 @@ match, with at most eight cached views by default (`view_cache_size` controls
 this bound). Cache keys include tenant, space, user, and both counters. Stores
 without the counter API retain the original snapshot-read behavior. All writers
 must use the updated store methods; raw SQL or older application writers bypass
-counter maintenance. Close brain instances before replacing/restoring a database.
+counter maintenance. Discard brain instances and close their stores before
+replacing/restoring a database; create fresh instances afterward.
+
+Custom stores can return immutable, hashable opaque access tokens instead of
+the two integer epochs. Equal tokens must mean equal documents and memberships
+for that scope and user, and `access_token_snapshot` must read its token and rows
+consistently. Opaque tokens retain their values in cache keys. Missing,
+unhashable, or malformed epoch tokens disable view retention and require fresh
+snapshots; they do not collapse to a shared default key.
 
 Hosts can also bound retained Python-object size and inspect eviction counts:
 
@@ -82,6 +90,28 @@ storage, retention policy, and service deployment are outside this example.
 SQLite atomicity tests exercise process death, not hardware power loss or a
 distributed database. A completed read observes a consistent snapshot; a later
 revocation does not retract an answer already delivered.
+
+## Restart and recovery
+
+Open a new `SQLiteBrainStore` and construct a new `CompanyBrain` after a process
+restart. Persisted answers can still be reused after validation against the
+reopened store; in-memory authorized views and search indexes are rebuilt.
+
+Resume synchronization from `store.state(scope, source_id)`, including its
+checkpoint and active mode. An unfinished full snapshot retains its observed
+document IDs across restarts; missing-document deletion happens when the full
+snapshot completes. Each source has its own state within each tenant and space.
+
+An exception from the `after_commit` failpoint occurs after the plan is durable.
+Read the persisted generation before deciding how to recover: replaying the old
+plan will fail the optimistic generation check. Failures before commit leave
+the documents, projection, checkpoint, and access counters at the previous
+committed state.
+
+Restoring an older database also restores older access counters and memberships.
+Fresh brain instances avoid reusing views from the replaced database, but hosts
+must reconcile current permissions before serving restored data. This example
+does not implement online restore or detect external database replacement.
 
 ## Answer quality
 

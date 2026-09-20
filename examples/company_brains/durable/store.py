@@ -138,11 +138,29 @@ def _resolve_path(path: str | os.PathLike[str]) -> str:
     candidate = os.fspath(path)
     if candidate == ":memory:" or candidate.startswith("file:"):
         return candidate
+    if not candidate:
+        # sqlite3 opens ``""`` as a private temporary database whose rows vanish
+        # when the connection closes, so silently accepting it loses data.
+        raise ValueError("database path must not be empty")
     if os.path.isdir(candidate):
         candidate = os.path.join(candidate, _DB_FILENAME)
     parent = os.path.dirname(os.path.abspath(candidate))
     os.makedirs(parent, exist_ok=True)
     return candidate
+
+
+def _rollback(connection: sqlite3.Connection) -> None:
+    """Undo the active transaction without masking the original failure.
+
+    SQLite rolls some failures back itself (for example a ``RAISE(ROLLBACK)``
+    trigger), so a second explicit ``ROLLBACK`` raises ``OperationalError`` and
+    would hide the real cause.  Only that secondary rollback error is swallowed.
+    """
+
+    try:
+        connection.execute("ROLLBACK")
+    except sqlite3.Error:
+        pass
 
 
 def _encode(value: Any) -> str:
@@ -282,9 +300,14 @@ class SQLiteBrainStore:
         self._connection.executescript(_SCHEMA)
 
     def close(self) -> None:
-        if self._connection is not None:
-            self._connection.close()
-            self._connection = None  # type: ignore[assignment]
+        """Close the underlying connection; safe to call more than once.
+
+        The connection object is retained (already closed), so later store
+        method calls fail loudly with ``sqlite3.ProgrammingError`` instead of
+        leaking an ``AttributeError`` from a nulled-out attribute.
+        """
+
+        self._connection.close()
 
     def __enter__(self) -> SQLiteBrainStore:
         return self
@@ -347,7 +370,7 @@ class SQLiteBrainStore:
             _bump_membership_epoch(connection, scope, user_id)
             connection.execute("COMMIT")
         except BaseException:
-            connection.execute("ROLLBACK")
+            _rollback(connection)
             raise
 
     def groups(self, scope: ScopeRef, user_id: str) -> frozenset[str]:
@@ -363,7 +386,7 @@ class SQLiteBrainStore:
             groups = _load_groups(connection, scope, user_id)
             connection.execute("COMMIT")
         except BaseException:
-            connection.execute("ROLLBACK")
+            _rollback(connection)
             raise
         return documents, groups
 
@@ -390,7 +413,7 @@ class SQLiteBrainStore:
             groups = _load_groups(connection, scope, user_id)
             connection.execute("COMMIT")
         except BaseException:
-            connection.execute("ROLLBACK")
+            _rollback(connection)
             raise
         return token, documents, groups
 
@@ -449,10 +472,7 @@ class SQLiteBrainStore:
             self._call(failpoint, "before_commit")
             connection.execute("COMMIT")
         except BaseException:
-            try:
-                connection.execute("ROLLBACK")
-            except sqlite3.Error:
-                pass
+            _rollback(connection)
             raise
         self._call(failpoint, "after_commit")
 

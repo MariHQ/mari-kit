@@ -59,6 +59,12 @@ EXTRACTIVE_LABEL = "Deterministic extractive answer: "
 _MAX_ATTEMPTS = 3
 _DEFAULT_VIEW_CACHE_SIZE = 8
 
+# A view-cache key binds one caller's scope and user to one live access token.
+# The token component is the documented epoch pair when the host exposes it, or
+# the opaque token value itself otherwise. ``None`` means the token cannot be
+# bound safely, so the view is not retained.
+_ViewKey = tuple[tuple[str, str], str, object]
+
 _TENANT_VISIBLE = frozenset({"public", "connector_scope"})
 _SENTENCE = re.compile(r"[^.!?\n]+[.!?]?")
 _WORD = re.compile(r"\w+")
@@ -71,7 +77,11 @@ class BrainStore(Protocol):
 
     ``access_token``/``access_token_snapshot`` are optional fast-path
     extensions; the engine falls back to ``access_snapshot`` alone when a store
-    does not provide them.
+    does not provide them. Tokens must have stable equality: an equal token
+    must imply equal documents and memberships for the same scope and user.
+    The snapshot extension must return its token and rows from one consistent
+    read. Tokens may expose two nonnegative integer epochs or be immutable,
+    hashable opaque values. Unsupported tokens disable view retention.
     """
 
     def access_snapshot(
@@ -348,9 +358,7 @@ class CompanyBrain:
         self._view_cache_bytes = _validate_budget(
             "view_cache_bytes", view_cache_bytes, allow_none=True
         )
-        self._views: OrderedDict[
-            tuple[tuple[str, str], str, int, int], _AuthorizedView
-        ] = OrderedDict()
+        self._views: OrderedDict[_ViewKey, _AuthorizedView] = OrderedDict()
         self._view_evictions = 0
         self._evicted_estimated_bytes = 0
 
@@ -453,9 +461,9 @@ class CompanyBrain:
     def _lookup_view(
         self, user_id: str, token: object | None
     ) -> _AuthorizedView | None:
-        if token is None:
-            return None
         key = self._view_key(user_id, token)
+        if key is None:
+            return None
         view = self._views.get(key)
         if view is not None:
             self._views.move_to_end(key)
@@ -464,9 +472,9 @@ class CompanyBrain:
     def _store_view(
         self, user_id: str, token: object | None, view: _AuthorizedView
     ) -> None:
-        if token is None:
-            return
         key = self._view_key(user_id, token)
+        if key is None:
+            return
         self._views[key] = view
         self._views.move_to_end(key)
         # A token change means every older view for this scope/user is obsolete;
@@ -484,7 +492,7 @@ class CompanyBrain:
     def _evict_obsolete_views(
         self,
         user_id: str,
-        current_key: tuple[tuple[str, str], str, int, int],
+        current_key: _ViewKey,
     ) -> None:
         scope_key = self.scope.key
         stale = [
@@ -534,7 +542,7 @@ class CompanyBrain:
                 self._drop_view(key)
                 return
 
-    def _drop_view(self, key: tuple[tuple[str, str], str, int, int]) -> None:
+    def _drop_view(self, key: _ViewKey) -> None:
         view = self._views.pop(key, None)
         if view is not None:
             self._view_evictions += 1
@@ -559,15 +567,39 @@ class CompanyBrain:
             max_bytes=self._view_cache_bytes,
         )
 
-    def _view_key(
-        self, user_id: str, token: object
-    ) -> tuple[tuple[str, str], str, int, int]:
-        return (
-            self.scope.key,
-            user_id,
-            int(getattr(token, "doc_epoch", 0)),
-            int(getattr(token, "membership_epoch", 0)),
-        )
+    def _view_key(self, user_id: str, token: object | None) -> _ViewKey | None:
+        """Bind a retained view to its scope, caller, and live token.
+
+        The documented fast-path token exposes ``doc_epoch`` and
+        ``membership_epoch``.  A host may instead return any hashable opaque
+        token; binding the key to that value keeps invalidation correct instead
+        of silently collapsing every token to ``(0, 0)`` and serving a stale
+        memoized view after an edit.  A ``None`` or unhashable token is never
+        retained, which degrades to the legacy uncached read.
+        """
+
+        if token is None:
+            return None
+        component = self._token_component(token)
+        if component is None:
+            return None
+        return (self.scope.key, user_id, component)
+
+    @staticmethod
+    def _token_component(token: object) -> object | None:
+        if hasattr(token, "doc_epoch") or hasattr(token, "membership_epoch"):
+            epochs = (
+                getattr(token, "doc_epoch", None),
+                getattr(token, "membership_epoch", None),
+            )
+            if not all(type(epoch) is int and epoch >= 0 for epoch in epochs):
+                return None
+            return ("epochs", *epochs)
+        try:
+            hash(token)
+        except TypeError:
+            return None
+        return ("opaque", token)
 
     def _authorized_snapshot(self, user_id: str) -> tuple[KnowledgeDocument, ...]:
         """Read the caller's authorized documents from one consistent view."""

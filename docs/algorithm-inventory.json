@@ -1,9 +1,9 @@
 {
-  "source_revision": "8f6c1bc907b76b4cce054010485f3ffa6a1a15bd",
+  "source_revision": "327926b5848f7bbfd4eafe8eb5a618cd88c3bd16",
   "scope": "Public top-level class/function definitions and public methods in all public source modules. Imported aliases, constants, private helpers, and dunder methods are outside the definition count. Pure facades are listed separately.",
-  "implementation_modules": 167,
-  "definitions": 988,
-  "public_methods": 188,
+  "implementation_modules": 169,
+  "definitions": 1009,
+  "public_methods": 193,
   "modules": [
     {
       "module": "mari_kit.agents.evaluation",
@@ -1726,88 +1726,124 @@
         {
           "name": "KnowledgeEvent",
           "kind": "class",
-          "line": 29,
+          "line": 81,
           "methods": []
         },
         {
           "name": "KnowledgeEpisode",
           "kind": "class",
-          "line": 52,
+          "line": 104,
           "methods": []
         },
         {
           "name": "segment_conversations",
           "kind": "function",
-          "line": 68,
+          "line": 120,
+          "methods": []
+        },
+        {
+          "name": "split_for_output",
+          "kind": "function",
+          "line": 184,
           "methods": []
         },
         {
           "name": "trajectory_events",
           "kind": "function",
-          "line": 138,
+          "line": 229,
           "methods": []
         },
         {
           "name": "EventEvidence",
           "kind": "class",
-          "line": 174,
+          "line": 265,
           "methods": []
         },
         {
           "name": "KnowledgeClaim",
           "kind": "class",
-          "line": 183,
+          "line": 274,
           "methods": []
         },
         {
           "name": "EpisodeKnowledge",
           "kind": "class",
-          "line": 191,
+          "line": 282,
           "methods": [
             {
               "name": "cache_key",
-              "line": 200
+              "line": 291
             },
             {
               "name": "retrieval_units",
-              "line": 203
+              "line": 294
             }
           ]
         },
         {
+          "name": "merge_chunk_knowledge",
+          "kind": "function",
+          "line": 324,
+          "methods": []
+        },
+        {
           "name": "extraction_request",
-          "kind": "function",
-          "line": 233,
-          "methods": []
-        },
-        {
-          "name": "parse_episode_knowledge",
-          "kind": "function",
-          "line": 263,
-          "methods": []
-        },
-        {
-          "name": "CompilationResult",
-          "kind": "class",
-          "line": 370,
-          "methods": []
-        },
-        {
-          "name": "compile_episodes",
           "kind": "function",
           "line": 377,
           "methods": []
         },
         {
+          "name": "parse_episode_knowledge",
+          "kind": "function",
+          "line": 429,
+          "methods": []
+        },
+        {
+          "name": "DroppedClaim",
+          "kind": "class",
+          "line": 524,
+          "methods": []
+        },
+        {
+          "name": "ResolvedOutput",
+          "kind": "class",
+          "line": 531,
+          "methods": []
+        },
+        {
+          "name": "resolve_evidence",
+          "kind": "function",
+          "line": 641,
+          "methods": []
+        },
+        {
+          "name": "EpisodeFailure",
+          "kind": "class",
+          "line": 722,
+          "methods": []
+        },
+        {
+          "name": "CompilationResult",
+          "kind": "class",
+          "line": 729,
+          "methods": []
+        },
+        {
+          "name": "compile_episodes",
+          "kind": "function",
+          "line": 738,
+          "methods": []
+        },
+        {
           "name": "evidence_context",
           "kind": "function",
-          "line": 426,
+          "line": 834,
           "methods": []
         },
         {
           "name": "topic_history",
           "kind": "function",
-          "line": 451,
+          "line": 859,
           "methods": []
         }
       ]
@@ -2356,6 +2392,125 @@
           "name": "adapt_docling_json",
           "kind": "function",
           "line": 44,
+          "methods": []
+        }
+      ]
+    },
+    {
+      "module": "mari_kit.documents.email",
+      "path": "src/mari_kit/documents/email.py",
+      "group": "Documents and source structure",
+      "summary": "RFC 822 email parsing with quoted-reply segmentation.",
+      "definitions": [
+        {
+          "name": "FragmentKind",
+          "kind": "class",
+          "line": 25,
+          "methods": []
+        },
+        {
+          "name": "Fragment",
+          "kind": "class",
+          "line": 33,
+          "methods": []
+        },
+        {
+          "name": "BulkSignal",
+          "kind": "class",
+          "line": 54,
+          "methods": [
+            {
+              "name": "is_bulk",
+              "line": 65
+            }
+          ]
+        },
+        {
+          "name": "EmailMessage",
+          "kind": "class",
+          "line": 75,
+          "methods": [
+            {
+              "name": "participants",
+              "line": 102
+            }
+          ]
+        },
+        {
+          "name": "subject_key",
+          "kind": "function",
+          "line": 207,
+          "methods": []
+        },
+        {
+          "name": "normalize_address",
+          "kind": "function",
+          "line": 218,
+          "methods": []
+        },
+        {
+          "name": "classify_lines",
+          "kind": "function",
+          "line": 293,
+          "methods": []
+        },
+        {
+          "name": "split_fragments",
+          "kind": "function",
+          "line": 579,
+          "methods": []
+        },
+        {
+          "name": "parse_email",
+          "kind": "function",
+          "line": 1000,
+          "methods": []
+        }
+      ]
+    },
+    {
+      "module": "mari_kit.documents.email_threads",
+      "path": "src/mari_kit/documents/email_threads.py",
+      "group": "Documents and source structure",
+      "summary": "Reconstruct email threads from headers, quoted text and subject evidence.",
+      "definitions": [
+        {
+          "name": "LinkReason",
+          "kind": "class",
+          "line": 40,
+          "methods": []
+        },
+        {
+          "name": "ThreadLink",
+          "kind": "class",
+          "line": 48,
+          "methods": []
+        },
+        {
+          "name": "EmailThread",
+          "kind": "class",
+          "line": 61,
+          "methods": [
+            {
+              "name": "subject",
+              "line": 79
+            },
+            {
+              "name": "participants",
+              "line": 83
+            }
+          ]
+        },
+        {
+          "name": "thread_emails",
+          "kind": "function",
+          "line": 175,
+          "methods": []
+        },
+        {
+          "name": "email_events",
+          "kind": "function",
+          "line": 380,
           "methods": []
         }
       ]
@@ -4043,30 +4198,30 @@
         {
           "name": "AnswerDisposition",
           "kind": "class",
-          "line": 22,
+          "line": 23,
           "methods": []
         },
         {
           "name": "GroundedAnswer",
           "kind": "class",
-          "line": 28,
+          "line": 29,
           "methods": [
             {
               "name": "knowledge_dependencies",
-              "line": 65
+              "line": 66
             }
           ]
         },
         {
           "name": "parse_answer",
           "kind": "function",
-          "line": 69,
+          "line": 70,
           "methods": []
         },
         {
           "name": "parse_answer_candidates",
           "kind": "function",
-          "line": 117,
+          "line": 118,
           "methods": []
         }
       ]
@@ -4360,7 +4515,7 @@
         {
           "name": "parse_decisions",
           "kind": "function",
-          "line": 17,
+          "line": 18,
           "methods": []
         }
       ]
@@ -4429,65 +4584,65 @@
         {
           "name": "ArtifactEvidence",
           "kind": "class",
-          "line": 28,
+          "line": 29,
           "methods": []
         },
         {
           "name": "LocatedEvidenceIssue",
           "kind": "class",
-          "line": 46,
+          "line": 47,
           "methods": []
         },
         {
           "name": "LocatedEvidenceReport",
           "kind": "class",
-          "line": 53,
+          "line": 54,
           "methods": [
             {
               "name": "accepted",
-              "line": 58
+              "line": 59
             }
           ]
         },
         {
           "name": "document_evidence_ref",
           "kind": "function",
-          "line": 62,
+          "line": 63,
           "methods": []
         },
         {
           "name": "EvidenceIssueKind",
           "kind": "class",
-          "line": 81,
+          "line": 89,
           "methods": []
         },
         {
           "name": "EvidenceIssue",
           "kind": "class",
-          "line": 90,
+          "line": 98,
           "methods": []
         },
         {
           "name": "EvidenceValidationReport",
           "kind": "class",
-          "line": 97,
+          "line": 105,
           "methods": [
             {
               "name": "accepted",
-              "line": 102
+              "line": 110
             }
           ]
         },
         {
           "name": "validate_artifact_evidence",
           "kind": "function",
-          "line": 106,
+          "line": 114,
           "methods": []
         },
         {
           "name": "validate_located_evidence",
           "kind": "function",
-          "line": 211,
+          "line": 219,
           "methods": []
         }
       ]
@@ -4677,31 +4832,31 @@
         {
           "name": "normalize_claim",
           "kind": "function",
-          "line": 23,
+          "line": 24,
           "methods": []
         },
         {
           "name": "parse_facts",
           "kind": "function",
-          "line": 97,
+          "line": 98,
           "methods": []
         },
         {
           "name": "FactAssessment",
           "kind": "class",
-          "line": 149,
+          "line": 150,
           "methods": []
         },
         {
           "name": "parse_claim_assessments",
           "kind": "function",
-          "line": 158,
+          "line": 159,
           "methods": []
         },
         {
           "name": "deduplicate_fact_candidates",
           "kind": "function",
-          "line": 218,
+          "line": 219,
           "methods": []
         }
       ]
@@ -4809,7 +4964,7 @@
         {
           "name": "parse_glossary",
           "kind": "function",
-          "line": 16,
+          "line": 17,
           "methods": []
         }
       ]
@@ -5105,31 +5260,31 @@
         {
           "name": "DigestTopic",
           "kind": "class",
-          "line": 19,
+          "line": 20,
           "methods": []
         },
         {
           "name": "DigestSummary",
           "kind": "class",
-          "line": 26,
+          "line": 27,
           "methods": []
         },
         {
           "name": "ImpactAssessment",
           "kind": "class",
-          "line": 34,
+          "line": 35,
           "methods": []
         },
         {
           "name": "parse_digest",
           "kind": "function",
-          "line": 41,
+          "line": 42,
           "methods": []
         },
         {
           "name": "parse_impact",
           "kind": "function",
-          "line": 80,
+          "line": 81,
           "methods": []
         }
       ]
@@ -6266,139 +6421,149 @@
         {
           "name": "BM25TermContribution",
           "kind": "class",
-          "line": 52,
+          "line": 65,
           "methods": []
         },
         {
           "name": "BM25Explanation",
           "kind": "class",
-          "line": 60,
+          "line": 73,
           "methods": []
         },
         {
           "name": "ArtifactIndexHit",
           "kind": "class",
-          "line": 67,
+          "line": 80,
           "methods": []
         },
         {
           "name": "ArtifactBM25Explanation",
           "kind": "class",
-          "line": 73,
+          "line": 86,
           "methods": []
         },
         {
           "name": "RevisionIndexHit",
           "kind": "class",
-          "line": 80,
+          "line": 93,
           "methods": []
         },
         {
           "name": "RevisionBM25Explanation",
           "kind": "class",
-          "line": 86,
+          "line": 99,
           "methods": []
         },
         {
           "name": "ArtifactIndexDelta",
           "kind": "class",
-          "line": 93,
+          "line": 106,
+          "methods": []
+        },
+        {
+          "name": "RevisionIndexDelta",
+          "kind": "class",
+          "line": 128,
           "methods": []
         },
         {
           "name": "DenseFlatIndex",
           "kind": "class",
-          "line": 135,
+          "line": 171,
           "methods": [
             {
               "name": "search",
-              "line": 151
+              "line": 187
             }
           ]
         },
         {
           "name": "SparseVectorIndex",
           "kind": "class",
-          "line": 187,
+          "line": 223,
           "methods": [
             {
               "name": "search",
-              "line": 210
+              "line": 246
             }
           ]
         },
         {
           "name": "BM25Index",
           "kind": "class",
-          "line": 244,
+          "line": 280,
           "methods": [
             {
               "name": "search",
-              "line": 287
+              "line": 323
             },
             {
               "name": "explain",
-              "line": 313
+              "line": 349
             },
             {
               "name": "with_deltas",
-              "line": 350
+              "line": 386
             }
           ]
         },
         {
           "name": "ArtifactBM25Index",
           "kind": "class",
-          "line": 380,
+          "line": 416,
           "methods": [
             {
               "name": "search",
-              "line": 406
+              "line": 444
             },
             {
               "name": "explain",
-              "line": 425
+              "line": 463
             },
             {
               "name": "with_deltas",
-              "line": 433
+              "line": 471
             }
           ]
         },
         {
           "name": "RevisionBM25Index",
           "kind": "class",
-          "line": 453,
+          "line": 491,
           "methods": [
             {
               "name": "search",
-              "line": 476
+              "line": 516
             },
             {
               "name": "explain",
-              "line": 495
+              "line": 535
+            },
+            {
+              "name": "with_deltas",
+              "line": 543
             }
           ]
         },
         {
           "name": "HNSWIndex",
           "kind": "class",
-          "line": 504,
+          "line": 574,
           "methods": [
             {
               "name": "search",
-              "line": 566
+              "line": 705
             }
           ]
         },
         {
           "name": "IVFPQIndex",
           "kind": "class",
-          "line": 651,
+          "line": 807,
           "methods": [
             {
               "name": "search",
-              "line": 694
+              "line": 850
             }
           ]
         }
@@ -7792,7 +7957,7 @@
         {
           "name": "start_speculative_retrieval",
           "kind": "function",
-          "line": 379,
+          "line": 393,
           "methods": []
         }
       ]
@@ -8185,6 +8350,7 @@
     }
   ],
   "private_modules": [
-    "connectors/_shared.py"
+    "connectors/_shared.py",
+    "knowledge/_documents.py"
   ]
 }

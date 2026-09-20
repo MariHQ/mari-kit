@@ -24,3 +24,6 @@ artifacts/company-brains-wave4/*.sqlite*
 artifacts/company-brains-wave5/*.jsonl
 artifacts/company-brains-wave5/*.log
 artifacts/company-brains-wave5/*.sqlite*
+artifacts/company-brains-wave6/*.jsonl
+artifacts/company-brains-wave6/*.log
+artifacts/company-brains-wave6/*.sqlite*

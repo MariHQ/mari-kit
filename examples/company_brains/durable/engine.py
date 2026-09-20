@@ -363,7 +363,7 @@ class CompanyBrain:
             raise ValueError("limit must not be negative")
         if limit == 0:
             return ()
-        view = self._view(user_id)
+        view = self._view(user_id, indexed=True)
         if not view.documents:
             return ()
         refs = view.refs
@@ -404,8 +404,8 @@ class CompanyBrain:
             self._store.save_cache(self.scope, key, payload)
         return self._present(payload, cache_hit=False)
 
-    def _view(self, user_id: str) -> _AuthorizedView:
-        """Return the memoized authorized view for the caller's live token."""
+    def _view(self, user_id: str, *, indexed: bool = False) -> _AuthorizedView:
+        """Return the live view; build requested indexes before new admission."""
 
         snapshot = getattr(self._store, "access_token_snapshot", None)
         reader = getattr(self._store, "access_token", None)
@@ -419,6 +419,11 @@ class CompanyBrain:
             if cached is not None:
                 return cached
             view = self._build_view(current_token, documents, groups, user_id)
+            # Search requires the index immediately. Account for its full size
+            # before admission can evict an existing warm view. Callback-only
+            # answers keep their indexes lazy.
+            if indexed and view.documents:
+                _ = view.index
             self._store_view(user_id, current_token, view)
             return view
         documents, groups = self._store.access_snapshot(self.scope, user_id)
@@ -466,13 +471,15 @@ class CompanyBrain:
         self._views.move_to_end(key)
         # A token change means every older view for this scope/user is obsolete;
         # drop it now so per-user growth tracks live state, not edit history.
+        # This holds even when the replacement view is itself too large to
+        # cache: revocation must never leave the old view behind.
         self._evict_obsolete_views(user_id, key)
-        self._enforce_view_limits()
+        self._enforce_view_limits(self._views.get(key))
 
     def _after_index_built(self, view: _AuthorizedView) -> None:
         """Re-enforce bounds now that a lazily built index grew a view."""
 
-        self._enforce_view_limits()
+        self._enforce_view_limits(view)
 
     def _evict_obsolete_views(
         self,
@@ -488,14 +495,25 @@ class CompanyBrain:
         for key in stale:
             self._drop_view(key)
 
-    def _enforce_view_limits(self) -> None:
+    def _enforce_view_limits(self, oversized: _AuthorizedView | None = None) -> None:
         """Evict least-recently-used views until both bounds hold.
 
         A view that is still being used for the current request may be evicted
         here: callers hold their own reference, so it can finish the request
         even though it is no longer retained.
+
+        A single view that exceeds the byte budget on its own is dropped first,
+        before any generic LRU eviction.  Otherwise admitting (or lazily
+        indexing) one oversized authorized corpus would evict every smaller,
+        useful view on its way out and leave the cache colder than it started.
         """
 
+        if (
+            oversized is not None
+            and self._view_cache_bytes is not None
+            and oversized.estimated_bytes() > self._view_cache_bytes
+        ):
+            self._drop_view_object(oversized)
         while self._views:
             if len(self._views) > self._view_cache_size:
                 self._drop_view(next(iter(self._views)))
@@ -507,6 +525,14 @@ class CompanyBrain:
                 self._drop_view(next(iter(self._views)))
                 continue
             break
+
+    def _drop_view_object(self, view: _AuthorizedView) -> None:
+        """Drop a specific view by identity, if this cache still holds it."""
+
+        for key, candidate in self._views.items():
+            if candidate is view:
+                self._drop_view(key)
+                return
 
     def _drop_view(self, key: tuple[tuple[str, str], str, int, int]) -> None:
         view = self._views.pop(key, None)
@@ -564,7 +590,7 @@ class CompanyBrain:
 
         for _ in range(_MAX_ATTEMPTS):
             attempt_scope = self.scope
-            view = self._view(user_id)
+            view = self._view(user_id, indexed=generate is None)
             fingerprint = view.fingerprint
             try:
                 if generate is None:

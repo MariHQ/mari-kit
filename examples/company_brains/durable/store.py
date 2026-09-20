@@ -413,7 +413,10 @@ class SQLiteBrainStore:
             return None
         try:
             payload = json.loads(row[0])
-        except json.JSONDecodeError:
+        except (ValueError, TypeError, RecursionError):
+            # A corrupt or hostile payload — invalid JSON text, non-UTF-8 bytes,
+            # an over-long integer literal, or pathologically nested JSON — is a
+            # cache miss, never an exception out of the request path.
             return None
         return payload if isinstance(payload, dict) else None
 

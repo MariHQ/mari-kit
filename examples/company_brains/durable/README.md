@@ -58,6 +58,13 @@ view can finish its request but is not retained. Obsolete versions of a user's
 view are evicted when that user's access counters change. `None` retains the
 original count-only policy, while zero disables view retention.
 
+Search misses build their required index before admission, so an oversized
+indexed view is rejected before it can displace smaller warm views. A cached
+view that later grows past the byte budget is removed before general LRU
+eviction. Callback-only answers still keep index construction lazy. Cache hit
+rates depend on request ordering: interleaving more users than the cache holds
+can eliminate the reuse observed in consecutive-user benchmarks.
+
 Persisted answer records now use schema v3, with explicit scope/question/user
 binding, structural validation, and an unkeyed checksum. Malformed records and
 old v1/v2 records are regenerated. The checksum detects accidental record changes;
@@ -161,3 +168,6 @@ See the [third-wave results](../../../artifacts/company-brains-wave3/README.md)
 [fourth-wave results](../../../artifacts/company-brains-wave4/README.md),
 and [fifth-wave results](../../../artifacts/company-brains-wave5/README.md)
 for measured changes and remaining limits.
+
+The [sixth-wave results](../../../artifacts/company-brains-wave6/README.md)
+cover oversized admissions, malformed-record recovery, and interleaved traffic.

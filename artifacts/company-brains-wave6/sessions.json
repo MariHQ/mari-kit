@@ -1,0 +1,20 @@
+[
+  {
+    "role": "admission",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43476a05ffeYf7Bwt8BIfsY01",
+    "completed": true
+  },
+  {
+    "role": "validation",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43476192ffezotY0oPouW8xWy",
+    "completed": true
+  },
+  {
+    "role": "workload",
+    "model": "deepseek/deepseek-flash",
+    "session_id": "ses_f43476605ffey3fCMKLhckPkQp",
+    "completed": true
+  }
+]

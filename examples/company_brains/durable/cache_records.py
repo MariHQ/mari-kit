@@ -38,7 +38,7 @@ def cache_record_matches_request(
     try:
         if payload.get("checksum") != seal_cache_record(payload)["checksum"]:
             return False
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, RecursionError):
         return False
     disposition = payload.get("disposition")
     if disposition not in ("grounded", "insufficient_evidence"):

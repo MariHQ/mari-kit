@@ -105,7 +105,7 @@ index = index.with_deltas([RevisionIndexDelta(
 
 `with_deltas` returns a new snapshot after exact revision-checked edits and
 deletions. A stale `previous_ref` raises before the original snapshot changes.
-The update rebuilds BM25 statistics; it is not a sublinear update algorithm.
+Each update rebuilds BM25 statistics in time proportional to the corpus.
 
 ## How it works and backing algorithms
 
@@ -137,7 +137,7 @@ Authorization filters can disconnect graph paths, so small allowlists lose
 recall first. `exact_filter_threshold` scores the authorized vectors exactly
 when an allowlist is at or below that size. `search_starts` merges several
 deterministic authorized traversals for larger allowlists. Additional starts
-improve recall at additional query cost; results remain approximate. Both
+improve recall at additional query cost. Results remain approximate. Both
 default to the original single-traversal behavior.
 
 ### IVF-PQ

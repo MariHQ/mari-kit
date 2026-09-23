@@ -12,8 +12,8 @@ python -m examples.company_brains.durable
 ```
 
 Eight scenarios compose Mari's public APIs into small company knowledge
-applications. Each uses synthetic documents and deterministic model output; no
-credentials or external services are required. The combined runner emits JSON
+applications. Each uses synthetic documents and deterministic model output.
+The scenarios run offline with no credentials. The combined runner emits JSON
 with each scenario's observable results.
 
 | Scenario | Workflow |
@@ -57,25 +57,27 @@ with SQLiteBrainStore(path) as store:
 |---|---|
 | Atomic sync | Documents, projection, and checkpoint commit in one transaction with an optimistic generation check |
 | Current authorization | Live access counters are checked on every request and again after the model callback |
-| Safe answer reuse | Cached answers require matching authorized source observations; edits, deletions, and ACL changes invalidate them |
+| Safe answer reuse | Cached answers require matching authorized source observations. Edits, deletions, and ACL changes invalidate them |
 | Bounded memory | Authorized views and indexes are cached by count and optional byte budget |
-| Crash recovery | Process-death tests cover each write stage; a fresh process resumes from the persisted checkpoint |
+| Crash recovery | Process-death tests cover each write stage. A fresh process resumes from the persisted checkpoint |
 
 Authentication, identity provisioning, backup and restore, encrypted storage,
 and deployment remain application responsibilities. The atomicity tests
-exercise process death, not power loss or a distributed database.
+exercise process death on one SQLite database. Power loss and distributed
+databases are outside their scope.
 
 :::{collapse} Evaluation and benchmarks
 
 Fixture evaluation covers current and superseded policy, unresolved conflicts,
 ambiguous questions, missing information, restricted evidence, and irrelevant
 matches. Opt-in live evaluation sends only synthetic questions and authorized
-source revisions to a model. Exact citation validation and lexical grading do
-not prove semantic entailment.
+source revisions to a model. Exact citation validation and lexical grading
+check quotations and wording. Semantic entailment needs separate evaluation.
 
 Scale, recall, filtered-recall, multi-start, and cache-memory benchmarks live
 in `benchmarks/company_brain_*.py`. They identify where a production search
-adapter is warranted; they do not establish production service levels.
+adapter is warranted. Production service levels need measurement on the
+target deployment.
 :::
 
 ## Extend the composition

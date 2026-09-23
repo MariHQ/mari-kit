@@ -88,11 +88,24 @@ for compatibility and lower-level use.
 ```{code-block} python
 :caption: Search exact revisions through the generic index boundary
 
-from mari_kit.retrieval import RevisionBM25Index
+from mari_kit.retrieval import (
+    IndexOperation, RevisionBM25Index, RevisionIndexDelta,
+)
 
 index = RevisionBM25Index({document_ref: document_text})
 hits = index.search(query, limit=10, allowed_refs=authorized_refs)
+
+index = index.with_deltas([RevisionIndexDelta(
+    ref=current_ref,
+    previous_ref=prior_ref,
+    operation=IndexOperation.UPSERT,
+    text=current_text,
+)])
 ```
+
+`with_deltas` returns a new snapshot after exact revision-checked edits and
+deletions. A stale `previous_ref` raises before the original snapshot changes.
+The update rebuilds BM25 statistics; it is not a sublinear update algorithm.
 
 ## How it works and backing algorithms
 
@@ -119,6 +132,13 @@ HNSW stores vectors in layered proximity graphs. Search begins in sparse upper
 layers and descends into denser neighborhoods. `ef_search` controls how many
 candidates remain active. Higher breadth evaluates more candidates. Measure
 its recall and distance calculations on the target corpus. [HNSW](https://doi.org/10.1109/TPAMI.2018.2889473){.paper}
+
+Authorization filters can disconnect graph paths, so small allowlists lose
+recall first. `exact_filter_threshold` scores the authorized vectors exactly
+when an allowlist is at or below that size. `search_starts` merges several
+deterministic authorized traversals for larger allowlists. Additional starts
+improve recall at additional query cost; results remain approximate. Both
+default to the original single-traversal behavior.
 
 ### IVF-PQ
 
@@ -163,7 +183,8 @@ lexical = BM25Index(passages, k1=1.2, b=0.75)
 sparse = SparseVectorIndex(model_generated_term_weights)
 
 hits = graph.search(query_vector, limit=20, ef_search=128,
-    allowed_document_ids=authorized_document_ids)
+    allowed_document_ids=authorized_document_ids,
+    exact_filter_threshold=200, search_starts=4)
 ```
 
 BM25 accepts a caller analyzer and produces per-term score contributions.

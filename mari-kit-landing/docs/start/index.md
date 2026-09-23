@@ -6,6 +6,7 @@
 | Page | Covers |
 |---|---|
 | [Company search](company-search.md) | A complete authorized retrieval path |
+| [Company brains](company-brains.md) | Eight scenarios and a persistent, permission-aware answer application |
 | [Governed knowledge](governed-knowledge.md) | Typed evidence and revisioned artifacts |
 | [Agent knowledge](agent-knowledge.md) | Completed activity to reviewable proposals |
 | [Conversation knowledge](../agents/conversation-knowledge.md) | Settled conversations to searchable, evidence-bound episodes |
@@ -31,6 +32,7 @@
 :maxdepth: 1
 
 company-search
+company-brains
 governed-knowledge
 agent-knowledge
 install

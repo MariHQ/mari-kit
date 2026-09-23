@@ -85,10 +85,11 @@ starting paths on the homepage as well. Conversation knowledge and dependency
 updates include their guides from the repository-level `docs/` directory, so
 edit those guides rather than duplicating their text.
 
-A Git push updates the repository. It does not itself publish the website:
-the current GitHub Actions workflow validates the project and has no docs
-deployment job. Publishing requires the authorized site operator to upload the
-complete strict-build output and invalidate the site's CDN cache.
+A push to `main` publishes the website. After the `docs` and `test` jobs pass,
+the `deploy-docs` job syncs the strict-build output to the `kit.mari.guru` S3
+bucket and invalidates the CloudFront cache. It assumes the `mari-kit-deploy`
+IAM role through GitHub OIDC; that role trusts only `main` of this repository.
+Pull requests build and check the site without deploying it.
 
 After publication, fetch the homepage, each new deep link, and a section index.
 Check the HTML title, canonical URL, page heading, and sidebar entry. A successful
